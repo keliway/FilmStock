@@ -1,0 +1,1004 @@
+{
+  "filmstocks": [
+    {
+      "id": "17621682656691",
+      "name": "Delta 100",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 3,
+      "expireDate": [
+        "10/2026",
+        "1999"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.669Z"
+    },
+    {
+      "id": "17621682656702",
+      "name": "Delta 100",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "03/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T11:27:04.657Z"
+    },
+    {
+      "id": "17621682656703",
+      "name": "Delta 400",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 5,
+      "expireDate": [
+        "05/2026",
+        "12/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656704",
+      "name": "Delta 400",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656705",
+      "name": "HP5",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 3,
+      "expireDate": [
+        "03/2026",
+        "1999"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656706",
+      "name": "HP5",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 5,
+      "expireDate": [
+        "04/2027"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656707",
+      "name": "FP4",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656708",
+      "name": "FP4",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "17621682656709",
+      "name": "T-Max 100",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 4,
+      "expireDate": [
+        "04/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567010",
+      "name": "T-Max 100",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567011",
+      "name": "T-Max 400",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567012",
+      "name": "T-Max 400",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567013",
+      "name": "Tri-X 400",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "06/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567014",
+      "name": "Tri-X 400",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567015",
+      "name": "RPX 100",
+      "manufacturer": "Rollei",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567016",
+      "name": "Delta 3200",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 3200,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "02/2024"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567017",
+      "name": "Ektar 100",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567018",
+      "name": "Ektar 100",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 100,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567019",
+      "name": "Portra 160",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567020",
+      "name": "Portra 400",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "04/2023"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567021",
+      "name": "Portra 400",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567022",
+      "name": "Pro 400H",
+      "manufacturer": "Fuji",
+      "type": "Color",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "2023"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567023",
+      "name": "Xtra 400",
+      "manufacturer": "Fuji",
+      "type": "Color",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567024",
+      "name": "Portra 800",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 800,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567025",
+      "name": "Gold 200",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 200,
+      "format": "120",
+      "quantity": 3,
+      "expireDate": [
+        "06/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567026",
+      "name": "PanF",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 50,
+      "format": "120",
+      "quantity": 4,
+      "expireDate": [
+        "07/2025",
+        "1998"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567027",
+      "name": "Pan 400",
+      "manufacturer": "Kentmere",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 2,
+      "expireDate": [
+        "05/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567028",
+      "name": "Tri-X 320",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 320,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567029",
+      "name": "TechPan",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 10,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "03/2001"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567030",
+      "name": "RPX 25",
+      "manufacturer": "Rollei",
+      "type": "BW",
+      "filmSpeed": 25,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "10/2024"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567031",
+      "name": "Double-X",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 250,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "09/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T13:51:10.774Z"
+    },
+    {
+      "id": "176216826567032",
+      "name": "Superpan 200",
+      "manufacturer": "Rollei",
+      "type": "BW",
+      "filmSpeed": 200,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "10/2024"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567033",
+      "name": "Agfaortho 25",
+      "manufacturer": "Agfa",
+      "type": "BW",
+      "filmSpeed": 25,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "07/1993"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:51:43.452Z"
+    },
+    {
+      "id": "176216826567034",
+      "name": "Fomapan 400",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "12/2023"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567035",
+      "name": "Ortho 400",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "04/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567036",
+      "name": "P30",
+      "manufacturer": "Ferrania",
+      "type": "BW",
+      "filmSpeed": 80,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567037",
+      "name": "no.10",
+      "manufacturer": "NoColor",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567038",
+      "name": "Portra 160VC",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 9,
+      "expireDate": [
+        "12/2004",
+        "04/2006"
+      ],
+      "comments": "shoot at ISO50",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T11:31:15.800Z"
+    },
+    {
+      "id": "176216826567039",
+      "name": "Portra 160NC",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "09/2001"
+      ],
+      "comments": "shoot at ISO 50",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:19:58.426Z"
+    },
+    {
+      "id": "176216826567040",
+      "name": "Portra 400NC",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 2,
+      "expireDate": [
+        "10/2005"
+      ],
+      "comments": "shoot at ISO200",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:20:53.555Z"
+    },
+    {
+      "id": "176216826567041",
+      "name": "Vericolor 160",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "07/2001"
+      ],
+      "comments": "shoot at ISO50",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:03:57.633Z"
+    },
+    {
+      "id": "176216826567042",
+      "name": "Portra 100T",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 100,
+      "format": "120",
+      "quantity": 2,
+      "expireDate": [
+        "03/2008"
+      ],
+      "comments": "shoot at ISO80",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:17:21.820Z"
+    },
+    {
+      "id": "176216826567043",
+      "name": "Pro 160S",
+      "manufacturer": "Fuji",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 46,
+      "expireDate": [
+        "06/2007"
+      ],
+      "comments": "shoot at ISO80",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:17:47.353Z"
+    },
+    {
+      "id": "176216826567044",
+      "name": "Ektachrome 160T",
+      "manufacturer": "Kodak",
+      "type": "Slide",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "12/2004"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:22:49.668Z"
+    },
+    {
+      "id": "176216826567045",
+      "name": "Ektachrome 64T",
+      "manufacturer": "Kodak",
+      "type": "Slide",
+      "filmSpeed": 64,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "11/2008"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:23:35.326Z"
+    },
+    {
+      "id": "176216826567046",
+      "name": "Provia 400F",
+      "manufacturer": "Fuji",
+      "type": "Slide",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "01/2005"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567047",
+      "name": "NPC 160",
+      "manufacturer": "Fuji",
+      "type": "Color",
+      "filmSpeed": 160,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "03/2003"
+      ],
+      "comments": "shoot at ISO80",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:18:11.721Z"
+    },
+    {
+      "id": "176216826567048",
+      "name": "Vision 200T",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 200,
+      "format": "35",
+      "quantity": 10,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567049",
+      "name": "Vision 250D",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 250,
+      "format": "35",
+      "quantity": 10,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567050",
+      "name": "Fomapan 200",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 200,
+      "format": "35",
+      "quantity": 15,
+      "expireDate": [
+        "03/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567051",
+      "name": "RPX 400",
+      "manufacturer": "Rollei",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 3,
+      "expireDate": [
+        "11/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567052",
+      "name": "Plus-X",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 125,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "01/2006"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567053",
+      "name": "XP2",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567054",
+      "name": "APX 400",
+      "manufacturer": "Agfa",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567055",
+      "name": "Ektachrome 160T",
+      "manufacturer": "Kodak",
+      "type": "Slide",
+      "filmSpeed": 160,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "2006"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:23:49.914Z"
+    },
+    {
+      "id": "176216826567056",
+      "name": "Ektapress 100",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 100,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "2006"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:22:24.436Z"
+    },
+    {
+      "id": "176216826567057",
+      "name": "Kodacolor 200",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 200,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "2006"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567058",
+      "name": "Neopan 400",
+      "manufacturer": "Fuji",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "35",
+      "quantity": 3,
+      "expireDate": [
+        "2006"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567059",
+      "name": "Neopan 1600",
+      "manufacturer": "Fuji",
+      "type": "BW",
+      "filmSpeed": 1600,
+      "format": "35",
+      "quantity": 1,
+      "expireDate": [
+        "2006"
+      ],
+      "comments": "Expiry date unsure",
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567060",
+      "name": "Gold 200",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 200,
+      "format": "127",
+      "quantity": 1,
+      "expireDate": [
+        "06/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567061",
+      "name": "HP5",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "127",
+      "quantity": 1,
+      "expireDate": [
+        "08/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567062",
+      "name": "FP4",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 125,
+      "format": "127",
+      "quantity": 1,
+      "expireDate": null,
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567063",
+      "name": "TechPan",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 10,
+      "format": "4x5",
+      "quantity": 38,
+      "expireDate": [
+        "12/1986"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567064",
+      "name": "Portra 100T",
+      "manufacturer": "Kodak",
+      "type": "Color",
+      "filmSpeed": 100,
+      "format": "4x5",
+      "quantity": 13,
+      "expireDate": [
+        "04/2008"
+      ],
+      "comments": "shoot at ISO80",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T12:18:28.184Z"
+    },
+    {
+      "id": "176216826567065",
+      "name": "Provia 100F",
+      "manufacturer": "Fuji",
+      "type": "Slide",
+      "filmSpeed": 100,
+      "format": "4x5",
+      "quantity": 12,
+      "expireDate": [
+        "09/2026"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567066",
+      "name": "FP100C45",
+      "manufacturer": "Fuji",
+      "type": "Instant",
+      "filmSpeed": 100,
+      "format": "4x5",
+      "quantity": 10,
+      "expireDate": [
+        "10/2009"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567067",
+      "name": "Ortho 400",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "4x5",
+      "quantity": 17,
+      "expireDate": [
+        "12/2027"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567068",
+      "name": "Fomapan 400",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "4x5",
+      "quantity": 5,
+      "expireDate": [
+        "05/2025"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567069",
+      "name": "Fomapan 100",
+      "manufacturer": "Foma",
+      "type": "BW",
+      "filmSpeed": 100,
+      "format": "4x5",
+      "quantity": 60,
+      "expireDate": [
+        "01/2025",
+        "01/2017"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567070",
+      "name": "Phoenix 200",
+      "manufacturer": "Harman",
+      "type": "Color",
+      "filmSpeed": 200,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "06/2027"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567071",
+      "name": "XP2",
+      "manufacturer": "Ilford",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "08/2024"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    },
+    {
+      "id": "176216826567072",
+      "name": "Portra 400BW",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 1,
+      "expireDate": [
+        "12/2002"
+      ],
+      "comments": "shoot at ISO200",
+      "createdAt": "2025-11-03T11:11:05.670Z",
+      "updatedAt": "2025-11-03T14:29:38.869Z"
+    },
+    {
+      "id": "176216826567073",
+      "name": "BW400CN",
+      "manufacturer": "Kodak",
+      "type": "BW",
+      "filmSpeed": 400,
+      "format": "120",
+      "quantity": 0,
+      "expireDate": [
+        "11/2005"
+      ],
+      "comments": null,
+      "createdAt": "2025-11-03T11:11:05.670Z"
+    }
+  ]
+}
