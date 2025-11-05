@@ -24,9 +24,6 @@ struct AddFilmView: View {
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
     @State private var showingImagePicker = false
-    @State private var showingImageSourceDialog = false
-    @State private var imageSourceType: UIImagePickerController.SourceType = .photoLibrary
-    @State private var showingCropView = false
     @State private var rawSelectedImage: UIImage?
     @State private var useDefaultImage = false
     @State private var showToast = false
@@ -99,28 +96,17 @@ struct AddFilmView: View {
                         // Upload button - only show if no custom image is uploaded
                         if selectedImage == nil {
                             Button {
-                                showingImageSourceDialog = true
+                                showingImagePicker = true
                             } label: {
                                 HStack {
-                                    Image(systemName: "photo.on.rectangle")
-                                    Text("Upload Image")
+                                    Image(systemName: "camera.fill")
+                                    Text("Take Photo")
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .background(Color.accentColor)
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
-                            }
-                            .confirmationDialog("Select Image Source", isPresented: $showingImageSourceDialog, titleVisibility: .visible) {
-                                Button("Camera") {
-                                    imageSourceType = .camera
-                                    showingImagePicker = true
-                                }
-                                Button("Photo Library") {
-                                    imageSourceType = .photoLibrary
-                                    showingImagePicker = true
-                                }
-                                Button("Cancel", role: .cancel) {}
                             }
                         }
                         
@@ -268,10 +254,7 @@ struct AddFilmView: View {
                     .disabled(name.isEmpty || manufacturer.isEmpty)
                 }
             }
-            .fullScreenCover(isPresented: Binding(
-                get: { showingImagePicker && imageSourceType == .camera },
-                set: { if !$0 { showingImagePicker = false } }
-            )) {
+            .fullScreenCover(isPresented: $showingImagePicker) {
                 ZStack {
                     Color.black
                         .ignoresSafeArea(.all)
@@ -279,31 +262,11 @@ struct AddFilmView: View {
                         .ignoresSafeArea(.all)
                 }
             }
-            .sheet(isPresented: Binding(
-                get: { showingImagePicker && imageSourceType == .photoLibrary },
-                set: { if !$0 { showingImagePicker = false } }
-            )) {
-                PhotoLibraryPicker(image: $rawSelectedImage, isPresented: $showingImagePicker)
-            }
-            .sheet(isPresented: $showingCropView) {
-                if let image = rawSelectedImage {
-                    SquareCropView(image: image) { croppedImage in
-                        selectedImage = croppedImage
-                        useDefaultImage = false
-                        showingCropView = false
-                    }
-                }
-            }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
-                    if imageSourceType == .camera {
-                        // For camera, image is already cropped, use directly
-                        selectedImage = newValue
-                        useDefaultImage = false
-                    } else {
-                        // For photo library, show crop view
-                        showingCropView = true
-                    }
+                    // Camera image is already cropped, use directly
+                    selectedImage = newValue
+                    useDefaultImage = false
                 }
             }
             .onChange(of: selectedImage) { oldValue, newValue in

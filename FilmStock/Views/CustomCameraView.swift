@@ -373,11 +373,20 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
         let cropWidth = maskFrame.width * scaleX
         let cropHeight = maskFrame.height * scaleY
         
+        // Make crop area 5% larger (zoom out) than the mask
+        let cropAdjustment: CGFloat = 1.4
+        let adjustedCropWidth = cropWidth * cropAdjustment
+        let adjustedCropHeight = cropHeight * cropAdjustment
+        
+        // Adjust crop position to keep it centered (move back by half the increase)
+        let adjustedCropX = cropX - (adjustedCropWidth - cropWidth) / 2
+        let adjustedCropY = cropY - (adjustedCropHeight - cropHeight) / 2
+        
         // Ensure crop rect is within image bounds and is valid
-        let finalCropX = max(0, min(cropX, imageWidth - 1))
-        let finalCropY = max(0, min(cropY, imageHeight - 1))
-        let finalCropWidth = min(cropWidth, imageWidth - finalCropX)
-        let finalCropHeight = min(cropHeight, imageHeight - finalCropY)
+        let finalCropX = max(0, min(adjustedCropX, imageWidth - 1))
+        let finalCropY = max(0, min(adjustedCropY, imageHeight - 1))
+        let finalCropWidth = min(adjustedCropWidth, imageWidth - finalCropX)
+        let finalCropHeight = min(adjustedCropHeight, imageHeight - finalCropY)
         
         guard finalCropWidth > 0 && finalCropHeight > 0 else {
             return nil
