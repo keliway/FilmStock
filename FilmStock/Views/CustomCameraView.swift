@@ -54,6 +54,7 @@ class CameraViewController: UIViewController {
     
     private var captureSession: AVCaptureSession!
     private var previewLayer: AVCaptureVideoPreviewLayer!
+    private var backgroundLayer: CALayer!
     private var photoOutput: AVCapturePhotoOutput!
     private var videoDeviceInput: AVCaptureDeviceInput!
     private var maskFrame: CGRect = .zero
@@ -63,6 +64,14 @@ class CameraViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         modalPresentationStyle = .fullScreen
+        
+        // Extend view under safe areas for full screen
+        edgesForExtendedLayout = [.top, .bottom, .left, .right]
+        extendedLayoutIncludesOpaqueBars = true
+        
+        // Ensure any white edges are black
+        view.layer.backgroundColor = UIColor.black.cgColor
+        
         setupCamera()
         setupOverlay()
     }
@@ -75,11 +84,24 @@ class CameraViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // Ensure view background is black
+        view.backgroundColor = .black
+        view.layer.backgroundColor = UIColor.black.cgColor
+        
         if !captureSession.isRunning {
             DispatchQueue.global(qos: .userInitiated).async {
                 self.captureSession.startRunning()
             }
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Ensure view background is black after appearing
+        view.backgroundColor = .black
+        view.layer.backgroundColor = UIColor.black.cgColor
+        // Update layout to ensure everything is properly positioned
+        viewDidLayoutSubviews()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -93,14 +115,28 @@ class CameraViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Ensure preview layer fills entire screen including safe areas
+        // Ensure view background is black
+        view.backgroundColor = .black
+        view.layer.backgroundColor = UIColor.black.cgColor
+        
+        // Ensure preview layer fills entire screen
         let bounds = view.bounds
         if bounds.width > 0 && bounds.height > 0 {
-            // Use full screen bounds, ignoring safe areas
-            previewLayer?.frame = bounds
+            // Use full screen bounds
+            let fullScreenBounds = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+            
+            // Update background layer to cover entire screen
+            if backgroundLayer != nil {
+                backgroundLayer.frame = fullScreenBounds
+                backgroundLayer.backgroundColor = UIColor.black.cgColor
+            }
+            
+            // Update preview layer
+            previewLayer?.frame = fullScreenBounds
+            
             // Ensure overlay also fills the screen
             if overlayView != nil {
-                overlayView.frame = bounds
+                overlayView.frame = fullScreenBounds
             }
         }
         updateOverlay()
@@ -151,7 +187,14 @@ class CameraViewController: UIViewController {
             previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
             previewLayer.videoGravity = .resizeAspectFill
             previewLayer.frame = view.bounds
-            view.layer.insertSublayer(previewLayer, at: 0)
+            
+            // Add a black background layer to cover any white edges
+            backgroundLayer = CALayer()
+            backgroundLayer.backgroundColor = UIColor.black.cgColor
+            backgroundLayer.frame = view.bounds
+            view.layer.insertSublayer(backgroundLayer, at: 0)
+            
+            view.layer.insertSublayer(previewLayer, at: 1)
             
         } catch {
             print("Error setting up camera: \(error)")

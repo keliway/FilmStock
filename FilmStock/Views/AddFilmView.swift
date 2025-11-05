@@ -245,7 +245,12 @@ struct AddFilmView: View {
                 get: { showingImagePicker && imageSourceType == .camera },
                 set: { if !$0 { showingImagePicker = false } }
             )) {
-                CustomCameraView(image: $rawSelectedImage, isPresented: $showingImagePicker)
+                ZStack {
+                    Color.black
+                        .ignoresSafeArea(.all)
+                    CustomCameraView(image: $rawSelectedImage, isPresented: $showingImagePicker)
+                        .ignoresSafeArea(.all)
+                }
             }
             .sheet(isPresented: Binding(
                 get: { showingImagePicker && imageSourceType == .photoLibrary },
