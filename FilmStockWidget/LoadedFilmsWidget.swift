@@ -85,8 +85,14 @@ struct LoadedFilmsWidgetEntryView: View {
             Text("Only small size supported")
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .widgetBackground {
+                    Color.clear
+                }
         } else if entry.loadedFilms.isEmpty {
             EmptyWidgetView()
+                .widgetBackground {
+                    Color.clear
+                }
                 .widgetURL(URL(string: "filmstock://loadedfilms"))
         } else {
             // Show current film based on index
@@ -211,7 +217,7 @@ struct LoadedFilmsWidgetEntryView: View {
 struct EmptyWidgetView: View {
     var body: some View {
         VStack(spacing: 8) {
-            Image(systemName: "camera")
+            Image(systemName: "camera.viewfinder")
                 .font(.system(size: 32))
                 .foregroundColor(.gray)
             

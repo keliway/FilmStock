@@ -155,7 +155,6 @@ class CameraViewController: UIViewController {
         captureSession.sessionPreset = .photo
         
         guard let videoDevice = getTelephotoCamera() ?? getWideCamera() else {
-            print("No camera available")
             return
         }
         
@@ -197,7 +196,7 @@ class CameraViewController: UIViewController {
             view.layer.insertSublayer(previewLayer, at: 1)
             
         } catch {
-            print("Error setting up camera: \(error)")
+            // Error setting up camera
         }
     }
     

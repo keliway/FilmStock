@@ -79,7 +79,6 @@ class FilmStockDataManager: ObservableObject {
             // Load films after migration
             loadFilmStocks()
         } catch {
-            print("Migration error: \(error)")
             await loadManufacturers(context: context)
             UserDefaults.standard.set(true, forKey: migrationKey)
         }
@@ -111,7 +110,7 @@ class FilmStockDataManager: ObservableObject {
             
             try context.save()
         } catch {
-            print("Failed to load manufacturers: \(error)")
+            // Failed to load manufacturers
         }
     }
     

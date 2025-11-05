@@ -179,7 +179,6 @@ class ImageStorage {
             
             return filename
         } catch {
-            print("Error saving image: \(error)")
             return nil
         }
     }

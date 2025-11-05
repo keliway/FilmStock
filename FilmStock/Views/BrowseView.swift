@@ -87,8 +87,6 @@ struct BrowseView: View {
             }
         }
         
-        // TODO: Apply expired filter if needed
-        
         return grouped
     }
     

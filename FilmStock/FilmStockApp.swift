@@ -29,8 +29,6 @@ struct FilmStockApp: App {
                 try? FileManager.default.removeItem(at: databaseShmURL)
                 try? FileManager.default.removeItem(at: databaseWalURL)
                 
-                print("Deleted old database files due to schema change")
-                
                 // Reset migration flag so app can re-migrate from JSON if needed
                 UserDefaults.standard.removeObject(forKey: "hasMigratedToSwiftData")
                 
