@@ -55,62 +55,6 @@
 		95DA01FE2EBA2B8D0040E997 /* Exceptions for "FilmStock" folder in "FilmStockWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				images/Agfa/agfaortho25.jpg,
-				images/Agfa/apx400.jpg,
-				images/Ferrania/P30.jpg,
-				images/Foma/fomapan100.jpg,
-				images/Foma/fomapan200.jpg,
-				images/Foma/fomapan400.jpg,
-				images/Foma/Ortho400.jpg,
-				images/Foma/Pan100.jpg,
-				images/Fujifilm/fp100c45.jpg,
-				images/Fujifilm/neopan400.jpg,
-				images/Fujifilm/neopan1600.jpg,
-				images/Fujifilm/npc160.jpg,
-				images/Fujifilm/pro160s.jpg,
-				images/Fujifilm/Pro400h.jpg,
-				images/Fujifilm/Provia100F.jpg,
-				images/Fujifilm/provia400f.jpg,
-				images/Fujifilm/xtra400.jpg,
-				images/Harman/Phoenix200.jpg,
-				images/Ilford/Delta100.jpg,
-				images/Ilford/Delta400.jpg,
-				images/Ilford/Delta3200.jpg,
-				images/Ilford/FP4.jpg,
-				images/Ilford/HP5.jpg,
-				images/Ilford/PanF.jpg,
-				images/Ilford/XP2.jpg,
-				images/Kentmere/Pan400.jpg,
-				images/Kodak/bw400cn.jpg,
-				images/Kodak/doublex.jpg,
-				images/Kodak/ektachrome64t.jpg,
-				images/Kodak/ektachrome160t.jpg,
-				images/Kodak/ektapress100.jpg,
-				images/Kodak/Ektar100.jpg,
-				images/Kodak/gold200.jpg,
-				images/Kodak/Kodacolor200.jpg,
-				images/Kodak/plusx.jpg,
-				images/Kodak/portra100t.jpg,
-				images/Kodak/Portra160.jpg,
-				images/Kodak/portra160nc.jpg,
-				images/Kodak/portra160vc.jpg,
-				images/Kodak/Portra400.jpg,
-				images/Kodak/portra400bw.jpg,
-				images/Kodak/portra400nc.jpg,
-				images/Kodak/Portra800.jpg,
-				images/Kodak/techpan.jpg,
-				images/Kodak/TMAX100.jpg,
-				images/Kodak/tmax400.jpg,
-				images/Kodak/trix320.jpg,
-				images/Kodak/TriX400.jpg,
-				images/Kodak/Vericolor160.jpg,
-				images/Kodak/Vision200T.jpg,
-				images/Kodak/Vision250D.jpg,
-				images/NoColor/no10.jpg,
-				images/Rollei/rpx25.jpg,
-				images/Rollei/rpx100.jpg,
-				images/Rollei/rpx400.jpg,
-				images/Rollei/Superpan200.jpg,
 				Models/FilmDataModel.swift,
 				Models/FilmStock.swift,
 			);
@@ -448,6 +392,7 @@
 				DEVELOPMENT_TEAM = MPTKM85UHG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take photos of film reminder cards";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select film reminder card images";
@@ -487,6 +432,7 @@
 				DEVELOPMENT_TEAM = MPTKM85UHG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take photos of film reminder cards";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select film reminder card images";

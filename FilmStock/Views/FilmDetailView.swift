@@ -16,18 +16,28 @@ struct FilmDetailView: View {
     @State private var showingLoadSheet = false
     @State private var shouldDismissAfterLoad = false
     
+    // Computed property to get the current groupedFilm from dataManager
+    private var currentGroupedFilm: GroupedFilm? {
+        dataManager.groupedFilms().first { $0.id == groupedFilm.id }
+    }
+    
+    // Use current groupedFilm if available, otherwise fall back to initial
+    private var displayGroupedFilm: GroupedFilm {
+        currentGroupedFilm ?? groupedFilm
+    }
+    
     var body: some View {
         List {
             // Film info
             Section {
-                InfoRow(label: "Manufacturer", value: groupedFilm.manufacturer)
-                InfoRow(label: "Type", value: groupedFilm.type.displayName)
-                InfoRow(label: "Speed", value: "ISO \(groupedFilm.filmSpeed)")
+                InfoRow(label: "Manufacturer", value: displayGroupedFilm.manufacturer)
+                InfoRow(label: "Type", value: displayGroupedFilm.type.displayName)
+                InfoRow(label: "Speed", value: "ISO \(displayGroupedFilm.filmSpeed)")
             }
             
             // Formats section
             Section("Formats") {
-                ForEach(groupedFilm.formats) { format in
+                ForEach(displayGroupedFilm.formats) { format in
                     if let film = relatedFilms.first(where: { $0.id == format.filmId }) {
                         FormatDetailRow(format: format, currentQuantity: film.quantity)
                     } else {
@@ -39,7 +49,7 @@ struct FilmDetailView: View {
             // Other formats if exists
             if relatedFilms.count > 1 {
                 Section("Other Formats") {
-                    ForEach(relatedFilms.filter { $0.id != groupedFilm.formats.first?.filmId }) { film in
+                    ForEach(relatedFilms.filter { $0.id != displayGroupedFilm.formats.first?.filmId }) { film in
                         NavigationLink {
                             // TODO: Show detail for other format
                         } label: {
@@ -55,9 +65,9 @@ struct FilmDetailView: View {
             }
             
             // Quantity control - for each format
-            if !groupedFilm.formats.isEmpty {
+            if !displayGroupedFilm.formats.isEmpty {
                 Section("Quantity") {
-                    ForEach(groupedFilm.formats) { formatInfo in
+                    ForEach(displayGroupedFilm.formats) { formatInfo in
                         if let film = relatedFilms.first(where: { $0.id == formatInfo.filmId }) {
                             HStack {
                                 Text(formatInfo.format.displayName)
@@ -78,7 +88,7 @@ struct FilmDetailView: View {
                 }
             }
         }
-        .navigationTitle("\(groupedFilm.manufacturer) \(groupedFilm.name)")
+        .navigationTitle("\(displayGroupedFilm.manufacturer) \(displayGroupedFilm.name)")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -110,11 +120,17 @@ struct FilmDetailView: View {
             loadRelatedFilms()
         }
         .sheet(isPresented: $showingEditSheet) {
-            EditFilmView(groupedFilm: groupedFilm)
+            EditFilmView(groupedFilm: displayGroupedFilm)
                 .environmentObject(dataManager)
         }
+        .onChange(of: showingEditSheet) { oldValue, newValue in
+            // When edit sheet dismisses, refresh the data
+            if !newValue {
+                loadRelatedFilms()
+            }
+        }
         .sheet(isPresented: $showingLoadSheet) {
-            LoadFilmView(groupedFilm: groupedFilm, onLoadComplete: {
+            LoadFilmView(groupedFilm: displayGroupedFilm, onLoadComplete: {
                 shouldDismissAfterLoad = true
             })
             .environmentObject(dataManager)
@@ -128,15 +144,15 @@ struct FilmDetailView: View {
     }
     
     private var hasAvailableFormats: Bool {
-        groupedFilm.formats.contains { $0.quantity > 0 }
+        displayGroupedFilm.formats.contains { $0.quantity > 0 }
     }
     
     private func loadRelatedFilms() {
         relatedFilms = dataManager.filmStocks.filter { film in
-            film.name == groupedFilm.name &&
-            film.manufacturer == groupedFilm.manufacturer &&
-            film.type == groupedFilm.type &&
-            film.filmSpeed == groupedFilm.filmSpeed
+            film.name == displayGroupedFilm.name &&
+            film.manufacturer == displayGroupedFilm.manufacturer &&
+            film.type == displayGroupedFilm.type &&
+            film.filmSpeed == displayGroupedFilm.filmSpeed
         }
     }
 }

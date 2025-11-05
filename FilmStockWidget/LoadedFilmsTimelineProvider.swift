@@ -173,16 +173,16 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     private func loadDefaultImageData(filmName: String, manufacturer: String) -> Data? {
         let baseName = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
         var variations = [
-            baseName + ".jpg",
-            baseName.lowercased() + ".jpg",
-            baseName.capitalized + ".jpg",
-            baseName.uppercased() + ".jpg"
+            baseName + ".png",
+            baseName.lowercased() + ".png",
+            baseName.capitalized + ".png",
+            baseName.uppercased() + ".png"
         ]
         
         if baseName.count > 1 {
             let firstChar = String(baseName.prefix(1)).uppercased()
             let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".jpg")
+            variations.append((firstChar + rest) + ".png")
         }
         
         // Only check App Group container (images copied by main app)

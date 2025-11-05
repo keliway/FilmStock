@@ -60,12 +60,12 @@ class ImageStorage {
             try? FileManager.default.createDirectory(at: destinationImagesURL, withIntermediateDirectories: true)
         }
         
-        // Get all jpg files from the bundle resource path (flattened structure)
-        let jpgFiles = (try? FileManager.default.contentsOfDirectory(
+        // Get all png files from the bundle resource path (flattened structure)
+        let pngFiles = (try? FileManager.default.contentsOfDirectory(
             at: resourceURL,
             includingPropertiesForKeys: nil,
             options: [.skipsHiddenFiles]
-        ))?.filter { $0.pathExtension.lowercased() == "jpg" } ?? []
+        ))?.filter { $0.pathExtension.lowercased() == "png" } ?? []
         
         // Create a mapping of image filename (without extension) to manufacturer
         var imageToManufacturer: [String: String] = [:]
@@ -77,9 +77,9 @@ class ImageStorage {
         }
         
         // Copy each image to the appropriate manufacturer directory
-        for imageFile in jpgFiles {
+        for imageFile in pngFiles {
             let fileName = imageFile.lastPathComponent
-            let imageNameWithoutExt = fileName.replacingOccurrences(of: ".jpg", with: "", options: .caseInsensitive)
+            let imageNameWithoutExt = fileName.replacingOccurrences(of: ".png", with: "", options: .caseInsensitive)
             
             // Find manufacturer by matching image name (case-insensitive)
             guard let mfg = imageToManufacturer[imageNameWithoutExt.lowercased()] else {
@@ -250,17 +250,17 @@ class ImageStorage {
     func loadDefaultImage(filmName: String, manufacturer: String) -> UIImage? {
         let baseName = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
         var variations = [
-            baseName + ".jpg",
-            baseName.lowercased() + ".jpg",
-            baseName.capitalized + ".jpg",
-            baseName.uppercased() + ".jpg"
+            baseName + ".png",
+            baseName.lowercased() + ".png",
+            baseName.capitalized + ".png",
+            baseName.uppercased() + ".png"
         ]
         
         // Add variation where only first letter is capitalized
         if baseName.count > 1 {
             let firstChar = String(baseName.prefix(1)).uppercased()
             let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".jpg")
+            variations.append((firstChar + rest) + ".png")
         }
         
         guard let resourcePath = Bundle.main.resourcePath else { return nil }
@@ -290,21 +290,21 @@ class ImageStorage {
         
         // Try Bundle.main.url methods
         for variation in variations {
-            let resourceName = variation.replacingOccurrences(of: ".jpg", with: "")
+            let resourceName = variation.replacingOccurrences(of: ".png", with: "")
             // Try with subdirectory
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images/\(manufacturer)"),
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images/\(manufacturer)"),
                let data = try? Data(contentsOf: bundleURL),
                let image = UIImage(data: data) {
                 return image
             }
             // Try without subdirectory (flattened)
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images"),
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images"),
                let data = try? Data(contentsOf: bundleURL),
                let image = UIImage(data: data) {
                 return image
             }
             // Try at bundle root
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg"),
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png"),
                let data = try? Data(contentsOf: bundleURL),
                let image = UIImage(data: data) {
                 return image

@@ -335,7 +335,42 @@ class FilmStockDataManager: ObservableObject {
             predicate: #Predicate { $0.id == filmStock.id }
         )
         
-        guard let myFilm = try? context.fetch(descriptor).first else { return }
+        guard let myFilm = try? context.fetch(descriptor).first,
+              let film = myFilm.film else { return }
+        
+        // Update Film entity properties
+        film.name = filmStock.name
+        film.type = filmStock.type.rawValue
+        film.filmSpeed = filmStock.filmSpeed
+        
+        // Update manufacturer if it changed
+        if film.manufacturer?.name != filmStock.manufacturer {
+            // Find or create the new manufacturer
+            let manufacturerDescriptor = FetchDescriptor<Manufacturer>(
+                predicate: #Predicate { $0.name == filmStock.manufacturer }
+            )
+            
+            let manufacturer: Manufacturer
+            if let existing = try? context.fetch(manufacturerDescriptor).first {
+                manufacturer = existing
+            } else {
+                manufacturer = Manufacturer(name: filmStock.manufacturer, isCustom: true)
+                context.insert(manufacturer)
+            }
+            
+            film.manufacturer = manufacturer
+        }
+        
+        // Update film's imageName if provided
+        if let imageName = imageName {
+            // Delete old image if it exists and is different
+            if let oldImageName = film.imageName, oldImageName != imageName {
+                if let manufacturer = film.manufacturer {
+                    ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
+                }
+            }
+            film.imageName = imageName
+        }
         
         // Update MyFilm
         myFilm.quantity = filmStock.quantity
@@ -346,17 +381,6 @@ class FilmStockDataManager: ObservableObject {
         // If format changed, we need to update it
         if myFilm.format != filmStock.format.rawValue {
             myFilm.format = filmStock.format.rawValue
-        }
-        
-        // Update film's imageName if provided
-        if let film = myFilm.film, let imageName = imageName {
-            // Delete old image if it exists and is different
-            if let oldImageName = film.imageName, oldImageName != imageName {
-                if let manufacturer = film.manufacturer {
-                    ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
-                }
-            }
-            film.imageName = imageName
         }
         
         try? context.save()

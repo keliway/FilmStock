@@ -165,17 +165,17 @@ struct FilmManageRowView: View {
         
         // First, try custom imageName if specified
         if let customImageName = groupedFilm.imageName {
-            variations.append(customImageName + ".jpg")
-            variations.append(customImageName.lowercased() + ".jpg")
+            variations.append(customImageName + ".png")
+            variations.append(customImageName.lowercased() + ".png")
         }
         
         // Then try auto-detected name from film name
         let baseName = groupedFilm.name.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
         variations.append(contentsOf: [
-            baseName + ".jpg",                    // Original case: "Pro400H.jpg"
-            baseName.lowercased() + ".jpg",       // Lowercase: "pro400h.jpg"
-            baseName.capitalized + ".jpg",        // Capitalized: "Pro400h.jpg"
-            baseName.uppercased() + ".jpg"        // Uppercase: "PRO400H.jpg"
+            baseName + ".png",                    // Original case: "Pro400H.png"
+            baseName.lowercased() + ".png",       // Lowercase: "pro400h.png"
+            baseName.capitalized + ".png",        // Capitalized: "Pro400h.png"
+            baseName.uppercased() + ".png"        // Uppercase: "PRO400H.png"
         ])
         
         // Add variation where only first letter is capitalized and rest is lowercase
@@ -183,7 +183,7 @@ struct FilmManageRowView: View {
         if baseName.count > 1 {
             let firstChar = String(baseName.prefix(1)).uppercased()
             let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".jpg")
+            variations.append((firstChar + rest) + ".png")
         }
         
         // Try bundle with manufacturer subdirectory structure
@@ -213,17 +213,17 @@ struct FilmManageRowView: View {
         
         // Try Bundle.main.url methods
         for variation in variations {
-            let resourceName = variation.replacingOccurrences(of: ".jpg", with: "")
+            let resourceName = variation.replacingOccurrences(of: ".png", with: "")
             // Try with subdirectory
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images/\(manufacturerName)") {
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images/\(manufacturerName)") {
                 imagePaths.append(bundleURL)
             }
             // Try without subdirectory (flattened)
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images") {
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images") {
                 imagePaths.append(bundleURL)
             }
             // Try at bundle root
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg") {
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png") {
                 imagePaths.append(bundleURL)
             }
         }
