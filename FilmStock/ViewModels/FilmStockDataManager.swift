@@ -16,7 +16,6 @@ class FilmStockDataManager: ObservableObject {
     @Published var filmStocks: [FilmStock] = []
     
     private var modelContext: ModelContext?
-    private let migrationKey = "hasMigratedToSwiftData"
     
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
@@ -29,59 +28,8 @@ class FilmStockDataManager: ObservableObject {
         // Copy default images to App Group container for widget access (runs once)
         ImageStorage.shared.copyDefaultImagesToAppGroup()
         
-        // Check if migration has already been done
-        if UserDefaults.standard.bool(forKey: migrationKey) {
-            return
-        }
-        
-        // Check if there's existing JSON data to migrate
-        let fileName = "filmstocks.json"
-        let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(fileName)
-        
-        var jsonData: Data?
-        
-        // Try Documents directory first
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            jsonData = try? Data(contentsOf: fileURL)
-        }
-        
-        // Try bundle if not in Documents
-        if jsonData == nil {
-            if let bundleURL = Bundle.main.url(forResource: "filmstocks", withExtension: "json") {
-                jsonData = try? Data(contentsOf: bundleURL)
-            }
-        }
-        
-        guard let data = jsonData, !data.isEmpty else {
-            // No JSON data, just load manufacturers
-            await loadManufacturers(context: context)
-            UserDefaults.standard.set(true, forKey: migrationKey)
-            return
-        }
-        
-        // Migrate JSON data
-        do {
-            let decoder = JSONDecoder()
-            let wrapper = try decoder.decode(FilmStockDataWrapper.self, from: data)
-            
-            // Load manufacturers first
-            await loadManufacturers(context: context)
-            
-            // Migrate each film stock
-            for filmStock in wrapper.filmstocks {
-                await migrateFilmStock(filmStock, context: context)
-            }
-            
-            // Mark migration as complete
-            UserDefaults.standard.set(true, forKey: migrationKey)
-            
-            // Load films after migration
-            loadFilmStocks()
-        } catch {
-            await loadManufacturers(context: context)
-            UserDefaults.standard.set(true, forKey: migrationKey)
-        }
+        // Load manufacturers from bundle
+        await loadManufacturers(context: context)
     }
     
     private func loadManufacturers(context: ModelContext) async {
@@ -112,60 +60,6 @@ class FilmStockDataManager: ObservableObject {
         } catch {
             // Failed to load manufacturers
         }
-    }
-    
-    private func migrateFilmStock(_ filmStock: FilmStock, context: ModelContext) async {
-        // Find or create manufacturer
-        let manufacturerDescriptor = FetchDescriptor<Manufacturer>(
-            predicate: #Predicate { $0.name == filmStock.manufacturer }
-        )
-        var manufacturer: Manufacturer
-        
-        if let existing = try? context.fetch(manufacturerDescriptor).first {
-            manufacturer = existing
-        } else {
-            manufacturer = Manufacturer(name: filmStock.manufacturer, isCustom: true)
-            context.insert(manufacturer)
-        }
-        
-        // Find or create film - fetch all and filter to avoid predicate complexity
-        let filmDescriptor = FetchDescriptor<Film>()
-        let allFilms = (try? context.fetch(filmDescriptor)) ?? []
-        
-        var film: Film
-        
-        if let existing = allFilms.first(where: { film in
-            film.name == filmStock.name &&
-            film.manufacturer?.name == filmStock.manufacturer &&
-            film.type == filmStock.type.rawValue &&
-            film.filmSpeed == filmStock.filmSpeed
-        }) {
-            film = existing
-        } else {
-            film = Film(
-                name: filmStock.name,
-                manufacturer: manufacturer,
-                type: filmStock.type.rawValue,
-                filmSpeed: filmStock.filmSpeed,
-                imageName: nil
-            )
-            context.insert(film)
-        }
-        
-        // Create MyFilm entry
-        let myFilm = MyFilm(
-            id: filmStock.id,
-            format: filmStock.format.rawValue,
-            quantity: filmStock.quantity,
-            expireDate: filmStock.expireDate,
-            comments: filmStock.comments,
-            createdAt: filmStock.createdAt,
-            updatedAt: filmStock.updatedAt,
-            film: film
-        )
-        context.insert(myFilm)
-        
-        try? context.save()
     }
     
     func loadFilmStocks() {
@@ -690,10 +584,6 @@ class FilmStockDataManager: ObservableObject {
         let loadedFilms = (try? context.fetch(descriptor)) ?? []
         return loadedFilms.count < 5
     }
-}
-
-private struct FilmStockDataWrapper: Codable {
-    let filmstocks: [FilmStock]
 }
 
 private struct ManufacturersDataWrapper: Codable {
