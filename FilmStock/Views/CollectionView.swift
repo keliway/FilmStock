@@ -20,9 +20,9 @@ struct CollectionView: View {
         NavigationStack {
             if filmsWithImages.isEmpty {
                 ContentUnavailableView(
-                    "No Images",
-                    systemImage: "photo.on.rectangle",
-                    description: Text("Upload custom images when adding films to see them here")
+                    "No Film Reminder Cards (yet)",
+                    systemImage: "camera.viewfinder",
+                    description: Text("Upload your own film reminders when adding/editing a film and start your own collection!")
                 )
             } else {
                 ScrollView {

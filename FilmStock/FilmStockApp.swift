@@ -44,7 +44,6 @@ struct FilmStockApp: App {
         WindowGroup {
             MainTabView()
                 .environmentObject(dataManager)
-                .preferredColorScheme(.light)
         }
         .modelContainer(for: [Manufacturer.self, Film.self, MyFilm.self, Camera.self, LoadedFilm.self])
     }

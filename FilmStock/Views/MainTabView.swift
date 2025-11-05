@@ -34,7 +34,7 @@ struct MainTabView: View {
                 CollectionView()
             }
             .tabItem {
-                Label("My Collection", systemImage: "photo.on.rectangle")
+                Label("My Collection", systemImage: "camera.viewfinder")
             }
             .tag(2)
         }
