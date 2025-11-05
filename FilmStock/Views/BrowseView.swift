@@ -240,9 +240,9 @@ struct BrowseView: View {
             navigationPath.append(group)
         } label: {
             SwipeableFilmCard(groupedFilm: group)
+                .environmentObject(dataManager)
         }
         .buttonStyle(.plain)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
     }
     
     @ViewBuilder

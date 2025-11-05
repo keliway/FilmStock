@@ -18,11 +18,11 @@ struct FilterPopoverView: View {
     @Environment(\.dismiss) var dismiss
     
     private let speedRanges = [
-        ("Super slow", 0, 99),
-        ("Slow", 100, 199),
-        ("Normal", 200, 300),
-        ("Fast", 301, 400),
-        ("Super fast", 401, Int.max)
+        ("<100", 0, 99),
+        ("100", 100, 199),
+        ("200", 200, 300),
+        ("400", 301, 400),
+        ("400+", 401, Int.max)
     ]
     
     // Get all films that match current filters (excluding the filter category being evaluated)

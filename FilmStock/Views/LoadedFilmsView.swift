@@ -86,62 +86,80 @@ struct LoadedFilmRow: View {
     @State private var filmImage: UIImage?
     
     var body: some View {
-        HStack(spacing: 12) {
-            // Film image
-            if let image = filmImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 60, height: 60)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            } else {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 60, height: 60)
-                    .overlay(
-                        Image(systemName: "camera")
-                            .foregroundColor(.gray)
-                    )
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                if let film = loadedFilm.film {
-                    Text("\(film.manufacturer?.name ?? "") \(film.name)")
-                        .font(.headline)
-                    
-                    HStack(spacing: 4) {
-                        Text("ISO \(film.filmSpeed)")
-                        Text("•")
-                        Text(formatDisplayName)
-                        if isSheetFormat(loadedFilm.format) {
+        ZStack(alignment: .topTrailing) {
+            HStack(spacing: 12) {
+                // Film image
+                if let image = filmImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 60, height: 60)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 60, height: 60)
+                        .overlay(
+                            Image(systemName: "camera")
+                                .foregroundColor(.gray)
+                        )
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    if let film = loadedFilm.film {
+                        Text("\(film.manufacturer?.name ?? "") \(film.name)")
+                            .font(.headline)
+                        
+                        HStack(spacing: 4) {
+                            Text("ISO \(film.filmSpeed)")
                             Text("•")
-                            Text("\(loadedFilm.quantity) \(loadedFilm.quantity == 1 ? "sheet" : "sheets")")
-                                .foregroundColor(.accentColor)
+                            Text(formatDisplayName)
+                            if isSheetFormat(loadedFilm.format) {
+                                Text("•")
+                                Text("\(loadedFilm.quantity) \(loadedFilm.quantity == 1 ? "sheet" : "sheets")")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    }
+                    
+                    if let camera = loadedFilm.camera {
+                        HStack(spacing: 4) {
+                            Image(systemName: "camera.fill")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(camera.name)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    
+                    Text("Loaded \(formatDate(loadedFilm.loadedAt))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 
-                if let camera = loadedFilm.camera {
-                    HStack(spacing: 4) {
-                        Image(systemName: "camera.fill")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text(camera.name)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Text("Loaded \(formatDate(loadedFilm.loadedAt))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Spacer()
             }
+            .padding(.vertical, 4)
             
-            Spacer()
+            // Red "EXPIRED" chip in top right
+            if isExpired {
+                Text("EXPIRED")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color.red, lineWidth: 1)
+                    )
+                    .padding(.top, 4)
+                    .padding(.trailing, 4)
+            }
         }
-        .padding(.vertical, 4)
         .onAppear {
             loadImage()
         }
@@ -185,6 +203,50 @@ struct LoadedFilmRow: View {
             return false
         }
         return filmFormat == .fourByFive || filmFormat == .fiveBySeven || filmFormat == .eightByTen
+    }
+    
+    private var isExpired: Bool {
+        guard let expireDates = loadedFilm.myFilm?.expireDateArray, !expireDates.isEmpty else {
+            return false
+        }
+        
+        let today = Date()
+        let calendar = Calendar.current
+        
+        // Check if any expire date has passed
+        for dateString in expireDates {
+            if let expireDate = FilmStock.parseExpireDate(dateString) {
+                var compareDate = expireDate
+                
+                // For YYYY format, compare to end of year (Dec 31)
+                if dateString.count == 4 {
+                    let year = calendar.component(.year, from: expireDate)
+                    if let endOfYear = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
+                        compareDate = endOfYear
+                    }
+                } else if dateString.split(separator: "/").count == 2 {
+                    // For MM/YYYY format, compare to end of month
+                    let components = calendar.dateComponents([.year, .month], from: expireDate)
+                    if let year = components.year,
+                       let month = components.month,
+                       let daysInMonth = calendar.range(of: .day, in: .month, for: expireDate)?.count,
+                       let endOfMonth = calendar.date(from: DateComponents(year: year, month: month, day: daysInMonth)) {
+                        compareDate = endOfMonth
+                    }
+                }
+                // For MM/DD/YYYY format, compare directly (already set)
+                
+                // Compare dates (ignore time)
+                if let todayStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: today),
+                   let compareStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: compareDate) {
+                    if todayStart > compareStart {
+                        return true
+                    }
+                }
+            }
+        }
+        
+        return false
     }
 }
 

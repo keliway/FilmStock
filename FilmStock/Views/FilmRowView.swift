@@ -370,18 +370,5 @@ struct FilmRowViewContent: View {
             }
         }
     }
-    
-    private func deleteFilm() {
-        let filmsToDelete = dataManager.filmStocks.filter { film in
-            film.name == groupedFilm.name &&
-            film.manufacturer == groupedFilm.manufacturer &&
-            film.type == groupedFilm.type &&
-            film.filmSpeed == groupedFilm.filmSpeed
-        }
-        
-        for film in filmsToDelete {
-            dataManager.deleteFilmStock(film)
-        }
-    }
 }
 
