@@ -85,13 +85,11 @@ struct FilmManageRowView: View {
             Spacer()
             
             // Format quantities
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 formatQty(groupedFilm.formats, format: .thirtyFive)
                 formatQty(groupedFilm.formats, format: .oneTwenty)
                 formatQty(groupedFilm.formats, format: .fourByFive)
             }
-            .font(.subheadline)
-            .foregroundColor(.secondary)
             
             Menu {
                 Button("Edit", systemImage: "pencil") {
@@ -108,8 +106,8 @@ struct FilmManageRowView: View {
             loadImage()
         }
         .sheet(isPresented: $showingEditSheet) {
-            // TODO: Edit view
-            Text("Edit View - To be implemented")
+            EditFilmView(groupedFilm: groupedFilm)
+                .environmentObject(dataManager)
         }
         .alert("Delete Film", isPresented: $showingDeleteAlert) {
             Button("Cancel", role: .cancel) { }
@@ -124,15 +122,22 @@ struct FilmManageRowView: View {
     @ViewBuilder
     private func formatQty(_ formats: [GroupedFilm.FormatInfo], format: FilmStock.FilmFormat) -> some View {
         let qty = formats
-            .filter { formatQty($0.format) == format }
+            .filter { normalizeFormat($0.format) == format }
             .reduce(0) { $0 + $1.quantity }
         
+        VStack(spacing: 2) {
+            Text(format.displayName)
+                .font(.caption2)
+                .foregroundColor(.secondary)
         Text(qty > 0 ? "\(qty)" : "-")
-            .frame(width: 30)
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .frame(width: 40)
             .multilineTextAlignment(.center)
     }
     
-    private func formatQty(_ format: FilmStock.FilmFormat) -> FilmStock.FilmFormat {
+    private func normalizeFormat(_ format: FilmStock.FilmFormat) -> FilmStock.FilmFormat {
         switch format {
         case .oneTwenty, .oneTwentySeven:
             return .oneTwenty
@@ -156,13 +161,81 @@ struct FilmManageRowView: View {
     }
     
     private func loadImage() {
-        let imageName = groupedFilm.name.lowercased().replacingOccurrences(of: "[^a-z0-9]", with: "", options: .regularExpression) + ".jpg"
-        if let imageURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
-            .appendingPathComponent("images")
-            .appendingPathComponent(imageName),
+        var variations: [String] = []
+        
+        // First, try custom imageName if specified
+        if let customImageName = groupedFilm.imageName {
+            variations.append(customImageName + ".jpg")
+            variations.append(customImageName.lowercased() + ".jpg")
+        }
+        
+        // Then try auto-detected name from film name
+        let baseName = groupedFilm.name.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
+        variations.append(contentsOf: [
+            baseName + ".jpg",                    // Original case: "Pro400H.jpg"
+            baseName.lowercased() + ".jpg",       // Lowercase: "pro400h.jpg"
+            baseName.capitalized + ".jpg",        // Capitalized: "Pro400h.jpg"
+            baseName.uppercased() + ".jpg"        // Uppercase: "PRO400H.jpg"
+        ])
+        
+        // Add variation where only first letter is capitalized and rest is lowercase
+        // This handles cases like "Pro400H" -> "Pro400h"
+        if baseName.count > 1 {
+            let firstChar = String(baseName.prefix(1)).uppercased()
+            let rest = String(baseName.dropFirst()).lowercased()
+            variations.append((firstChar + rest) + ".jpg")
+        }
+        
+        // Try bundle with manufacturer subdirectory structure
+        let manufacturerName = groupedFilm.manufacturer
+        
+        // Try multiple methods to find images
+        var imagePaths: [URL] = []
+        
+        guard let resourcePath = Bundle.main.resourcePath else { return }
+        let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
+        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
+        
+        // When images folder is added as a group (yellow folder in Xcode),
+        // Xcode flattens subdirectories, so files are in images/ directly
+        // Try flattened structure first (most likely for groups)
+        for variation in variations {
+            let imageURL = imagesURL.appendingPathComponent(variation, isDirectory: false)
+            imagePaths.append(imageURL)
+        }
+        
+        // Also try manufacturer subdirectory structure (in case folder references are used)
+        let manufacturerURL = imagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
+        for variation in variations {
+            let imageURL = manufacturerURL.appendingPathComponent(variation, isDirectory: false)
+            imagePaths.append(imageURL)
+        }
+        
+        // Try Bundle.main.url methods
+        for variation in variations {
+            let resourceName = variation.replacingOccurrences(of: ".jpg", with: "")
+            // Try with subdirectory
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images/\(manufacturerName)") {
+                imagePaths.append(bundleURL)
+            }
+            // Try without subdirectory (flattened)
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images") {
+                imagePaths.append(bundleURL)
+            }
+            // Try at bundle root
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg") {
+                imagePaths.append(bundleURL)
+            }
+        }
+        
+        // Try all paths
+        for imageURL in imagePaths {
+            if FileManager.default.fileExists(atPath: imageURL.path),
            let data = try? Data(contentsOf: imageURL),
            let uiImage = UIImage(data: data) {
             self.image = uiImage
+                return
+            }
         }
     }
 }

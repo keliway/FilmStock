@@ -277,7 +277,7 @@
     {
       "id": "176216826567022",
       "name": "Pro 400H",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Color",
       "filmSpeed": 400,
       "format": "120",
@@ -291,7 +291,7 @@
     {
       "id": "176216826567023",
       "name": "Xtra 400",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Color",
       "filmSpeed": 400,
       "format": "35",
@@ -570,7 +570,7 @@
     {
       "id": "176216826567043",
       "name": "Pro 160S",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Color",
       "filmSpeed": 160,
       "format": "120",
@@ -615,7 +615,7 @@
     {
       "id": "176216826567046",
       "name": "Provia 400F",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Slide",
       "filmSpeed": 400,
       "format": "120",
@@ -629,7 +629,7 @@
     {
       "id": "176216826567047",
       "name": "NPC 160",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Color",
       "filmSpeed": 160,
       "format": "120",
@@ -778,7 +778,7 @@
     {
       "id": "176216826567058",
       "name": "Neopan 400",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "BW",
       "filmSpeed": 400,
       "format": "35",
@@ -792,7 +792,7 @@
     {
       "id": "176216826567059",
       "name": "Neopan 1600",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "BW",
       "filmSpeed": 1600,
       "format": "35",
@@ -875,7 +875,7 @@
     {
       "id": "176216826567065",
       "name": "Provia 100F",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Slide",
       "filmSpeed": 100,
       "format": "4x5",
@@ -889,7 +889,7 @@
     {
       "id": "176216826567066",
       "name": "FP100C45",
-      "manufacturer": "Fuji",
+      "manufacturer": "Fujifilm",
       "type": "Instant",
       "filmSpeed": 100,
       "format": "4x5",

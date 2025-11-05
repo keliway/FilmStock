@@ -6,19 +6,58 @@
 //
 
 import SwiftUI
+import SwiftData
+import WidgetKit
 
 struct MainTabView: View {
+    @EnvironmentObject var dataManager: FilmStockDataManager
+    @Environment(\.modelContext) private var modelContext
+    @State private var selectedTab: Int = 0
+    
     var body: some View {
-        TabView {
-            BrowseView()
-                .tabItem {
-                    Label("Browse", systemImage: "square.grid.2x2")
-                }
+        TabView(selection: $selectedTab) {
+            NavigationStack {
+                BrowseView()
+            }
+            .tabItem {
+                Label("My Films", systemImage: "film")
+            }
+            .tag(0)
             
-            ManageView()
+            LoadedFilmsView()
                 .tabItem {
-                    Label("Manage", systemImage: "gearshape.fill")
+                    Label("Loaded Films", systemImage: "camera")
                 }
+            .tag(1)
+        }
+        .task {
+            dataManager.setModelContext(modelContext)
+            await dataManager.migrateIfNeeded()
+        }
+        .onOpenURL { url in
+            // Handle deep link from widget
+            if url.scheme == "filmstock" {
+                if url.host == "loadedfilms" {
+                    selectedTab = 1
+                } else if url.host == "widget" {
+                    // Handle widget navigation
+                    let appGroupID = "group.halbe.no.FilmStock"
+                    if let userDefaults = UserDefaults(suiteName: appGroupID) {
+                        var currentIndex = userDefaults.integer(forKey: "currentFilmIndex")
+                        
+                        if url.path == "/previous" {
+                            currentIndex = max(0, currentIndex - 1)
+                        } else if url.path == "/next" {
+                            currentIndex = currentIndex + 1 // Will be clamped by widget
+                        }
+                        
+                        userDefaults.set(currentIndex, forKey: "currentFilmIndex")
+                        
+                        // Reload widget timeline
+                        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+                    }
+                }
+            }
         }
     }
 }

@@ -12,75 +12,118 @@ struct FilmCardView: View {
     @State private var image: UIImage?
     
     var body: some View {
-        NavigationLink(value: groupedFilm) {
-            HStack(spacing: 0) {
-                // Content
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(groupedFilm.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Text(groupedFilm.manufacturer)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    HStack(spacing: 8) {
-                        Label(groupedFilm.type.displayName, systemImage: typeIcon)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Label("ISO \(groupedFilm.filmSpeed)", systemImage: "speedometer")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    // Format chips
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(groupedFilm.formats) { format in
-                                HStack(spacing: 4) {
-                                    Text(format.format.displayName)
-                                    Text("\(format.quantity)")
-                                }
-                                .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.2))
-                                .cornerRadius(8)
-                            }
-                        }
-                    }
-                    
-                    // Total quantity
-                    Text(totalQuantityText)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                // Image
+        HStack(alignment: .top, spacing: 0) {
+            // Image
+            Group {
                 if let image = image {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 100)
-                        .clipped()
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 } else {
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(Color.secondary.opacity(0.2))
-                        .frame(width: 100, height: 100)
+                        .frame(width: 80, height: 80)
                         .overlay(
                             Image(systemName: "photo")
                                 .foregroundColor(.secondary)
                         )
                 }
             }
-            .background(Color(uiColor: .systemBackground))
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+            .padding(.leading, 16)
+            .padding(.top, 12)
+            .padding(.trailing, 8)
+            
+            // Content
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Text(groupedFilm.manufacturer)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Text(groupedFilm.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
+                
+                HStack(spacing: 8) {
+                    if groupedFilm.type == .color {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            .red, .orange, .yellow, .green, .blue, .purple
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 12, height: 12)
+                            
+                            Text(groupedFilm.type.displayName)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    } else if groupedFilm.type == .slide {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            .red, .orange, .yellow, .green, .blue, .purple
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 12, height: 12)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.black, lineWidth: 1.5)
+                                )
+                            
+                            Text(groupedFilm.type.displayName)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        Label(groupedFilm.type.displayName, systemImage: typeIcon)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Label("ISO \(groupedFilm.filmSpeed)", systemImage: "speedometer")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                // Format chips
+                HStack(spacing: 8) {
+                    ForEach(groupedFilm.formats) { format in
+                        HStack(spacing: 6) {
+                            Text("\(format.format.displayName):")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text("\(format.quantity)")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2))
+                                .cornerRadius(8)
+                        }
+                    }
+                }
+            }
+            .padding()
+            .padding(.trailing, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
         .onAppear {
             loadImage()
         }
@@ -95,40 +138,90 @@ struct FilmCardView: View {
         }
     }
     
-    private var totalQuantityText: String {
-        let totalRolls = groupedFilm.formats
-            .filter { $0.format != .fourByFive }
-            .reduce(0) { $0 + $1.quantity }
-        let totalSheets = groupedFilm.formats
-            .filter { $0.format == .fourByFive }
-            .reduce(0) { $0 + $1.quantity }
-        
-        if totalSheets > 0 && totalRolls > 0 {
-            return "Total: \(totalRolls) Rolls and \(totalSheets) Sheets"
-        } else if totalSheets > 0 {
-            return "Total: \(totalSheets) Sheets"
-        } else {
-            return "Total: \(totalRolls) Rolls"
-        }
-    }
-    
     private func loadImage() {
-        let imageName = groupedFilm.name.lowercased().replacingOccurrences(of: "[^a-z0-9]", with: "", options: .regularExpression) + ".jpg"
+        // First, try user-uploaded image if imageName is specified
+        if let customImageName = groupedFilm.imageName {
+            if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                self.image = userImage
+                return
+            }
+        }
         
-        // Try Documents/images first (user uploaded)
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let imagesDir = documentsURL.appendingPathComponent("images")
-        let imageURL = imagesDir.appendingPathComponent(imageName)
+        // Then try bundle images
+        var variations: [String] = []
         
-        if let data = try? Data(contentsOf: imageURL),
-           let uiImage = UIImage(data: data) {
-            self.image = uiImage
-        } else {
-            // Try bundle (if images are included in app)
-            if let bundleURL = Bundle.main.url(forResource: imageName.replacingOccurrences(of: ".jpg", with: ""), withExtension: "jpg", subdirectory: "images"),
-               let data = try? Data(contentsOf: bundleURL),
+        // First, try custom imageName if specified (for bundle images)
+        if let customImageName = groupedFilm.imageName {
+            variations.append(customImageName + ".jpg")
+            variations.append(customImageName.lowercased() + ".jpg")
+        }
+        
+        // Then try auto-detected name from film name
+        let baseName = groupedFilm.name.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
+        variations.append(contentsOf: [
+            baseName + ".jpg",                    // Original case: "Pro400H.jpg"
+            baseName.lowercased() + ".jpg",       // Lowercase: "pro400h.jpg"
+            baseName.capitalized + ".jpg",        // Capitalized: "Pro400h.jpg"
+            baseName.uppercased() + ".jpg"        // Uppercase: "PRO400H.jpg"
+        ])
+        
+        // Add variation where only first letter is capitalized and rest is lowercase
+        // This handles cases like "Pro400H" -> "Pro400h"
+        if baseName.count > 1 {
+            let firstChar = String(baseName.prefix(1)).uppercased()
+            let rest = String(baseName.dropFirst()).lowercased()
+            variations.append((firstChar + rest) + ".jpg")
+        }
+        
+        // Try bundle with manufacturer subdirectory structure
+        let manufacturerName = groupedFilm.manufacturer
+        
+        // Try multiple methods to find images
+        var imagePaths: [URL] = []
+        
+        guard let resourcePath = Bundle.main.resourcePath else { return }
+        let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
+        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
+        
+        // When images folder is added as a group (yellow folder in Xcode),
+        // Xcode flattens subdirectories, so files are in images/ directly
+        // Try flattened structure first (most likely for groups)
+        for variation in variations {
+            let imageURL = imagesURL.appendingPathComponent(variation, isDirectory: false)
+            imagePaths.append(imageURL)
+        }
+        
+        // Also try manufacturer subdirectory structure (in case folder references are used)
+        let manufacturerURL = imagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
+        for variation in variations {
+            let imageURL = manufacturerURL.appendingPathComponent(variation, isDirectory: false)
+            imagePaths.append(imageURL)
+        }
+        
+        // Try Bundle.main.url methods
+        for variation in variations {
+            let resourceName = variation.replacingOccurrences(of: ".jpg", with: "")
+            // Try with subdirectory
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images/\(manufacturerName)") {
+                imagePaths.append(bundleURL)
+            }
+            // Try without subdirectory (flattened)
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg", subdirectory: "images") {
+                imagePaths.append(bundleURL)
+            }
+            // Try at bundle root
+            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "jpg") {
+                imagePaths.append(bundleURL)
+            }
+        }
+        
+        // Try all paths
+        for imageURL in imagePaths {
+            if FileManager.default.fileExists(atPath: imageURL.path),
+               let data = try? Data(contentsOf: imageURL),
                let uiImage = UIImage(data: data) {
                 self.image = uiImage
+                return
             }
         }
     }

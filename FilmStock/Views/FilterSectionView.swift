@@ -22,7 +22,7 @@ struct FilterSectionView: View {
         Array(Set(dataManager.filmStocks.map { $0.manufacturer })).sorted()
     }
     
-    private let speedRanges = ["<100", "100", "200", "400", ">400"]
+    private let speedRanges = ["Super slow", "Slow", "Normal", "Fast", "Super fast"]
     
     var body: some View {
         DisclosureGroup("Filters", isExpanded: $isExpanded) {
@@ -75,6 +75,7 @@ struct FilterSectionView: View {
                     Toggle("Hide empty", isOn: $hideEmpty)
                 }
                 .font(.subheadline)
+                .padding(.trailing, 8)
             }
             .padding(.vertical, 8)
         }

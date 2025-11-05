@@ -10,22 +10,14 @@ import SwiftUI
 struct FilmDetailView: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
-    @State private var image: UIImage?
+    @Environment(\.dismiss) var dismiss
     @State private var relatedFilms: [FilmStock] = []
+    @State private var showingEditSheet = false
+    @State private var showingLoadSheet = false
+    @State private var shouldDismissAfterLoad = false
     
     var body: some View {
         List {
-            // Image at top
-            if let image = image {
-                Section {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxHeight: 300)
-                        .listRowInsets(EdgeInsets())
-                }
-            }
-            
             // Film info
             Section {
                 InfoRow(label: "Manufacturer", value: groupedFilm.manufacturer)
@@ -36,7 +28,11 @@ struct FilmDetailView: View {
             // Formats section
             Section("Formats") {
                 ForEach(groupedFilm.formats) { format in
-                    FormatDetailRow(format: format)
+                    if let film = relatedFilms.first(where: { $0.id == format.filmId }) {
+                        FormatDetailRow(format: format, currentQuantity: film.quantity)
+                    } else {
+                        FormatDetailRow(format: format, currentQuantity: format.quantity)
+                    }
                 }
             }
             
@@ -82,33 +78,57 @@ struct FilmDetailView: View {
                 }
             }
         }
-        .navigationTitle(groupedFilm.name)
+        .navigationTitle("\(groupedFilm.manufacturer) \(groupedFilm.name)")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Edit") {
+                    showingEditSheet = true
+                }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if hasAvailableFormats {
+                Button {
+                    showingLoadSheet = true
+                } label: {
+                    Text("Load Film")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
         .onAppear {
-            loadImage()
             loadRelatedFilms()
+        }
+        .onChange(of: dataManager.filmStocks) { oldValue, newValue in
+            loadRelatedFilms()
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            EditFilmView(groupedFilm: groupedFilm)
+                .environmentObject(dataManager)
+        }
+        .sheet(isPresented: $showingLoadSheet) {
+            LoadFilmView(groupedFilm: groupedFilm, onLoadComplete: {
+                shouldDismissAfterLoad = true
+            })
+            .environmentObject(dataManager)
+        }
+        .onChange(of: shouldDismissAfterLoad) { oldValue, newValue in
+            if newValue {
+                // Dismiss the detail view to go back to My Films list
+                dismiss()
+            }
         }
     }
     
-    private func loadImage() {
-        let imageName = groupedFilm.name.lowercased().replacingOccurrences(of: "[^a-z0-9]", with: "", options: .regularExpression) + ".jpg"
-        
-        // Try Documents/images first (user uploaded)
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let imagesDir = documentsURL.appendingPathComponent("images")
-        let imageURL = imagesDir.appendingPathComponent(imageName)
-        
-        if let data = try? Data(contentsOf: imageURL),
-           let uiImage = UIImage(data: data) {
-            self.image = uiImage
-        } else {
-            // Try bundle (if images are included in app)
-            if let bundleURL = Bundle.main.url(forResource: imageName.replacingOccurrences(of: ".jpg", with: ""), withExtension: "jpg", subdirectory: "images"),
-               let data = try? Data(contentsOf: bundleURL),
-               let uiImage = UIImage(data: data) {
-                self.image = uiImage
-            }
-        }
+    private var hasAvailableFormats: Bool {
+        groupedFilm.formats.contains { $0.quantity > 0 }
     }
     
     private func loadRelatedFilms() {
@@ -138,15 +158,16 @@ struct InfoRow: View {
 
 struct FormatDetailRow: View {
     let format: GroupedFilm.FormatInfo
+    let currentQuantity: Int
     
     var body: some View {
         HStack {
             Text(format.format.displayName)
             Spacer()
-            Text("\(format.quantity) \(format.format.quantityUnit)")
+            Text("\(currentQuantity) \(format.format.quantityUnit)")
                 .foregroundColor(.secondary)
-            if !format.expireDate.isEmpty {
-                Text(formatExpireDates(format.expireDate))
+            if let expireDate = format.expireDate, !expireDate.isEmpty {
+                Text(formatExpireDates(expireDate))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -175,10 +196,11 @@ struct QuantityControlView: View {
         ) {
             Text("\(quantity) \(film.format.quantityUnit)")
         }
-        .onChange(of: quantity) { newValue in
+        .onChange(of: quantity) { oldValue, newValue in
             var updated = film
             updated.quantity = newValue
             dataManager.updateFilmStock(updated)
         }
     }
 }
+
