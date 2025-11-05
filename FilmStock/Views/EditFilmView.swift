@@ -173,6 +173,7 @@ struct EditFilmView: View {
             )
             
             dataManager.updateFilmStock(updated)
+            dismiss()
         } else {
             // If no film found, create a new one (shouldn't happen, but handle it)
             let film = FilmStock(
@@ -189,10 +190,13 @@ struct EditFilmView: View {
                 updatedAt: nil
             )
             
-            dataManager.addFilmStock(film)
+            Task {
+                let wasUpdated = await dataManager.addFilmStock(film)
+                await MainActor.run {
+                    dismiss()
+                }
+            }
         }
-        
-        dismiss()
     }
 }
 

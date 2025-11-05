@@ -29,6 +29,14 @@ struct MainTabView: View {
                     Label("Loaded Films", systemImage: "camera")
                 }
             .tag(1)
+            
+            NavigationStack {
+                CollectionView()
+            }
+            .tabItem {
+                Label("My Collection", systemImage: "photo.on.rectangle")
+            }
+            .tag(2)
         }
         .task {
             dataManager.setModelContext(modelContext)

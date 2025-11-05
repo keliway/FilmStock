@@ -202,14 +202,100 @@ class FilmStockDataManager: ObservableObject {
         }
     }
     
-    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil) {
-        guard let context = modelContext else { return }
+    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil) async -> Bool {
+        guard let context = modelContext else { return false }
         
-        Task {
-            // Find or create manufacturer
-            let manufacturer = await findOrCreateManufacturer(name: filmStock.manufacturer, context: context)
-            
-            // Find or create film
+        // Find or create manufacturer
+        let manufacturer = await findOrCreateManufacturer(name: filmStock.manufacturer, context: context)
+        
+        // Check if a film with the same name + manufacturer exists (regardless of ISO)
+        let descriptor = FetchDescriptor<Film>()
+        let allFilms = (try? context.fetch(descriptor)) ?? []
+        
+        if let existingFilm = allFilms.first(where: { film in
+            film.name == filmStock.name &&
+            film.manufacturer?.name == filmStock.manufacturer
+        }) {
+            // Film with same name + manufacturer exists
+            // Check if ISO matches
+            if existingFilm.filmSpeed == filmStock.filmSpeed &&
+               existingFilm.type == filmStock.type.rawValue {
+                // ISO matches - update existing film
+                // Update image if provided
+                if let imageName = imageName {
+                    // Delete old image if it exists and is different
+                    if let oldImageName = existingFilm.imageName, oldImageName != imageName {
+                        if let manufacturer = existingFilm.manufacturer {
+                            ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
+                        }
+                    }
+                    existingFilm.imageName = imageName
+                }
+                
+                // Check if a MyFilm entry with the same format already exists
+                if let myFilms = existingFilm.myFilms,
+                   let existingMyFilm = myFilms.first(where: { $0.format == filmStock.format.rawValue }) {
+                    // Update existing MyFilm entry
+                    existingMyFilm.quantity = filmStock.quantity
+                    existingMyFilm.expireDateArray = filmStock.expireDate
+                    existingMyFilm.comments = filmStock.comments
+                    existingMyFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
+                } else {
+                    // Create new MyFilm entry for this format
+                    let myFilm = MyFilm(
+                        id: filmStock.id,
+                        format: filmStock.format.rawValue,
+                        quantity: filmStock.quantity,
+                        expireDate: filmStock.expireDate,
+                        comments: filmStock.comments,
+                        createdAt: filmStock.createdAt,
+                        updatedAt: filmStock.updatedAt,
+                        film: existingFilm
+                    )
+                    context.insert(myFilm)
+                }
+                
+                try? context.save()
+                
+                await MainActor.run {
+                    loadFilmStocks()
+                }
+                
+                return true // Film was updated
+            } else {
+                // ISO doesn't match - create new film
+                let film = await findOrCreateFilm(
+                    name: filmStock.name,
+                    manufacturer: manufacturer,
+                    type: filmStock.type.rawValue,
+                    filmSpeed: filmStock.filmSpeed,
+                    imageName: imageName,
+                    context: context
+                )
+                
+                // Create MyFilm entry
+                let myFilm = MyFilm(
+                    id: filmStock.id,
+                    format: filmStock.format.rawValue,
+                    quantity: filmStock.quantity,
+                    expireDate: filmStock.expireDate,
+                    comments: filmStock.comments,
+                    createdAt: filmStock.createdAt,
+                    updatedAt: filmStock.updatedAt,
+                    film: film
+                )
+                
+                context.insert(myFilm)
+                try? context.save()
+                
+                await MainActor.run {
+                    loadFilmStocks()
+                }
+                
+                return false // Film was created
+            }
+        } else {
+            // No existing film with same name + manufacturer - create new film
             let film = await findOrCreateFilm(
                 name: filmStock.name,
                 manufacturer: manufacturer,
@@ -237,6 +323,8 @@ class FilmStockDataManager: ObservableObject {
             await MainActor.run {
                 loadFilmStocks()
             }
+            
+            return false // Film was created
         }
     }
     

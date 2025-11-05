@@ -29,6 +29,8 @@ struct AddFilmView: View {
     @State private var showingCropView = false
     @State private var rawSelectedImage: UIImage?
     @State private var useDefaultImage = false
+    @State private var showToast = false
+    @State private var toastMessage = ""
     
     // For editing
     var filmToEdit: FilmStock?
@@ -39,7 +41,8 @@ struct AddFilmView: View {
     
     var body: some View {
         NavigationStack {
-            Form {
+            ZStack {
+                Form {
                 Section("Film Information") {
                     NavigationLink {
                         ManufacturerPickerView(
@@ -225,6 +228,30 @@ struct AddFilmView: View {
                             }
                         }
                 }
+                }
+                
+                // Toast notification
+                if showToast {
+                    VStack {
+                        Spacer()
+                            .frame(height: 100)
+                        HStack {
+                            Spacer()
+                            Text(toastMessage)
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(Color.black.opacity(0.8))
+                                .cornerRadius(8)
+                                .padding(.horizontal, 16)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .animation(.easeInOut, value: showToast)
+                }
             }
             .navigationTitle(filmToEdit == nil ? "Add Film" : "Edit Film")
             .navigationBarTitleDisplayMode(.inline)
@@ -363,6 +390,7 @@ struct AddFilmView: View {
             )
             
             dataManager.updateFilmStock(updated, imageName: imageName)
+            dismiss()
         } else {
             // Add new film
             // If manufacturer doesn't exist, it will be created automatically in addFilmStock
@@ -380,10 +408,23 @@ struct AddFilmView: View {
                 updatedAt: nil
             )
             
-            dataManager.addFilmStock(film, imageName: imageName)
+            Task {
+                let wasUpdated = await dataManager.addFilmStock(film, imageName: imageName)
+                await MainActor.run {
+                    if wasUpdated {
+                        toastMessage = "Film already existed and was updated"
+                        showToast = true
+                        
+                        // Dismiss after showing toast
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            dismiss()
+                        }
+                    } else {
+                        dismiss()
+                    }
+                }
+            }
         }
-        
-        dismiss()
     }
 }
 
