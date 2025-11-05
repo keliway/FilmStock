@@ -73,8 +73,6 @@
 				images/Fujifilm/provia400f.jpg,
 				images/Fujifilm/xtra400.jpg,
 				images/Harman/Phoenix200.jpg,
-				"images/icon-192.png",
-				"images/icon-512.png",
 				images/Ilford/Delta100.jpg,
 				images/Ilford/Delta400.jpg,
 				images/Ilford/Delta3200.jpg,

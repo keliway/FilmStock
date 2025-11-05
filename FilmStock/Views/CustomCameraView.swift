@@ -130,10 +130,8 @@ class CameraViewController: UIViewController {
                 videoDeviceInput = videoInput
             }
             
-            // Check if this is a telephoto camera by checking device type
-            let isTelephoto = videoDevice.deviceType == .builtInTelephotoCamera ||
-                             videoDevice.deviceType == .builtInDualCamera ||
-                             videoDevice.deviceType == .builtInDualWideCamera
+            // Check if this is a true telephoto camera (2x lens)
+            let isTelephoto = videoDevice.deviceType == .builtInTelephotoCamera
             
             // If we're using wide camera (not telephoto), apply 2x zoom
             if !isTelephoto {
@@ -161,21 +159,13 @@ class CameraViewController: UIViewController {
     }
     
     private func getTelephotoCamera() -> AVCaptureDevice? {
-        // Try to find telephoto camera (2x)
+        // Try to find telephoto camera (2x) - this is the actual 2x lens
         if let device = AVCaptureDevice.default(.builtInTelephotoCamera, for: .video, position: .back) {
             return device
         }
         
-        // Try to find dual camera and use telephoto
-        if let device = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
-            return device
-        }
-        
-        // Try to find dual wide camera
-        if let device = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
-            return device
-        }
-        
+        // Note: .builtInDualCamera and .builtInDualWideCamera don't automatically use telephoto
+        // They need to be configured with specific inputs, so we skip them and use zoom instead
         return nil
     }
     

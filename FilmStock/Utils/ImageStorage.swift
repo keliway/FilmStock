@@ -154,8 +154,9 @@ class ImageStorage {
         let filename = "\(sanitizedFilmName)_\(UUID().uuidString.prefix(8))"
         let fileURL = manufacturerDir.appendingPathComponent("\(filename).jpg")
         
-        // Convert to JPEG with compression (80% quality for efficiency)
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+        // Convert to JPEG with high quality for widget display (95% quality)
+        // Higher quality ensures crisp display on high-DPI screens (@2x, @3x)
+        guard let imageData = image.jpegData(compressionQuality: 0.95) else {
             return nil
         }
         
