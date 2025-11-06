@@ -239,6 +239,8 @@ struct BrowseView: View {
         } label: {
             SwipeableFilmCard(groupedFilm: group)
                 .environmentObject(dataManager)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -249,6 +251,7 @@ struct BrowseView: View {
             navigationPath.append(group)
         } label: {
             FilmRowViewContent(groupedFilm: group)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

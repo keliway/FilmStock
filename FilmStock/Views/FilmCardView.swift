@@ -104,6 +104,8 @@ struct FilmCardView: View {
                 Spacer()
             }
             .padding(.vertical, 4)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             // Red "EXPIRED" chip in top right
             if isExpired {
@@ -121,6 +123,7 @@ struct FilmCardView: View {
                     .padding(.trailing, 4)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .onAppear {
             loadImage()
         }
