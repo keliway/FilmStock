@@ -22,6 +22,7 @@ struct BrowseView: View {
     @State private var filmToLoad: GroupedFilm?
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
+    @State private var showingSupport = false
     
     enum ViewMode {
         case cards, list
@@ -169,6 +170,13 @@ struct BrowseView: View {
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $searchText, prompt: "Search films")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingSupport = true
+                    } label: {
+                        Image(systemName: "cup.and.heat.waves.fill")
+                    }
+                }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         showingFilters = true
@@ -217,6 +225,9 @@ struct BrowseView: View {
                     hideEmpty: $hideEmpty,
                     dataManager: dataManager
                 )
+            }
+            .sheet(isPresented: $showingSupport) {
+                SupportView()
             }
         }
     }
