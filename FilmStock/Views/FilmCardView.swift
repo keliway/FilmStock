@@ -81,8 +81,8 @@ struct FilmCardView: View {
                             }
                         }
                     }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                     
                     // Format quantities
                     HStack(spacing: 8) {
@@ -97,16 +97,16 @@ struct FilmCardView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             }
+                            }
                         }
                     }
-                }
-                
+                    
                 Spacer()
             }
             .padding(.vertical, 4)
             .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
             // Red "EXPIRED" chip in top right
             if isExpired {
                 Text("EXPIRED")
@@ -115,10 +115,10 @@ struct FilmCardView: View {
                     .foregroundColor(.red)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
-                    .overlay(
+                        .overlay(
                         RoundedRectangle(cornerRadius: 4)
                             .stroke(Color.red, lineWidth: 1)
-                    )
+                        )
                     .padding(.top, 4)
                     .padding(.trailing, 4)
             }
@@ -135,9 +135,9 @@ struct FilmCardView: View {
             if let image = ImageStorage.shared.loadImage(filename: imageName, manufacturer: groupedFilm.manufacturer) {
                 filmImage = image
                 return
-            }
         }
-        
+    }
+    
         // Try to load default image
         if let defaultImage = ImageStorage.shared.loadDefaultImage(
             filmName: groupedFilm.name,
@@ -185,8 +185,8 @@ struct FilmCardView: View {
                        let compareStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: compareDate) {
                         if todayStart > compareStart {
                             return true
-                        }
-                    }
+            }
+        }
                 }
             }
         }

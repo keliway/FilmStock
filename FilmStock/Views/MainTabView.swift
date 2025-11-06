@@ -13,6 +13,7 @@ struct MainTabView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.modelContext) private var modelContext
     @State private var selectedTab: Int = 0
+    @State private var showingWelcome = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -41,6 +42,14 @@ struct MainTabView: View {
         .task {
             dataManager.setModelContext(modelContext)
             await dataManager.migrateIfNeeded()
+            
+            // Show welcome screen on first launch
+            if !OnboardingManager.shared.hasCompletedOnboarding {
+                showingWelcome = true
+            }
+        }
+        .fullScreenCover(isPresented: $showingWelcome) {
+            WelcomeView(isPresented: $showingWelcome)
         }
         .onOpenURL { url in
             // Handle deep link from widget

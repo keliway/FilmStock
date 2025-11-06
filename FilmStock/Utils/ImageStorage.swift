@@ -46,13 +46,8 @@ class ImageStorage {
             return
         }
         
-        guard let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-              let manufacturersData = try? Data(contentsOf: manufacturersURL),
-              let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) else {
-            return
-        }
-        
         let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
+        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
         let destinationImagesURL = containerURL.appendingPathComponent("DefaultImages", isDirectory: true)
         
         // Create destination directory if it doesn't exist
@@ -60,43 +55,38 @@ class ImageStorage {
             try? FileManager.default.createDirectory(at: destinationImagesURL, withIntermediateDirectories: true)
         }
         
-        // Get all png files from the bundle resource path (flattened structure)
-        let pngFiles = (try? FileManager.default.contentsOfDirectory(
-            at: resourceURL,
+        // Get all png files from the images directory (new format: manufacturer_filmname.png)
+        guard let pngFiles = try? FileManager.default.contentsOfDirectory(
+            at: imagesURL,
             includingPropertiesForKeys: nil,
             options: [.skipsHiddenFiles]
-        ))?.filter { $0.pathExtension.lowercased() == "png" } ?? []
-        
-        // Create a mapping of image filename (without extension) to manufacturer
-        var imageToManufacturer: [String: String] = [:]
-        for manufacturerName in manufacturersWrapper.manufacturers {
-            let commonImageNames = getCommonImageNames(for: manufacturerName)
-            for imageName in commonImageNames {
-                imageToManufacturer[imageName.lowercased()] = manufacturerName
-            }
+        ) else {
+            return
         }
         
         // Copy each image to the appropriate manufacturer directory
-        for imageFile in pngFiles {
+        for imageFile in pngFiles.filter({ $0.pathExtension.lowercased() == "png" }) {
             let fileName = imageFile.lastPathComponent
-            let imageNameWithoutExt = fileName.replacingOccurrences(of: ".png", with: "", options: .caseInsensitive)
+            let filenameWithoutExt = fileName.replacingOccurrences(of: ".png", with: "", options: .caseInsensitive)
             
-            // Find manufacturer by matching image name (case-insensitive)
-            guard let mfg = imageToManufacturer[imageNameWithoutExt.lowercased()] else {
-                continue
-            }
-            
-            let destinationManufacturerURL = destinationImagesURL.appendingPathComponent(mfg, isDirectory: true)
-            
-            if !FileManager.default.fileExists(atPath: destinationManufacturerURL.path) {
-                try? FileManager.default.createDirectory(at: destinationManufacturerURL, withIntermediateDirectories: true)
-            }
-            
-            let destinationFile = destinationManufacturerURL.appendingPathComponent(fileName)
-            
-            if !FileManager.default.fileExists(atPath: destinationFile.path),
-               let imageData = try? Data(contentsOf: imageFile) {
-                try? imageData.write(to: destinationFile)
+            // Parse manufacturer_filmname format
+            if let underscoreIndex = filenameWithoutExt.firstIndex(of: "_") {
+                let manufacturerName = String(filenameWithoutExt[..<underscoreIndex])
+                let filmName = String(filenameWithoutExt[filenameWithoutExt.index(after: underscoreIndex)...])
+                
+                let destinationManufacturerURL = destinationImagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
+                
+                if !FileManager.default.fileExists(atPath: destinationManufacturerURL.path) {
+                    try? FileManager.default.createDirectory(at: destinationManufacturerURL, withIntermediateDirectories: true)
+                }
+                
+                // Save as manufacturer_filmname.png in the manufacturer subdirectory
+                let destinationFile = destinationManufacturerURL.appendingPathComponent(fileName)
+                
+                if !FileManager.default.fileExists(atPath: destinationFile.path),
+                   let imageData = try? Data(contentsOf: imageFile) {
+                    try? imageData.write(to: destinationFile)
+                }
             }
         }
         
@@ -105,8 +95,18 @@ class ImageStorage {
     }
     
     // Helper struct for decoding manufacturers.json
-    private struct ManufacturersDataWrapper: Codable {
-        let manufacturers: [String]
+    struct FilmInfo: Codable {
+        let filename: String
+        let aliases: [String]
+    }
+    
+    struct ManufacturerInfo: Codable {
+        let name: String
+        var films: [FilmInfo]
+    }
+    
+    struct ManufacturersDataWrapper: Codable {
+        var manufacturers: [ManufacturerInfo]
     }
     
     // Helper function to get common image names for a manufacturer
@@ -242,75 +242,216 @@ class ImageStorage {
     }
     
     /// Load the default image for a film from the bundle
+    /// Images are now in format: manufacturer_filmname.png
+    /// Matching is case-insensitive and handles spaces/special characters
     /// - Parameters:
-    ///   - filmName: The film name
-    ///   - manufacturer: The manufacturer name
+    ///   - filmName: The film name (user input, can be any case or format)
+    ///   - manufacturer: The manufacturer name (user input, can be any case)
     /// - Returns: The UIImage if found, nil otherwise
     func loadDefaultImage(filmName: String, manufacturer: String) -> UIImage? {
+        // Load manufacturers.json to get film name variations
+        guard let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+              let manufacturersData = try? Data(contentsOf: manufacturersURL),
+              let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) else {
+            return loadDefaultImageDirect(filmName: filmName, manufacturer: manufacturer)
+        }
+        
+        // Find the manufacturer in the JSON (case-insensitive)
+        guard let manufacturerInfo = manufacturersWrapper.manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
+            return loadDefaultImageDirect(filmName: filmName, manufacturer: manufacturer)
+        }
+        
+        // Normalize the user's film name for comparison (remove spaces/special characters, lowercase)
+        let normalizedUserInput = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+        
+        // Try to find a matching film by checking all aliases
+        for filmInfo in manufacturerInfo.films {
+            // Check if any of the film's aliases match the user input
+            // Also include the filename itself as a potential match
+            let allNames = [filmInfo.filename] + filmInfo.aliases
+            
+            for alias in allNames {
+                // Normalize alias (remove spaces/special characters, lowercase)
+                let normalizedAlias = alias.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+                
+                // Check if user input matches this alias
+                if normalizedUserInput == normalizedAlias {
+                    // Found a match! Use the filename to load the image
+                    let imageFileName = filmInfo.filename
+                    
+                    // Try to load the image using lowercase manufacturer (as stored in files)
+                    let manufacturerLower = manufacturer.lowercased()
+                    let fullImageFileName = "\(manufacturerLower)_\(imageFileName).png"
+                    
+                    if let image = loadImageFromBundle(filename: fullImageFileName) {
+                        return image
+                    }
+                    
+                    // Try with capitalized manufacturer
+                    let manufacturerCapitalized = manufacturerInfo.name.prefix(1).uppercased() + manufacturerInfo.name.dropFirst().lowercased()
+                    let fullImageFileName2 = "\(manufacturerCapitalized.lowercased())_\(imageFileName).png"
+                    if let image = loadImageFromBundle(filename: fullImageFileName2) {
+                        return image
+                    }
+                }
+            }
+        }
+        
+        // If no match found in JSON, try direct filename matching
+        return loadDefaultImageDirect(filmName: filmName, manufacturer: manufacturer)
+    }
+    
+    /// Try to load image directly using manufacturer_filmname format
+    private func loadDefaultImageDirect(filmName: String, manufacturer: String) -> UIImage? {
         let baseName = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
-        var variations = [
-            baseName + ".png",
-            baseName.lowercased() + ".png",
-            baseName.capitalized + ".png",
-            baseName.uppercased() + ".png"
+        let manufacturerName = manufacturer.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
+        
+        // Try various case combinations (manufacturer is typically lowercase in filenames)
+        let variations = [
+            "\(manufacturerName.lowercased())_\(baseName.lowercased()).png",
+            "\(manufacturerName.lowercased())_\(baseName.capitalized).png",
+            "\(manufacturerName.lowercased())_\(baseName.uppercased()).png",
+            "\(manufacturerName.lowercased())_\(baseName).png", // Original case
+            "\(manufacturerName.capitalized)_\(baseName.lowercased()).png",
+            "\(manufacturerName.capitalized)_\(baseName.capitalized).png",
+            "\(manufacturerName.capitalized)_\(baseName.uppercased()).png"
         ]
         
-        // Add variation where only first letter is capitalized
-        if baseName.count > 1 {
-            let firstChar = String(baseName.prefix(1)).uppercased()
-            let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".png")
-        }
-        
-        guard let resourcePath = Bundle.main.resourcePath else { return nil }
-        let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
-        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
-        
-        // Check flattened structure first
         for variation in variations {
-            let imageURL = imagesURL.appendingPathComponent(variation, isDirectory: false)
-            if FileManager.default.fileExists(atPath: imageURL.path),
-               let data = try? Data(contentsOf: imageURL),
-               let image = UIImage(data: data) {
-                return image
-            }
-        }
-        
-        // Check manufacturer subdirectory
-        let manufacturerURL = imagesURL.appendingPathComponent(manufacturer, isDirectory: true)
-        for variation in variations {
-            let imageURL = manufacturerURL.appendingPathComponent(variation, isDirectory: false)
-            if FileManager.default.fileExists(atPath: imageURL.path),
-               let data = try? Data(contentsOf: imageURL),
-               let image = UIImage(data: data) {
-                return image
-            }
-        }
-        
-        // Try Bundle.main.url methods
-        for variation in variations {
-            let resourceName = variation.replacingOccurrences(of: ".png", with: "")
-            // Try with subdirectory
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images/\(manufacturer)"),
-               let data = try? Data(contentsOf: bundleURL),
-               let image = UIImage(data: data) {
-                return image
-            }
-            // Try without subdirectory (flattened)
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images"),
-               let data = try? Data(contentsOf: bundleURL),
-               let image = UIImage(data: data) {
-                return image
-            }
-            // Try at bundle root
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png"),
-               let data = try? Data(contentsOf: bundleURL),
-               let image = UIImage(data: data) {
+            if let image = loadImageFromBundle(filename: variation) {
                 return image
             }
         }
         
         return nil
+    }
+    
+    /// Load an image from the bundle
+    private func loadImageFromBundle(filename: String) -> UIImage? {
+        let resourceName = filename.replacingOccurrences(of: ".png", with: "")
+        
+        // Load from bundle root (where images are)
+        if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: nil),
+           let imageData = try? Data(contentsOf: bundleURL),
+           let image = UIImage(data: imageData) {
+            return image
+        }
+        
+        return nil
+    }
+    
+    /// Get all custom images grouped by manufacturer
+    /// - Returns: Dictionary mapping manufacturer names to arrays of (filename, image) tuples
+    func getAllCustomImages() -> [String: [(filename: String, image: UIImage)]] {
+        var imagesByManufacturer: [String: [(filename: String, image: UIImage)]] = [:]
+        
+        guard FileManager.default.fileExists(atPath: userImagesDirectory.path) else {
+            return imagesByManufacturer
+        }
+        
+        // Get all manufacturer directories
+        guard let manufacturerDirs = try? FileManager.default.contentsOfDirectory(
+            at: userImagesDirectory,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) else {
+            return imagesByManufacturer
+        }
+        
+        for manufacturerDir in manufacturerDirs {
+            // Check if it's actually a directory
+            guard let resourceValues = try? manufacturerDir.resourceValues(forKeys: [.isDirectoryKey]),
+                  resourceValues.isDirectory == true else {
+                continue
+            }
+            
+            let manufacturerName = manufacturerDir.lastPathComponent
+            
+            // Get all image files in this manufacturer directory
+            guard let imageFiles = try? FileManager.default.contentsOfDirectory(
+                at: manufacturerDir,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            ) else {
+                continue
+            }
+            
+            var images: [(filename: String, image: UIImage)] = []
+            
+            for imageFile in imageFiles {
+                // Only process .jpg files
+                guard imageFile.pathExtension.lowercased() == "jpg" else {
+                    continue
+                }
+                
+                let filename = imageFile.deletingPathExtension().lastPathComponent
+                
+                if let imageData = try? Data(contentsOf: imageFile),
+                   let image = UIImage(data: imageData) {
+                    images.append((filename: filename, image: image))
+                }
+            }
+            
+            if !images.isEmpty {
+                imagesByManufacturer[manufacturerName] = images
+            }
+        }
+        
+        return imagesByManufacturer
+    }
+    
+    /// Get all default images grouped by manufacturer
+    /// Images are now in format: manufacturer_filmname.png in a single folder
+    /// - Returns: Dictionary mapping manufacturer names to arrays of (imageName, image) tuples
+    func getAllDefaultImages() -> [String: [(imageName: String, image: UIImage)]] {
+        var imagesByManufacturer: [String: [(imageName: String, image: UIImage)]] = [:]
+        
+        // Load manufacturers.json to get proper manufacturer name capitalization
+        var manufacturerNameMap: [String: String] = [:]
+        if let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+           let manufacturersData = try? Data(contentsOf: manufacturersURL),
+           let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) {
+            for manufacturerInfo in manufacturersWrapper.manufacturers {
+                manufacturerNameMap[manufacturerInfo.name.lowercased()] = manufacturerInfo.name
+            }
+        }
+        
+        // Get all PNG files from bundle root
+        let allImagePaths = Bundle.main.paths(forResourcesOfType: "png", inDirectory: nil)
+        
+        for imagePath in allImagePaths {
+            let imageURL = URL(fileURLWithPath: imagePath)
+            let filename = imageURL.deletingPathExtension().lastPathComponent
+            
+            // Only process files that match manufacturer_filmname format
+            if let underscoreIndex = filename.firstIndex(of: "_") {
+                let manufacturerNameRaw = String(filename[..<underscoreIndex])
+                let filmName = String(filename[filename.index(after: underscoreIndex)...])
+                
+                // Get proper manufacturer name from map, or capitalize it
+                let manufacturerName: String
+                if let properName = manufacturerNameMap[manufacturerNameRaw.lowercased()] {
+                    manufacturerName = properName
+                } else {
+                    // Fallback: capitalize first letter
+                    manufacturerName = manufacturerNameRaw.prefix(1).uppercased() + manufacturerNameRaw.dropFirst().lowercased()
+                }
+                
+                // Load the image
+                if let imageData = try? Data(contentsOf: imageURL),
+                   let image = UIImage(data: imageData) {
+                    // Initialize array if needed
+                    if imagesByManufacturer[manufacturerName] == nil {
+                        imagesByManufacturer[manufacturerName] = []
+                    }
+                    
+                    // Add image (use filmName as the identifier)
+                    imagesByManufacturer[manufacturerName]?.append((imageName: filmName, image: image))
+                }
+            }
+        }
+        
+        return imagesByManufacturer
     }
 }
 

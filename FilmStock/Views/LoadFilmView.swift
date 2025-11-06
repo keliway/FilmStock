@@ -231,7 +231,7 @@ struct CameraPickerView: View {
                 Button {
                     newCameraName = searchText
                     selectedCamera = searchText
-                    dataManager.addCamera(name: searchText)
+                    _ = dataManager.addCamera(name: searchText)
                     dismiss()
                 } label: {
                     HStack {

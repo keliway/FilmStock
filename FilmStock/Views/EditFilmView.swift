@@ -191,7 +191,7 @@ struct EditFilmView: View {
             )
             
             Task {
-                let wasUpdated = await dataManager.addFilmStock(film)
+                _ = await dataManager.addFilmStock(film)
                 await MainActor.run {
                     dismiss()
                 }

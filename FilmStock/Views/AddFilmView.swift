@@ -24,6 +24,7 @@ struct AddFilmView: View {
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
     @State private var showingImagePicker = false
+    @State private var showingImageCatalog = false
     @State private var rawSelectedImage: UIImage?
     @State private var useDefaultImage = false
     @State private var showToast = false
@@ -60,11 +61,16 @@ struct AddFilmView: View {
                             // Load default image when name changes
                             if !newValue.isEmpty && !manufacturer.isEmpty {
                                 defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
-                                if defaultImage == nil && selectedImage == nil {
+                                if defaultImage != nil && selectedImage == nil {
+                                    useDefaultImage = true
+                                } else if defaultImage == nil && selectedImage == nil {
                                     useDefaultImage = false
                                 }
                             } else {
                                 defaultImage = nil
+                                if selectedImage == nil {
+                                    useDefaultImage = false
+                                }
                             }
                         }
                     
@@ -93,20 +99,38 @@ struct AddFilmView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         
-                        // Upload button - only show if no custom image is uploaded
+                        // Image selection buttons - only show if no custom image is uploaded
                         if selectedImage == nil {
-                            Button {
-                                showingImagePicker = true
-                            } label: {
-                                HStack {
-                                    Image(systemName: "camera.fill")
-                                    Text("Take Photo")
+                            HStack(spacing: 12) {
+                                Button {
+                                    showingImagePicker = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "camera.fill")
+                                        Text("Take Photo")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color.accentColor)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
                                 }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
-                                .background(Color.accentColor)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+                                .buttonStyle(.plain)
+                                
+                                Button {
+                                    showingImageCatalog = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "photo.on.rectangle")
+                                        Text("Open Catalog")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color(.systemGray5))
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                         
@@ -262,6 +286,9 @@ struct AddFilmView: View {
                         .ignoresSafeArea(.all)
                 }
             }
+            .sheet(isPresented: $showingImageCatalog) {
+                ImageCatalogView(selectedImage: $selectedImage)
+            }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
                     // Camera image is already cropped, use directly
@@ -317,11 +344,16 @@ struct AddFilmView: View {
                 // Load default image when manufacturer changes
                 if !name.isEmpty && !newValue.isEmpty {
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue)
-                    if defaultImage == nil && selectedImage == nil {
+                    if defaultImage != nil && selectedImage == nil {
+                        useDefaultImage = true
+                    } else if defaultImage == nil && selectedImage == nil {
                         useDefaultImage = false
                     }
                 } else {
                     defaultImage = nil
+                    if selectedImage == nil {
+                        useDefaultImage = false
+                    }
                 }
             }
         }

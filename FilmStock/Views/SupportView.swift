@@ -149,8 +149,8 @@ struct SupportView: View {
                     Text("This will purchase a support contribution. Thank you for your generosity!")
                 }
             }
-            .onChange(of: storeManager.purchaseSuccessful) { success in
-                if success {
+            .onChange(of: storeManager.purchaseSuccessful) { oldValue, newValue in
+                if newValue {
                     showThankYou = true
                     // Auto-dismiss after 3 seconds
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

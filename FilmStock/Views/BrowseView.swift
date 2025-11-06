@@ -23,6 +23,9 @@ struct BrowseView: View {
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
     @State private var showingSupport = false
+    @State private var showAddFilmTooltip = false
+    @State private var showFilterTooltip = false
+    @State private var tooltipPreferences: [TooltipPreference] = []
     
     enum ViewMode {
         case cards, list
@@ -180,6 +183,10 @@ struct BrowseView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         showingFilters = true
+                        if showFilterTooltip {
+                            OnboardingManager.shared.markTooltipSeen("filter")
+                            showFilterTooltip = false
+                        }
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "line.3.horizontal.decrease.circle")
@@ -195,10 +202,43 @@ struct BrowseView: View {
                             }
                         }
                     }
+                    .onboardingTooltip(
+                        id: "filter",
+                        title: "Filter Your Collection",
+                        message: "Use filters to find films by manufacturer, type, speed, or format. Perfect for quickly locating what you need.",
+                        anchor: .trailing,
+                        isVisible: showFilterTooltip
+                    ) {
+                        showFilterTooltip = false
+                    }
                     Button {
                         showingAddFilm = true
+                        if showAddFilmTooltip {
+                            OnboardingManager.shared.markTooltipSeen("addFilm")
+                            showAddFilmTooltip = false
+                            // Show next tooltip
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                                    showFilterTooltip = true
+                                }
+                            }
+                        }
                     } label: {
                         Image(systemName: "plus")
+                    }
+                    .onboardingTooltip(
+                        id: "addFilm",
+                        title: "Add Your First Film",
+                        message: "Tap the + button to add films to your collection. You can track quantities, expiration dates, and even take photos of your film reminder cards.",
+                        anchor: .trailing,
+                        isVisible: showAddFilmTooltip
+                    ) {
+                        showAddFilmTooltip = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                                showFilterTooltip = true
+                            }
+                        }
                     }
                 }
             }
@@ -229,7 +269,121 @@ struct BrowseView: View {
             .sheet(isPresented: $showingSupport) {
                 SupportView()
             }
+            .onAppear {
+                // Show tooltips after onboarding, with a slight delay
+                if OnboardingManager.shared.hasCompletedOnboarding {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
+                            showAddFilmTooltip = true
+                        }
+                    }
+                }
+            }
+            .onPreferenceChange(TooltipPreferenceKey.self) { preferences in
+                tooltipPreferences = preferences
+            }
+            .overlay {
+                // Global tooltip overlay
+                if let activeTooltip = tooltipPreferences.first(where: { $0.isVisible }) {
+                    ZStack {
+                        // Background overlay
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                OnboardingManager.shared.markTooltipSeen(activeTooltip.id)
+                                if activeTooltip.id == "addFilm" {
+                                    showAddFilmTooltip = false
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                                            showFilterTooltip = true
+                                        }
+                                    }
+                                } else if activeTooltip.id == "filter" {
+                                    showFilterTooltip = false
+                                }
+                            }
+                        
+                        // Tooltip positioned relative to button
+                        tooltipView(for: activeTooltip)
+                            .position(
+                                x: tooltipPositionX(for: activeTooltip),
+                                y: tooltipPositionY(for: activeTooltip)
+                            )
+                    }
+                }
+            }
         }
+    }
+    
+    private func tooltipPositionX(for tooltip: TooltipPreference) -> CGFloat {
+        let buttonFrame = tooltip.frame
+        switch tooltip.anchor {
+        case .leading:
+            return buttonFrame.minX - 150
+        case .trailing:
+            return buttonFrame.maxX + 150
+        case .top, .bottom:
+            return buttonFrame.midX
+        }
+    }
+    
+    private func tooltipPositionY(for tooltip: TooltipPreference) -> CGFloat {
+        let buttonFrame = tooltip.frame
+        switch tooltip.anchor {
+        case .top:
+            return buttonFrame.minY - 100
+        case .bottom:
+            return buttonFrame.maxY + 100
+        case .leading, .trailing:
+            return buttonFrame.midY
+        }
+    }
+    
+    @ViewBuilder
+    private func tooltipView(for tooltip: TooltipPreference) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(tooltip.title)
+                .font(.headline)
+            
+            Text(tooltip.message)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            HStack {
+                Spacer()
+                Button {
+                    OnboardingManager.shared.markTooltipSeen(tooltip.id)
+                    if tooltip.id == "addFilm" {
+                        showAddFilmTooltip = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                                showFilterTooltip = true
+                            }
+                        }
+                    } else if tooltip.id == "filter" {
+                        showFilterTooltip = false
+                    }
+                } label: {
+                    Text("Got it")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color.accentColor)
+                        .cornerRadius(8)
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
+        )
+        .frame(maxWidth: 280)
+        .transition(.scale.combined(with: .opacity))
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: tooltip.isVisible)
     }
     
     private var activeFilterCount: Int {

@@ -49,10 +49,10 @@ class FilmStockDataManager: ObservableObject {
         
         do {
             let decoder = JSONDecoder()
-            let wrapper = try decoder.decode(ManufacturersDataWrapper.self, from: data)
+            let wrapper = try decoder.decode(ImageStorage.ManufacturersDataWrapper.self, from: data)
             
-            for manufacturerName in wrapper.manufacturers {
-                let manufacturer = Manufacturer(name: manufacturerName, isCustom: false)
+            for manufacturerInfo in wrapper.manufacturers {
+                let manufacturer = Manufacturer(name: manufacturerInfo.name, isCustom: false)
                 context.insert(manufacturer)
             }
             

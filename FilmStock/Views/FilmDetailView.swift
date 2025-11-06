@@ -50,11 +50,11 @@ struct FilmDetailView: View {
             if relatedFilms.count > 1 {
                 Section("Other Formats") {
                     ForEach(relatedFilms.filter { $0.id != displayGroupedFilm.formats.first?.filmId }) { film in
-                        HStack {
-                            Text(film.format.displayName)
-                            Spacer()
-                            Text("\(film.quantity) \(film.format.quantityUnit)")
-                                .foregroundColor(.secondary)
+                            HStack {
+                                Text(film.format.displayName)
+                                Spacer()
+                                Text("\(film.quantity) \(film.format.quantityUnit)")
+                                    .foregroundColor(.secondary)
                         }
                     }
                 }
