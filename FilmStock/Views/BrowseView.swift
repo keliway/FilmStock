@@ -270,7 +270,6 @@ struct BrowseView: View {
                 SupportView()
             }
             .onAppear {
-                // Show tooltips after onboarding, with a slight delay
                 if OnboardingManager.shared.hasCompletedOnboarding {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
@@ -285,65 +284,103 @@ struct BrowseView: View {
             .overlay {
                 // Global tooltip overlay
                 if let activeTooltip = tooltipPreferences.first(where: { $0.isVisible }) {
-                    ZStack {
-                        // Background overlay
-                        Color.black.opacity(0.3)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                OnboardingManager.shared.markTooltipSeen(activeTooltip.id)
-                                if activeTooltip.id == "addFilm" {
-                                    showAddFilmTooltip = false
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        if !OnboardingManager.shared.hasSeenTooltip("filter") {
-                                            showFilterTooltip = true
+                    GeometryReader { geometry in
+                        ZStack {
+                            // Background overlay
+                            Color.black.opacity(0.3)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    OnboardingManager.shared.markTooltipSeen(activeTooltip.id)
+                                    if activeTooltip.id == "addFilm" {
+                                        showAddFilmTooltip = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                                                showFilterTooltip = true
+                                            }
                                         }
+                                    } else if activeTooltip.id == "filter" {
+                                        showFilterTooltip = false
                                     }
-                                } else if activeTooltip.id == "filter" {
-                                    showFilterTooltip = false
                                 }
-                            }
-                        
-                        // Tooltip positioned relative to button
-                        tooltipView(for: activeTooltip)
-                            .position(
-                                x: tooltipPositionX(for: activeTooltip),
-                                y: tooltipPositionY(for: activeTooltip)
-                            )
+                            
+                            // Tooltip positioned relative to button with bounds checking
+                            tooltipView(for: activeTooltip)
+                                .position(
+                                    x: tooltipPositionX(for: activeTooltip, in: geometry),
+                                    y: tooltipPositionY(for: activeTooltip, in: geometry)
+                                )
+                        }
                     }
                 }
             }
         }
     }
     
-    private func tooltipPositionX(for tooltip: TooltipPreference) -> CGFloat {
+    private func tooltipPositionX(for tooltip: TooltipPreference, in geometry: GeometryProxy) -> CGFloat {
         let buttonFrame = tooltip.frame
+        let tooltipWidth: CGFloat = 280
+        let padding: CGFloat = 20
+        let screenWidth = geometry.size.width
+        
+        let preferredX: CGFloat
         switch tooltip.anchor {
         case .leading:
-            return buttonFrame.minX - 150
+            preferredX = buttonFrame.minX - tooltipWidth / 2 - padding
         case .trailing:
-            return buttonFrame.maxX + 150
+            preferredX = buttonFrame.maxX + tooltipWidth / 2 + padding
         case .top, .bottom:
-            return buttonFrame.midX
+            preferredX = buttonFrame.midX
         }
+        
+        // Clamp to screen bounds
+        let minX = tooltipWidth / 2 + padding
+        let maxX = screenWidth - tooltipWidth / 2 - padding
+        return max(minX, min(maxX, preferredX))
     }
     
-    private func tooltipPositionY(for tooltip: TooltipPreference) -> CGFloat {
+    private func tooltipPositionY(for tooltip: TooltipPreference, in geometry: GeometryProxy) -> CGFloat {
         let buttonFrame = tooltip.frame
+        let tooltipHeight: CGFloat = 200 // Approximate height
+        let padding: CGFloat = 20
+        let screenHeight = geometry.size.height
+        
+        let preferredY: CGFloat
         switch tooltip.anchor {
         case .top:
-            return buttonFrame.minY - 100
+            preferredY = buttonFrame.minY - tooltipHeight / 2 - padding
         case .bottom:
-            return buttonFrame.maxY + 100
+            preferredY = buttonFrame.maxY + tooltipHeight / 2 + padding
         case .leading, .trailing:
-            return buttonFrame.midY
+            preferredY = buttonFrame.midY
         }
+        
+        // Clamp to screen bounds
+        let minY = tooltipHeight / 2 + padding
+        let maxY = screenHeight - tooltipHeight / 2 - padding
+        return max(minY, min(maxY, preferredY))
     }
     
     @ViewBuilder
     private func tooltipView(for tooltip: TooltipPreference) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(tooltip.title)
-                .font(.headline)
+            HStack(spacing: 8) {
+                Text(tooltip.title)
+                    .font(.headline)
+                
+                // Show icon for filter tooltip
+                if tooltip.id == "filter" {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .font(.headline)
+                        .foregroundColor(.accentColor)
+                }
+                
+                // Show icon for add film tooltip
+                if tooltip.id == "addFilm" {
+                    Image(systemName: "plus")
+                        .font(.headline)
+                        .foregroundColor(.accentColor)
+                }
+            }
             
             Text(tooltip.message)
                 .font(.subheadline)

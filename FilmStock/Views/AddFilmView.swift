@@ -40,7 +40,7 @@ struct AddFilmView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Form {
+            Form {
                 Section("Film Information") {
                     NavigationLink {
                         ManufacturerPickerView(
@@ -258,7 +258,7 @@ struct AddFilmView: View {
                             Spacer()
                         }
                         Spacer()
-                    }
+            }
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .animation(.easeInOut, value: showToast)
                 }
@@ -389,20 +389,20 @@ struct AddFilmView: View {
         } else {
             // Add new film
             // If manufacturer doesn't exist, it will be created automatically in addFilmStock
-            let film = FilmStock(
-                id: UUID().uuidString,
-                name: name,
-                manufacturer: manufacturer,
-                type: type,
-                filmSpeed: filmSpeed,
-                format: format,
-                quantity: quantity,
+        let film = FilmStock(
+            id: UUID().uuidString,
+            name: name,
+            manufacturer: manufacturer,
+            type: type,
+            filmSpeed: filmSpeed,
+            format: format,
+            quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
-                comments: comments.isEmpty ? nil : comments,
-                createdAt: ISO8601DateFormatter().string(from: Date()),
-                updatedAt: nil
-            )
-            
+            comments: comments.isEmpty ? nil : comments,
+            createdAt: ISO8601DateFormatter().string(from: Date()),
+            updatedAt: nil
+        )
+        
             Task {
                 let wasUpdated = await dataManager.addFilmStock(film, imageName: imageName)
                 await MainActor.run {
@@ -464,7 +464,7 @@ struct ManufacturerPickerView: View {
             ForEach(filteredManufacturers, id: \.persistentModelID) { manufacturer in
                 Button {
                     selectedManufacturer = manufacturer.name
-                    dismiss()
+        dismiss()
                 } label: {
                     HStack {
                         Text(manufacturer.name)
