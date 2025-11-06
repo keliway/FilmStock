@@ -111,7 +111,7 @@ struct LoadedFilmsWidgetEntryView: View {
                         }
                     
                     // Film info bar (date and format) - conditionally shown and positioned
-                    if entry.configuration.showFilmInfo ?? true {
+                    if entry.configuration.showFilmInfo ?? false {
                         VStack {
                             if (entry.configuration.infoPosition ?? .top) == .top {
                                 // Top position

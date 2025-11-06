@@ -12,14 +12,14 @@ struct LoadedFilmsWidgetConfiguration: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Loaded Films Widget Configuration"
     static var description = IntentDescription("Configure the loaded films widget display")
     
-    @Parameter(title: "Show Film Info", default: true)
+    @Parameter(title: "Show Film Info", default: false)
     var showFilmInfo: Bool?
     
     @Parameter(title: "Info Position", default: .top)
     var infoPosition: InfoPosition?
     
     init() {
-        self.showFilmInfo = true
+        self.showFilmInfo = false
         self.infoPosition = .top
     }
     
