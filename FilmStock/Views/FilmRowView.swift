@@ -255,6 +255,15 @@ struct FilmRowViewContent: View {
         .onAppear {
             loadImage()
         }
+        .onChange(of: groupedFilm.imageName) { oldValue, newValue in
+            loadImage()
+        }
+        .onChange(of: groupedFilm.name) { oldValue, newValue in
+            loadImage()
+        }
+        .onChange(of: groupedFilm.manufacturer) { oldValue, newValue in
+            loadImage()
+        }
     }
     
     @ViewBuilder

@@ -254,16 +254,32 @@ class FilmStockDataManager: ObservableObject {
             film.manufacturer = manufacturer
         }
         
-        // Update film's imageName if provided
-        if let imageName = imageName {
-            // Delete old image if it exists and is different
-            if let oldImageName = film.imageName, oldImageName != imageName {
+        // Update film's imageName (can be nil to clear it)
+        // Check if imageName parameter was explicitly provided (not just default nil)
+        // We'll use a different approach: always update if imageName is provided in the call
+        // For now, we need to distinguish between "don't change" and "clear"
+        // Since we can't do that with optional, we'll always update when called from EditFilmView
+        // which always passes imageName (either a value or nil)
+        
+        // Delete old image if it exists and is different
+        if let oldImageName = film.imageName {
+            if let newImageName = imageName {
+                // New image provided - delete old if different
+                if oldImageName != newImageName {
+                    if let manufacturer = film.manufacturer {
+                        ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
+                    }
+                }
+            } else {
+                // imageName is nil - clear the old image
                 if let manufacturer = film.manufacturer {
                     ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
                 }
             }
-            film.imageName = imageName
         }
+        
+        // Always update imageName (can be nil to clear it)
+        film.imageName = imageName
         
         // Update MyFilm
         myFilm.quantity = filmStock.quantity

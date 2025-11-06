@@ -23,6 +23,12 @@ struct EditFilmView: View {
     @State private var expireDates: [String] = [""]
     @State private var comments = ""
     @State private var filmToEdit: FilmStock?
+    @State private var selectedImage: UIImage?
+    @State private var defaultImage: UIImage?
+    @State private var showingImagePicker = false
+    @State private var showingImageCatalog = false
+    @State private var rawSelectedImage: UIImage?
+    @State private var useDefaultImage = false
     
     var body: some View {
         NavigationStack {
@@ -39,6 +45,22 @@ struct EditFilmView: View {
                     }
                     
                     TextField("Name", text: $name)
+                        .onChange(of: name) { oldValue, newValue in
+                            // Load default image when name changes
+                            if !newValue.isEmpty && !manufacturer.isEmpty {
+                                defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
+                                if defaultImage != nil && selectedImage == nil {
+                                    useDefaultImage = true
+                                } else if defaultImage == nil && selectedImage == nil {
+                                    useDefaultImage = false
+                                }
+                            } else {
+                                defaultImage = nil
+                                if selectedImage == nil {
+                                    useDefaultImage = false
+                                }
+                            }
+                        }
                     
                     Picker("Type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
@@ -58,6 +80,114 @@ struct EditFilmView: View {
                             Text(format.displayName).tag(format)
                         }
                     }
+                    
+                    // Image selection
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Film reminder")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        // Image selection buttons - only show if no custom image is uploaded
+                        if selectedImage == nil {
+                            HStack(spacing: 12) {
+                                Button {
+                                    showingImagePicker = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "camera.fill")
+                                        Text("Take Photo")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color.accentColor)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                }
+                                .buttonStyle(.plain)
+                                
+                                Button {
+                                    showingImageCatalog = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "photo.on.rectangle")
+                                        Text("Open Catalog")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(Color(.systemGray5))
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(8)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        
+                        // Image previews
+                        if selectedImage != nil || defaultImage != nil {
+                            HStack(spacing: 12) {
+                                // Custom uploaded image
+                                if let selectedImage = selectedImage {
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(uiImage: selectedImage)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(useDefaultImage ? Color.clear : Color.accentColor, lineWidth: 3)
+                                            )
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                useDefaultImage = false
+                                            }
+                                        
+                                        Button(action: {
+                                            self.selectedImage = nil
+                                            if defaultImage != nil {
+                                                useDefaultImage = true
+                                            } else {
+                                                useDefaultImage = false
+                                            }
+                                        }) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.black.opacity(0.6))
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .foregroundColor(.white)
+                                                    .font(.system(size: 20))
+                                            }
+                                            .frame(width: 24, height: 24)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                        .offset(x: 4, y: -4)
+                                        .zIndex(1)
+                                    }
+                                    .frame(width: 100, height: 100)
+                                    .contentShape(Rectangle())
+                                }
+                                
+                                // Default image thumbnail
+                                if let defaultImage = defaultImage {
+                                    Image(uiImage: defaultImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(useDefaultImage ? Color.accentColor : Color.clear, lineWidth: 3)
+                                        )
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            useDefaultImage = true
+                                        }
+                                }
+                            }
+                            .contentShape(Rectangle())
+                        }
+                    }
+                    .padding(.vertical, 4)
                 }
                 
                 Section("Quantity") {
@@ -100,6 +230,46 @@ struct EditFilmView: View {
                     .disabled(name.isEmpty || manufacturer.isEmpty)
                 }
             }
+            .fullScreenCover(isPresented: $showingImagePicker) {
+                ZStack {
+                    Color.black
+                        .ignoresSafeArea(.all)
+                    CustomCameraView(image: $rawSelectedImage, isPresented: $showingImagePicker)
+                        .ignoresSafeArea(.all)
+                }
+            }
+            .sheet(isPresented: $showingImageCatalog) {
+                ImageCatalogView(selectedImage: $selectedImage)
+            }
+            .onChange(of: rawSelectedImage) { oldValue, newValue in
+                if let newValue = newValue {
+                    // Camera image is already cropped, use directly
+                    selectedImage = newValue
+                    useDefaultImage = false
+                }
+            }
+            .onChange(of: selectedImage) { oldValue, newValue in
+                // When an image is uploaded, automatically select it
+                if newValue != nil {
+                    useDefaultImage = false
+                }
+            }
+            .onChange(of: manufacturer) { oldValue, newValue in
+                // Load default image when manufacturer changes
+                if !name.isEmpty && !newValue.isEmpty {
+                    defaultImage = ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue)
+                    if defaultImage != nil && selectedImage == nil {
+                        useDefaultImage = true
+                    } else if defaultImage == nil && selectedImage == nil {
+                        useDefaultImage = false
+                    }
+                } else {
+                    defaultImage = nil
+                    if selectedImage == nil {
+                        useDefaultImage = false
+                    }
+                }
+            }
             .onAppear {
                 loadFilmToEdit()
             }
@@ -136,6 +306,20 @@ struct EditFilmView: View {
                 expireDates = [""]
             }
             comments = film.comments ?? ""
+            
+            // Load images
+            defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: film.manufacturer)
+            
+            // Check if film has a custom image
+            if let imageName = dataManager.getImageName(for: film) {
+                selectedImage = ImageStorage.shared.loadImage(filename: imageName, manufacturer: film.manufacturer)
+                useDefaultImage = false
+            } else {
+                // Set selection state based on whether default image exists
+                if defaultImage != nil {
+                    useDefaultImage = true
+                }
+            }
         } else {
             // Fallback to groupedFilm data if no FilmStock found
             name = groupedFilm.name
@@ -156,6 +340,21 @@ struct EditFilmView: View {
     private func saveFilm() {
         let filteredDates = expireDates.filter { !$0.isEmpty }
         
+        // Save custom image if selected (not using default)
+        var imageName: String? = nil
+        if useDefaultImage {
+            // Using default image - clear any custom image
+            imageName = nil
+        } else if let image = selectedImage {
+            // Save new custom image
+            imageName = ImageStorage.shared.saveImage(image, forManufacturer: manufacturer, filmName: name)
+        } else {
+            // No image selected - keep existing image if any
+            if let existingFilm = filmToEdit {
+                imageName = dataManager.getImageName(for: existingFilm)
+            }
+        }
+        
         if let existingFilm = filmToEdit {
             // Update existing film - create new instance with updated values
             let updated = FilmStock(
@@ -172,7 +371,7 @@ struct EditFilmView: View {
                 updatedAt: ISO8601DateFormatter().string(from: Date())
             )
             
-            dataManager.updateFilmStock(updated)
+            dataManager.updateFilmStock(updated, imageName: imageName)
             dismiss()
         } else {
             // If no film found, create a new one (shouldn't happen, but handle it)
