@@ -111,7 +111,8 @@ struct GroupedFilm: Identifiable, Hashable {
     let manufacturer: String
     let type: FilmStock.FilmType
     let filmSpeed: Int
-    var imageName: String? // Optional custom image filename
+    var imageName: String? // For catalog: default image filename, for custom: user photo filename
+    var imageSource: String // ImageSource rawValue
     var formats: [FormatInfo]
     
     struct FormatInfo: Identifiable, Hashable {

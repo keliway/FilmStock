@@ -68,7 +68,7 @@ class FilmStockDataManager: ObservableObject {
         let descriptor = FetchDescriptor<MyFilm>()
         guard let myFilms = try? context.fetch(descriptor) else {
             filmStocks = []
-            return
+                return
         }
         
         // Convert MyFilm to FilmStock for compatibility
@@ -95,7 +95,7 @@ class FilmStockDataManager: ObservableObject {
         }
     }
     
-    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil) async -> Bool {
+    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) async -> Bool {
         guard let context = modelContext else { return false }
         
         // Find or create manufacturer
@@ -116,13 +116,8 @@ class FilmStockDataManager: ObservableObject {
                 // ISO matches - update existing film
                 // Update image if provided
                 if let imageName = imageName {
-                    // Delete old image if it exists and is different
-                    if let oldImageName = existingFilm.imageName, oldImageName != imageName {
-                        if let manufacturer = existingFilm.manufacturer {
-                            ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
-                        }
-                    }
                     existingFilm.imageName = imageName
+                    existingFilm.imageSource = imageSource
                 }
                 
                 // Check if a MyFilm entry with the same format already exists
@@ -163,6 +158,7 @@ class FilmStockDataManager: ObservableObject {
                     type: filmStock.type.rawValue,
                     filmSpeed: filmStock.filmSpeed,
                     imageName: imageName,
+                    imageSource: imageSource,
                     context: context
                 )
                 
@@ -195,6 +191,7 @@ class FilmStockDataManager: ObservableObject {
                 type: filmStock.type.rawValue,
                 filmSpeed: filmStock.filmSpeed,
                 imageName: imageName,
+                imageSource: imageSource,
                 context: context
             )
             
@@ -221,7 +218,7 @@ class FilmStockDataManager: ObservableObject {
         }
     }
     
-    func updateFilmStock(_ filmStock: FilmStock, imageName: String? = nil) {
+    func updateFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) {
         guard let context = modelContext else { return }
         
         let descriptor = FetchDescriptor<MyFilm>(
@@ -249,8 +246,8 @@ class FilmStockDataManager: ObservableObject {
             } else {
                 manufacturer = Manufacturer(name: filmStock.manufacturer, isCustom: true)
                 context.insert(manufacturer)
-            }
-            
+    }
+    
             film.manufacturer = manufacturer
         }
         
@@ -261,25 +258,9 @@ class FilmStockDataManager: ObservableObject {
         // Since we can't do that with optional, we'll always update when called from EditFilmView
         // which always passes imageName (either a value or nil)
         
-        // Delete old image if it exists and is different
-        if let oldImageName = film.imageName {
-            if let newImageName = imageName {
-                // New image provided - delete old if different
-                if oldImageName != newImageName {
-                    if let manufacturer = film.manufacturer {
-                        ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
-                    }
-                }
-            } else {
-                // imageName is nil - clear the old image
-                if let manufacturer = film.manufacturer {
-                    ImageStorage.shared.deleteImage(filename: oldImageName, manufacturer: manufacturer.name)
-                }
-            }
-        }
-        
-        // Always update imageName (can be nil to clear it)
+        // Update imageName and imageSource (custom photos are kept, user can delete manually)
         film.imageName = imageName
+        film.imageSource = imageSource
         
         // Update MyFilm
         myFilm.quantity = filmStock.quantity
@@ -336,6 +317,7 @@ class FilmStockDataManager: ObservableObject {
                     type: type,
                     filmSpeed: film.filmSpeed,
                     imageName: film.imageName,
+                    imageSource: film.imageSource,
                     formats: []
                 )
             }
@@ -344,13 +326,13 @@ class FilmStockDataManager: ObservableObject {
             if let myFilms = film.myFilms {
                 for myFilm in myFilms {
                     if let format = FilmStock.FilmFormat(rawValue: myFilm.format) {
-                        groups[key]?.formats.append(GroupedFilm.FormatInfo(
+            groups[key]?.formats.append(GroupedFilm.FormatInfo(
                             id: myFilm.id,
                             format: format,
                             quantity: myFilm.quantity,
                             expireDate: myFilm.expireDateArray,
                             filmId: myFilm.id
-                        ))
+            ))
                     }
                 }
             }
@@ -425,7 +407,7 @@ class FilmStockDataManager: ObservableObject {
         return manufacturer
     }
     
-    private func findOrCreateFilm(name: String, manufacturer: Manufacturer, type: String, filmSpeed: Int, imageName: String? = nil, context: ModelContext) async -> Film {
+    private func findOrCreateFilm(name: String, manufacturer: Manufacturer, type: String, filmSpeed: Int, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue, context: ModelContext) async -> Film {
         // Fetch all films and filter in memory to avoid complex predicate issues
         let descriptor = FetchDescriptor<Film>()
         let allFilms = (try? context.fetch(descriptor)) ?? []
@@ -437,9 +419,10 @@ class FilmStockDataManager: ObservableObject {
             film.type == type &&
             film.filmSpeed == filmSpeed
         }) {
-            // Update imageName if provided
+            // Update imageName and imageSource if provided
             if let imageName = imageName {
                 existing.imageName = imageName
+                existing.imageSource = imageSource
                 try? context.save()
             }
             return existing
@@ -450,7 +433,8 @@ class FilmStockDataManager: ObservableObject {
             manufacturer: manufacturer,
             type: type,
             filmSpeed: filmSpeed,
-            imageName: imageName
+            imageName: imageName,
+            imageSource: imageSource
         )
         context.insert(film)
         try? context.save()

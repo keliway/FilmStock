@@ -10,6 +10,7 @@ import SwiftUI
 struct ImageCatalogView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var selectedImage: UIImage?
+    @Binding var selectedImageFilename: String? // e.g., "ilford_hp5"
     @State private var imagesByManufacturer: [String: [(imageName: String, image: UIImage)]] = [:]
     
     var sortedManufacturers: [String] {
@@ -44,6 +45,9 @@ struct ImageCatalogView: View {
                                             ForEach(images, id: \.imageName) { item in
                                                 Button {
                                                     selectedImage = item.image
+                                                    // Store the filename as manufacturer_filmname (without .png)
+                                                    let manufacturerLower = manufacturer.lowercased()
+                                                    selectedImageFilename = "\(manufacturerLower)_\(item.imageName)"
                                                     dismiss()
                                                 } label: {
                                                     Image(uiImage: item.image)

@@ -28,7 +28,8 @@ struct EditFilmView: View {
     @State private var showingImagePicker = false
     @State private var showingImageCatalog = false
     @State private var rawSelectedImage: UIImage?
-    @State private var useDefaultImage = false
+    @State private var selectedCatalogFilename: String? // Tracks catalog image filename (e.g., "ilford_hp5")
+    @State private var imageSource: ImageSource = .autoDetected
     
     var body: some View {
         NavigationStack {
@@ -45,22 +46,6 @@ struct EditFilmView: View {
                     }
                     
                     TextField("Name", text: $name)
-                        .onChange(of: name) { oldValue, newValue in
-                            // Load default image when name changes
-                            if !newValue.isEmpty && !manufacturer.isEmpty {
-                                defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
-                                if defaultImage != nil && selectedImage == nil {
-                                    useDefaultImage = true
-                                } else if defaultImage == nil && selectedImage == nil {
-                                    useDefaultImage = false
-                                }
-                            } else {
-                                defaultImage = nil
-                                if selectedImage == nil {
-                                    useDefaultImage = false
-                                }
-                            }
-                        }
                     
                     Picker("Type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
@@ -135,19 +120,25 @@ struct EditFilmView: View {
                                             .clipShape(RoundedRectangle(cornerRadius: 8))
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(useDefaultImage ? Color.clear : Color.accentColor, lineWidth: 3)
+                                                    .stroke(imageSource == .custom || imageSource == .catalog ? Color.accentColor : Color.clear, lineWidth: 3)
                                             )
                                             .contentShape(Rectangle())
                                             .onTapGesture {
-                                                useDefaultImage = false
+                                                // User selected custom/catalog image
+                                                if selectedCatalogFilename != nil {
+                                                    imageSource = .catalog
+                                                } else {
+                                                    imageSource = .custom
+                                                }
                                             }
                                         
                                         Button(action: {
                                             self.selectedImage = nil
+                                            selectedCatalogFilename = nil
                                             if defaultImage != nil {
-                                                useDefaultImage = true
+                                                imageSource = .autoDetected
                                             } else {
-                                                useDefaultImage = false
+                                                imageSource = .none
                                             }
                                         }) {
                                             ZStack {
@@ -176,11 +167,11 @@ struct EditFilmView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .stroke(useDefaultImage ? Color.accentColor : Color.clear, lineWidth: 3)
+                                                .stroke(imageSource == .autoDetected ? Color.accentColor : Color.clear, lineWidth: 3)
                                         )
                                         .contentShape(Rectangle())
                                         .onTapGesture {
-                                            useDefaultImage = true
+                                            imageSource = .autoDetected
                                         }
                                 }
                             }
@@ -239,35 +230,48 @@ struct EditFilmView: View {
                 }
             }
             .sheet(isPresented: $showingImageCatalog) {
-                ImageCatalogView(selectedImage: $selectedImage)
+                ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename)
             }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
                     // Camera image is already cropped, use directly
                     selectedImage = newValue
-                    useDefaultImage = false
+                    imageSource = .custom
+                    selectedCatalogFilename = nil
+                }
+            }
+            .onChange(of: selectedCatalogFilename) { oldValue, newValue in
+                // When a catalog image is selected
+                if newValue != nil {
+                    imageSource = .catalog
                 }
             }
             .onChange(of: selectedImage) { oldValue, newValue in
-                // When an image is uploaded, automatically select it
-                if newValue != nil {
-                    useDefaultImage = false
+                // Track if user cleared the selection
+                if newValue == nil {
+                    selectedCatalogFilename = nil
+                    // Revert to auto-detected if there's a default image
+                    if defaultImage != nil {
+                        imageSource = .autoDetected
+                    } else {
+                        imageSource = .none
+                    }
                 }
             }
             .onChange(of: manufacturer) { oldValue, newValue in
-                // Load default image when manufacturer changes
+                // Always try to load default image when manufacturer changes (for auto-detection)
                 if !name.isEmpty && !newValue.isEmpty {
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue)
-                    if defaultImage != nil && selectedImage == nil {
-                        useDefaultImage = true
-                    } else if defaultImage == nil && selectedImage == nil {
-                        useDefaultImage = false
-                    }
                 } else {
                     defaultImage = nil
-                    if selectedImage == nil {
-                        useDefaultImage = false
-                    }
+                }
+            }
+            .onChange(of: name) { oldValue, newValue in
+                // Always try to load default image when name changes (for auto-detection)
+                if !newValue.isEmpty && !manufacturer.isEmpty {
+                    defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
+                } else {
+                    defaultImage = nil
                 }
             }
             .onAppear {
@@ -307,18 +311,31 @@ struct EditFilmView: View {
             }
             comments = film.comments ?? ""
             
-            // Load images
-            defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: film.manufacturer)
+            // Load images based on image source
+            let filmImageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
+            imageSource = filmImageSource
             
-            // Check if film has a custom image
-            if let imageName = dataManager.getImageName(for: film) {
-                selectedImage = ImageStorage.shared.loadImage(filename: imageName, manufacturer: film.manufacturer)
-                useDefaultImage = false
-            } else {
-                // Set selection state based on whether default image exists
-                if defaultImage != nil {
-                    useDefaultImage = true
+            switch filmImageSource {
+            case .custom:
+                // Load custom user photo
+                if let imageName = groupedFilm.imageName {
+                    selectedImage = ImageStorage.shared.loadImage(filename: imageName, manufacturer: film.manufacturer)
                 }
+                
+            case .catalog:
+                // Load catalog image
+                if let catalogFilename = groupedFilm.imageName {
+                    selectedImage = ImageStorage.shared.loadCatalogImage(filename: catalogFilename)
+                    selectedCatalogFilename = catalogFilename
+                }
+                
+            case .autoDetected:
+                // Load auto-detected default image
+                defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: film.manufacturer)
+                
+            case .none:
+                // No image
+                break
             }
         } else {
             // Fallback to groupedFilm data if no FilmStock found
@@ -340,19 +357,24 @@ struct EditFilmView: View {
     private func saveFilm() {
         let filteredDates = expireDates.filter { !$0.isEmpty }
         
-        // Save custom image if selected (not using default)
+        // Handle image based on source
         var imageName: String? = nil
-        if useDefaultImage {
-            // Using default image - clear any custom image
-            imageName = nil
-        } else if let image = selectedImage {
-            // Save new custom image
-            imageName = ImageStorage.shared.saveImage(image, forManufacturer: manufacturer, filmName: name)
-        } else {
-            // No image selected - keep existing image if any
-            if let existingFilm = filmToEdit {
-                imageName = dataManager.getImageName(for: existingFilm)
+        var finalImageSource = imageSource
+        
+        switch imageSource {
+        case .custom:
+            // Save user-taken photo
+            if let image = selectedImage {
+                imageName = ImageStorage.shared.saveImage(image, forManufacturer: manufacturer, filmName: name)
             }
+            
+        case .catalog:
+            // Store catalog image filename (don't save image, just reference it)
+            imageName = selectedCatalogFilename
+            
+        case .autoDetected, .none:
+            // No imageName needed - will auto-detect or show nothing
+            imageName = nil
         }
         
         if let existingFilm = filmToEdit {
@@ -371,7 +393,7 @@ struct EditFilmView: View {
                 updatedAt: ISO8601DateFormatter().string(from: Date())
             )
             
-            dataManager.updateFilmStock(updated, imageName: imageName)
+            dataManager.updateFilmStock(updated, imageName: imageName, imageSource: finalImageSource.rawValue)
             dismiss()
         } else {
             // If no film found, create a new one (shouldn't happen, but handle it)
@@ -390,7 +412,7 @@ struct EditFilmView: View {
             )
             
             Task {
-                _ = await dataManager.addFilmStock(film)
+                _ = await dataManager.addFilmStock(film, imageName: imageName, imageSource: finalImageSource.rawValue)
                 await MainActor.run {
                     dismiss()
                 }

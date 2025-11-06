@@ -340,6 +340,13 @@ class ImageStorage {
         return nil
     }
     
+    /// Load a catalog image directly by its filename (e.g., "ilford_hp5")
+    /// - Parameter filename: The filename without extension (e.g., "ilford_hp5")
+    /// - Returns: The UIImage if found, nil otherwise
+    func loadCatalogImage(filename: String) -> UIImage? {
+        return loadImageFromBundle(filename: filename)
+    }
+    
     /// Get all custom images grouped by manufacturer
     /// - Returns: Dictionary mapping manufacturer names to arrays of (filename, image) tuples
     func getAllCustomImages() -> [String: [(filename: String, image: UIImage)]] {

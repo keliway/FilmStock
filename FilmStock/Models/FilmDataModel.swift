@@ -22,6 +22,13 @@ final class Manufacturer {
     }
 }
 
+enum ImageSource: String, Codable {
+    case none = "none"              // No image
+    case autoDetected = "auto"      // Auto-detected default image based on manufacturer + film name
+    case catalog = "catalog"        // User selected a specific default image from catalog
+    case custom = "custom"          // User took a photo with camera
+}
+
 @Model
 final class Film {
     var name: String
@@ -29,16 +36,18 @@ final class Film {
     var manufacturer: Manufacturer?
     var type: String // FilmType rawValue
     var filmSpeed: Int
-    var imageName: String? // Optional custom image filename (without extension)
+    var imageName: String? // For catalog: default image filename, for custom: user photo filename
+    var imageSource: String // ImageSource rawValue - tracks the type of image
     @Relationship(deleteRule: .cascade)
     var myFilms: [MyFilm]?
     
-    init(name: String, manufacturer: Manufacturer?, type: String, filmSpeed: Int, imageName: String? = nil) {
+    init(name: String, manufacturer: Manufacturer?, type: String, filmSpeed: Int, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) {
         self.name = name
         self.manufacturer = manufacturer
         self.type = type
         self.filmSpeed = filmSpeed
         self.imageName = imageName
+        self.imageSource = imageSource
         self.myFilms = []
     }
 }

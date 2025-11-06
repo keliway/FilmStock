@@ -18,7 +18,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationStack {
-                BrowseView()
+            BrowseView()
             }
             .tabItem {
                 Label("My Films", systemImage: "film")
@@ -34,7 +34,7 @@ struct MainTabView: View {
             NavigationStack {
                 CollectionView()
             }
-            .tabItem {
+                .tabItem {
                 Label("My Collection", systemImage: "camera.viewfinder")
             }
             .tag(2)
@@ -74,7 +74,7 @@ struct MainTabView: View {
                         WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
                     }
                 }
-            }
+                }
         }
     }
 }

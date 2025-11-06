@@ -118,89 +118,38 @@ struct FilmRowView: View {
     }
     
     private func loadImage() {
-        // First, try user-uploaded image if imageName is specified
-        if let customImageName = groupedFilm.imageName {
-            if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
-                self.image = userImage
+        let imageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
+        
+        switch imageSource {
+        case .custom:
+            // Load user-taken photo
+            if let customImageName = groupedFilm.imageName {
+                if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                    self.image = userImage
+                    return
+                }
+            }
+            
+        case .catalog:
+            // Load catalog image by exact filename
+            if let catalogImageName = groupedFilm.imageName {
+                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
+                    self.image = catalogImage
+                    return
+                }
+            }
+            
+        case .autoDetected:
+            // Auto-detect default image based on manufacturer + film name
+            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer) {
+                self.image = defaultImage
                 return
             }
-        }
-        
-        // Then try bundle images
-        var variations: [String] = []
-        
-        // First, try custom imageName if specified (for bundle images)
-        if let customImageName = groupedFilm.imageName {
-            variations.append(customImageName + ".png")
-            variations.append(customImageName.lowercased() + ".png")
-        }
-        
-        // Then try auto-detected name from film name
-        let baseName = groupedFilm.name.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
-        variations.append(contentsOf: [
-            baseName + ".png",
-            baseName.lowercased() + ".png",
-            baseName.capitalized + ".png",
-            baseName.uppercased() + ".png"
-        ])
-        
-        // Add variation where only first letter is capitalized and rest is lowercase
-        if baseName.count > 1 {
-            let firstChar = String(baseName.prefix(1)).uppercased()
-            let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".png")
-        }
-        
-        // Try bundle with manufacturer subdirectory structure
-        let manufacturerName = groupedFilm.manufacturer
-        
-        // Try multiple methods to find images
-        var imagePaths: [URL] = []
-        
-        guard let resourcePath = Bundle.main.resourcePath else { return }
-        let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
-        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
-        
-        // When images folder is added as a group (yellow folder in Xcode),
-        // Xcode flattens subdirectories, so files are in images/ directly
-        // Try flattened structure first (most likely for groups)
-        for variation in variations {
-            let imageURL = imagesURL.appendingPathComponent(variation, isDirectory: false)
-            imagePaths.append(imageURL)
-        }
-        
-        // Also try manufacturer subdirectory structure (in case folder references are used)
-        let manufacturerURL = imagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
-        for variation in variations {
-            let imageURL = manufacturerURL.appendingPathComponent(variation, isDirectory: false)
-            imagePaths.append(imageURL)
-        }
-        
-        // Try Bundle.main.url methods
-        for variation in variations {
-            let resourceName = variation.replacingOccurrences(of: ".png", with: "")
-            // Try with subdirectory
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images/\(manufacturerName)") {
-                imagePaths.append(bundleURL)
-            }
-            // Try without subdirectory (flattened)
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png", subdirectory: "images") {
-                imagePaths.append(bundleURL)
-            }
-            // Try at bundle root
-            if let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: "png") {
-                imagePaths.append(bundleURL)
-            }
-        }
-        
-        // Try all paths
-        for imageURL in imagePaths {
-            if FileManager.default.fileExists(atPath: imageURL.path),
-               let data = try? Data(contentsOf: imageURL),
-           let uiImage = UIImage(data: data) {
-            self.image = uiImage
-                return
-            }
+            
+        case .none:
+            // No image
+            self.image = nil
+            return
         }
     }
 }
@@ -294,17 +243,37 @@ struct FilmRowViewContent: View {
     }
     
     private func loadImage() {
-        // First, try user-uploaded image if imageName is specified
-        if let customImageName = groupedFilm.imageName {
-            if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
-                self.image = userImage
+        let imageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
+        
+        switch imageSource {
+        case .custom:
+            // Load user-taken photo
+            if let customImageName = groupedFilm.imageName {
+                if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                    self.image = userImage
+                    return
+                }
+            }
+            
+        case .catalog:
+            // Load catalog image by exact filename
+            if let catalogImageName = groupedFilm.imageName {
+                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
+                    self.image = catalogImage
+                    return
+                }
+            }
+            
+        case .autoDetected:
+            // Auto-detect default image based on manufacturer + film name
+            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer) {
+                self.image = defaultImage
                 return
             }
-        }
-        
-        // Then try default image using the new matching logic
-        if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer) {
-            self.image = defaultImage
+            
+        case .none:
+            // No image
+            self.image = nil
             return
         }
     }

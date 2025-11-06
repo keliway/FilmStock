@@ -139,20 +139,38 @@ struct FilmCardView: View {
     }
     
     private func loadImage() {
-        // Try to load custom image first
-        if let imageName = groupedFilm.imageName {
-            if let image = ImageStorage.shared.loadImage(filename: imageName, manufacturer: groupedFilm.manufacturer) {
-                filmImage = image
+        let imageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
+        
+        switch imageSource {
+        case .custom:
+            // Load user-taken photo
+            if let customImageName = groupedFilm.imageName {
+                if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                    filmImage = userImage
+                    return
+                }
+            }
+            
+        case .catalog:
+            // Load catalog image by exact filename
+            if let catalogImageName = groupedFilm.imageName {
+                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
+                    filmImage = catalogImage
+                    return
+                }
+            }
+            
+        case .autoDetected:
+            // Auto-detect default image based on manufacturer + film name
+            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer) {
+                filmImage = defaultImage
                 return
-        }
-    }
-    
-        // Try to load default image
-        if let defaultImage = ImageStorage.shared.loadDefaultImage(
-            filmName: groupedFilm.name,
-            manufacturer: groupedFilm.manufacturer
-        ) {
-            filmImage = defaultImage
+            }
+            
+        case .none:
+            // No image
+            filmImage = nil
+            return
         }
     }
     
