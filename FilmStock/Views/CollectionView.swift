@@ -17,6 +17,7 @@ struct CollectionView: View {
     @State private var itemToDelete: CollectionItem?
     @State private var isEditMode = false
     @State private var selectedItems: Set<String> = []
+    @State private var showingHelp = false
     
     var body: some View {
         NavigationStack {
@@ -126,7 +127,13 @@ struct CollectionView: View {
         .navigationTitle("My Collection")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    showingHelp = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                
                 // Only show Edit button when there are images in the collection
                 if !filmsWithImages.isEmpty {
                     if isEditMode {
@@ -179,6 +186,11 @@ struct CollectionView: View {
             } else if let item = itemToDelete {
                 Text("Are you sure you want to delete the image for \(item.title)?")
             }
+        }
+        .alert("About My Collection", isPresented: $showingHelp) {
+            Button("Got it", role: .cancel) { }
+        } message: {
+            Text("This is your gallery of custom film reminder card photos. When you take a photo using the camera button while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need.")
         }
     }
     

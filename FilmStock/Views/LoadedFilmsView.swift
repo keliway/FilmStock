@@ -10,6 +10,7 @@ import SwiftUI
 struct LoadedFilmsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var loadedFilms: [LoadedFilm] = []
+    @State private var showingHelp = false
     
     var body: some View {
         NavigationStack {
@@ -45,8 +46,23 @@ struct LoadedFilmsView: View {
                     }
                 }
             }
+            .listStyle(.plain)
             .navigationTitle("Loaded Films")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+            }
+            .alert("About Loaded Films", isPresented: $showingHelp) {
+                Button("Got it", role: .cancel) { }
+            } message: {
+                Text("This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it (which returns it to your film stock). This helps you track which films are actively being used and prevents accidentally loading the same film twice.")
+            }
             .onAppear {
                 loadFilms()
             }

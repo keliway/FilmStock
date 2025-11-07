@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		950B954C2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */; };
+		950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */; };
 		95DA01DF2EBA296E0040E997 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01DE2EBA296E0040E997 /* WidgetKit.framework */; };
 		95DA01E12EBA296E0040E997 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01E02EBA296E0040E997 /* SwiftUI.framework */; };
 		95DA01F02EBA29700040E997 /* FilmStockWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -37,6 +39,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Filmstock Appicon.icon"; sourceTree = "<group>"; };
 		95D20FB72EB901CB00EF7348 /* FilmStock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FilmStock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FilmStockWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA01DE2EBA296E0040E997 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -104,6 +107,7 @@
 		95D20FAE2EB901CB00EF7348 = {
 			isa = PBXGroup;
 			children = (
+				950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */,
 				95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */,
 				95D20FB92EB901CB00EF7348 /* FilmStock */,
 				95DA01E22EBA296E0040E997 /* FilmStockWidget */,
@@ -223,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950B954C2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,9 +389,9 @@
 		95D20FC32EB901CB00EF7348 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Filmstock Appicon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -423,9 +429,9 @@
 		95D20FC42EB901CB00EF7348 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Filmstock Appicon";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
