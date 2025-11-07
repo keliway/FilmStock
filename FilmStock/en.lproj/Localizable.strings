@@ -58,6 +58,8 @@
 "format.4x5" = "4×5";
 "format.5x7" = "5×7";
 "format.8x10" = "8×10";
+"format.sheet.count" = "%d sheet";
+"format.sheets.count" = "%d sheets";
 
 // MARK: - Image Selection
 "image.takePhoto" = "Take Photo";
@@ -84,7 +86,9 @@
 "filter.type" = "Type";
 "filter.format" = "Format";
 "filter.manufacturer" = "Manufacturer";
+"filter.speed" = "Speed";
 "filter.filmSpeed" = "Film Speed";
+"filter.options" = "Options";
 "filter.showExpiredOnly" = "Show expired only";
 "filter.clearAll" = "Clear All";
 "filter.apply" = "Apply";
@@ -160,6 +164,10 @@
 "delete.film.title" = "Delete Film";
 "delete.film.message" = "Are you sure you want to delete %@?";
 "delete.image.title" = "Delete Image";
+
+// MARK: - Error Messages
+"error.cannotDelete.title" = "Cannot Delete Film";
+"error.cannotDeleteLoaded" = "\"%@\" is currently loaded in a camera. Please unload it first before deleting.";
 
 // MARK: - Load Film
 "load.title" = "Load Film";

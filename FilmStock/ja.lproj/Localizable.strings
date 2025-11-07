@@ -1,0 +1,247 @@
+/* 
+  Localizable.strings (Japanese)
+  FilmStock
+*/
+
+// MARK: - Tabs & Navigation
+"tab.myFilms" = "マイフィルム";
+"tab.loadedFilms" = "装填中のフィルム";
+"tab.collection" = "マイコレクション";
+
+// MARK: - Common Actions
+"action.add" = "追加";
+"action.edit" = "編集";
+"action.delete" = "削除";
+"action.done" = "完了";
+"action.cancel" = "キャンセル";
+"action.save" = "保存";
+"action.load" = "装填";
+"action.unload" = "取り出す";
+"action.unloadOne" = "1枚取り出す";
+"action.unloadAll" = "すべて取り出す";
+"action.close" = "閉じる";
+"action.ok" = "OK";
+"action.addNew" = "\"%@\" を追加";
+
+// MARK: - Film Management
+"film.addFilm" = "フィルムを追加";
+"film.editFilm" = "フィルムを編集";
+"film.manufacturer" = "メーカー";
+"film.selectManufacturer" = "メーカーを選択";
+"film.filmName" = "フィルム名";
+"film.name" = "名前";
+"film.filmSpeed" = "感度";
+"film.speed" = "感度";
+"film.format" = "フォーマット";
+"film.type" = "種類";
+"film.quantity" = "数量";
+"film.expiryDate" = "有効期限";
+"film.comments" = "コメント";
+"film.filmInformation" = "フィルム情報";
+"film.filmReminder" = "フィルムリマインダー";
+"film.addExpiryDate" = "有効期限を追加";
+"film.rollsCount" = "%d本";
+"film.rollCount" = "%d本";
+"Quantity: %d" = "数量：%d";
+"Sheets: %d" = "枚数：%d";
+"film.expiryDateFormat" = "MM/YYYY または YYYY";
+"film.searchManufacturer" = "メーカーを検索または追加";
+
+// MARK: - Film Types
+"type.color" = "カラー";
+"type.blackAndWhite" = "白黒";
+
+// MARK: - Film Formats
+"format.35mm" = "35mm";
+"format.120" = "120";
+"format.127" = "127";
+"format.4x5" = "4×5";
+"format.5x7" = "5×7";
+"format.8x10" = "8×10";
+"format.sheet.count" = "%d枚";
+"format.sheets.count" = "%d枚";
+
+// MARK: - Image Selection
+"image.takePhoto" = "写真を撮る";
+"image.openCatalog" = "カタログを開く";
+"image.catalog" = "画像カタログ";
+"image.defaultCatalog" = "デフォルトカタログ";
+"image.myPhotos" = "マイフォト";
+
+// MARK: - Empty States
+"empty.noFilms.title" = "フィルムがありません";
+"empty.noFilms.message" = "最初のフィルムを追加して始めましょう！";
+"empty.noLoadedFilms.title" = "装填中のフィルムがありません";
+"empty.noLoadedFilms.message" = "マイフィルムタブからフィルムを装填して、現在使用中のロールを追跡しましょう";
+"empty.noCollection.title" = "リマインダーカードがありません";
+"empty.noCollection.message" = "フィルムの追加・編集時に独自のリマインダーをアップロードして、コレクションを始めましょう！";
+"empty.noCatalogImages.title" = "画像がありません";
+"empty.noCatalogImages.message" = "バンドル内にデフォルト画像が見つかりません";
+"empty.noCustomPhotos.title" = "カスタム写真がありません";
+"empty.noCustomPhotos.message" = "フィルム追加時にフィルムカードの写真を撮ってコレクションを作成しましょう";
+
+// MARK: - Filters & Search
+"filter.title" = "フィルター";
+"filter.hideEmpty" = "空のものを非表示";
+"filter.type" = "種類";
+"filter.format" = "フォーマット";
+"filter.manufacturer" = "メーカー";
+"filter.speed" = "感度";
+"filter.filmSpeed" = "感度";
+"filter.options" = "オプション";
+"filter.showExpiredOnly" = "期限切れのみ表示";
+"filter.clearAll" = "すべてクリア";
+"filter.apply" = "適用";
+"search.placeholder" = "フィルムを検索...";
+
+// MARK: - View Modes
+"view.cards" = "カード";
+"view.list" = "リスト";
+
+// MARK: - Alerts & Confirmations
+"alert.delete.title" = "フィルムを削除";
+"alert.delete.message" = "このフィルムを削除してもよろしいですか？関連するすべてのフォーマットが削除されます。";
+"alert.deleteImage.title" = "画像を削除";
+"alert.deleteImage.single" = "%@ の画像を削除してもよろしいですか？";
+"alert.deleteImage.multiple" = "%d 枚の画像を削除してもよろしいですか？";
+"alert.unload.title" = "フィルムを取り出す";
+"alert.unload.message" = "%@ を取り出してもよろしいですか？";
+
+// MARK: - Settings
+"settings.title" = "設定";
+"settings.myFilms" = "マイフィルム";
+"settings.general" = "一般";
+"settings.support" = "サポート";
+"settings.hideEmpty" = "空のフィルムを表示しない";
+"settings.hideEmpty.footer" = "これらの設定は、アプリを開いたときのデフォルトビューを制御します。";
+"settings.tableView" = "常にテーブルビューを表示";
+"settings.appearance" = "外観";
+"settings.appearance.system" = "システム";
+"settings.appearance.light" = "ライト";
+"settings.appearance.dark" = "ダーク";
+"settings.version" = "バージョン";
+"settings.about" = "について";
+"settings.contact" = "連絡先";
+
+// MARK: - About
+"about.title" = "について";
+"about.appName" = "FilmStock";
+"about.version" = "バージョン %@";
+"about.tagline" = "あなた専用のフィルムコレクション管理アプリ";
+"about.description" = "FilmStockは、アナログフィルムコレクションの追跡、カメラに装填されたフィルムの管理、お気に入りのフィルムストックを見失わないようにするのに役立ちます。";
+"about.developedBy" = "開発者";
+"about.contactUs" = "お問い合わせ";
+"about.emailError.title" = "メールが利用できません";
+"about.emailError.message" = "hello@halbe.no までご連絡ください";
+"about.emailNotAvailable.title" = "メールが利用できません";
+"about.emailNotAvailable.message" = "hello@halbe.no までご連絡ください";
+
+// MARK: - Support / Buy Me a Coffee
+"support.title" = "サポート";
+"support.buyMeCoffee" = "コーヒーを贈る";
+"support.description" = "開発をサポート";
+"support.header" = "FilmStockをサポート";
+"support.message" = "FilmStockを楽しんでいただけている場合は、少額のご支援をご検討ください。";
+"support.message.withPrice" = "FilmStockを楽しんでいただけている場合は、%@ のご支援をご検討ください。";
+"support.benefits" = "あなたのサポートは、アプリを最新の状態に保ち、新機能を追加し、FilmStockが最高のフィルム管理アプリであり続けることを保証します。";
+"support.button.withPrice" = "コーヒーを贈る (%@)";
+"support.loading" = "読み込み中...";
+"support.selectAmount" = "金額を選択：";
+"support.restore" = "購入を復元";
+"support.thankYou.title" = "ありがとうございます！";
+"support.thankYou.message" = "あなたのサポートは私にとって大きな意味があります。本当に感謝しています！";
+"support.confirm.title" = "サポートを確認";
+"support.confirm.message" = "%@ のサポート寄付を購入します。ご協力ありがとうございます！";
+"support.confirm.message.noPrice" = "サポート寄付を購入します。ご協力ありがとうございます！";
+"support.confirm" = "はい、FilmStockをサポート";
+"support.error.productNotAvailable" = "製品が利用できません。後でもう一度お試しください。";
+"support.error.verificationFailed" = "購入の検証に失敗しました：%@";
+"support.error.pending" = "購入は承認待ちです";
+"support.error.unknown" = "不明な購入結果";
+"support.error.failed" = "購入に失敗しました：%@";
+
+// MARK: - Delete Confirmations  
+"delete.film.title" = "フィルムを削除";
+"delete.film.message" = "%@ を削除してもよろしいですか？";
+"delete.image.title" = "画像を削除";
+
+// MARK: - Error Messages
+"error.cannotDelete.title" = "フィルムを削除できません";
+"error.cannotDeleteLoaded" = "\"%@\" は現在カメラに装填されています。削除する前に取り出してください。";
+
+// MARK: - Load Film
+"load.title" = "フィルムを装填";
+"load.selectCamera" = "カメラを選択";
+"load.selectFormat" = "フォーマットを選択";
+"load.searchCamera" = "カメラを検索または追加";
+"load.error.noRolls" = "このフォーマットで利用可能なロールがありません";
+"load.error.maxFilms" = "一度に最大5本のフィルムを装填できます";
+"load.error.failed" = "フィルムの装填に失敗しました。少なくとも %d %@ が利用可能であることを確認してください。";
+"load.noFormatsAvailable" = "利用可能なフォーマットがありません";
+"load.rollsAvailable" = "本利用可能";
+"load.sheetsAvailable" = "枚利用可能";
+"load.loadedSuccessfully" = "フィルムが正常に装填されました！";
+"load.cameraRequired" = "カメラを選択してください";
+"load.formatRequired" = "フォーマットを選択してください";
+"load.addNewCamera" = "新しいカメラを追加";
+"load.enterCameraName" = "カメラ名を入力";
+"load.cameraName" = "カメラ名";
+"load.addCamera" = "カメラを追加";
+"load.quantityToLoad" = "装填する数量";
+
+// MARK: - Cameras
+"camera.title" = "カメラ";
+"camera.addCamera" = "カメラを追加";
+"camera.name" = "カメラ名";
+"camera.model" = "モデル";
+
+// MARK: - Film Detail
+"detail.information" = "フィルム情報";
+"detail.formats" = "フォーマット";
+"detail.otherFormats" = "その他のフォーマット";
+"detail.noFormats" = "利用可能なフォーマットがありません";
+"detail.loadedAt" = "装填済み";
+
+// MARK: - Onboarding
+"onboarding.welcome.title" = "FilmStockへようこそ";
+"onboarding.welcome.subtitle" = "あなた専用のアナログフィルムマネージャー";
+"onboarding.feature1.title" = "コレクションを追跡";
+"onboarding.feature1.description" = "すべてのフィルムロール、シート、フォーマットを一か所で追跡";
+"onboarding.feature2.title" = "装填済みフィルムを管理";
+"onboarding.feature2.description" = "どのカメラにどのフィルムが装填されているかを正確に把握";
+"onboarding.feature3.title" = "カスタムフィルムカード";
+"onboarding.feature3.description" = "素早い視覚的参照のためにフィルムボックスの写真を撮影";
+"onboarding.getStarted" = "始める";
+"onboarding.tooltip.addFilm.title" = "最初のフィルムを追加";
+"onboarding.tooltip.addFilm.message" = "ここをタップしてコレクションにフィルムを追加します。さまざまなフォーマット、有効期限を追跡し、フィルムボックスの写真を追加することもできます！";
+"onboarding.tooltip.filter.title" = "フィルムをフィルタリング";
+"onboarding.tooltip.filter.message" = "フィルターを使用して、種類、フォーマット、またはメーカー別にコレクションを整理します。「空のものを非表示」を切り替えて、在庫のあるフィルムのみを表示します。";
+
+// MARK: - Help
+"help.collection.title" = "マイコレクションについて";
+"help.collection.message" = "これは、カスタムフィルムリマインダーカード写真のギャラリーです。フィルムの追加または編集中にカメラボタンを使用して写真を撮ると、ここに表示されます。これらの写真は、フィルムボックスの外観を思い出すのに役立ち、素早い識別に便利です。不要になった画像は削除できます。";
+"help.loadedFilms.title" = "装填中のフィルムについて";
+"help.loadedFilms.message" = "このビューには、カメラに現在装填されているすべてのフィルムが表示されます。マイフィルムタブからフィルムを装填すると、カメラ名と装填日とともにここに表示されます。任意のフィルムを左にスワイプして取り出します（フィルムストックに戻ります）。これにより、どのフィルムが積極的に使用されているかを追跡し、誤って同じフィルムを2回装填することを防ぎます。";
+
+// MARK: - Accessibility
+"accessibility.filmImage" = "フィルム画像";
+"accessibility.manufacturerIcon" = "メーカーアイコン";
+"accessibility.deleteButton" = "削除";
+"accessibility.editButton" = "編集";
+"accessibility.filterButton" = "フィルター";
+"accessibility.searchField" = "フィルムを検索";
+
+// MARK: - Time
+"time.loadedAt" = "%@ に装填";
+"time.justNow" = "たった今";
+"time.minutesAgo" = "%d 分前";
+"time.hoursAgo" = "%d 時間前";
+"time.daysAgo" = "%d 日前";
+
+// MARK: - Widget
+"widget.title" = "装填中のフィルム";
+"widget.description" = "現在装填中のフィルムを表示";
+"widget.noFilms" = "装填されたフィルムがありません";
+"widget.unsupportedSize" = "小サイズのみサポート";
+
+

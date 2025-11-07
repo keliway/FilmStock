@@ -281,6 +281,23 @@ class FilmStockDataManager: ObservableObject {
         deleteFilmStocks([filmStock])
     }
     
+    func isFilmLoaded(_ filmStock: FilmStock) -> Bool {
+        guard let context = modelContext else { return false }
+        
+        // Fetch all LoadedFilm entries
+        let loadedFilmDescriptor = FetchDescriptor<LoadedFilm>()
+        guard let loadedFilms = try? context.fetch(loadedFilmDescriptor) else { return false }
+        
+        // Check if any loaded film matches this film
+        return loadedFilms.contains { loadedFilm in
+            guard let film = loadedFilm.film else { return false }
+            return film.name == filmStock.name &&
+                   film.manufacturer?.name == filmStock.manufacturer &&
+                   film.type == filmStock.type.rawValue &&
+                   film.filmSpeed == filmStock.filmSpeed
+        }
+    }
+    
     func deleteFilmStocks(_ filmStocks: [FilmStock]) {
         guard let context = modelContext else { return }
         guard !filmStocks.isEmpty else { return }

@@ -7,6 +7,11 @@ I've created the localization infrastructure:
 1. **Created Localizable.strings files:**
    - `FilmStock/en.lproj/Localizable.strings` (English)
    - `FilmStock/de.lproj/Localizable.strings` (German)
+   - `FilmStock/fr.lproj/Localizable.strings` (French)
+   - `FilmStock/ja.lproj/Localizable.strings` (Japanese)
+   - `FilmStock/es.lproj/Localizable.strings` (Spanish)
+   - `FilmStock/no.lproj/Localizable.strings` (Norwegian)
+   - `FilmStock/pl.lproj/Localizable.strings` (Polish)
 
 2. **Updated Key Views to use localization:**
    - MainTabView (tab labels)
@@ -21,33 +26,44 @@ I've created the localization infrastructure:
 
 1. In Xcode, **right-click** on the `FilmStock` folder in the Project Navigator
 2. Select **Add Files to "FilmStock"...**
-3. Navigate to and select both:
+3. Navigate to and select all:
    - `FilmStock/en.lproj` folder
    - `FilmStock/de.lproj` folder
+   - `FilmStock/fr.lproj` folder
+   - `FilmStock/ja.lproj` folder
+   - `FilmStock/es.lproj` folder
+   - `FilmStock/no.lproj` folder
+   - `FilmStock/pl.lproj` folder
 4. Make sure **"Copy items if needed"** is **unchecked** (they're already in place)
 5. Make sure **"Create groups"** is selected
 6. Make sure the **FilmStock target** is checked
 7. Click **Add**
 
-### 2. Enable German Localization in Project Settings
+### 2. Enable Localizations in Project Settings
 
 1. Select the **FilmStock** project in the Project Navigator (top item)
 2. Select the **FilmStock** target
 3. Go to the **Info** tab
 4. Under **Localizations**, you should see "English"
 5. Click the **+** button below the localizations list
-6. Select **German (de)** from the dropdown
-7. Xcode will show a dialog asking which files to localize
+6. Add each language:
+   - **German (de)**
+   - **French (fr)**
+   - **Japanese (ja)**
+   - **Spanish (es)**
+   - **Norwegian (no)**
+   - **Polish (pl)**
+7. For each language, Xcode will show a dialog asking which files to localize
 8. Check the `Localizable.strings` file
 9. Click **Finish**
 
 ### 3. Verify the Setup
 
-1. In the Project Navigator, expand the `en.lproj` and `de.lproj` folders
-2. You should see `Localizable.strings` in each
+1. In the Project Navigator, expand the `.lproj` folders
+2. You should see `Localizable.strings` in each (`en`, `de`, `fr`, `ja`, `es`, `no`, `pl`)
 3. Click on `Localizable.strings` in the left sidebar
 4. In the **File Inspector** (right sidebar), you should see:
-   - **Localization** section showing both "English" and "German (de)"
+   - **Localization** section showing all seven languages
 
 ### 4. Test the Localization
 

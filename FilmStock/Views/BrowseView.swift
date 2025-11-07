@@ -26,6 +26,8 @@ struct BrowseView: View {
     @State private var showAddFilmTooltip = false
     @State private var showFilterTooltip = false
     @State private var tooltipPreferences: [TooltipPreference] = []
+    @State private var showingDeleteError = false
+    @State private var deleteErrorMessage = ""
     
     enum ViewMode {
         case cards, list
@@ -266,9 +268,14 @@ struct BrowseView: View {
                     dataManager: dataManager
                 )
             }
-            .sheet(isPresented: $showingSettings) {
-                SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
-            }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
+        }
+        .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text(deleteErrorMessage)
+        }
             .onAppear {
                 if OnboardingManager.shared.hasCompletedOnboarding {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -480,6 +487,13 @@ struct BrowseView: View {
             film.manufacturer == group.manufacturer &&
             film.type == group.type &&
             film.filmSpeed == group.filmSpeed
+        }
+        
+        // Check if any of the films are currently loaded
+        if let loadedFilm = filmsToDelete.first(where: { dataManager.isFilmLoaded($0) }) {
+            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+            showingDeleteError = true
+            return
         }
         
         dataManager.deleteFilmStocks(filmsToDelete)

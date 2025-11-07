@@ -25,6 +25,8 @@ struct FilmRowView: View {
     @State private var image: UIImage?
     @State private var showingEdit = false
     @State private var showingDeleteAlert = false
+    @State private var showingDeleteError = false
+    @State private var deleteErrorMessage = ""
     
     var body: some View {
             HStack(spacing: 12) {
@@ -84,6 +86,11 @@ struct FilmRowView: View {
         } message: {
             Text(String(format: NSLocalizedString("delete.film.message", comment: ""), groupedFilm.name))
         }
+        .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text(deleteErrorMessage)
+        }
         .onAppear {
             loadImage()
         }
@@ -95,6 +102,13 @@ struct FilmRowView: View {
             film.manufacturer == groupedFilm.manufacturer &&
             film.type == groupedFilm.type &&
             film.filmSpeed == groupedFilm.filmSpeed
+        }
+        
+        // Check if any of the films are currently loaded
+        if let loadedFilm = filmsToDelete.first(where: { dataManager.isFilmLoaded($0) }) {
+            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+            showingDeleteError = true
+            return
         }
         
         for film in filmsToDelete {

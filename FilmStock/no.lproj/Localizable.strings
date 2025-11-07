@@ -1,0 +1,247 @@
+/* 
+  Localizable.strings (Norwegian)
+  FilmStock
+*/
+
+// MARK: - Tabs & Navigation
+"tab.myFilms" = "Mine Filmer";
+"tab.loadedFilms" = "Innlagte Filmer";
+"tab.collection" = "Min Samling";
+
+// MARK: - Common Actions
+"action.add" = "Legg til";
+"action.edit" = "Rediger";
+"action.delete" = "Slett";
+"action.done" = "Ferdig";
+"action.cancel" = "Avbryt";
+"action.save" = "Lagre";
+"action.load" = "Legg inn";
+"action.unload" = "Ta ut";
+"action.unloadOne" = "Ta ut 1 ark";
+"action.unloadAll" = "Ta ut alle";
+"action.close" = "Lukk";
+"action.ok" = "OK";
+"action.addNew" = "Legg til \"%@\"";
+
+// MARK: - Film Management
+"film.addFilm" = "Legg til film";
+"film.editFilm" = "Rediger film";
+"film.manufacturer" = "Produsent";
+"film.selectManufacturer" = "Velg produsent";
+"film.filmName" = "Filmnavn";
+"film.name" = "Navn";
+"film.filmSpeed" = "Filmfølsomhet";
+"film.speed" = "Følsomhet";
+"film.format" = "Format";
+"film.type" = "Type";
+"film.quantity" = "Antall";
+"film.expiryDate" = "Utløpsdato";
+"film.comments" = "Kommentarer";
+"film.filmInformation" = "Filminformasjon";
+"film.filmReminder" = "Filmpåminnelse";
+"film.addExpiryDate" = "Legg til utløpsdato";
+"film.rollsCount" = "%d ruller";
+"film.rollCount" = "%d rulle";
+"Quantity: %d" = "Antall: %d";
+"Sheets: %d" = "Ark: %d";
+"film.expiryDateFormat" = "MM/ÅÅÅÅ eller ÅÅÅÅ";
+"film.searchManufacturer" = "Søk eller legg til produsent";
+
+// MARK: - Film Types
+"type.color" = "Farge";
+"type.blackAndWhite" = "Svart-hvitt";
+
+// MARK: - Film Formats
+"format.35mm" = "35mm";
+"format.120" = "120";
+"format.127" = "127";
+"format.4x5" = "4×5";
+"format.5x7" = "5×7";
+"format.8x10" = "8×10";
+"format.sheet.count" = "%d ark";
+"format.sheets.count" = "%d ark";
+
+// MARK: - Image Selection
+"image.takePhoto" = "Ta bilde";
+"image.openCatalog" = "Åpne katalog";
+"image.catalog" = "Bildekatalog";
+"image.defaultCatalog" = "Standard katalog";
+"image.myPhotos" = "Mine bilder";
+
+// MARK: - Empty States
+"empty.noFilms.title" = "Ingen filmer ennå";
+"empty.noFilms.message" = "Legg til din første film for å komme i gang!";
+"empty.noLoadedFilms.title" = "Ingen innlagte filmer";
+"empty.noLoadedFilms.message" = "Legg inn en film fra Mine Filmer-fanen for å spore hvilke ruller som er i bruk";
+"empty.noCollection.title" = "Ingen påminnelseskort (ennå)";
+"empty.noCollection.message" = "Last opp dine egne filmpåminnelser når du legger til/redigerer en film og start samlingen din!";
+"empty.noCatalogImages.title" = "Ingen bilder tilgjengelig";
+"empty.noCatalogImages.message" = "Ingen standardbilder funnet i pakken";
+"empty.noCustomPhotos.title" = "Ingen egne bilder";
+"empty.noCustomPhotos.message" = "Ta bilder av filmkortene dine når du legger til filmer for å bygge samlingen din";
+
+// MARK: - Filters & Search
+"filter.title" = "Filtre";
+"filter.hideEmpty" = "Skjul tomme";
+"filter.type" = "Type";
+"filter.format" = "Format";
+"filter.manufacturer" = "Produsent";
+"filter.speed" = "Følsomhet";
+"filter.filmSpeed" = "Filmfølsomhet";
+"filter.options" = "Alternativer";
+"filter.showExpiredOnly" = "Vis kun utgåtte";
+"filter.clearAll" = "Tøm alle";
+"filter.apply" = "Bruk";
+"search.placeholder" = "Søk etter filmer...";
+
+// MARK: - View Modes
+"view.cards" = "Kort";
+"view.list" = "Liste";
+
+// MARK: - Alerts & Confirmations
+"alert.delete.title" = "Slett film";
+"alert.delete.message" = "Er du sikker på at du vil slette denne filmen? Alle relaterte formater vil bli fjernet.";
+"alert.deleteImage.title" = "Slett bilde";
+"alert.deleteImage.single" = "Er du sikker på at du vil slette bildet for %@?";
+"alert.deleteImage.multiple" = "Er du sikker på at du vil slette %d bilde(r)?";
+"alert.unload.title" = "Ta ut film";
+"alert.unload.message" = "Er du sikker på at du vil ta ut %@?";
+
+// MARK: - Settings
+"settings.title" = "Innstillinger";
+"settings.myFilms" = "Mine Filmer";
+"settings.general" = "Generelt";
+"settings.support" = "Støtte";
+"settings.hideEmpty" = "Aldri vis tomme filmer";
+"settings.hideEmpty.footer" = "Disse innstillingene styrer standardvisningen når du åpner appen.";
+"settings.tableView" = "Vis alltid tabellvisning";
+"settings.appearance" = "Utseende";
+"settings.appearance.system" = "System";
+"settings.appearance.light" = "Lys";
+"settings.appearance.dark" = "Mørk";
+"settings.version" = "Versjon";
+"settings.about" = "Om";
+"settings.contact" = "Kontakt";
+
+// MARK: - About
+"about.title" = "Om";
+"about.appName" = "FilmStock";
+"about.version" = "Versjon %@";
+"about.tagline" = "Din personlige filmsamlingshåndterer";
+"about.description" = "FilmStock hjelper deg med å holde styr på din analoge filmsamling, administrere innlagte filmer i kameraene dine, og aldri miste oversikten over favorittfilmene dine.";
+"about.developedBy" = "Utviklet av";
+"about.contactUs" = "Kontakt oss";
+"about.emailError.title" = "E-post ikke tilgjengelig";
+"about.emailError.message" = "Vennligst kontakt oss på hello@halbe.no";
+"about.emailNotAvailable.title" = "E-post ikke tilgjengelig";
+"about.emailNotAvailable.message" = "Vennligst kontakt oss på hello@halbe.no";
+
+// MARK: - Support / Buy Me a Coffee
+"support.title" = "Støtte";
+"support.buyMeCoffee" = "Kjøp meg en kaffe";
+"support.description" = "Støtt utviklingen";
+"support.header" = "Støtt FilmStock";
+"support.message" = "Hvis du liker FilmStock, vurder å støtte utviklingen med et lite bidrag.";
+"support.message.withPrice" = "Hvis du liker FilmStock, vurder å støtte utviklingen med et lite bidrag på %@.";
+"support.benefits" = "Din støtte hjelper med å holde appen oppdatert, legge til nye funksjoner og sikre at FilmStock fortsetter å være den beste filmhåndteringsappen.";
+"support.button.withPrice" = "Kjøp meg en kaffe (%@)";
+"support.loading" = "Laster...";
+"support.selectAmount" = "Velg et beløp:";
+"support.restore" = "Gjenopprett kjøp";
+"support.thankYou.title" = "Takk!";
+"support.thankYou.message" = "Din støtte betyr mye for meg. Jeg setter virkelig pris på det!";
+"support.confirm.title" = "Bekreft støtte";
+"support.confirm.message" = "Dette vil kjøpe et støttebidrag på %@. Takk for din generøsitet!";
+"support.confirm.message.noPrice" = "Dette vil kjøpe et støttebidrag. Takk for din generøsitet!";
+"support.confirm" = "Ja, støtt FilmStock";
+"support.error.productNotAvailable" = "Produkt ikke tilgjengelig. Vennligst prøv igjen senere.";
+"support.error.verificationFailed" = "Kjøpsverifisering mislyktes: %@";
+"support.error.pending" = "Kjøpet venter på godkjenning";
+"support.error.unknown" = "Ukjent kjøpsresultat";
+"support.error.failed" = "Kjøp mislyktes: %@";
+
+// MARK: - Delete Confirmations  
+"delete.film.title" = "Slett film";
+"delete.film.message" = "Er du sikker på at du vil slette %@?";
+"delete.image.title" = "Slett bilde";
+
+// MARK: - Error Messages
+"error.cannotDelete.title" = "Kan ikke slette film";
+"error.cannotDeleteLoaded" = "\"%@\" er for øyeblikket innlagt i et kamera. Vennligst ta den ut først før du sletter.";
+
+// MARK: - Load Film
+"load.title" = "Legg inn film";
+"load.selectCamera" = "Velg kamera";
+"load.selectFormat" = "Velg format";
+"load.searchCamera" = "Søk eller legg til kamera";
+"load.error.noRolls" = "Ingen ruller tilgjengelig for dette formatet";
+"load.error.maxFilms" = "Maksimalt 5 filmer kan legges inn av gangen";
+"load.error.failed" = "Kunne ikke legge inn film. Sørg for at du har minst %d %@ tilgjengelig.";
+"load.noFormatsAvailable" = "Ingen formater tilgjengelig";
+"load.rollsAvailable" = "rulle(r) tilgjengelig";
+"load.sheetsAvailable" = "ark tilgjengelig";
+"load.loadedSuccessfully" = "Film lagt inn!";
+"load.cameraRequired" = "Vennligst velg et kamera";
+"load.formatRequired" = "Vennligst velg et format";
+"load.addNewCamera" = "Legg til nytt kamera";
+"load.enterCameraName" = "Skriv inn kameranavn";
+"load.cameraName" = "Kameranavn";
+"load.addCamera" = "Legg til kamera";
+"load.quantityToLoad" = "Antall å legge inn";
+
+// MARK: - Cameras
+"camera.title" = "Kameraer";
+"camera.addCamera" = "Legg til kamera";
+"camera.name" = "Kameranavn";
+"camera.model" = "Modell";
+
+// MARK: - Film Detail
+"detail.information" = "Filminformasjon";
+"detail.formats" = "Formater";
+"detail.otherFormats" = "Andre formater";
+"detail.noFormats" = "Ingen formater tilgjengelig";
+"detail.loadedAt" = "Innlagt";
+
+// MARK: - Onboarding
+"onboarding.welcome.title" = "Velkommen til FilmStock";
+"onboarding.welcome.subtitle" = "Din personlige analoge filmhåndterer";
+"onboarding.feature1.title" = "Spor samlingen din";
+"onboarding.feature1.description" = "Hold oversikt over alle filmruller, ark og formater på ett sted";
+"onboarding.feature2.title" = "Administrer innlagte filmer";
+"onboarding.feature2.description" = "Vit nøyaktig hvilke filmer som er i hvilke kameraer";
+"onboarding.feature3.title" = "Egne filmkort";
+"onboarding.feature3.description" = "Ta bilder av filmeskene dine for rask visuell referanse";
+"onboarding.getStarted" = "Kom i gang";
+"onboarding.tooltip.addFilm.title" = "Legg til din første film";
+"onboarding.tooltip.addFilm.message" = "Trykk her for å legge til en film i samlingen din. Du kan spore forskjellige formater, utløpsdatoer og til og med legge til bilder av filmeskene dine!";
+"onboarding.tooltip.filter.title" = "Filtrer filmene dine";
+"onboarding.tooltip.filter.message" = "Bruk filtre for å organisere samlingen din etter type, format eller produsent. Slå på 'Skjul tomme' for å vise bare filmer du har på lager.";
+
+// MARK: - Help
+"help.collection.title" = "Om Min Samling";
+"help.collection.message" = "Dette er ditt galleri med egne filmpåminnelsesbilder. Når du tar et bilde med kameraknappen mens du legger til eller redigerer en film, vises det her. Disse bildene hjelper deg med å huske hvordan filmeskene dine ser ut og kan være nyttige for rask identifisering. Du kan slette bilder du ikke lenger trenger.";
+"help.loadedFilms.title" = "Om Innlagte Filmer";
+"help.loadedFilms.message" = "Denne visningen viser alle filmer som for øyeblikket er innlagt i kameraene dine. Når du legger inn en film fra Mine Filmer-fanen, vises den her sammen med kameranavn og innleggingsdato. Sveip til venstre på en film for å ta den ut (som returnerer den til filmlageret ditt). Dette hjelper deg med å spore hvilke filmer som aktivt brukes og forhindrer utilsiktet innlegging av samme film to ganger.";
+
+// MARK: - Accessibility
+"accessibility.filmImage" = "Filmbilde";
+"accessibility.manufacturerIcon" = "Produsentikon";
+"accessibility.deleteButton" = "Slett";
+"accessibility.editButton" = "Rediger";
+"accessibility.filterButton" = "Filtrer";
+"accessibility.searchField" = "Søk etter filmer";
+
+// MARK: - Time
+"time.loadedAt" = "Innlagt %@";
+"time.justNow" = "akkurat nå";
+"time.minutesAgo" = "%d minutter siden";
+"time.hoursAgo" = "%d timer siden";
+"time.daysAgo" = "%d dager siden";
+
+// MARK: - Widget
+"widget.title" = "Innlagte filmer";
+"widget.description" = "Se dine innlagte filmer";
+"widget.noFilms" = "Ingen innlagte filmer";
+"widget.unsupportedSize" = "Kun liten størrelse støttes";
+
+

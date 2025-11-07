@@ -141,7 +141,9 @@ struct LoadedFilmRow: View {
                             Text(formatDisplayName)
                             if isSheetFormat(loadedFilm.format) {
                                 Text("•")
-                                Text("\(loadedFilm.quantity) \(loadedFilm.quantity == 1 ? "sheet" : "sheets")")
+                                Text(loadedFilm.quantity == 1 
+                                     ? String(format: NSLocalizedString("format.sheet.count", comment: ""), loadedFilm.quantity)
+                                     : String(format: NSLocalizedString("format.sheets.count", comment: ""), loadedFilm.quantity))
                                     .foregroundColor(.accentColor)
                             }
                         }
@@ -160,7 +162,7 @@ struct LoadedFilmRow: View {
                         }
                     }
                     
-                    Text("Loaded \(formatDate(loadedFilm.loadedAt))")
+                    Text(String(format: NSLocalizedString("time.loadedAt", comment: ""), formatDate(loadedFilm.loadedAt)))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

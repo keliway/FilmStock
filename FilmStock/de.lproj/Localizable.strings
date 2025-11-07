@@ -58,6 +58,8 @@
 "format.4x5" = "4×5";
 "format.5x7" = "5×7";
 "format.8x10" = "8×10";
+"format.sheet.count" = "%d Blatt";
+"format.sheets.count" = "%d Blatt";
 
 // MARK: - Image Selection
 "image.takePhoto" = "Foto aufnehmen";
@@ -84,7 +86,9 @@
 "filter.type" = "Typ";
 "filter.format" = "Format";
 "filter.manufacturer" = "Hersteller";
+"filter.speed" = "Empfindlichkeit";
 "filter.filmSpeed" = "Empfindlichkeit";
+"filter.options" = "Optionen";
 "filter.showExpiredOnly" = "Nur abgelaufene anzeigen";
 "filter.clearAll" = "Alle löschen";
 "filter.apply" = "Anwenden";
@@ -160,6 +164,10 @@
 "delete.film.title" = "Film löschen";
 "delete.film.message" = "Möchtest du %@ wirklich löschen?";
 "delete.image.title" = "Bild löschen";
+
+// MARK: - Error Messages
+"error.cannotDelete.title" = "Film kann nicht gelöscht werden";
+"error.cannotDeleteLoaded" = "\"%@\" ist derzeit in einer Kamera eingelegt. Bitte nimm ihn zuerst heraus, bevor du ihn löschst.";
 
 // MARK: - Load Film
 "load.title" = "Film einlegen";

@@ -11,6 +11,8 @@ struct SwipeableFilmCard: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var showingLoad = false
+    @State private var showingDeleteError = false
+    @State private var deleteErrorMessage = ""
     
     var body: some View {
         FilmCardView(groupedFilm: groupedFilm)
@@ -33,6 +35,11 @@ struct SwipeableFilmCard: View {
                 LoadFilmView(groupedFilm: groupedFilm)
                     .environmentObject(dataManager)
             }
+            .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
+                Button("action.ok", role: .cancel) { }
+            } message: {
+                Text(deleteErrorMessage)
+            }
     }
     
     private var hasAvailableFormats: Bool {
@@ -45,6 +52,13 @@ struct SwipeableFilmCard: View {
             film.manufacturer == groupedFilm.manufacturer &&
             film.type == groupedFilm.type &&
             film.filmSpeed == groupedFilm.filmSpeed
+        }
+        
+        // Check if any of the films are currently loaded
+        if let loadedFilm = filmsToDelete.first(where: { dataManager.isFilmLoaded($0) }) {
+            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+            showingDeleteError = true
+            return
         }
         
         dataManager.deleteFilmStocks(filmsToDelete)

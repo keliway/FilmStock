@@ -105,7 +105,7 @@ struct FilterPopoverView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     // Manufacturer chips
                     FilterChipSection(
-                        title: "Manufacturer",
+                        title: String(localized: "filter.manufacturer"),
                         items: availableManufacturers,
                         selection: Binding(
                             get: { selectedManufacturers },
@@ -120,7 +120,7 @@ struct FilterPopoverView: View {
                     
                     // Type chips
                     FilterChipSection(
-                        title: "Type",
+                        title: String(localized: "filter.type"),
                         items: availableTypes.map { $0.displayName },
                         selection: Binding(
                             get: { Set(selectedTypes.map { $0.displayName }) },
@@ -134,7 +134,7 @@ struct FilterPopoverView: View {
                     
                     // Speed ranges
                     FilterChipSection(
-                        title: "Speed",
+                        title: String(localized: "filter.speed"),
                         items: availableSpeedRanges,
                         selection: Binding(
                             get: { selectedSpeedRanges },
@@ -146,7 +146,7 @@ struct FilterPopoverView: View {
                     
                     // Format chips
                     FilterChipSection(
-                        title: "Format",
+                        title: String(localized: "filter.format"),
                         items: availableFormats.map { $0.displayName },
                         selection: Binding(
                             get: { Set(selectedFormats.map { $0.displayName }) },
@@ -160,12 +160,12 @@ struct FilterPopoverView: View {
                     
                     // Toggles
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Options")
+                        Text("filter.options")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Toggle("Show only expired films", isOn: $showExpiredOnly)
-                        Toggle("Hide empty", isOn: $hideEmpty)
+                        Toggle("filter.showExpiredOnly", isOn: $showExpiredOnly)
+                        Toggle("filter.hideEmpty", isOn: $hideEmpty)
                     }
                 }
                 .padding()
