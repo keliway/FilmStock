@@ -28,8 +28,8 @@ struct LoadedFilmsWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: LoadedFilmsWidgetConfiguration.self, provider: LoadedFilmsTimelineProvider()) { entry in
             LoadedFilmsWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Loaded Films")
-        .description("View your currently loaded films")
+        .configurationDisplayName(Text("widget.title"))
+        .description(Text("widget.description"))
         .supportedFamilies([.systemSmall])
     }
 }
@@ -82,7 +82,7 @@ struct LoadedFilmsWidgetEntryView: View {
     var body: some View {
         // Only support systemSmall size
         if family != .systemSmall {
-            Text("Only small size supported")
+            Text("widget.unsupportedSize")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .widgetBackground {
@@ -221,7 +221,7 @@ struct EmptyWidgetView: View {
                 .font(.system(size: 32))
                 .foregroundColor(.gray)
             
-            Text("No Films Loaded")
+            Text("widget.noFilms")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(.gray)
         }

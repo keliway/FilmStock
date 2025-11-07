@@ -25,7 +25,7 @@ struct AboutView: View {
                     .fontWeight(.bold)
                 
                 // Version
-                Text("Version \(appVersion)")
+                Text(String(format: NSLocalizedString("about.version", comment: ""), appVersion))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -34,10 +34,10 @@ struct AboutView: View {
                 
                 // Description
                 VStack(spacing: 16) {
-                    Text("Your Personal Film Collection Manager")
+                    Text("about.tagline")
                         .font(.headline)
                     
-                    Text("FilmStock helps you keep track of your analog film collection, manage loaded films in your cameras, and never lose track of your favorite film stocks.")
+                    Text("about.description")
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -49,7 +49,7 @@ struct AboutView: View {
                 
                 // Credits
                 VStack(spacing: 8) {
-                    Text("Developed by")
+                    Text("about.developedBy")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text("Jonas Halbe")
@@ -69,7 +69,7 @@ struct AboutView: View {
                 } label: {
                     HStack {
                         Image(systemName: "envelope.fill")
-                        Text("Contact Us")
+                        Text("about.contactUs")
                     }
                     .font(.body)
                     .fontWeight(.medium)
@@ -85,12 +85,12 @@ struct AboutView: View {
             }
             .padding()
         }
-        .navigationTitle("About")
+        .navigationTitle("settings.about")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Email Not Available", isPresented: $showMailError) {
-            Button("OK", role: .cancel) { }
+        .alert("about.emailError.title", isPresented: $showMailError) {
+            Button("action.ok", role: .cancel) { }
         } message: {
-            Text("Please contact us at hello@halbe.no")
+            Text("about.emailError.message")
         }
     }
     

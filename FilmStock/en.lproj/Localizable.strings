@@ -1,0 +1,238 @@
+/* 
+  Localizable.strings (English)
+  FilmStock
+*/
+
+// MARK: - Tabs & Navigation
+"tab.myFilms" = "My Films";
+"tab.loadedFilms" = "Loaded Films";
+"tab.collection" = "My Collection";
+
+// MARK: - Common Actions
+"action.add" = "Add";
+"action.edit" = "Edit";
+"action.delete" = "Delete";
+"action.done" = "Done";
+"action.cancel" = "Cancel";
+"action.save" = "Save";
+"action.load" = "Load";
+"action.unload" = "Unload";
+"action.unloadOne" = "Unload 1 Sheet";
+"action.unloadAll" = "Unload All";
+"action.close" = "Close";
+"action.ok" = "OK";
+"action.addNew" = "Add \"%@\"";
+
+// MARK: - Film Management
+"film.addFilm" = "Add Film";
+"film.editFilm" = "Edit Film";
+"film.manufacturer" = "Manufacturer";
+"film.selectManufacturer" = "Select Manufacturer";
+"film.filmName" = "Film Name";
+"film.name" = "Name";
+"film.filmSpeed" = "Film Speed";
+"film.speed" = "Speed";
+"film.format" = "Format";
+"film.type" = "Type";
+"film.quantity" = "Quantity";
+"film.expiryDate" = "Expiry Date";
+"film.comments" = "Comments";
+"film.filmInformation" = "Film Information";
+"film.filmReminder" = "Film reminder";
+"film.addExpiryDate" = "Add Expiry Date";
+"film.rollsCount" = "%d rolls";
+"film.rollCount" = "%d roll";
+"Quantity: %d" = "Quantity: %d";
+"Sheets: %d" = "Sheets: %d";
+"film.expiryDateFormat" = "MM/YYYY or YYYY";
+"film.searchManufacturer" = "Search or add manufacturer";
+
+// MARK: - Film Types
+"type.color" = "Color";
+"type.blackAndWhite" = "Black & White";
+
+// MARK: - Film Formats
+"format.35mm" = "35mm";
+"format.120" = "120";
+"format.127" = "127";
+"format.4x5" = "4×5";
+"format.5x7" = "5×7";
+"format.8x10" = "8×10";
+
+// MARK: - Image Selection
+"image.takePhoto" = "Take Photo";
+"image.openCatalog" = "Open Catalog";
+"image.catalog" = "Image Catalog";
+"image.defaultCatalog" = "Default Catalog";
+"image.myPhotos" = "My Photos";
+
+// MARK: - Empty States
+"empty.noFilms.title" = "No Films Yet";
+"empty.noFilms.message" = "Add your first film to get started!";
+"empty.noLoadedFilms.title" = "No Loaded Films";
+"empty.noLoadedFilms.message" = "Load a film from the My Films tab to track which rolls are currently in use";
+"empty.noCollection.title" = "No Film Reminder Cards (yet)";
+"empty.noCollection.message" = "Upload your own film reminders when adding/editing a film and start your own collection!";
+"empty.noCatalogImages.title" = "No Images Available";
+"empty.noCatalogImages.message" = "No default images found in the bundle";
+"empty.noCustomPhotos.title" = "No Custom Photos";
+"empty.noCustomPhotos.message" = "Take photos of your film cards when adding films to build your collection";
+
+// MARK: - Filters & Search
+"filter.title" = "Filter";
+"filter.hideEmpty" = "Hide empty";
+"filter.type" = "Type";
+"filter.format" = "Format";
+"filter.manufacturer" = "Manufacturer";
+"filter.filmSpeed" = "Film Speed";
+"filter.showExpiredOnly" = "Show expired only";
+"filter.clearAll" = "Clear All";
+"filter.apply" = "Apply";
+"search.placeholder" = "Search films...";
+
+// MARK: - View Modes
+"view.cards" = "Cards";
+"view.list" = "List";
+
+// MARK: - Alerts & Confirmations
+"alert.delete.title" = "Delete Film";
+"alert.delete.message" = "Are you sure you want to delete this film? All related formats will be removed.";
+"alert.deleteImage.title" = "Delete Image";
+"alert.deleteImage.single" = "Are you sure you want to delete the image for %@?";
+"alert.deleteImage.multiple" = "Are you sure you want to delete %d image(s)?";
+"alert.unload.title" = "Unload Film";
+"alert.unload.message" = "Are you sure you want to unload %@?";
+
+// MARK: - Settings
+"settings.title" = "Settings";
+"settings.myFilms" = "My Films";
+"settings.general" = "General";
+"settings.support" = "Support";
+"settings.hideEmpty" = "Never show empty films";
+"settings.hideEmpty.footer" = "These settings control the default view when you open the app.";
+"settings.tableView" = "Always show the table view";
+"settings.appearance" = "Appearance";
+"settings.appearance.system" = "System";
+"settings.appearance.light" = "Light";
+"settings.appearance.dark" = "Dark";
+"settings.version" = "Version";
+"settings.about" = "About";
+"settings.contact" = "Contact";
+
+// MARK: - About
+"about.title" = "About";
+"about.appName" = "FilmStock";
+"about.version" = "Version %@";
+"about.tagline" = "Your Personal Film Collection Manager";
+"about.description" = "FilmStock helps you keep track of your analog film collection, manage loaded films in your cameras, and never lose track of your favorite film stocks.";
+"about.developedBy" = "Developed by";
+"about.contactUs" = "Contact Us";
+"about.emailError.title" = "Email Not Available";
+"about.emailError.message" = "Please contact us at hello@halbe.no";
+"about.emailNotAvailable.title" = "Email Not Available";
+"about.emailNotAvailable.message" = "Please contact us at hello@halbe.no";
+
+// MARK: - Support / Buy Me a Coffee
+"support.title" = "Support";
+"support.buyMeCoffee" = "Buy Me a Coffee";
+"support.description" = "Support the development";
+"support.header" = "Support FilmStock";
+"support.message" = "If you're enjoying FilmStock, consider supporting its development with a small contribution.";
+"support.message.withPrice" = "If you're enjoying FilmStock, consider supporting its development with a small %@ contribution.";
+"support.benefits" = "Your support helps keep the app updated, adds new features, and ensures FilmStock continues to be the best film management app.";
+"support.button.withPrice" = "Buy Me a Coffee (%@)";
+"support.loading" = "Loading...";
+"support.selectAmount" = "Select an amount:";
+"support.restore" = "Restore Purchases";
+"support.thankYou.title" = "Thank You!";
+"support.thankYou.message" = "Your support means the world to me. I truly appreciate it!";
+"support.confirm.title" = "Confirm Support";
+"support.confirm.message" = "This will purchase a %@ support contribution. Thank you for your generosity!";
+"support.confirm.message.noPrice" = "This will purchase a support contribution. Thank you for your generosity!";
+"support.confirm" = "Yes, Support FilmStock";
+"support.error.productNotAvailable" = "Product not available. Please try again later.";
+"support.error.verificationFailed" = "Purchase verification failed: %@";
+"support.error.pending" = "Purchase is pending approval";
+"support.error.unknown" = "Unknown purchase result";
+"support.error.failed" = "Purchase failed: %@";
+
+// MARK: - Delete Confirmations  
+"delete.film.title" = "Delete Film";
+"delete.film.message" = "Are you sure you want to delete %@?";
+"delete.image.title" = "Delete Image";
+
+// MARK: - Load Film
+"load.title" = "Load Film";
+"load.selectCamera" = "Select Camera";
+"load.selectFormat" = "Select Format";
+"load.searchCamera" = "Search or add camera";
+"load.error.noRolls" = "No rolls available for this format";
+"load.error.maxFilms" = "Maximum of 5 films can be loaded at once";
+"load.error.failed" = "Failed to load film. Make sure you have at least %d %@ available.";
+"load.noFormatsAvailable" = "No formats available";
+"load.rollsAvailable" = "roll(s) available";
+"load.sheetsAvailable" = "sheet(s) available";
+"load.loadedSuccessfully" = "Film loaded successfully!";
+"load.cameraRequired" = "Please select a camera";
+"load.formatRequired" = "Please select a format";
+"load.addNewCamera" = "Add New Camera";
+"load.enterCameraName" = "Enter camera name";
+"load.cameraName" = "Camera Name";
+"load.addCamera" = "Add Camera";
+"load.quantityToLoad" = "Quantity to Load";
+
+// MARK: - Cameras
+"camera.title" = "Cameras";
+"camera.addCamera" = "Add Camera";
+"camera.name" = "Camera Name";
+"camera.model" = "Model";
+
+// MARK: - Film Detail
+"detail.information" = "Film Information";
+"detail.formats" = "Formats";
+"detail.otherFormats" = "Other Formats";
+"detail.noFormats" = "No formats available";
+"detail.loadedAt" = "Loaded";
+
+// MARK: - Onboarding
+"onboarding.welcome.title" = "Welcome to FilmStock";
+"onboarding.welcome.subtitle" = "Your personal analog film manager";
+"onboarding.feature1.title" = "Track Your Collection";
+"onboarding.feature1.description" = "Keep track of all your film rolls, sheets, and formats in one place";
+"onboarding.feature2.title" = "Manage Loaded Films";
+"onboarding.feature2.description" = "Know exactly which films are loaded in which cameras";
+"onboarding.feature3.title" = "Custom Film Cards";
+"onboarding.feature3.description" = "Take photos of your film boxes for quick visual reference";
+"onboarding.getStarted" = "Get Started";
+"onboarding.tooltip.addFilm.title" = "Add Your First Film";
+"onboarding.tooltip.addFilm.message" = "Tap here to add a film to your collection. You can track different formats, expiry dates, and even add photos of your film boxes!";
+"onboarding.tooltip.filter.title" = "Filter Your Films";
+"onboarding.tooltip.filter.message" = "Use filters to organize your collection by type, format, or manufacturer. Toggle 'Hide empty' to show only films you have in stock.";
+
+// MARK: - Help
+"help.collection.title" = "About My Collection";
+"help.collection.message" = "This is your gallery of custom film reminder card photos. When you take a photo using the camera button while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need.";
+"help.loadedFilms.title" = "About Loaded Films";
+"help.loadedFilms.message" = "This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it (which returns it to your film stock). This helps you track which films are actively being used and prevents accidentally loading the same film twice.";
+
+// MARK: - Accessibility
+"accessibility.filmImage" = "Film image";
+"accessibility.manufacturerIcon" = "Manufacturer icon";
+"accessibility.deleteButton" = "Delete";
+"accessibility.editButton" = "Edit";
+"accessibility.filterButton" = "Filter";
+"accessibility.searchField" = "Search films";
+
+// MARK: - Time
+"time.loadedAt" = "Loaded %@";
+"time.justNow" = "just now";
+"time.minutesAgo" = "%d minutes ago";
+"time.hoursAgo" = "%d hours ago";
+"time.daysAgo" = "%d days ago";
+
+// MARK: - Widget
+"widget.title" = "Loaded Films";
+"widget.description" = "View your currently loaded films";
+"widget.noFilms" = "No Films Loaded";
+"widget.unsupportedSize" = "Only small size supported";
+

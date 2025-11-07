@@ -61,10 +61,10 @@ struct FilmRowView: View {
             
             // Menu button for edit/delete
             Menu {
-                Button("Edit", systemImage: "pencil") {
+                Button("action.edit", systemImage: "pencil") {
                     showingEdit = true
                 }
-                Button("Delete", systemImage: "trash", role: .destructive) {
+                Button("action.delete", systemImage: "trash", role: .destructive) {
                     showingDeleteAlert = true
                 }
             } label: {
@@ -76,13 +76,13 @@ struct FilmRowView: View {
             EditFilmView(groupedFilm: groupedFilm)
                 .environmentObject(dataManager)
         }
-        .alert("Delete Film", isPresented: $showingDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        .alert("delete.film.title", isPresented: $showingDeleteAlert) {
+            Button("action.cancel", role: .cancel) { }
+            Button("action.delete", role: .destructive) {
                 deleteFilm()
             }
         } message: {
-            Text("Are you sure you want to delete \(groupedFilm.name)?")
+            Text(String(format: NSLocalizedString("delete.film.message", comment: ""), groupedFilm.name))
         }
         .onAppear {
             loadImage()

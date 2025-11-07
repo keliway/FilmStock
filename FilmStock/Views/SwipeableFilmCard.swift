@@ -18,13 +18,13 @@ struct SwipeableFilmCard: View {
                 Button(role: .destructive) {
                     deleteFilm()
                 } label: {
-                    Label("Delete", systemImage: "trash")
+                    Label("action.delete", systemImage: "trash")
                 }
                 
                 Button {
                     showingLoad = true
                 } label: {
-                    Label("Load", systemImage: "camera")
+                    Label("action.load", systemImage: "camera")
                 }
                 .tint(.blue)
                 .disabled(!hasAvailableFormats)

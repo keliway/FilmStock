@@ -18,14 +18,14 @@ struct SettingsView: View {
             List {
                 // My Films Section
                 Section {
-                    Toggle("Never show empty films", isOn: Binding(
+                    Toggle("settings.hideEmpty", isOn: Binding(
                         get: { settingsManager.hideEmptyByDefault },
                         set: { newValue in
                             settingsManager.hideEmptyByDefault = newValue
                             hideEmpty = newValue
                         }
                     ))
-                    Toggle("Always show the table view", isOn: Binding(
+                    Toggle("settings.tableView", isOn: Binding(
                         get: { settingsManager.useTableViewByDefault },
                         set: { newValue in
                             settingsManager.useTableViewByDefault = newValue
@@ -33,9 +33,9 @@ struct SettingsView: View {
                         }
                     ))
                 } header: {
-                    Text("My Films")
+                    Text("settings.myFilms")
                 } footer: {
-                    Text("These settings control the default view when you open the app.")
+                    Text("settings.hideEmpty.footer")
                 }
                 
                 // General Section
@@ -45,16 +45,16 @@ struct SettingsView: View {
                         AppearanceSettingsView()
                     } label: {
                         HStack {
-                            Text("Appearance")
+                            Text("settings.appearance")
                             Spacer()
-                            Text(settingsManager.appearance.rawValue)
+                            Text(settingsManager.appearance.localizedName)
                                 .foregroundColor(.secondary)
                         }
                     }
                     
                     // Version
                     HStack {
-                        Text("Version")
+                        Text("settings.version")
                             .foregroundColor(.primary)
                         Spacer()
                         Text(appVersion)
@@ -65,10 +65,10 @@ struct SettingsView: View {
                     NavigationLink {
                         AboutView()
                     } label: {
-                        Text("About")
+                        Text("settings.about")
                     }
                 } header: {
-                    Text("General")
+                    Text("settings.general")
                 }
                 
                 // Support Section
@@ -83,9 +83,9 @@ struct SettingsView: View {
                                 .frame(width: 32)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Buy Me a Coffee")
+                                Text("support.buyMeCoffee")
                                     .font(.body)
-                                Text("Support the development")
+                                Text("support.description")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -93,14 +93,14 @@ struct SettingsView: View {
                         .padding(.vertical, 8)
                     }
                 } header: {
-                    Text("Support")
+                    Text("settings.support")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("settings.title")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("action.done") {
                         dismiss()
                     }
                 }

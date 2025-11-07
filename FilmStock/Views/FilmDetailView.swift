@@ -30,13 +30,13 @@ struct FilmDetailView: View {
         List {
             // Film info
             Section {
-                InfoRow(label: "Manufacturer", value: displayGroupedFilm.manufacturer)
-                InfoRow(label: "Type", value: displayGroupedFilm.type.displayName)
-                InfoRow(label: "Speed", value: "ISO \(displayGroupedFilm.filmSpeed)")
+                InfoRow(label: "film.manufacturer", value: displayGroupedFilm.manufacturer)
+                InfoRow(label: "film.type", value: displayGroupedFilm.type.displayName)
+                InfoRow(label: "film.speed", value: "ISO \(displayGroupedFilm.filmSpeed)")
             }
             
             // Formats section
-            Section("Formats") {
+            Section("detail.formats") {
                 ForEach(displayGroupedFilm.formats) { format in
                     if let film = relatedFilms.first(where: { $0.id == format.filmId }) {
                         FormatDetailRow(format: format, currentQuantity: film.quantity)
@@ -48,7 +48,7 @@ struct FilmDetailView: View {
             
             // Other formats if exists
             if relatedFilms.count > 1 {
-                Section("Other Formats") {
+                Section("detail.otherFormats") {
                     ForEach(relatedFilms.filter { $0.id != displayGroupedFilm.formats.first?.filmId }) { film in
                             HStack {
                                 Text(film.format.displayName)
@@ -62,7 +62,7 @@ struct FilmDetailView: View {
             
             // Quantity control - for each format
             if !displayGroupedFilm.formats.isEmpty {
-                Section("Quantity") {
+                Section("film.quantity") {
                     ForEach(displayGroupedFilm.formats) { formatInfo in
                         if let film = relatedFilms.first(where: { $0.id == formatInfo.filmId }) {
                             HStack {
@@ -78,7 +78,7 @@ struct FilmDetailView: View {
             
             // Comments
             if let comments = relatedFilms.first?.comments, !comments.isEmpty {
-                Section("Comments") {
+                Section("film.comments") {
                     Text(comments)
                         .foregroundColor(.primary)
                 }
@@ -88,7 +88,7 @@ struct FilmDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Edit") {
+                Button("action.edit") {
                     showingEditSheet = true
                 }
             }
@@ -98,7 +98,7 @@ struct FilmDetailView: View {
                 Button {
                     showingLoadSheet = true
                 } label: {
-                    Text("Load Film")
+                    Text("load.title")
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(Color.accentColor)
@@ -159,7 +159,7 @@ struct InfoRow: View {
     
     var body: some View {
         HStack {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .foregroundColor(.secondary)
             Spacer()
             Text(value)
@@ -176,7 +176,7 @@ struct FormatDetailRow: View {
         HStack {
             Text(format.format.displayName)
             Spacer()
-            Text("\(currentQuantity) \(format.format.quantityUnit)")
+            Text(quantityText)
                 .foregroundColor(.secondary)
             if let expireDate = format.expireDate, !expireDate.isEmpty {
                 Text(formatExpireDates(expireDate))
@@ -184,6 +184,18 @@ struct FormatDetailRow: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+    
+    private var quantityText: String {
+        let unit = format.format.quantityUnit
+        if unit == "roll(s)" {
+            return currentQuantity == 1 
+                ? String(format: NSLocalizedString("film.rollCount", comment: ""), currentQuantity)
+                : String(format: NSLocalizedString("film.rollsCount", comment: ""), currentQuantity)
+        } else if unit == "sheet(s)" {
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), currentQuantity)
+        }
+        return "\(currentQuantity) \(unit)"
     }
     
     private func formatExpireDates(_ dates: [String]) -> String {
@@ -206,13 +218,25 @@ struct QuantityControlView: View {
             value: $quantity,
             in: 0...999
         ) {
-            Text("\(quantity) \(film.format.quantityUnit)")
+            Text(quantityText)
         }
         .onChange(of: quantity) { oldValue, newValue in
             var updated = film
             updated.quantity = newValue
             dataManager.updateFilmStock(updated)
         }
+    }
+    
+    private var quantityText: String {
+        let unit = film.format.quantityUnit
+        if unit == "roll(s)" {
+            return quantity == 1 
+                ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
+                : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
+        } else if unit == "sheet(s)" {
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
+        }
+        return "\(quantity) \(unit)"
     }
 }
 

@@ -122,10 +122,10 @@ struct BrowseView: View {
                         Image(systemName: "film")
                             .font(.system(size: 48))
                             .foregroundColor(.secondary)
-                        Text("No Films Found")
+                        Text("empty.noFilms.title")
                             .font(.title2)
                             .fontWeight(.semibold)
-                        Text("Try adjusting your filters")
+                        Text("empty.noFilms.message")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -138,7 +138,7 @@ struct BrowseView: View {
                             EmptyView()
                         } header: {
                             HStack {
-                                Text("\(filteredTotalRolls) rolls")
+                                Text(String(format: NSLocalizedString(filteredTotalRolls == 1 ? "film.rollCount" : "film.rollsCount", comment: ""), filteredTotalRolls))
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
@@ -169,9 +169,9 @@ struct BrowseView: View {
                     .environment(\.defaultMinListRowHeight, 0)
                 }
             }
-            .navigationTitle("My Films")
+            .navigationTitle("tab.myFilms")
             .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $searchText, prompt: "Search films")
+            .searchable(text: $searchText, prompt: Text("search.placeholder"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -461,13 +461,13 @@ struct BrowseView: View {
             Button(role: .destructive) {
                 deleteFilm(group)
             } label: {
-                Label("Delete", systemImage: "trash")
+                Label("action.delete", systemImage: "trash")
             }
             
             Button {
                 loadFilm(group)
             } label: {
-                Label("Load", systemImage: "camera")
+                Label("action.load", systemImage: "camera")
             }
             .tint(.blue)
             .disabled(!hasAvailableFormats(group))

@@ -21,13 +21,13 @@ struct MainTabView: View {
             BrowseView()
             }
             .tabItem {
-                Label("My Films", systemImage: "film")
+                Label("tab.myFilms", systemImage: "film")
             }
             .tag(0)
             
             LoadedFilmsView()
                 .tabItem {
-                    Label("Loaded Films", systemImage: "camera")
+                    Label("tab.loadedFilms", systemImage: "camera")
                 }
             .tag(1)
             
@@ -35,7 +35,7 @@ struct MainTabView: View {
                 CollectionView()
             }
                 .tabItem {
-                Label("My Collection", systemImage: "camera.viewfinder")
+                Label("tab.collection", systemImage: "camera.viewfinder")
             }
             .tag(2)
         }

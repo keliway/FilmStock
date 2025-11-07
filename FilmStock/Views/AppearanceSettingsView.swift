@@ -17,7 +17,7 @@ struct AppearanceSettingsView: View {
                     settingsManager.appearance = mode
                 } label: {
                     HStack {
-                        Text(mode.rawValue)
+                        Text(mode.localizedName)
                             .foregroundColor(.primary)
                         Spacer()
                         if settingsManager.appearance == mode {
@@ -28,7 +28,7 @@ struct AppearanceSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Appearance")
+        .navigationTitle("settings.appearance")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(settingsManager.appearance.colorScheme)
     }

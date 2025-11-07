@@ -43,37 +43,42 @@ struct AddFilmView: View {
         NavigationStack {
             ZStack {
             Form {
-                Section("Film Information") {
+                Section("film.filmInformation") {
                     NavigationLink {
                         ManufacturerPickerView(
                             selectedManufacturer: $manufacturer
                         )
                         .environmentObject(dataManager)
                     } label: {
-                        Text(manufacturer.isEmpty ? "Select Manufacturer" : manufacturer)
-                            .foregroundColor(manufacturer.isEmpty ? .secondary : .primary)
+                        if manufacturer.isEmpty {
+                            Text("film.selectManufacturer")
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text(manufacturer)
+                                .foregroundColor(.primary)
+                        }
                     }
                     
-                    TextField("Name", text: $name)
+                    TextField("film.name", text: $name)
                         .submitLabel(.done)
                         .onSubmit {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                         }
                     
-                    Picker("Type", selection: $type) {
+                    Picker("film.type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
                             Text(type.displayName).tag(type)
                         }
                     }
                     
-                    Picker("Speed", selection: $filmSpeed) {
+                    Picker("film.speed", selection: $filmSpeed) {
                         ForEach(isoValues, id: \.self) { iso in
                             Text("ISO \(iso)").tag(iso)
                         }
                     }
                     .pickerStyle(.wheel)
                     
-                    Picker("Format", selection: $format) {
+                    Picker("film.format", selection: $format) {
                         ForEach(FilmStock.FilmFormat.allCases, id: \.self) { format in
                             Text(format.displayName).tag(format)
                         }
@@ -81,7 +86,7 @@ struct AddFilmView: View {
                     
                     // Image selection
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Film reminder")
+                        Text("film.filmReminder")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         
@@ -93,7 +98,7 @@ struct AddFilmView: View {
                                 } label: {
                                     HStack {
                                         Image(systemName: "camera.fill")
-                                        Text("Take Photo")
+                                        Text("image.takePhoto")
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
@@ -108,7 +113,7 @@ struct AddFilmView: View {
                                 } label: {
                                     HStack {
                                         Image(systemName: "photo.on.rectangle")
-                                        Text("Open Catalog")
+                                        Text("image.openCatalog")
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
@@ -195,12 +200,12 @@ struct AddFilmView: View {
                 }
                 
                 Section {
-                    Stepper("Quantity: \(quantity)", value: $quantity, in: 0...999)
+                    Stepper(String(format: NSLocalizedString("Quantity: %d", comment: ""), quantity), value: $quantity, in: 0...999)
                 }
                 
-                Section("Expire Dates") {
+                Section("film.expiryDate") {
                     ForEach(expireDates.indices, id: \.self) { index in
-                        TextField("MM/YYYY or YYYY", text: Binding(
+                        TextField("film.expiryDateFormat", text: Binding(
                             get: { expireDates[index] },
                             set: { expireDates[index] = $0 }
                         ))
@@ -213,18 +218,18 @@ struct AddFilmView: View {
                         expireDates.remove(atOffsets: indexSet)
                     }
                     
-                    Button("Add Date") {
+                    Button("film.addExpiryDate") {
                         expireDates.append("")
                     }
                 }
                 
-                Section("Comments") {
+                Section("film.comments") {
                     TextEditor(text: $comments)
                         .frame(height: 120)
                         .toolbar {
                             ToolbarItemGroup(placement: .keyboard) {
                                 Spacer()
-                                Button("Done") {
+                                Button("action.done") {
                                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                                 }
                             }
@@ -255,16 +260,16 @@ struct AddFilmView: View {
                     .animation(.easeInOut, value: showToast)
                 }
             }
-            .navigationTitle(filmToEdit == nil ? "Add Film" : "Edit Film")
+            .navigationTitle(filmToEdit == nil ? "film.addFilm" : "film.editFilm")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("action.cancel") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                    Button("action.save") {
                         saveFilm()
                     }
                     .disabled(name.isEmpty || manufacturer.isEmpty)
@@ -476,7 +481,7 @@ struct ManufacturerPickerView: View {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundColor(.accentColor)
-                            Text("Add \"\(searchText)\"")
+                            Text(String(format: NSLocalizedString("action.addNew", comment: ""), searchText))
                         }
                     }
                 }
@@ -499,8 +504,8 @@ struct ManufacturerPickerView: View {
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search or add manufacturer")
-        .navigationTitle("Select Manufacturer")
+        .searchable(text: $searchText, prompt: Text("film.searchManufacturer"))
+        .navigationTitle("film.selectManufacturer")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

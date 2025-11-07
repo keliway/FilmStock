@@ -41,16 +41,16 @@ struct LoadFilmView: View {
                 quantitySelectionSection
                 errorSection
             }
-            .navigationTitle("Load Film")
+            .navigationTitle("load.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("action.cancel") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Load") {
+                    Button("action.load") {
                         loadFilm()
                     }
                     .disabled(selectedFormat == nil || selectedCamera.isEmpty)
@@ -78,9 +78,9 @@ struct LoadFilmView: View {
     }
     
     private var formatSelectionSection: some View {
-        Section("Select Format") {
+        Section("load.selectFormat") {
             if availableFormats.isEmpty {
-                Text("No formats available")
+                Text("load.noFormatsAvailable")
                     .foregroundColor(.secondary)
             } else {
                 ForEach(availableFormats, id: \.self) { format in
@@ -113,13 +113,18 @@ struct LoadFilmView: View {
     }
     
     private var cameraSelectionSection: some View {
-        Section("Select Camera") {
+        Section("load.selectCamera") {
             NavigationLink(destination: CameraPickerView(selectedCamera: $selectedCamera, newCameraName: $newCameraName)) {
                 HStack {
-                    Text("Camera")
+                    Text("camera.name")
                     Spacer()
-                    Text(selectedCamera.isEmpty ? "Select Camera" : selectedCamera)
-                        .foregroundColor(selectedCamera.isEmpty ? .secondary : .primary)
+                    if selectedCamera.isEmpty {
+                        Text("load.selectCamera")
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text(selectedCamera)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
         }
@@ -128,8 +133,8 @@ struct LoadFilmView: View {
     private var quantitySelectionSection: some View {
         Group {
             if let format = selectedFormat, isSheetFormat(format) {
-                Section("Number of Sheets") {
-                    Stepper("Sheets: \(sheetQuantity)", value: $sheetQuantity, in: 1...maxSheetQuantity)
+                Section("load.quantityToLoad") {
+                    Stepper(String(format: NSLocalizedString("Sheets: %d", comment: ""), sheetQuantity), value: $sheetQuantity, in: 1...maxSheetQuantity)
                 }
             }
         }
@@ -168,13 +173,13 @@ struct LoadFilmView: View {
         // Find the format info for the selected format
         guard let formatInfo = groupedFilm.formats.first(where: { $0.format == format }),
               formatInfo.quantity > 0 else {
-            errorMessage = "No rolls available for this format"
+            errorMessage = NSLocalizedString("load.error.noRolls", comment: "")
             return
         }
         
         // Check if we can load (max 5 films)
         guard dataManager.canLoadFilm() else {
-            errorMessage = "Maximum of 5 films can be loaded at once"
+            errorMessage = NSLocalizedString("load.error.maxFilms", comment: "")
             return
         }
         
@@ -187,7 +192,7 @@ struct LoadFilmView: View {
             onLoadComplete?()
         } else {
             let unit = isSheetFormat(format) ? "sheets" : "rolls"
-            errorMessage = "Failed to load film. Make sure you have at least \(quantityToLoad) \(unit) available."
+            errorMessage = String(format: NSLocalizedString("load.error.failed", comment: ""), quantityToLoad, unit)
         }
     }
 }
@@ -236,14 +241,14 @@ struct CameraPickerView: View {
                 } label: {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                        Text("Add \"\(searchText)\"")
+                        Text(String(format: NSLocalizedString("action.addNew", comment: ""), searchText))
                     }
                     .foregroundColor(.accentColor)
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search or add camera")
-        .navigationTitle("Select Camera")
+        .searchable(text: $searchText, prompt: Text("load.searchCamera"))
+        .navigationTitle("load.selectCamera")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

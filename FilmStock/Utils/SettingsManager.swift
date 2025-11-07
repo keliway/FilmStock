@@ -55,6 +55,14 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
     
     var id: String { rawValue }
     
+    var localizedName: String {
+        switch self {
+        case .system: return NSLocalizedString("settings.appearance.system", comment: "")
+        case .light: return NSLocalizedString("settings.appearance.light", comment: "")
+        case .dark: return NSLocalizedString("settings.appearance.dark", comment: "")
+        }
+    }
+    
     var colorScheme: ColorScheme? {
         switch self {
         case .system: return nil

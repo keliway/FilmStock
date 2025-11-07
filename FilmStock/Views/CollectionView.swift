@@ -35,9 +35,9 @@ struct CollectionView: View {
         NavigationStack {
             if filmsWithImages.isEmpty {
                 ContentUnavailableView(
-                    "No Film Reminder Cards (yet)",
+                    "empty.noCollection.title",
                     systemImage: "camera.viewfinder",
-                    description: Text("Upload your own film reminders when adding/editing a film and start your own collection!")
+                    description: Text("empty.noCollection.message")
                 )
             } else {
                 ZStack {
@@ -100,7 +100,7 @@ struct CollectionView: View {
                                             itemToDelete = item
                                             showingDeleteAlert = true
                                         } label: {
-                                            Label("Delete", systemImage: "trash")
+                                            Label("action.delete", systemImage: "trash")
                                         }
                                     }
                                 }
@@ -136,7 +136,7 @@ struct CollectionView: View {
                 }
             }
         }
-        .navigationTitle("My Collection")
+        .navigationTitle("tab.collection")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -149,12 +149,12 @@ struct CollectionView: View {
                 // Only show Edit button when there are images in the collection
                 if !filmsWithImages.isEmpty {
                     if isEditMode {
-                        Button("Done") {
+                        Button("action.done") {
                             isEditMode = false
                             selectedItems.removeAll()
                         }
                     } else {
-                        Button("Edit") {
+                        Button("action.edit") {
                             isEditMode = true
                         }
                     }
@@ -175,9 +175,9 @@ struct CollectionView: View {
                 )
             }
         }
-        .alert("Delete Image", isPresented: $showingDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        .alert("delete.image.title", isPresented: $showingDeleteAlert) {
+            Button("action.cancel", role: .cancel) { }
+            Button("action.delete", role: .destructive) {
                 if isEditMode && !selectedItems.isEmpty {
                     // Delete multiple selected items
                     let itemsToDelete = filmsWithImages.filter { selectedItems.contains($0.id) }
@@ -199,10 +199,10 @@ struct CollectionView: View {
                 Text("Are you sure you want to delete the image for \(item.title)?")
             }
         }
-        .alert("About My Collection", isPresented: $showingHelp) {
-            Button("Got it", role: .cancel) { }
+        .alert("help.collection.title", isPresented: $showingHelp) {
+            Button("action.done", role: .cancel) { }
         } message: {
-            Text("This is your gallery of custom film reminder card photos. When you take a photo using the camera button while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need.")
+            Text("help.collection.message")
         }
     }
     
@@ -332,7 +332,7 @@ struct ImageDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("action.done") {
                         dismiss()
                     }
                     .foregroundColor(.white)

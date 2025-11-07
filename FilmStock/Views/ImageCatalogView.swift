@@ -16,9 +16,18 @@ struct ImageCatalogView: View {
     @State private var customPhotos: [(filename: String, manufacturer: String, image: UIImage)] = []
     @State private var catalogMode: CatalogMode = .defaultCatalog
     
-    enum CatalogMode: String, CaseIterable {
-        case defaultCatalog = "App Catalog"
-        case myPhotos = "My Uploads"
+    enum CatalogMode: String, CaseIterable, Identifiable {
+        case defaultCatalog
+        case myPhotos
+        
+        var id: String { rawValue }
+        
+        var localizedName: String {
+            switch self {
+            case .defaultCatalog: return NSLocalizedString("image.defaultCatalog", comment: "")
+            case .myPhotos: return NSLocalizedString("image.myPhotos", comment: "")
+            }
+        }
     }
     
     var sortedManufacturers: [String] {
@@ -30,8 +39,8 @@ struct ImageCatalogView: View {
             VStack(spacing: 0) {
                 // Segmented control
                 Picker("Catalog Mode", selection: $catalogMode) {
-                    ForEach(CatalogMode.allCases, id: \.self) { mode in
-                        Text(mode.rawValue).tag(mode)
+                    ForEach(CatalogMode.allCases) { mode in
+                        Text(mode.localizedName).tag(mode)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -46,11 +55,11 @@ struct ImageCatalogView: View {
                     }
                 }
             }
-            .navigationTitle("Image Catalog")
+            .navigationTitle("image.catalog")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("action.done") {
                         dismiss()
                     }
                 }
@@ -66,9 +75,9 @@ struct ImageCatalogView: View {
     private var defaultCatalogView: some View {
         if imagesByManufacturer.isEmpty {
             ContentUnavailableView(
-                "No Images Available",
+                "empty.noCatalogImages.title",
                 systemImage: "photo.on.rectangle",
-                description: Text("No default images found in the bundle")
+                description: Text("empty.noCatalogImages.message")
             )
         } else {
             ScrollView {
@@ -121,9 +130,9 @@ struct ImageCatalogView: View {
     private var myPhotosView: some View {
         if customPhotos.isEmpty {
             ContentUnavailableView(
-                "No Custom Photos",
+                "empty.noCustomPhotos.title",
                 systemImage: "camera",
-                description: Text("Take photos of your film cards when adding films to build your collection")
+                description: Text("empty.noCustomPhotos.message")
             )
         } else {
             ScrollView {

@@ -170,11 +170,11 @@ struct FilterPopoverView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Filters")
+            .navigationTitle("filter.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("action.done") {
                         // Clean up any selections that are no longer available
                         let availableManufacturerSet = Set(availableManufacturers)
                         selectedManufacturers = selectedManufacturers.intersection(availableManufacturerSet)

@@ -29,9 +29,9 @@ struct LoadedFilmsView: View {
             List {
                 if loadedFilms.isEmpty {
                     ContentUnavailableView(
-                        "No Films Loaded",
+                        "empty.noLoadedFilms.title",
                         systemImage: "camera",
-                        description: Text("Load a film from the My Films tab to see it here")
+                        description: Text("empty.noLoadedFilms.message")
                     )
                 } else {
                     ForEach(loadedFilms, id: \.id) { loadedFilm in
@@ -42,7 +42,7 @@ struct LoadedFilmsView: View {
                                     Button {
                                         unloadOneSheet(loadedFilm)
                                     } label: {
-                                        Label("Unload 1 Sheet", systemImage: "minus.circle")
+                                        Label("action.unloadOne", systemImage: "minus.circle")
                                     }
                                     .tint(.orange)
                                 }
@@ -51,7 +51,7 @@ struct LoadedFilmsView: View {
                                 Button {
                                     unloadFilm(loadedFilm)
                                 } label: {
-                                    Label("Unload All", systemImage: "arrow.uturn.backward")
+                                    Label("action.unloadAll", systemImage: "arrow.uturn.backward")
                                 }
                                 .tint(.green)
                             }
@@ -59,7 +59,7 @@ struct LoadedFilmsView: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Loaded Films")
+            .navigationTitle("tab.loadedFilms")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,10 +70,10 @@ struct LoadedFilmsView: View {
                     }
                 }
             }
-            .alert("About Loaded Films", isPresented: $showingHelp) {
-                Button("Got it", role: .cancel) { }
+            .alert("help.loadedFilms.title", isPresented: $showingHelp) {
+                Button("action.done", role: .cancel) { }
             } message: {
-                Text("This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it (which returns it to your film stock). This helps you track which films are actively being used and prevents accidentally loading the same film twice.")
+                Text("help.loadedFilms.message")
             }
             .onAppear {
                 loadFilms()

@@ -24,7 +24,7 @@ struct SupportView: View {
                         .padding(.top, 32)
                     
                     // Title
-                    Text("Support FilmStock")
+                    Text("support.header")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
@@ -33,9 +33,9 @@ struct SupportView: View {
                     VStack(spacing: 16) {
                         Group {
                             if let product = storeManager.products.first {
-                                Text("If you're enjoying FilmStock, consider supporting its development with a small \(product.displayPrice) contribution.")
+                                Text(String(format: NSLocalizedString("support.message.withPrice", comment: ""), product.displayPrice))
                             } else {
-                                Text("If you're enjoying FilmStock, consider supporting its development with a small contribution.")
+                                Text("support.message")
                             }
                         }
                         .font(.body)
@@ -43,7 +43,7 @@ struct SupportView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                         
-                        Text("Your support helps keep the app updated, adds new features, and ensures FilmStock continues to be the best film management app.")
+                        Text("support.benefits")
                             .font(.body)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -62,10 +62,10 @@ struct SupportView: View {
                         HStack {
                             Image(systemName: "cup.and.heat.waves.fill")
                             if let product = storeManager.products.first {
-                                Text("Buy Me a Coffee (\(product.displayPrice))")
+                                Text(String(format: NSLocalizedString("support.button.withPrice", comment: ""), product.displayPrice))
                                     .fontWeight(.semibold)
                             } else {
-                                Text("Buy Me a Coffee")
+                                Text("support.buyMeCoffee")
                                     .fontWeight(.semibold)
                             }
                         }
@@ -82,7 +82,7 @@ struct SupportView: View {
                         HStack {
                             ProgressView()
                                 .scaleEffect(0.8)
-                            Text("Loading...")
+                            Text("support.loading")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -107,10 +107,10 @@ struct SupportView: View {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 32))
                                 .foregroundColor(.pink)
-                            Text("Thank You!")
+                            Text("support.thankYou.title")
                                 .font(.title2)
                                 .fontWeight(.semibold)
-                            Text("Your support means the world to me. I truly appreciate it!")
+                            Text("support.thankYou.message")
                                 .font(.body)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -126,18 +126,18 @@ struct SupportView: View {
                 }
                 .padding()
         }
-        .navigationTitle("Support")
+        .navigationTitle("support.title")
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog("Confirm Support", isPresented: $showConfirmation, titleVisibility: .visible) {
-                Button("Yes, Support FilmStock") {
+        .confirmationDialog("support.confirm.title", isPresented: $showConfirmation, titleVisibility: .visible) {
+                Button("support.confirm", role: .none) {
                     storeManager.purchaseCoffee()
                 }
-                Button("Cancel", role: .cancel) { }
+                Button("action.cancel", role: .cancel) { }
             } message: {
                 if let product = storeManager.products.first {
-                    Text("This will purchase a \(product.displayPrice) support contribution. Thank you for your generosity!")
+                    Text(String(format: NSLocalizedString("support.confirm.message", comment: ""), product.displayPrice))
                 } else {
-                    Text("This will purchase a support contribution. Thank you for your generosity!")
+                    Text("support.confirm.message.noPrice")
                 }
             }
         .onChange(of: storeManager.purchaseSuccessful) { oldValue, newValue in
@@ -177,7 +177,7 @@ class StoreManager: ObservableObject {
     
     func purchaseCoffee() {
         guard let product = products.first else {
-            purchaseError = "Product not available. Please try again later."
+            purchaseError = NSLocalizedString("support.error.productNotAvailable", comment: "")
             return
         }
         
@@ -199,7 +199,7 @@ class StoreManager: ObservableObject {
                         }
                     case .unverified(_, let error):
                         await MainActor.run {
-                            purchaseError = "Purchase verification failed: \(error.localizedDescription)"
+                            purchaseError = String(format: NSLocalizedString("support.error.verificationFailed", comment: ""), error.localizedDescription)
                             isPurchasing = false
                         }
                     }
@@ -209,18 +209,18 @@ class StoreManager: ObservableObject {
                     }
                 case .pending:
                     await MainActor.run {
-                        purchaseError = "Purchase is pending approval"
+                        purchaseError = NSLocalizedString("support.error.pending", comment: "")
                         isPurchasing = false
                     }
                 @unknown default:
                     await MainActor.run {
-                        purchaseError = "Unknown purchase result"
+                        purchaseError = NSLocalizedString("support.error.unknown", comment: "")
                         isPurchasing = false
                     }
                 }
             } catch {
                 await MainActor.run {
-                    purchaseError = "Purchase failed: \(error.localizedDescription)"
+                    purchaseError = String(format: NSLocalizedString("support.error.failed", comment: ""), error.localizedDescription)
                     isPurchasing = false
                 }
             }

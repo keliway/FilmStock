@@ -47,33 +47,38 @@ struct EditFilmView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Film Information") {
+                Section("film.filmInformation") {
                     NavigationLink {
                         ManufacturerPickerView(
                             selectedManufacturer: $manufacturer
                         )
                         .environmentObject(dataManager)
                     } label: {
-                        Text(manufacturer.isEmpty ? "Select Manufacturer" : manufacturer)
-                            .foregroundColor(manufacturer.isEmpty ? .secondary : .primary)
+                        if manufacturer.isEmpty {
+                            Text("film.selectManufacturer")
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text(manufacturer)
+                                .foregroundColor(.primary)
+                        }
                     }
                     
-                    TextField("Name", text: $name)
+                    TextField("film.name", text: $name)
                     
-                    Picker("Type", selection: $type) {
+                    Picker("film.type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
                             Text(type.displayName).tag(type)
                         }
                     }
                     
-                    Picker("Speed", selection: $filmSpeed) {
+                    Picker("film.speed", selection: $filmSpeed) {
                         ForEach(isoValues, id: \.self) { iso in
                             Text("ISO \(iso)").tag(iso)
                         }
                     }
                     .pickerStyle(.wheel)
                     
-                    Picker("Format", selection: $format) {
+                    Picker("film.format", selection: $format) {
                         ForEach(FilmStock.FilmFormat.allCases, id: \.self) { format in
                             Text(format.displayName).tag(format)
                         }
@@ -81,7 +86,7 @@ struct EditFilmView: View {
                     
                     // Image selection
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Film reminder")
+                        Text("film.filmReminder")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         
@@ -93,7 +98,7 @@ struct EditFilmView: View {
                                 } label: {
                                     HStack {
                                         Image(systemName: "camera.fill")
-                                        Text("Take Photo")
+                                        Text("image.takePhoto")
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
@@ -108,7 +113,7 @@ struct EditFilmView: View {
                                 } label: {
                                     HStack {
                                         Image(systemName: "photo.on.rectangle")
-                                        Text("Open Catalog")
+                                        Text("image.openCatalog")
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
@@ -194,13 +199,13 @@ struct EditFilmView: View {
                     .padding(.vertical, 4)
                 }
                 
-                Section("Quantity") {
-                    Stepper("Quantity: \(quantity)", value: $quantity, in: 0...999)
+                Section("film.quantity") {
+                    Stepper(String(format: NSLocalizedString("Quantity: %d", comment: ""), quantity), value: $quantity, in: 0...999)
                 }
                 
-                Section("Expire Dates") {
+                Section("film.expiryDate") {
                     ForEach(expireDates.indices, id: \.self) { index in
-                        TextField("MM/YYYY or YYYY", text: Binding(
+                        TextField("film.expiryDateFormat", text: Binding(
                             get: { expireDates[index] },
                             set: { expireDates[index] = $0 }
                         ))
@@ -209,26 +214,26 @@ struct EditFilmView: View {
                         expireDates.remove(atOffsets: indexSet)
                     }
                     
-                    Button("Add Date") {
+                    Button("film.addExpiryDate") {
                         expireDates.append("")
                     }
                 }
                 
-                Section("Comments") {
+                Section("film.comments") {
                     TextEditor(text: $comments)
                         .frame(minHeight: 100)
                 }
             }
-            .navigationTitle("Edit Film")
+            .navigationTitle("film.editFilm")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("action.cancel") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                    Button("action.save") {
                         saveFilm()
                     }
                     .disabled(name.isEmpty || manufacturer.isEmpty)
