@@ -18,7 +18,7 @@ struct AddFilmView: View {
     
     private let isoValues = [1, 2, 4, 5, 8, 10, 12, 16, 20, 25, 32, 40, 50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 6400]
     @State private var format: FilmStock.FilmFormat = .thirtyFive
-    @State private var quantity = 0
+    @State private var quantity = 1
     @State private var expireDates: [String] = [""]
     @State private var comments = ""
     @State private var selectedImage: UIImage?
@@ -193,7 +193,7 @@ struct AddFilmView: View {
                     .padding(.vertical, 4)
                 }
                 
-                Section("Quantity") {
+                Section {
                     Stepper("Quantity: \(quantity)", value: $quantity, in: 0...999)
                 }
                 
