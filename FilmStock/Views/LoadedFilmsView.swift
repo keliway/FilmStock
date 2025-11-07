@@ -26,7 +26,7 @@ struct LoadedFilmsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            Group {
                 if loadedFilms.isEmpty {
                     ContentUnavailableView(
                         "empty.noLoadedFilms.title",
@@ -34,31 +34,33 @@ struct LoadedFilmsView: View {
                         description: Text("empty.noLoadedFilms.message")
                     )
                 } else {
-                    ForEach(loadedFilms, id: \.id) { loadedFilm in
-                        LoadedFilmRow(loadedFilm: loadedFilm)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                // Primary action: Unload one sheet (for sheet films only) - detail swipe action
-                                if isSheetFormat(loadedFilm.format) && loadedFilm.quantity > 1 {
-                                    Button {
-                                        unloadOneSheet(loadedFilm)
-                                    } label: {
-                                        Label("action.unloadOne", systemImage: "minus.circle")
+                    List {
+                        ForEach(loadedFilms, id: \.id) { loadedFilm in
+                            LoadedFilmRow(loadedFilm: loadedFilm)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    // Primary action: Unload one sheet (for sheet films only) - detail swipe action
+                                    if isSheetFormat(loadedFilm.format) && loadedFilm.quantity > 1 {
+                                        Button {
+                                            unloadOneSheet(loadedFilm)
+                                        } label: {
+                                            Label("action.unloadOne", systemImage: "minus.circle")
+                                        }
+                                        .tint(.orange)
                                     }
-                                    .tint(.orange)
+                                    
+                                    // Secondary action: Unload all
+                                    Button {
+                                        unloadFilm(loadedFilm)
+                                    } label: {
+                                        Label("action.unloadAll", systemImage: "arrow.uturn.backward")
+                                    }
+                                    .tint(.green)
                                 }
-                                
-                                // Secondary action: Unload all
-                                Button {
-                                    unloadFilm(loadedFilm)
-                                } label: {
-                                    Label("action.unloadAll", systemImage: "arrow.uturn.backward")
-                                }
-                                .tint(.green)
-                            }
+                        }
                     }
+                    .listStyle(.plain)
                 }
             }
-            .listStyle(.plain)
             .navigationTitle("tab.loadedFilms")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
