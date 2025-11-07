@@ -8,6 +8,18 @@
 import SwiftUI
 import SwiftData
 
+// Helper function to parse custom image name
+// Returns (manufacturer, filename) tuple
+private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+    if imageName.contains("/") {
+        let components = imageName.split(separator: "/", maxSplits: 1)
+        if components.count == 2 {
+            return (String(components[0]), String(components[1]))
+        }
+    }
+    return (defaultManufacturer, imageName)
+}
+
 struct CollectionView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.modelContext) private var modelContext
@@ -195,26 +207,46 @@ struct CollectionView: View {
     }
     
     private func loadCollectionItems() {
-        let descriptor = FetchDescriptor<Film>()
-        let allFilms = (try? modelContext.fetch(descriptor)) ?? []
+        // Load ALL custom photos from disk, regardless of whether they're associated with a film
+        let allPhotos = ImageStorage.shared.getAllCustomPhotos()
         
         var items: [CollectionItem] = []
+        var seenIds: Set<String> = []
         
-        for film in allFilms {
-            if let imageName = film.imageName,
-               let manufacturer = film.manufacturer,
-               let image = ImageStorage.shared.loadImage(filename: imageName, manufacturer: manufacturer.name) {
-                let title = "\(manufacturer.name) \(film.name)"
-                // Create unique ID from imageName and manufacturer to avoid duplicates
-                let uniqueId = "\(manufacturer.name)_\(imageName)"
-                items.append(CollectionItem(
-                    id: uniqueId,
-                    image: image,
-                    imageName: imageName,
-                    manufacturer: manufacturer.name,
-                    title: title
-                ))
+        for photo in allPhotos {
+            // Create unique ID from manufacturer and filename
+            let uniqueId = "\(photo.manufacturer)_\(photo.filename)"
+            
+            // Avoid duplicates
+            guard !seenIds.contains(uniqueId) else { continue }
+            seenIds.insert(uniqueId)
+            
+            // Try to find a film name for this image
+            let descriptor = FetchDescriptor<Film>()
+            let allFilms = (try? modelContext.fetch(descriptor)) ?? []
+            
+            var title = photo.manufacturer
+            // Check if this image is used by any film (handle manufacturer/filename format)
+            for film in allFilms {
+                if let filmImageName = film.imageName,
+                   let filmManufacturer = film.manufacturer {
+                    // Parse the stored image name
+                    let (storedManufacturer, storedFilename) = parseCustomImageName(filmImageName, defaultManufacturer: filmManufacturer.name)
+                    
+                    if storedManufacturer == photo.manufacturer && storedFilename == photo.filename {
+                        title = "\(filmManufacturer.name) \(film.name)"
+                        break
+                    }
+                }
             }
+            
+            items.append(CollectionItem(
+                id: uniqueId,
+                image: photo.image,
+                imageName: photo.filename,
+                manufacturer: photo.manufacturer,
+                title: title
+            ))
         }
         
         filmsWithImages = items
@@ -229,8 +261,16 @@ struct CollectionView: View {
         let allFilms = (try? modelContext.fetch(descriptor)) ?? []
         
         for film in allFilms {
-            if film.imageName == item.imageName {
-                film.imageName = nil
+            if let filmImageName = film.imageName,
+               let filmManufacturer = film.manufacturer {
+                // Parse the stored image name to handle manufacturer/filename format
+                let (storedManufacturer, storedFilename) = parseCustomImageName(filmImageName, defaultManufacturer: filmManufacturer.name)
+                
+                // If this film uses the image being deleted, clear it
+                if storedManufacturer == item.manufacturer && storedFilename == item.imageName {
+                    film.imageName = nil
+                    film.imageSource = ImageSource.autoDetected.rawValue // Revert to auto-detected
+                }
             }
         }
         

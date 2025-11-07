@@ -10,6 +10,18 @@ import SwiftUI
 import SwiftData
 import Foundation
 
+// Helper function to parse custom image name
+// Returns (manufacturer, filename) tuple
+private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+    if imageName.contains("/") {
+        let components = imageName.split(separator: "/", maxSplits: 1)
+        if components.count == 2 {
+            return (String(components[0]), String(components[1]))
+        }
+    }
+    return (defaultManufacturer, imageName)
+}
+
 struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     typealias Entry = LoadedFilmsWidgetEntry
     typealias Intent = LoadedFilmsWidgetConfiguration
@@ -127,7 +139,9 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                 case "custom":
                     // Load user-taken photo
                     if let imageName = film.imageName {
-                        imageData = loadImageData(filename: imageName, manufacturer: manufacturerName)
+                        // Handle manufacturer/filename format (for catalog-selected photos)
+                        let (manufacturer, filename) = parseCustomImageName(imageName, defaultManufacturer: manufacturerName)
+                        imageData = loadImageData(filename: filename, manufacturer: manufacturer)
                     }
                     
                 case "catalog":

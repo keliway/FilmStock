@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+// Helper function to parse custom image name
+// Returns (manufacturer, filename) tuple
+private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+    if imageName.contains("/") {
+        let components = imageName.split(separator: "/", maxSplits: 1)
+        if components.count == 2 {
+            return (String(components[0]), String(components[1]))
+        }
+    }
+    return (defaultManufacturer, imageName)
+}
+
 struct LoadedFilmsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var loadedFilms: [LoadedFilm] = []
@@ -67,9 +79,6 @@ struct LoadedFilmsView: View {
                 loadFilms()
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
-                loadFilms()
-            }
-            .refreshable {
                 loadFilms()
             }
         }
@@ -197,20 +206,41 @@ struct LoadedFilmRow: View {
     private func loadImage() {
         guard let film = loadedFilm.film else { return }
         
-        // Try to load custom image first
-        if let imageName = film.imageName {
-            if let image = ImageStorage.shared.loadImage(filename: imageName, manufacturer: film.manufacturer?.name ?? "") {
-                filmImage = image
+        let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
+        let manufacturerName = film.manufacturer?.name ?? ""
+        
+        switch imageSource {
+        case .custom:
+            // Load user-taken photo
+            if let customImageName = film.imageName {
+                // Handle manufacturer/filename format (for catalog-selected photos)
+                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: manufacturerName)
+                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
+                    filmImage = userImage
+                    return
+                }
+            }
+            
+        case .catalog:
+            // Load catalog image by exact filename
+            if let catalogImageName = film.imageName {
+                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
+                    filmImage = catalogImage
+                    return
+                }
+            }
+            
+        case .autoDetected:
+            // Auto-detect default image based on manufacturer + film name
+            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: manufacturerName) {
+                filmImage = defaultImage
                 return
             }
-        }
-        
-        // Try to load default image
-        if let defaultImage = ImageStorage.shared.loadDefaultImage(
-            filmName: film.name,
-            manufacturer: film.manufacturer?.name ?? ""
-        ) {
-            filmImage = defaultImage
+            
+        case .none:
+            // No image
+            filmImage = nil
+            return
         }
     }
     

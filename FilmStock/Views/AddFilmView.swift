@@ -28,6 +28,7 @@ struct AddFilmView: View {
     @State private var rawSelectedImage: UIImage?
     @State private var selectedCatalogFilename: String? // Tracks catalog image filename (e.g., "ilford_hp5")
     @State private var imageSource: ImageSource = .autoDetected
+    @State private var catalogSelectedSource: ImageSource? // Tracks what was selected from catalog
     @State private var showToast = false
     @State private var toastMessage = ""
     
@@ -278,7 +279,7 @@ struct AddFilmView: View {
                 }
             }
             .sheet(isPresented: $showingImageCatalog) {
-                ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename)
+                ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename, selectedImageSource: $catalogSelectedSource)
             }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
@@ -286,12 +287,13 @@ struct AddFilmView: View {
                     selectedImage = newValue
                     imageSource = .custom
                     selectedCatalogFilename = nil
+                    catalogSelectedSource = nil
                 }
             }
-            .onChange(of: selectedCatalogFilename) { oldValue, newValue in
-                // When a catalog image is selected
-                if newValue != nil {
-                    imageSource = .catalog
+            .onChange(of: catalogSelectedSource) { oldValue, newValue in
+                // When an image is selected from the catalog view
+                if let source = newValue {
+                    imageSource = source
                 }
             }
             .onChange(of: selectedImage) { oldValue, newValue in
@@ -370,8 +372,12 @@ struct AddFilmView: View {
         
         switch imageSource {
         case .custom:
-            // Save user-taken photo
-            if let image = selectedImage {
+            // Check if user selected an existing custom photo from catalog or took a new one
+            if let catalogFilename = selectedCatalogFilename {
+                // User selected an existing custom photo - just reference it
+                imageName = catalogFilename
+            } else if let image = selectedImage {
+                // User took a new photo - save it
                 imageName = ImageStorage.shared.saveImage(image, forManufacturer: manufacturer, filmName: name)
             }
             

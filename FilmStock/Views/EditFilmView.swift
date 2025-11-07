@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+// Helper function to parse custom image name
+// Returns (manufacturer, filename) tuple
+private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+    if imageName.contains("/") {
+        let components = imageName.split(separator: "/", maxSplits: 1)
+        if components.count == 2 {
+            return (String(components[0]), String(components[1]))
+        }
+    }
+    return (defaultManufacturer, imageName)
+}
+
 struct EditFilmView: View {
     let groupedFilm: GroupedFilm
     @Environment(\.dismiss) var dismiss
@@ -30,6 +42,7 @@ struct EditFilmView: View {
     @State private var rawSelectedImage: UIImage?
     @State private var selectedCatalogFilename: String? // Tracks catalog image filename (e.g., "ilford_hp5")
     @State private var imageSource: ImageSource = .autoDetected
+    @State private var catalogSelectedSource: ImageSource? // Tracks what was selected from catalog
     
     var body: some View {
         NavigationStack {
@@ -230,7 +243,7 @@ struct EditFilmView: View {
                 }
             }
             .sheet(isPresented: $showingImageCatalog) {
-                ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename)
+                ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename, selectedImageSource: $catalogSelectedSource)
             }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
@@ -238,12 +251,13 @@ struct EditFilmView: View {
                     selectedImage = newValue
                     imageSource = .custom
                     selectedCatalogFilename = nil
+                    catalogSelectedSource = nil
                 }
             }
-            .onChange(of: selectedCatalogFilename) { oldValue, newValue in
-                // When a catalog image is selected
-                if newValue != nil {
-                    imageSource = .catalog
+            .onChange(of: catalogSelectedSource) { oldValue, newValue in
+                // When an image is selected from the catalog view
+                if let source = newValue {
+                    imageSource = source
                 }
             }
             .onChange(of: selectedImage) { oldValue, newValue in
@@ -319,7 +333,11 @@ struct EditFilmView: View {
             case .custom:
                 // Load custom user photo
                 if let imageName = groupedFilm.imageName {
-                    selectedImage = ImageStorage.shared.loadImage(filename: imageName, manufacturer: film.manufacturer)
+                    // Handle manufacturer/filename format (for catalog-selected photos)
+                    let (manufacturer, filename) = parseCustomImageName(imageName, defaultManufacturer: film.manufacturer)
+                    selectedImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer)
+                    // Store the full path for later saving
+                    selectedCatalogFilename = imageName.contains("/") ? imageName : nil
                 }
                 
             case .catalog:
@@ -363,8 +381,12 @@ struct EditFilmView: View {
         
         switch imageSource {
         case .custom:
-            // Save user-taken photo
-            if let image = selectedImage {
+            // Check if user selected an existing custom photo from catalog or took a new one
+            if let catalogFilename = selectedCatalogFilename {
+                // User selected an existing custom photo - just reference it
+                imageName = catalogFilename
+            } else if let image = selectedImage {
+                // User took a new photo - save it
                 imageName = ImageStorage.shared.saveImage(image, forManufacturer: manufacturer, filmName: name)
             }
             

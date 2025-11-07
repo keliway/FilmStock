@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+// Helper function to parse custom image name
+// Returns (manufacturer, filename) tuple
+private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+    if imageName.contains("/") {
+        let components = imageName.split(separator: "/", maxSplits: 1)
+        if components.count == 2 {
+            return (String(components[0]), String(components[1]))
+        }
+    }
+    return (defaultManufacturer, imageName)
+}
+
 struct FilmRowView: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
@@ -124,7 +136,9 @@ struct FilmRowView: View {
         case .custom:
             // Load user-taken photo
             if let customImageName = groupedFilm.imageName {
-                if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                // Handle manufacturer/filename format (for catalog-selected photos)
+                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: groupedFilm.manufacturer)
+                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
                     self.image = userImage
                     return
                 }
@@ -249,7 +263,9 @@ struct FilmRowViewContent: View {
         case .custom:
             // Load user-taken photo
             if let customImageName = groupedFilm.imageName {
-                if let userImage = ImageStorage.shared.loadImage(filename: customImageName, manufacturer: groupedFilm.manufacturer) {
+                // Handle manufacturer/filename format (for catalog-selected photos)
+                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: groupedFilm.manufacturer)
+                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
                     self.image = userImage
                     return
                 }

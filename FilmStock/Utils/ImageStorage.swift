@@ -459,5 +459,55 @@ class ImageStorage {
         
         return imagesByManufacturer
     }
+    
+    /// Get all custom user photos
+    func getAllCustomPhotos() -> [(filename: String, manufacturer: String, image: UIImage)] {
+        var photos: [(filename: String, manufacturer: String, image: UIImage)] = []
+        
+        // Check if the directory exists
+        guard FileManager.default.fileExists(atPath: userImagesDirectory.path) else {
+            return photos
+        }
+        
+        // Enumerate all manufacturer directories
+        guard let manufacturerDirs = try? FileManager.default.contentsOfDirectory(
+            at: userImagesDirectory,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ) else {
+            return photos
+        }
+        
+        for manufacturerDir in manufacturerDirs where manufacturerDir.hasDirectoryPath {
+            let manufacturerName = manufacturerDir.lastPathComponent
+            
+            // Get all images in this manufacturer directory
+            guard let imageFiles = try? FileManager.default.contentsOfDirectory(
+                at: manufacturerDir,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            ) else {
+                continue
+            }
+            
+            for imageFile in imageFiles {
+                let fileExtension = imageFile.pathExtension.lowercased()
+                // Custom photos are saved as .jpg
+                guard fileExtension == "jpg" || fileExtension == "jpeg" else { continue }
+                
+                let filename = imageFile.deletingPathExtension().lastPathComponent
+                
+                if let imageData = try? Data(contentsOf: imageFile),
+                   let image = UIImage(data: imageData) {
+                    photos.append((filename: filename, manufacturer: manufacturerName, image: image))
+                }
+            }
+        }
+        
+        // Sort by manufacturer then filename
+        photos.sort { $0.manufacturer < $1.manufacturer || ($0.manufacturer == $1.manufacturer && $0.filename < $1.filename) }
+        
+        return photos
+    }
 }
 
