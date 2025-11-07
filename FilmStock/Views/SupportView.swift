@@ -180,7 +180,7 @@ class StoreManager: ObservableObject {
                 }
             } catch {
                 await MainActor.run {
-                    print("Failed to load products: \(error)")
+                    self.purchaseError = NSLocalizedString("support.error.productNotAvailable", comment: "")
                 }
             }
         }

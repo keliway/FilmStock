@@ -13,7 +13,7 @@ struct AboutView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // App Icon (placeholder - you can replace with actual icon)
+                // App Icon
                 Image(systemName: "film.stack")
                     .font(.system(size: 80))
                     .foregroundColor(.accentColor)
@@ -80,6 +80,32 @@ struct AboutView: View {
                     .cornerRadius(10)
                 }
                 .padding(.top, 8)
+                
+                // Legal Links
+                VStack(spacing: 12) {
+                    NavigationLink {
+                        PrivacyPolicyView()
+                    } label: {
+                        Text("Privacy Policy")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    NavigationLink {
+                        TermsOfServiceView()
+                    } label: {
+                        Text("Terms of Service")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.top, 16)
+                
+                // Copyright
+                Text("© 2024 Jonas Halbe. All rights reserved.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 8)
                 
                 Spacer()
             }
