@@ -72,12 +72,12 @@
 "empty.noFilms.title" = "Aucun film pour le moment";
 "empty.noFilms.message" = "Ajoutez votre premier film pour commencer !";
 "empty.noLoadedFilms.title" = "Aucun film chargé";
-"empty.noLoadedFilms.message" = "Chargez un film depuis l'onglet Mes Films pour suivre les rouleaux actuellement utilisés";
-"empty.noCollection.title" = "Aucune carte de rappel (pour le moment)";
-"empty.noCollection.message" = "Téléchargez vos propres rappels de film lors de l'ajout/modification d'un film et commencez votre collection !";
+"empty.noLoadedFilms.message" = "Chargez un film depuis l'onglet Mes Films pour suivre quelles bobines sont actuellement dans votre/vos appareil(s)";
+"empty.noCollection.title" = "aucune carte de rappel de film (pour l'instant)";
+"empty.noCollection.message" = "Téléchargez vos propres cartes de rappel de film lors de l'ajout/modification d'un film et commencez votre propre collection !";
 "empty.noCatalogImages.title" = "Aucune image disponible";
-"empty.noCatalogImages.message" = "Aucune image par défaut trouvée dans le bundle";
-"empty.noCustomPhotos.title" = "Aucune photo personnalisée";
+"empty.noCatalogImages.message" = "Aucune image trouvée dans le catalogue";
+"empty.noCustomPhotos.title" = "Aucune photo de carte de film";
 "empty.noCustomPhotos.message" = "Prenez des photos de vos cartes de film lors de l'ajout de films pour créer votre collection";
 
 // MARK: - Filters & Search
@@ -104,8 +104,8 @@
 "alert.deleteImage.title" = "Supprimer l'image";
 "alert.deleteImage.single" = "Êtes-vous sûr de vouloir supprimer l'image de %@ ?";
 "alert.deleteImage.multiple" = "Êtes-vous sûr de vouloir supprimer %d image(s) ?";
-"alert.unload.title" = "Décharger le film";
-"alert.unload.message" = "Êtes-vous sûr de vouloir décharger %@ ?";
+"alert.unload.title" = "Décharger %@";
+"alert.unload.message" = "Êtes-vous sûr d'avoir terminé votre bobine de %@ ?";
 
 // MARK: - Settings
 "settings.title" = "Réglages";
@@ -128,22 +128,22 @@
 "about.appName" = "FilmStock";
 "about.version" = "Version %@";
 "about.tagline" = "Votre gestionnaire personnel de collection de films";
-"about.description" = "FilmStock vous aide à suivre votre collection de films argentiques, à gérer les films chargés dans vos appareils et à ne jamais perdre la trace de vos pellicules préférées.";
+"about.description" = "FilmStock vous aide à garder une trace de votre collection de films, à gérer les films chargés dans vos appareils et à ne jamais perdre la trace de ce qui est dans votre appareil et ce qui est dans votre réfrigérateur. Des commentaires ou des fabricants oubliés ? Faites-le moi savoir !";
 "about.developedBy" = "Développé par";
-"about.contactUs" = "Nous contacter";
+"about.contactUs" = "Contactez-moi";
 "about.emailError.title" = "E-mail non disponible";
-"about.emailError.message" = "Veuillez nous contacter à hello@halbe.no";
+"about.emailError.message" = "Veuillez me contacter à hello@halbe.no";
 "about.emailNotAvailable.title" = "E-mail non disponible";
-"about.emailNotAvailable.message" = "Veuillez nous contacter à hello@halbe.no";
+"about.emailNotAvailable.message" = "Veuillez me contacter à hello@halbe.no";
 
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Soutien";
 "support.buyMeCoffee" = "Offrez-moi un café";
-"support.description" = "Soutenir le développement";
+"support.description" = "Dites merci";
 "support.header" = "Soutenir FilmStock";
 "support.message" = "Si vous appréciez FilmStock, envisagez de soutenir son développement avec une petite contribution.";
 "support.message.withPrice" = "Si vous appréciez FilmStock, envisagez de soutenir son développement avec une petite contribution de %@.";
-"support.benefits" = "Votre soutien aide à maintenir l'application à jour, à ajouter de nouvelles fonctionnalités et à garantir que FilmStock reste la meilleure application de gestion de films.";
+"support.benefits" = "Cette application est gratuite et le restera toujours. Votre soutien m'aide à maintenir l'application à jour, à ajouter de nouvelles fonctionnalités et à garantir que FilmStock reste la meilleure application de gestion de films.";
 "support.button.withPrice" = "Offrez-moi un café (%@)";
 "support.loading" = "Chargement...";
 "support.selectAmount" = "Sélectionnez un montant :";
@@ -151,8 +151,8 @@
 "support.thankYou.title" = "Merci !";
 "support.thankYou.message" = "Votre soutien signifie beaucoup pour moi. Je l'apprécie vraiment !";
 "support.confirm.title" = "Confirmer le soutien";
-"support.confirm.message" = "Cela achètera une contribution de soutien de %@. Merci pour votre générosité !";
-"support.confirm.message.noPrice" = "Cela achètera une contribution de soutien. Merci pour votre générosité !";
+"support.confirm.message" = "Cela achètera une contribution de soutien de %@. Merci !";
+"support.confirm.message.noPrice" = "Cela achètera une contribution de soutien. Merci !";
 "support.confirm" = "Oui, soutenir FilmStock";
 "support.error.productNotAvailable" = "Produit non disponible. Veuillez réessayer plus tard.";
 "support.error.verificationFailed" = "Échec de la vérification de l'achat : %@";
@@ -161,13 +161,13 @@
 "support.error.failed" = "Échec de l'achat : %@";
 
 // MARK: - Delete Confirmations  
-"delete.film.title" = "Supprimer le film";
-"delete.film.message" = "Êtes-vous sûr de vouloir supprimer %@ ?";
+"delete.film.title" = "Retirer le film";
+"delete.film.message" = "Êtes-vous sûr de vouloir retirer %@ ?";
 "delete.image.title" = "Supprimer l'image";
 
 // MARK: - Error Messages
-"error.cannotDelete.title" = "Impossible de supprimer le film";
-"error.cannotDeleteLoaded" = "\"%@\" est actuellement chargé dans un appareil. Veuillez d'abord le décharger avant de le supprimer.";
+"error.cannotDelete.title" = "Impossible de retirer le film";
+"error.cannotDeleteLoaded" = "\"%@\" est actuellement chargé dans un appareil. Veuillez d'abord le décharger avant de le retirer.";
 
 // MARK: - Load Film
 "load.title" = "Charger le film";
@@ -180,7 +180,7 @@
 "load.noFormatsAvailable" = "Aucun format disponible";
 "load.rollsAvailable" = "rouleau(x) disponible(s)";
 "load.sheetsAvailable" = "feuille(s) disponible(s)";
-"load.loadedSuccessfully" = "Film chargé avec succès !";
+"load.loadedSuccessfully" = "Film chargé, amusez-vous bien !";
 "load.cameraRequired" = "Veuillez sélectionner un appareil";
 "load.formatRequired" = "Veuillez sélectionner un format";
 "load.addNewCamera" = "Ajouter un nouvel appareil";
@@ -203,25 +203,25 @@
 "detail.loadedAt" = "Chargé";
 
 // MARK: - Onboarding
-"onboarding.welcome.title" = "Bienvenue dans FilmStock";
+"onboarding.welcome.title" = "Bienvenue dans FilmStock !";
 "onboarding.welcome.subtitle" = "Votre gestionnaire personnel de films argentiques";
 "onboarding.feature1.title" = "Suivez votre collection";
-"onboarding.feature1.description" = "Gardez une trace de tous vos rouleaux, feuilles et formats de film en un seul endroit";
+"onboarding.feature1.description" = "Gardez une trace de tous vos rouleaux de film, feuilles et formats - à la fois dans votre réfrigérateur et dans votre appareil";
 "onboarding.feature2.title" = "Gérez les films chargés";
-"onboarding.feature2.description" = "Sachez exactement quels films sont chargés dans quels appareils";
-"onboarding.feature3.title" = "Cartes de film personnalisées";
-"onboarding.feature3.description" = "Prenez des photos de vos boîtes de film pour une référence visuelle rapide";
+"onboarding.feature2.description" = "Sachez exactement quels films sont chargés dans quels appareils et quand. ISO ou date d'expiration oubliée ? Je suis là pour vous !";
+"onboarding.feature3.title" = "Cartes de rappel de film personnalisées";
+"onboarding.feature3.description" = "Prenez des photos de vos boîtes de film et ajoutez-les à votre collection. Vous pouvez également ajouter votre propre porte-carte de rappel de film à votre écran d'accueil - ajoutez simplement le widget FilmStock et voyez ce qui est actuellement dans votre appareil.";
 "onboarding.getStarted" = "Commencer";
 "onboarding.tooltip.addFilm.title" = "Ajoutez votre premier film";
-"onboarding.tooltip.addFilm.message" = "Appuyez ici pour ajouter un film à votre collection. Vous pouvez suivre différents formats, dates d'expiration et même ajouter des photos de vos boîtes de film !";
+"onboarding.tooltip.addFilm.message" = "Appuyez ici pour ajouter un film de votre stock. Vous pouvez suivre différents formats, dates d'expiration et même ajouter des photos de vos propres cartes de rappel !";
 "onboarding.tooltip.filter.title" = "Filtrez vos films";
 "onboarding.tooltip.filter.message" = "Utilisez les filtres pour organiser votre collection par type, format ou fabricant. Activez 'Masquer les vides' pour afficher uniquement les films que vous avez en stock.";
 
 // MARK: - Help
-"help.collection.title" = "À propos de Ma Collection";
-"help.collection.message" = "Ceci est votre galerie de photos de cartes de rappel de film personnalisées. Lorsque vous prenez une photo en utilisant le bouton appareil photo lors de l'ajout ou de la modification d'un film, elle apparaît ici. Ces photos vous aident à vous souvenir de l'apparence de vos boîtes de film et peuvent être utiles pour une identification rapide. Vous pouvez supprimer les images dont vous n'avez plus besoin.";
-"help.loadedFilms.title" = "À propos des films chargés";
-"help.loadedFilms.message" = "Cette vue affiche tous les films actuellement chargés dans vos appareils. Lorsque vous chargez un film depuis l'onglet Mes Films, il apparaît ici avec le nom de l'appareil et la date de chargement. Balayez vers la gauche sur n'importe quel film pour le décharger (ce qui le renvoie à votre stock de films). Cela vous aide à suivre quels films sont activement utilisés et évite de charger accidentellement le même film deux fois.";
+"help.collection.title" = "Ma Collection";
+"help.collection.message" = "Ceci est votre galerie de photos de cartes de rappel de film personnalisées. Lorsque vous prenez une photo avec l'appareil lors de l'ajout ou de la modification d'un film, elle apparaît ici. Ces photos vous aident à vous souvenir de l'apparence de vos boîtes de film et peuvent être utiles pour une identification rapide. Vous pouvez supprimer les images dont vous n'avez plus besoin ou les réutiliser si vous vous réapprovisionnez en votre film préféré.";
+"help.loadedFilms.title" = "Films Chargés";
+"help.loadedFilms.message" = "Cette vue affiche tous les films actuellement chargés dans vos appareils. Lorsque vous chargez un film depuis l'onglet Mes Films, il apparaît ici avec le nom de l'appareil et la date de chargement. Balayez vers la gauche sur un film pour le décharger lorsque vous avez terminé votre bobine.";
 
 // MARK: - Accessibility
 "accessibility.filmImage" = "Image du film";

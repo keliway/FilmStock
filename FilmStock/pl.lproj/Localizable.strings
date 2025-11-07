@@ -72,12 +72,12 @@
 "empty.noFilms.title" = "Jeszcze brak filmów";
 "empty.noFilms.message" = "Dodaj swój pierwszy film, aby zacząć!";
 "empty.noLoadedFilms.title" = "Brak załadowanych filmów";
-"empty.noLoadedFilms.message" = "Załaduj film z zakładki Moje Filmy, aby śledzić aktualnie używane rolki";
-"empty.noCollection.title" = "Brak kart przypomnień (jeszcze)";
-"empty.noCollection.message" = "Prześlij własne przypomnienia o filmach podczas dodawania/edycji filmu i rozpocznij swoją kolekcję!";
+"empty.noLoadedFilms.message" = "Załaduj film z zakładki Moje Filmy, aby śledzić rolki aktualnie w twoim aparacie/aparatach";
+"empty.noCollection.title" = "brak kart przypomnień filmowych (jeszcze)";
+"empty.noCollection.message" = "Prześlij własne karty przypomnień filmowych podczas dodawania/edycji filmu i rozpocznij własną kolekcję!";
 "empty.noCatalogImages.title" = "Brak dostępnych obrazów";
-"empty.noCatalogImages.message" = "Nie znaleziono domyślnych obrazów w pakiecie";
-"empty.noCustomPhotos.title" = "Brak niestandardowych zdjęć";
+"empty.noCatalogImages.message" = "Nie znaleziono obrazów w katalogu";
+"empty.noCustomPhotos.title" = "Brak zdjęć kart filmowych";
 "empty.noCustomPhotos.message" = "Rób zdjęcia swoich kart filmowych podczas dodawania filmów, aby zbudować swoją kolekcję";
 
 // MARK: - Filters & Search
@@ -104,8 +104,8 @@
 "alert.deleteImage.title" = "Usuń obraz";
 "alert.deleteImage.single" = "Czy na pewno chcesz usunąć obraz dla %@?";
 "alert.deleteImage.multiple" = "Czy na pewno chcesz usunąć %d obraz(ów)?";
-"alert.unload.title" = "Wyjmij film";
-"alert.unload.message" = "Czy na pewno chcesz wyjąć %@?";
+"alert.unload.title" = "Wyjmij %@";
+"alert.unload.message" = "Czy na pewno skończyłeś rolkę %@?";
 
 // MARK: - Settings
 "settings.title" = "Ustawienia";
@@ -128,22 +128,22 @@
 "about.appName" = "FilmStock";
 "about.version" = "Wersja %@";
 "about.tagline" = "Twój osobisty menedżer kolekcji filmów";
-"about.description" = "FilmStock pomaga śledzić twoją kolekcję filmów analogowych, zarządzać załadowanymi filmami w aparatach i nigdy nie tracić z oczu ulubionych filmów.";
+"about.description" = "FilmStock pomaga śledzić twoją kolekcję filmów, zarządzać załadowanymi filmami w aparatach i nigdy nie tracić z oczu tego, co jest w twoim aparacie i co jest w lodówce. Uwagi lub zapomniani producenci? Daj mi znać!";
 "about.developedBy" = "Opracowane przez";
-"about.contactUs" = "Skontaktuj się z nami";
+"about.contactUs" = "Skontaktuj się ze mną";
 "about.emailError.title" = "E-mail niedostępny";
-"about.emailError.message" = "Skontaktuj się z nami pod adresem hello@halbe.no";
+"about.emailError.message" = "Skontaktuj się ze mną pod adresem hello@halbe.no";
 "about.emailNotAvailable.title" = "E-mail niedostępny";
-"about.emailNotAvailable.message" = "Skontaktuj się z nami pod adresem hello@halbe.no";
+"about.emailNotAvailable.message" = "Skontaktuj się ze mną pod adresem hello@halbe.no";
 
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Wsparcie";
 "support.buyMeCoffee" = "Postaw mi kawę";
-"support.description" = "Wesprzyj rozwój";
+"support.description" = "Powiedz dziękuję";
 "support.header" = "Wesprzyj FilmStock";
 "support.message" = "Jeśli podoba ci się FilmStock, rozważ wsparcie jego rozwoju małym wkładem.";
 "support.message.withPrice" = "Jeśli podoba ci się FilmStock, rozważ wsparcie jego rozwoju małym wkładem w wysokości %@.";
-"support.benefits" = "Twoje wsparcie pomaga utrzymać aplikację zaktualizowaną, dodawać nowe funkcje i zapewnić, że FilmStock pozostanie najlepszą aplikacją do zarządzania filmami.";
+"support.benefits" = "Ta aplikacja jest darmowa i zawsze będzie darmowa. Twoje wsparcie pomaga mi utrzymać aplikację zaktualizowaną, dodawać nowe funkcje i zapewnić, że FilmStock pozostanie najlepszą aplikacją do zarządzania filmami.";
 "support.button.withPrice" = "Postaw mi kawę (%@)";
 "support.loading" = "Ładowanie...";
 "support.selectAmount" = "Wybierz kwotę:";
@@ -151,8 +151,8 @@
 "support.thankYou.title" = "Dziękuję!";
 "support.thankYou.message" = "Twoje wsparcie wiele dla mnie znaczy. Naprawdę to doceniam!";
 "support.confirm.title" = "Potwierdź wsparcie";
-"support.confirm.message" = "To kupi wkład wspierający w wysokości %@. Dziękuję za hojność!";
-"support.confirm.message.noPrice" = "To kupi wkład wspierający. Dziękuję za hojność!";
+"support.confirm.message" = "To kupi wkład wspierający w wysokości %@. Dziękuję!";
+"support.confirm.message.noPrice" = "To kupi wkład wspierający. Dziękuję!";
 "support.confirm" = "Tak, wesprzyj FilmStock";
 "support.error.productNotAvailable" = "Produkt niedostępny. Spróbuj ponownie później.";
 "support.error.verificationFailed" = "Weryfikacja zakupu nie powiodła się: %@";
@@ -180,7 +180,7 @@
 "load.noFormatsAvailable" = "Brak dostępnych formatów";
 "load.rollsAvailable" = "rolka/rolki dostępne";
 "load.sheetsAvailable" = "arkusz(y) dostępne";
-"load.loadedSuccessfully" = "Film załadowany pomyślnie!";
+"load.loadedSuccessfully" = "Film załadowany, baw się dobrze!";
 "load.cameraRequired" = "Proszę wybrać aparat";
 "load.formatRequired" = "Proszę wybrać format";
 "load.addNewCamera" = "Dodaj nowy aparat";
@@ -203,25 +203,25 @@
 "detail.loadedAt" = "Załadowany";
 
 // MARK: - Onboarding
-"onboarding.welcome.title" = "Witaj w FilmStock";
+"onboarding.welcome.title" = "Witaj w FilmStock!";
 "onboarding.welcome.subtitle" = "Twój osobisty menedżer filmów analogowych";
 "onboarding.feature1.title" = "Śledź swoją kolekcję";
-"onboarding.feature1.description" = "Trzymaj wszystkie rolki, arkusze i formaty filmowe w jednym miejscu";
+"onboarding.feature1.description" = "Trzymaj wszystkie rolki filmowe, arkusze i formaty - zarówno w lodówce, jak i w aparacie";
 "onboarding.feature2.title" = "Zarządzaj załadowanymi filmami";
-"onboarding.feature2.description" = "Wiedz dokładnie, które filmy są w których aparatach";
-"onboarding.feature3.title" = "Niestandardowe karty filmowe";
-"onboarding.feature3.description" = "Rób zdjęcia pudełek filmowych dla szybkiego podglądu wizualnego";
+"onboarding.feature2.description" = "Wiedz dokładnie, które filmy są w których aparatach i kiedy. Zapomniałeś ISO lub daty ważności? Jestem tu, aby pomóc!";
+"onboarding.feature3.title" = "Niestandardowe karty przypomnień filmowych";
+"onboarding.feature3.description" = "Rób zdjęcia pudełek filmowych i dodawaj je do swojej kolekcji. Możesz również dodać własny uchwyt karty przypomnień filmowych do ekranu głównego - po prostu dodaj widżet FilmStock i zobacz, co jest obecnie w twoim aparacie.";
 "onboarding.getStarted" = "Zacznij";
 "onboarding.tooltip.addFilm.title" = "Dodaj swój pierwszy film";
-"onboarding.tooltip.addFilm.message" = "Dotknij tutaj, aby dodać film do swojej kolekcji. Możesz śledzić różne formaty, daty ważności, a nawet dodawać zdjęcia pudełek filmowych!";
+"onboarding.tooltip.addFilm.message" = "Dotknij tutaj, aby dodać film ze swojego zapasu. Możesz śledzić różne formaty, daty ważności, a nawet dodawać zdjęcia własnych kart przypomnień!";
 "onboarding.tooltip.filter.title" = "Filtruj swoje filmy";
 "onboarding.tooltip.filter.message" = "Użyj filtrów, aby uporządkować swoją kolekcję według typu, formatu lub producenta. Włącz 'Ukryj puste', aby pokazać tylko filmy, które masz na stanie.";
 
 // MARK: - Help
-"help.collection.title" = "O Mojej Kolekcji";
-"help.collection.message" = "To jest twoja galeria niestandardowych zdjęć kart przypomnień filmowych. Kiedy robisz zdjęcie za pomocą przycisku aparatu podczas dodawania lub edytowania filmu, pojawia się ono tutaj. Te zdjęcia pomagają ci zapamiętać, jak wyglądają twoje pudełka filmowe i mogą być przydatne do szybkiej identyfikacji. Możesz usuwać obrazy, których już nie potrzebujesz.";
-"help.loadedFilms.title" = "O Załadowanych Filmach";
-"help.loadedFilms.message" = "Ten widok pokazuje wszystkie filmy aktualnie załadowane w twoich aparatach. Kiedy ładujesz film z zakładki Moje Filmy, pojawia się on tutaj wraz z nazwą aparatu i datą załadowania. Przesuń w lewo na dowolnym filmie, aby go wyjąć (co zwraca go do twojego zapasu filmów). Pomaga to śledzić, które filmy są aktywnie używane i zapobiega przypadkowemu załadowaniu tego samego filmu dwa razy.";
+"help.collection.title" = "Moja Kolekcja";
+"help.collection.message" = "To jest twoja galeria niestandardowych zdjęć kart przypomnień filmowych. Kiedy robisz zdjęcie aparatem podczas dodawania lub edytowania filmu, pojawia się ono tutaj. Te zdjęcia pomagają ci zapamiętać, jak wyglądają twoje pudełka filmowe i mogą być przydatne do szybkiej identyfikacji. Możesz usuwać obrazy, których już nie potrzebujesz lub ponownie wykorzystać je, jeśli ponownie zamówisz swój ulubiony film.";
+"help.loadedFilms.title" = "Załadowane Filmy";
+"help.loadedFilms.message" = "Ten widok pokazuje wszystkie filmy aktualnie załadowane w twoich aparatach. Kiedy ładujesz film z zakładki Moje Filmy, pojawia się on tutaj wraz z nazwą aparatu i datą załadowania. Przesuń w lewo na filmie, aby go wyjąć, gdy skończysz rolkę.";
 
 // MARK: - Accessibility
 "accessibility.filmImage" = "Obraz filmu";

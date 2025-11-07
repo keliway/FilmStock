@@ -72,12 +72,12 @@
 "empty.noFilms.title" = "No Films Yet";
 "empty.noFilms.message" = "Add your first film to get started!";
 "empty.noLoadedFilms.title" = "No Loaded Films";
-"empty.noLoadedFilms.message" = "Load a film from the My Films tab to track which rolls are currently in use";
-"empty.noCollection.title" = "No Film Reminder Cards (yet)";
+"empty.noLoadedFilms.message" = "Load a film from the My Films tab to track which rolls are currently in your camera(s)";
+"empty.noCollection.title" = "No film reminder cards (yet)";
 "empty.noCollection.message" = "Upload your own film reminder cards when adding/editing a film and start your own collection!";
 "empty.noCatalogImages.title" = "No Images Available";
-"empty.noCatalogImages.message" = "No default images found in the bundle";
-"empty.noCustomPhotos.title" = "No Custom Photos";
+"empty.noCatalogImages.message" = "No images found in the catalog";
+"empty.noCustomPhotos.title" = "No film card photos";
 "empty.noCustomPhotos.message" = "Take photos of your film cards when adding films to build your collection";
 
 // MARK: - Filters & Search
@@ -104,8 +104,8 @@
 "alert.deleteImage.title" = "Delete Image";
 "alert.deleteImage.single" = "Are you sure you want to delete the image for %@?";
 "alert.deleteImage.multiple" = "Are you sure you want to delete %d image(s)?";
-"alert.unload.title" = "Unload Film";
-"alert.unload.message" = "Are you sure you want to unload %@?";
+"alert.unload.title" = "Unload %@";
+"alert.unload.message" = "Are you sure you are finished with your roll of %@?";
 
 // MARK: - Settings
 "settings.title" = "Settings";
@@ -128,31 +128,31 @@
 "about.appName" = "FilmStock";
 "about.version" = "Version %@";
 "about.tagline" = "Your Personal Film Collection Manager";
-"about.description" = "FilmStock helps you keep track of your analog film collection, manage loaded films in your cameras, and never lose track of your favorite film stocks.";
+"about.description" = "FilmStock helps you keep track of your film collection, manage loaded films in your cameras, and never lose track of whats in your camera and whats in your fridge. Any feedback or manufacturers I forgot? Please let me know!";
 "about.developedBy" = "Developed by";
-"about.contactUs" = "Contact Us";
+"about.contactUs" = "Contact me";
 "about.emailError.title" = "Email Not Available";
-"about.emailError.message" = "Please contact us at hello@halbe.no";
+"about.emailError.message" = "Please contact me at hello@halbe.no";
 "about.emailNotAvailable.title" = "Email Not Available";
-"about.emailNotAvailable.message" = "Please contact us at hello@halbe.no";
+"about.emailNotAvailable.message" = "Please contact me at hello@halbe.no";
 
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Support";
 "support.buyMeCoffee" = "Buy Me a Coffee";
-"support.description" = "Support the development";
+"support.description" = "Say thank you";
 "support.header" = "Support FilmStock";
 "support.message" = "If you're enjoying FilmStock, consider supporting its development with a small contribution.";
 "support.message.withPrice" = "If you're enjoying FilmStock, consider supporting its development with a small %@ contribution.";
-"support.benefits" = "Your support helps keep the app updated, adds new features, and ensures FilmStock continues to be the best film management app.";
+"support.benefits" = "This app is free and will always stay free. Your support helps me keeping the app updated, add new features, and ensures FilmStock continues to be the best film management app.";
 "support.button.withPrice" = "Buy Me a Coffee (%@)";
 "support.loading" = "Loading...";
 "support.selectAmount" = "Select an amount:";
 "support.restore" = "Restore Purchases";
 "support.thankYou.title" = "Thank You!";
-"support.thankYou.message" = "Your support means the world to me. I truly appreciate it!";
+"support.thankYou.message" = "Your support means a lot to me. I truly appreciate it!";
 "support.confirm.title" = "Confirm Support";
-"support.confirm.message" = "This will purchase a %@ support contribution. Thank you for your generosity!";
-"support.confirm.message.noPrice" = "This will purchase a support contribution. Thank you for your generosity!";
+"support.confirm.message" = "This will purchase a %@ support contribution. Thank you!";
+"support.confirm.message.noPrice" = "This will purchase a support contribution. Thank you!";
 "support.confirm" = "Yes, Support FilmStock";
 "support.error.productNotAvailable" = "Product not available. Please try again later.";
 "support.error.verificationFailed" = "Purchase verification failed: %@";
@@ -161,13 +161,13 @@
 "support.error.failed" = "Purchase failed: %@";
 
 // MARK: - Delete Confirmations  
-"delete.film.title" = "Delete Film";
-"delete.film.message" = "Are you sure you want to delete %@?";
+"delete.film.title" = "Remove Film";
+"delete.film.message" = "Are you sure you want to remove %@?";
 "delete.image.title" = "Delete Image";
 
 // MARK: - Error Messages
-"error.cannotDelete.title" = "Cannot Delete Film";
-"error.cannotDeleteLoaded" = "\"%@\" is currently loaded in a camera. Please unload it first before deleting.";
+"error.cannotDelete.title" = "Cannot Remove Film";
+"error.cannotDeleteLoaded" = "\"%@\" is currently loaded in a camera. Please unload it first before removing.";
 
 // MARK: - Load Film
 "load.title" = "Load Film";
@@ -180,14 +180,14 @@
 "load.noFormatsAvailable" = "No formats available";
 "load.rollsAvailable" = "roll(s) available";
 "load.sheetsAvailable" = "sheet(s) available";
-"load.loadedSuccessfully" = "Film loaded successfully!";
+"load.loadedSuccessfully" = "Film loaded, have fun!";
 "load.cameraRequired" = "Please select a camera";
 "load.formatRequired" = "Please select a format";
 "load.addNewCamera" = "Add New Camera";
 "load.enterCameraName" = "Enter camera name";
 "load.cameraName" = "Camera Name";
 "load.addCamera" = "Add Camera";
-"load.quantityToLoad" = "Quantity to Load";
+"load.quantityToLoad" = "Amount to Load";
 
 // MARK: - Cameras
 "camera.title" = "Cameras";
@@ -203,25 +203,25 @@
 "detail.loadedAt" = "Loaded";
 
 // MARK: - Onboarding
-"onboarding.welcome.title" = "Welcome to FilmStock";
+"onboarding.welcome.title" = "Welcome to FilmStock!";
 "onboarding.welcome.subtitle" = "Your personal analog film manager";
 "onboarding.feature1.title" = "Track Your Collection";
-"onboarding.feature1.description" = "Keep track of all your film rolls, sheets, and formats in one place";
+"onboarding.feature1.description" = "Keep track of all your film rolls, sheets, and formats - both in your fridge and currently in your camera";
 "onboarding.feature2.title" = "Manage Loaded Films";
-"onboarding.feature2.description" = "Know exactly which films are loaded in which cameras";
-"onboarding.feature3.title" = "Custom Film Cards";
-"onboarding.feature3.description" = "Take photos of your film boxes for quick visual reference";
+"onboarding.feature2.description" = "Know exactly films are loaded in which cameras and when. Forgot the ISO or expiry date? I got you!";
+"onboarding.feature3.title" = "Custom Film Reminder Cards";
+"onboarding.feature3.description" = "Take photos of your film boxes and add them to your collection. You can also add your own film reminder holder to your home screen - just add the FilmStock widget and see whats currently loaded in your camera.";
 "onboarding.getStarted" = "Get Started";
 "onboarding.tooltip.addFilm.title" = "Add Your First Film";
-"onboarding.tooltip.addFilm.message" = "Tap here to add a film to your collection. You can track different formats, expiry dates, and even add photos of your film boxes!";
+"onboarding.tooltip.addFilm.message" = "Tap here to add a film from your stock. You can track different formats, expiry dates, and even add photos of your own reminder cards!";
 "onboarding.tooltip.filter.title" = "Filter Your Films";
 "onboarding.tooltip.filter.message" = "Use filters to organize your collection by type, format, or manufacturer. Toggle 'Hide empty' to show only films you have in stock.";
 
 // MARK: - Help
-"help.collection.title" = "About My Collection";
-"help.collection.message" = "This is your gallery of custom film reminder card photos. When you take a photo using the camera button while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need.";
-"help.loadedFilms.title" = "About Loaded Films";
-"help.loadedFilms.message" = "This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it (which returns it to your film stock). This helps you track which films are actively being used and prevents accidentally loading the same film twice.";
+"help.collection.title" = "My Collection";
+"help.collection.message" = "This is your gallery of custom film reminder card photos. When you take a photo using the camera while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need or re-use them if you stock up on your favourite film.";
+"help.loadedFilms.title" = "Loaded Films";
+"help.loadedFilms.message" = "This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it when you have finished your roll.";
 
 // MARK: - Accessibility
 "accessibility.filmImage" = "Film image";

@@ -72,12 +72,12 @@
 "empty.noFilms.title" = "Ingen filmer ennå";
 "empty.noFilms.message" = "Legg til din første film for å komme i gang!";
 "empty.noLoadedFilms.title" = "Ingen innlagte filmer";
-"empty.noLoadedFilms.message" = "Legg inn en film fra Mine Filmer-fanen for å spore hvilke ruller som er i bruk";
-"empty.noCollection.title" = "Ingen påminnelseskort (ennå)";
-"empty.noCollection.message" = "Last opp dine egne filmpåminnelser når du legger til/redigerer en film og start samlingen din!";
+"empty.noLoadedFilms.message" = "Legg inn en film fra Mine Filmer-fanen for å spore hvilke ruller som er i kamera(ene) dine";
+"empty.noCollection.title" = "ingen filmpåminnelseskort (ennå)";
+"empty.noCollection.message" = "Last opp dine egne filmpåminnelseskort når du legger til/redigerer en film og start din egen samling!";
 "empty.noCatalogImages.title" = "Ingen bilder tilgjengelig";
-"empty.noCatalogImages.message" = "Ingen standardbilder funnet i pakken";
-"empty.noCustomPhotos.title" = "Ingen egne bilder";
+"empty.noCatalogImages.message" = "Ingen bilder funnet i katalogen";
+"empty.noCustomPhotos.title" = "Ingen filmkortbilder";
 "empty.noCustomPhotos.message" = "Ta bilder av filmkortene dine når du legger til filmer for å bygge samlingen din";
 
 // MARK: - Filters & Search
@@ -104,8 +104,8 @@
 "alert.deleteImage.title" = "Slett bilde";
 "alert.deleteImage.single" = "Er du sikker på at du vil slette bildet for %@?";
 "alert.deleteImage.multiple" = "Er du sikker på at du vil slette %d bilde(r)?";
-"alert.unload.title" = "Ta ut film";
-"alert.unload.message" = "Er du sikker på at du vil ta ut %@?";
+"alert.unload.title" = "Ta ut %@";
+"alert.unload.message" = "Er du sikker på at du er ferdig med rullen din av %@?";
 
 // MARK: - Settings
 "settings.title" = "Innstillinger";
@@ -128,22 +128,22 @@
 "about.appName" = "FilmStock";
 "about.version" = "Versjon %@";
 "about.tagline" = "Din personlige filmsamlingshåndterer";
-"about.description" = "FilmStock hjelper deg med å holde styr på din analoge filmsamling, administrere innlagte filmer i kameraene dine, og aldri miste oversikten over favorittfilmene dine.";
+"about.description" = "FilmStock hjelper deg med å holde styr på filmsamlingen din, administrere innlagte filmer i kameraene dine, og aldri miste oversikten over hva som er i kameraet ditt og hva som er i kjøleskapet. Tilbakemeldinger eller glemte produsenter? Gi meg beskjed!";
 "about.developedBy" = "Utviklet av";
-"about.contactUs" = "Kontakt oss";
+"about.contactUs" = "Kontakt meg";
 "about.emailError.title" = "E-post ikke tilgjengelig";
-"about.emailError.message" = "Vennligst kontakt oss på hello@halbe.no";
+"about.emailError.message" = "Vennligst kontakt meg på hello@halbe.no";
 "about.emailNotAvailable.title" = "E-post ikke tilgjengelig";
-"about.emailNotAvailable.message" = "Vennligst kontakt oss på hello@halbe.no";
+"about.emailNotAvailable.message" = "Vennligst kontakt meg på hello@halbe.no";
 
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Støtte";
 "support.buyMeCoffee" = "Kjøp meg en kaffe";
-"support.description" = "Støtt utviklingen";
+"support.description" = "Si takk";
 "support.header" = "Støtt FilmStock";
 "support.message" = "Hvis du liker FilmStock, vurder å støtte utviklingen med et lite bidrag.";
 "support.message.withPrice" = "Hvis du liker FilmStock, vurder å støtte utviklingen med et lite bidrag på %@.";
-"support.benefits" = "Din støtte hjelper med å holde appen oppdatert, legge til nye funksjoner og sikre at FilmStock fortsetter å være den beste filmhåndteringsappen.";
+"support.benefits" = "Denne appen er gratis og vil alltid være det. Din støtte hjelper meg med å holde appen oppdatert, legge til nye funksjoner og sikre at FilmStock fortsetter å være den beste filmhåndteringsappen.";
 "support.button.withPrice" = "Kjøp meg en kaffe (%@)";
 "support.loading" = "Laster...";
 "support.selectAmount" = "Velg et beløp:";
@@ -151,8 +151,8 @@
 "support.thankYou.title" = "Takk!";
 "support.thankYou.message" = "Din støtte betyr mye for meg. Jeg setter virkelig pris på det!";
 "support.confirm.title" = "Bekreft støtte";
-"support.confirm.message" = "Dette vil kjøpe et støttebidrag på %@. Takk for din generøsitet!";
-"support.confirm.message.noPrice" = "Dette vil kjøpe et støttebidrag. Takk for din generøsitet!";
+"support.confirm.message" = "Dette vil kjøpe et støttebidrag på %@. Takk!";
+"support.confirm.message.noPrice" = "Dette vil kjøpe et støttebidrag. Takk!";
 "support.confirm" = "Ja, støtt FilmStock";
 "support.error.productNotAvailable" = "Produkt ikke tilgjengelig. Vennligst prøv igjen senere.";
 "support.error.verificationFailed" = "Kjøpsverifisering mislyktes: %@";
@@ -161,13 +161,13 @@
 "support.error.failed" = "Kjøp mislyktes: %@";
 
 // MARK: - Delete Confirmations  
-"delete.film.title" = "Slett film";
-"delete.film.message" = "Er du sikker på at du vil slette %@?";
+"delete.film.title" = "Fjern film";
+"delete.film.message" = "Er du sikker på at du vil fjerne %@?";
 "delete.image.title" = "Slett bilde";
 
 // MARK: - Error Messages
-"error.cannotDelete.title" = "Kan ikke slette film";
-"error.cannotDeleteLoaded" = "\"%@\" er for øyeblikket innlagt i et kamera. Vennligst ta den ut først før du sletter.";
+"error.cannotDelete.title" = "Kan ikke fjerne film";
+"error.cannotDeleteLoaded" = "\"%@\" er for øyeblikket innlagt i et kamera. Vennligst ta den ut først før du fjerner.";
 
 // MARK: - Load Film
 "load.title" = "Legg inn film";
@@ -180,7 +180,7 @@
 "load.noFormatsAvailable" = "Ingen formater tilgjengelig";
 "load.rollsAvailable" = "rulle(r) tilgjengelig";
 "load.sheetsAvailable" = "ark tilgjengelig";
-"load.loadedSuccessfully" = "Film lagt inn!";
+"load.loadedSuccessfully" = "Film lagt inn, ha det gøy!";
 "load.cameraRequired" = "Vennligst velg et kamera";
 "load.formatRequired" = "Vennligst velg et format";
 "load.addNewCamera" = "Legg til nytt kamera";
@@ -203,25 +203,25 @@
 "detail.loadedAt" = "Innlagt";
 
 // MARK: - Onboarding
-"onboarding.welcome.title" = "Velkommen til FilmStock";
+"onboarding.welcome.title" = "Velkommen til FilmStock!";
 "onboarding.welcome.subtitle" = "Din personlige analoge filmhåndterer";
 "onboarding.feature1.title" = "Spor samlingen din";
-"onboarding.feature1.description" = "Hold oversikt over alle filmruller, ark og formater på ett sted";
+"onboarding.feature1.description" = "Hold oversikt over alle filmruller, ark og formater - både i kjøleskapet og i kameraet";
 "onboarding.feature2.title" = "Administrer innlagte filmer";
-"onboarding.feature2.description" = "Vit nøyaktig hvilke filmer som er i hvilke kameraer";
-"onboarding.feature3.title" = "Egne filmkort";
-"onboarding.feature3.description" = "Ta bilder av filmeskene dine for rask visuell referanse";
+"onboarding.feature2.description" = "Vit nøyaktig hvilke filmer som er i hvilke kameraer og når. Glemt ISO eller utløpsdato? Jeg hjelper deg!";
+"onboarding.feature3.title" = "Egne filmpåminnelseskort";
+"onboarding.feature3.description" = "Ta bilder av filmeskene dine og legg dem til i samlingen din. Du kan også legge til din egen filmpåminnelsesholder på hjemmeskjermen - bare legg til FilmStock-widgeten og se hva som er i kameraet ditt akkurat nå.";
 "onboarding.getStarted" = "Kom i gang";
 "onboarding.tooltip.addFilm.title" = "Legg til din første film";
-"onboarding.tooltip.addFilm.message" = "Trykk her for å legge til en film i samlingen din. Du kan spore forskjellige formater, utløpsdatoer og til og med legge til bilder av filmeskene dine!";
+"onboarding.tooltip.addFilm.message" = "Trykk her for å legge til en film fra lageret ditt. Du kan spore forskjellige formater, utløpsdatoer og til og med legge til bilder av dine egne påminnelseskort!";
 "onboarding.tooltip.filter.title" = "Filtrer filmene dine";
 "onboarding.tooltip.filter.message" = "Bruk filtre for å organisere samlingen din etter type, format eller produsent. Slå på 'Skjul tomme' for å vise bare filmer du har på lager.";
 
 // MARK: - Help
-"help.collection.title" = "Om Min Samling";
-"help.collection.message" = "Dette er ditt galleri med egne filmpåminnelsesbilder. Når du tar et bilde med kameraknappen mens du legger til eller redigerer en film, vises det her. Disse bildene hjelper deg med å huske hvordan filmeskene dine ser ut og kan være nyttige for rask identifisering. Du kan slette bilder du ikke lenger trenger.";
-"help.loadedFilms.title" = "Om Innlagte Filmer";
-"help.loadedFilms.message" = "Denne visningen viser alle filmer som for øyeblikket er innlagt i kameraene dine. Når du legger inn en film fra Mine Filmer-fanen, vises den her sammen med kameranavn og innleggingsdato. Sveip til venstre på en film for å ta den ut (som returnerer den til filmlageret ditt). Dette hjelper deg med å spore hvilke filmer som aktivt brukes og forhindrer utilsiktet innlegging av samme film to ganger.";
+"help.collection.title" = "Min Samling";
+"help.collection.message" = "Dette er ditt galleri med egne filmpåminnelsesbilder. Når du tar et bilde med kameraet mens du legger til eller redigerer en film, vises det her. Disse bildene hjelper deg med å huske hvordan filmeskene dine ser ut og kan være nyttige for rask identifisering. Du kan slette bilder du ikke lenger trenger eller gjenbruke dem hvis du bestiller favorittfilmen din på nytt.";
+"help.loadedFilms.title" = "Innlagte Filmer";
+"help.loadedFilms.message" = "Denne visningen viser alle filmer som for øyeblikket er innlagt i kameraene dine. Når du legger inn en film fra Mine Filmer-fanen, vises den her sammen med kameranavn og innleggingsdato. Sveip til venstre på en film for å ta den ut når du er ferdig med rullen.";
 
 // MARK: - Accessibility
 "accessibility.filmImage" = "Filmbilde";

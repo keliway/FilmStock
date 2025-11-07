@@ -72,12 +72,12 @@
 "empty.noFilms.title" = "フィルムがありません";
 "empty.noFilms.message" = "最初のフィルムを追加して始めましょう！";
 "empty.noLoadedFilms.title" = "装填中のフィルムがありません";
-"empty.noLoadedFilms.message" = "マイフィルムタブからフィルムを装填して、現在使用中のロールを追跡しましょう";
-"empty.noCollection.title" = "リマインダーカードがありません";
-"empty.noCollection.message" = "フィルムの追加・編集時に独自のリマインダーをアップロードして、コレクションを始めましょう！";
+"empty.noLoadedFilms.message" = "マイフィルムタブからフィルムを装填して、現在カメラに入っているロールを追跡しましょう";
+"empty.noCollection.title" = "フィルムリマインダーカードがありません（まだ）";
+"empty.noCollection.message" = "フィルムの追加・編集時に独自のフィルムリマインダーカードをアップロードして、コレクションを始めましょう！";
 "empty.noCatalogImages.title" = "画像がありません";
-"empty.noCatalogImages.message" = "バンドル内にデフォルト画像が見つかりません";
-"empty.noCustomPhotos.title" = "カスタム写真がありません";
+"empty.noCatalogImages.message" = "カタログに画像が見つかりません";
+"empty.noCustomPhotos.title" = "フィルムカードの写真がありません";
 "empty.noCustomPhotos.message" = "フィルム追加時にフィルムカードの写真を撮ってコレクションを作成しましょう";
 
 // MARK: - Filters & Search
@@ -104,8 +104,8 @@
 "alert.deleteImage.title" = "画像を削除";
 "alert.deleteImage.single" = "%@ の画像を削除してもよろしいですか？";
 "alert.deleteImage.multiple" = "%d 枚の画像を削除してもよろしいですか？";
-"alert.unload.title" = "フィルムを取り出す";
-"alert.unload.message" = "%@ を取り出してもよろしいですか？";
+"alert.unload.title" = "%@ を取り出す";
+"alert.unload.message" = "%@ のロールを撮り終えましたか？";
 
 // MARK: - Settings
 "settings.title" = "設定";
@@ -128,7 +128,7 @@
 "about.appName" = "FilmStock";
 "about.version" = "バージョン %@";
 "about.tagline" = "あなた専用のフィルムコレクション管理アプリ";
-"about.description" = "FilmStockは、アナログフィルムコレクションの追跡、カメラに装填されたフィルムの管理、お気に入りのフィルムストックを見失わないようにするのに役立ちます。";
+"about.description" = "FilmStockは、フィルムコレクションの追跡、カメラに装填されたフィルムの管理、カメラに入っているものと冷蔵庫に入っているものを見失わないようにするのに役立ちます。フィードバックや忘れられたメーカーがあれば教えてください！";
 "about.developedBy" = "開発者";
 "about.contactUs" = "お問い合わせ";
 "about.emailError.title" = "メールが利用できません";
@@ -139,11 +139,11 @@
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "サポート";
 "support.buyMeCoffee" = "コーヒーを贈る";
-"support.description" = "開発をサポート";
+"support.description" = "感謝を伝える";
 "support.header" = "FilmStockをサポート";
 "support.message" = "FilmStockを楽しんでいただけている場合は、少額のご支援をご検討ください。";
 "support.message.withPrice" = "FilmStockを楽しんでいただけている場合は、%@ のご支援をご検討ください。";
-"support.benefits" = "あなたのサポートは、アプリを最新の状態に保ち、新機能を追加し、FilmStockが最高のフィルム管理アプリであり続けることを保証します。";
+"support.benefits" = "このアプリは無料で、今後も無料のままです。あなたのサポートは、アプリを最新の状態に保ち、新機能を追加し、FilmStockが最高のフィルム管理アプリであり続けることを保証します。";
 "support.button.withPrice" = "コーヒーを贈る (%@)";
 "support.loading" = "読み込み中...";
 "support.selectAmount" = "金額を選択：";
@@ -151,8 +151,8 @@
 "support.thankYou.title" = "ありがとうございます！";
 "support.thankYou.message" = "あなたのサポートは私にとって大きな意味があります。本当に感謝しています！";
 "support.confirm.title" = "サポートを確認";
-"support.confirm.message" = "%@ のサポート寄付を購入します。ご協力ありがとうございます！";
-"support.confirm.message.noPrice" = "サポート寄付を購入します。ご協力ありがとうございます！";
+"support.confirm.message" = "%@ のサポート寄付を購入します。ありがとうございます！";
+"support.confirm.message.noPrice" = "サポート寄付を購入します。ありがとうございます！";
 "support.confirm" = "はい、FilmStockをサポート";
 "support.error.productNotAvailable" = "製品が利用できません。後でもう一度お試しください。";
 "support.error.verificationFailed" = "購入の検証に失敗しました：%@";
@@ -161,13 +161,13 @@
 "support.error.failed" = "購入に失敗しました：%@";
 
 // MARK: - Delete Confirmations  
-"delete.film.title" = "フィルムを削除";
-"delete.film.message" = "%@ を削除してもよろしいですか？";
+"delete.film.title" = "フィルムを取り除く";
+"delete.film.message" = "%@ を取り除いてもよろしいですか？";
 "delete.image.title" = "画像を削除";
 
 // MARK: - Error Messages
-"error.cannotDelete.title" = "フィルムを削除できません";
-"error.cannotDeleteLoaded" = "\"%@\" は現在カメラに装填されています。削除する前に取り出してください。";
+"error.cannotDelete.title" = "フィルムを取り除けません";
+"error.cannotDeleteLoaded" = "\"%@\" は現在カメラに装填されています。取り除く前に取り出してください。";
 
 // MARK: - Load Film
 "load.title" = "フィルムを装填";
@@ -180,7 +180,7 @@
 "load.noFormatsAvailable" = "利用可能なフォーマットがありません";
 "load.rollsAvailable" = "本利用可能";
 "load.sheetsAvailable" = "枚利用可能";
-"load.loadedSuccessfully" = "フィルムが正常に装填されました！";
+"load.loadedSuccessfully" = "フィルムが装填されました、楽しんでください！";
 "load.cameraRequired" = "カメラを選択してください";
 "load.formatRequired" = "フォーマットを選択してください";
 "load.addNewCamera" = "新しいカメラを追加";
@@ -203,25 +203,25 @@
 "detail.loadedAt" = "装填済み";
 
 // MARK: - Onboarding
-"onboarding.welcome.title" = "FilmStockへようこそ";
+"onboarding.welcome.title" = "FilmStockへようこそ！";
 "onboarding.welcome.subtitle" = "あなた専用のアナログフィルムマネージャー";
 "onboarding.feature1.title" = "コレクションを追跡";
-"onboarding.feature1.description" = "すべてのフィルムロール、シート、フォーマットを一か所で追跡";
+"onboarding.feature1.description" = "すべてのフィルムロール、シート、フォーマットを追跡 - 冷蔵庫とカメラの両方で";
 "onboarding.feature2.title" = "装填済みフィルムを管理";
-"onboarding.feature2.description" = "どのカメラにどのフィルムが装填されているかを正確に把握";
-"onboarding.feature3.title" = "カスタムフィルムカード";
-"onboarding.feature3.description" = "素早い視覚的参照のためにフィルムボックスの写真を撮影";
+"onboarding.feature2.description" = "どのカメラにどのフィルムが装填されているか、いつ装填されたかを正確に把握。ISOや有効期限を忘れても大丈夫！";
+"onboarding.feature3.title" = "カスタムフィルムリマインダーカード";
+"onboarding.feature3.description" = "フィルムボックスの写真を撮ってコレクションに追加しましょう。ホーム画面に独自のフィルムリマインダーホルダーを追加することもできます - FilmStockウィジェットを追加して、現在カメラに入っているものを確認しましょう。";
 "onboarding.getStarted" = "始める";
 "onboarding.tooltip.addFilm.title" = "最初のフィルムを追加";
-"onboarding.tooltip.addFilm.message" = "ここをタップしてコレクションにフィルムを追加します。さまざまなフォーマット、有効期限を追跡し、フィルムボックスの写真を追加することもできます！";
+"onboarding.tooltip.addFilm.message" = "ここをタップしてストックからフィルムを追加します。さまざまなフォーマット、有効期限を追跡し、独自のリマインダーカードの写真を追加することもできます！";
 "onboarding.tooltip.filter.title" = "フィルムをフィルタリング";
 "onboarding.tooltip.filter.message" = "フィルターを使用して、種類、フォーマット、またはメーカー別にコレクションを整理します。「空のものを非表示」を切り替えて、在庫のあるフィルムのみを表示します。";
 
 // MARK: - Help
-"help.collection.title" = "マイコレクションについて";
-"help.collection.message" = "これは、カスタムフィルムリマインダーカード写真のギャラリーです。フィルムの追加または編集中にカメラボタンを使用して写真を撮ると、ここに表示されます。これらの写真は、フィルムボックスの外観を思い出すのに役立ち、素早い識別に便利です。不要になった画像は削除できます。";
-"help.loadedFilms.title" = "装填中のフィルムについて";
-"help.loadedFilms.message" = "このビューには、カメラに現在装填されているすべてのフィルムが表示されます。マイフィルムタブからフィルムを装填すると、カメラ名と装填日とともにここに表示されます。任意のフィルムを左にスワイプして取り出します（フィルムストックに戻ります）。これにより、どのフィルムが積極的に使用されているかを追跡し、誤って同じフィルムを2回装填することを防ぎます。";
+"help.collection.title" = "マイコレクション";
+"help.collection.message" = "これは、カスタムフィルムリマインダーカード写真のギャラリーです。フィルムの追加または編集中にカメラで写真を撮ると、ここに表示されます。これらの写真は、フィルムボックスの外観を思い出すのに役立ち、素早い識別に便利です。不要になった画像は削除でき、お気に入りのフィルムを再注文する場合は再利用できます。";
+"help.loadedFilms.title" = "装填中のフィルム";
+"help.loadedFilms.message" = "このビューには、カメラに現在装填されているすべてのフィルムが表示されます。マイフィルムタブからフィルムを装填すると、カメラ名と装填日とともにここに表示されます。ロールを撮り終えたら、フィルムを左にスワイプして取り出します。";
 
 // MARK: - Accessibility
 "accessibility.filmImage" = "フィルム画像";
