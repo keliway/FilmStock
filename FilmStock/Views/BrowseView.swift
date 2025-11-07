@@ -482,9 +482,7 @@ struct BrowseView: View {
             film.filmSpeed == group.filmSpeed
         }
         
-        for film in filmsToDelete {
-            dataManager.deleteFilmStock(film)
-        }
+        dataManager.deleteFilmStocks(filmsToDelete)
     }
     
     private func editFilm(_ group: GroupedFilm) {

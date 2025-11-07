@@ -278,17 +278,64 @@ class FilmStockDataManager: ObservableObject {
     }
     
     func deleteFilmStock(_ filmStock: FilmStock) {
+        deleteFilmStocks([filmStock])
+    }
+    
+    func deleteFilmStocks(_ filmStocks: [FilmStock]) {
         guard let context = modelContext else { return }
+        guard !filmStocks.isEmpty else { return }
         
-        let descriptor = FetchDescriptor<MyFilm>(
-            predicate: #Predicate { $0.id == filmStock.id }
-        )
+        // Fetch all MyFilm entries
+        let myFilmDescriptor = FetchDescriptor<MyFilm>()
+        guard let allMyFilms = try? context.fetch(myFilmDescriptor) else { return }
         
-        guard let myFilm = try? context.fetch(descriptor).first else { return }
+        // Fetch all Film entries
+        let filmDescriptor = FetchDescriptor<Film>()
+        guard let allFilms = try? context.fetch(filmDescriptor) else { return }
         
-        context.delete(myFilm)
-        try? context.save()
-        loadFilmStocks()
+        // Track which films we're deleting MyFilms from and which MyFilms are being deleted
+        var filmsToCheck: Set<PersistentIdentifier> = []
+        var deletedMyFilmIds: Set<String> = []
+        
+        // Find and delete all matching MyFilms from the database
+        for filmStock in filmStocks {
+            let myFilmsToDelete = allMyFilms.filter { myFilm in
+                guard let film = myFilm.film else { return false }
+                return film.name == filmStock.name &&
+                       film.manufacturer?.name == filmStock.manufacturer &&
+                       film.type == filmStock.type.rawValue &&
+                       film.filmSpeed == filmStock.filmSpeed
+            }
+            
+            for myFilm in myFilmsToDelete {
+                if let film = myFilm.film {
+                    filmsToCheck.insert(film.persistentModelID)
+                }
+                deletedMyFilmIds.insert(myFilm.id)
+                context.delete(myFilm)
+            }
+        }
+        
+        // Check if any Films now have zero MyFilm entries and delete them
+        for filmId in filmsToCheck {
+            if let film = allFilms.first(where: { $0.persistentModelID == filmId }) {
+                // Check if this film has any remaining MyFilms (excluding the ones we just deleted)
+                let remainingMyFilms = allMyFilms.filter { myFilm in
+                    guard let myFilmFilm = myFilm.film else { return false }
+                    return myFilmFilm.persistentModelID == filmId && !deletedMyFilmIds.contains(myFilm.id)
+                }
+                
+                // If no MyFilms remain for this film, delete the Film entity too
+                if remainingMyFilms.isEmpty {
+                    context.delete(film)
+                }
+            }
+        }
+        
+        // Save to database and reload immediately
+        if (try? context.save()) != nil {
+            loadFilmStocks()
+        }
     }
     
     func groupedFilms() -> [GroupedFilm] {

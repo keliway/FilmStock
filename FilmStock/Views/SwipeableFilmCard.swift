@@ -11,13 +11,12 @@ struct SwipeableFilmCard: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var showingLoad = false
-    @State private var showingDeleteAlert = false
     
     var body: some View {
         FilmCardView(groupedFilm: groupedFilm)
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                 Button(role: .destructive) {
-                    showingDeleteAlert = true
+                    deleteFilm()
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
@@ -34,14 +33,6 @@ struct SwipeableFilmCard: View {
                 LoadFilmView(groupedFilm: groupedFilm)
                     .environmentObject(dataManager)
             }
-            .alert("Delete Film", isPresented: $showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
-                    deleteFilm()
-                }
-            } message: {
-                Text("Are you sure you want to delete \(groupedFilm.name)?")
-            }
     }
     
     private var hasAvailableFormats: Bool {
@@ -56,9 +47,7 @@ struct SwipeableFilmCard: View {
             film.filmSpeed == groupedFilm.filmSpeed
         }
         
-        for film in filmsToDelete {
-            dataManager.deleteFilmStock(film)
-        }
+        dataManager.deleteFilmStocks(filmsToDelete)
     }
 }
 
