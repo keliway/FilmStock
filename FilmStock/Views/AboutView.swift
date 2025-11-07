@@ -102,7 +102,7 @@ struct AboutView: View {
                 .padding(.top, 16)
                 
                 // Copyright
-                Text("legal.copyright")
+                Text(copyrightText)
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .padding(.top, 8)
@@ -124,6 +124,11 @@ struct AboutView: View {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
         return "\(version) (\(build))"
+    }
+    
+    private var copyrightText: String {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        return String(format: NSLocalizedString("legal.copyright", comment: ""), currentYear)
     }
 }
 

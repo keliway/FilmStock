@@ -139,7 +139,7 @@
 // MARK: - Legal
 "legal.privacyPolicy" = "Personvernerklæring";
 "legal.termsOfService" = "Vilkår for bruk";
-"legal.copyright" = "© 2024 Jonas Halbe. Alle rettigheter reservert.";
+"legal.copyright" = "© %d Jonas Halbe. Alle rettigheter reservert.";
 "legal.lastUpdated" = "Sist oppdatert: november 2024";
 
 // MARK: - Support / Buy Me a Coffee
