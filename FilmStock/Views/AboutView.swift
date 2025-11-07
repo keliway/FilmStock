@@ -86,7 +86,7 @@ struct AboutView: View {
                     NavigationLink {
                         PrivacyPolicyView()
                     } label: {
-                        Text("Privacy Policy")
+                        Text("legal.privacyPolicy")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                     }
@@ -94,7 +94,7 @@ struct AboutView: View {
                     NavigationLink {
                         TermsOfServiceView()
                     } label: {
-                        Text("Terms of Service")
+                        Text("legal.termsOfService")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                     }
@@ -102,7 +102,7 @@ struct AboutView: View {
                 .padding(.top, 16)
                 
                 // Copyright
-                Text("© 2024 Jonas Halbe. All rights reserved.")
+                Text("legal.copyright")
                     .font(.caption2)
                     .foregroundColor(.secondary)
                     .padding(.top, 8)

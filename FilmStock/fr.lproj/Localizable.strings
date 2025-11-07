@@ -136,6 +136,12 @@
 "about.emailNotAvailable.title" = "E-mail non disponible";
 "about.emailNotAvailable.message" = "Veuillez me contacter à hello@halbe.no";
 
+// MARK: - Legal
+"legal.privacyPolicy" = "Politique de confidentialité";
+"legal.termsOfService" = "Conditions d'utilisation";
+"legal.copyright" = "© 2024 Jonas Halbe. Tous droits réservés.";
+"legal.lastUpdated" = "Dernière mise à jour : novembre 2024";
+
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Soutien";
 "support.buyMeCoffee" = "Offrez-moi un café";

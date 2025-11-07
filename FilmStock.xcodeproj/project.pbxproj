@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		950B954C2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */; };
 		950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */; };
+		950B974B2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */; };
+		950B974C2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */; };
 		95DA01DF2EBA296E0040E997 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01DE2EBA296E0040E997 /* WidgetKit.framework */; };
 		95DA01E12EBA296E0040E997 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01E02EBA296E0040E997 /* SwiftUI.framework */; };
 		95DA01F02EBA29700040E997 /* FilmStockWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -40,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Filmstock Appicon.icon"; sourceTree = "<group>"; };
+		950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		95D20FB72EB901CB00EF7348 /* FilmStock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FilmStock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FilmStockWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA01DE2EBA296E0040E997 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -108,6 +111,7 @@
 		95D20FAE2EB901CB00EF7348 = {
 			isa = PBXGroup;
 			children = (
+				950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */,
 				950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */,
 				95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */,
 				95D20FB92EB901CB00EF7348 /* FilmStock */,
@@ -235,6 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950B974C2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */,
 				950B954C2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
+				950B974B2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

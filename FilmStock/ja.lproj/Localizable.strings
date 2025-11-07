@@ -136,6 +136,12 @@
 "about.emailNotAvailable.title" = "メールが利用できません";
 "about.emailNotAvailable.message" = "hello@halbe.no までご連絡ください";
 
+// MARK: - Legal
+"legal.privacyPolicy" = "プライバシーポリシー";
+"legal.termsOfService" = "利用規約";
+"legal.copyright" = "© 2024 Jonas Halbe. 無断転載禁止。";
+"legal.lastUpdated" = "最終更新：2024年11月";
+
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "サポート";
 "support.buyMeCoffee" = "コーヒーを贈る";

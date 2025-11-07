@@ -11,12 +11,12 @@ struct PrivacyPolicyView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Privacy Policy")
+                Text("legal.privacyPolicy")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.bottom, 8)
                 
-                Text("Last updated: November 2024")
+                Text("legal.lastUpdated")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
@@ -99,7 +99,7 @@ struct PrivacyPolicyView: View {
             }
             .padding()
         }
-        .navigationTitle("Privacy Policy")
+        .navigationTitle("legal.privacyPolicy")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
