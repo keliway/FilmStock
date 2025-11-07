@@ -243,5 +243,12 @@
 "widget.description" = "Ver tus películas actualmente cargadas";
 "widget.noFilms" = "No hay películas cargadas";
 "widget.unsupportedSize" = "Solo se admite tamaño pequeño";
+"widget.config.title" = "Configuración del widget";
+"widget.config.description" = "Configurar la visualización del widget";
+"widget.config.showFilmInfo" = "Mostrar información de la película";
+"widget.config.infoPosition" = "Posición de la información";
+"widget.config.position" = "Posición";
+"widget.config.position.top" = "Arriba";
+"widget.config.position.bottom" = "Abajo";
 
 

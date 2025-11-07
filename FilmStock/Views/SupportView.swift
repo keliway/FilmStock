@@ -18,10 +18,17 @@ struct SupportView: View {
         ScrollView {
                 VStack(spacing: 24) {
                     // Icon
-                    Image(systemName: "cup.and.heat.waves.fill")
-                        .font(.system(size: 64))
-                        .foregroundColor(.orange)
-                        .padding(.top, 32)
+                    if #available(iOS 17.4, *) {
+                        Image(systemName: "cup.and.heat.waves.fill")
+                            .font(.system(size: 64))
+                            .foregroundColor(.orange)
+                            .padding(.top, 32)
+                    } else {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 64))
+                            .foregroundColor(.orange)
+                            .padding(.top, 32)
+                    }
                     
                     // Title
                     Text("support.header")
@@ -60,7 +67,11 @@ struct SupportView: View {
                         }
                     } label: {
                         HStack {
-                            Image(systemName: "cup.and.heat.waves.fill")
+                            if #available(iOS 17.4, *) {
+                                Image(systemName: "cup.and.heat.waves.fill")
+                            } else {
+                                Image(systemName: "heart.fill")
+                            }
                             if let product = storeManager.products.first {
                                 Text(String(format: NSLocalizedString("support.button.withPrice", comment: ""), product.displayPrice))
                                     .fontWeight(.semibold)

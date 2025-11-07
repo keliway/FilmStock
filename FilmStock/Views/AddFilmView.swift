@@ -430,23 +430,19 @@ struct AddFilmView: View {
             updatedAt: nil
         )
         
-            Task {
-                let wasUpdated = await dataManager.addFilmStock(film, imageName: imageName, imageSource: finalImageSource.rawValue)
-                await MainActor.run {
-                    if wasUpdated {
-                        toastMessage = "Film already existed and was updated"
-                        showToast = true
-                        
-                        // Dismiss after showing toast
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                            dismiss()
-                        }
-                    } else {
-                        dismiss()
-                    }
-                }
+        let wasUpdated = dataManager.addFilmStock(film, imageName: imageName, imageSource: finalImageSource.rawValue)
+        if wasUpdated {
+            toastMessage = "Film already existed and was updated"
+            showToast = true
+            
+            // Dismiss after showing toast
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                dismiss()
             }
+        } else {
+            dismiss()
         }
+    }
     }
 }
 

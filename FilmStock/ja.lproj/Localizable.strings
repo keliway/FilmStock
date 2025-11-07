@@ -243,5 +243,12 @@
 "widget.description" = "現在装填中のフィルムを表示";
 "widget.noFilms" = "装填されたフィルムがありません";
 "widget.unsupportedSize" = "小サイズのみサポート";
+"widget.config.title" = "ウィジェット設定";
+"widget.config.description" = "ウィジェットの表示を設定";
+"widget.config.showFilmInfo" = "フィルム情報を表示";
+"widget.config.infoPosition" = "情報の位置";
+"widget.config.position" = "位置";
+"widget.config.position.top" = "上";
+"widget.config.position.bottom" = "下";
 
 

@@ -438,12 +438,8 @@ struct EditFilmView: View {
                 updatedAt: nil
             )
             
-            Task {
-                _ = await dataManager.addFilmStock(film, imageName: imageName, imageSource: finalImageSource.rawValue)
-                await MainActor.run {
-                    dismiss()
-                }
-            }
+            _ = dataManager.addFilmStock(film, imageName: imageName, imageSource: finalImageSource.rawValue)
+            dismiss()
         }
     }
 }

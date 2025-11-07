@@ -74,7 +74,7 @@
 "empty.noLoadedFilms.title" = "No Loaded Films";
 "empty.noLoadedFilms.message" = "Load a film from the My Films tab to track which rolls are currently in use";
 "empty.noCollection.title" = "No Film Reminder Cards (yet)";
-"empty.noCollection.message" = "Upload your own film reminders when adding/editing a film and start your own collection!";
+"empty.noCollection.message" = "Upload your own film reminder cards when adding/editing a film and start your own collection!";
 "empty.noCatalogImages.title" = "No Images Available";
 "empty.noCatalogImages.message" = "No default images found in the bundle";
 "empty.noCustomPhotos.title" = "No Custom Photos";
@@ -243,4 +243,11 @@
 "widget.description" = "View your currently loaded films";
 "widget.noFilms" = "No Films Loaded";
 "widget.unsupportedSize" = "Only small size supported";
+"widget.config.title" = "Loaded Films Widget Configuration";
+"widget.config.description" = "Configure the loaded films widget display";
+"widget.config.showFilmInfo" = "Show Film Info";
+"widget.config.infoPosition" = "Info Position";
+"widget.config.position" = "Position";
+"widget.config.position.top" = "Top";
+"widget.config.position.bottom" = "Bottom";
 

@@ -66,8 +66,22 @@ struct FilmRowView: View {
                 Button("action.edit", systemImage: "pencil") {
                     showingEdit = true
                 }
-                Button("action.delete", systemImage: "trash", role: .destructive) {
-                    showingDeleteAlert = true
+                Button("action.delete", systemImage: "trash", role: isFilmLoaded ? nil : .destructive) {
+                    if isFilmLoaded {
+                        // Show error message instead of deleting
+                        let filmsToCheck = dataManager.filmStocks.filter { film in
+                            film.name == groupedFilm.name &&
+                            film.manufacturer == groupedFilm.manufacturer &&
+                            film.type == groupedFilm.type &&
+                            film.filmSpeed == groupedFilm.filmSpeed
+                        }
+                        if let loadedFilm = filmsToCheck.first {
+                            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+                            showingDeleteError = true
+                        }
+                    } else {
+                        showingDeleteAlert = true
+                    }
                 }
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -94,6 +108,16 @@ struct FilmRowView: View {
         .onAppear {
             loadImage()
         }
+    }
+    
+    private var isFilmLoaded: Bool {
+        let filmsToCheck = dataManager.filmStocks.filter { film in
+            film.name == groupedFilm.name &&
+            film.manufacturer == groupedFilm.manufacturer &&
+            film.type == groupedFilm.type &&
+            film.filmSpeed == groupedFilm.filmSpeed
+        }
+        return filmsToCheck.contains { dataManager.isFilmLoaded($0) }
     }
     
     private func deleteFilm() {

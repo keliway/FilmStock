@@ -243,4 +243,11 @@
 "widget.description" = "Zeige deine aktuell eingelegten Filme";
 "widget.noFilms" = "Keine Filme eingelegt";
 "widget.unsupportedSize" = "Nur kleine Größe unterstützt";
+"widget.config.title" = "Widget-Konfiguration";
+"widget.config.description" = "Konfiguriere die Anzeige des Widgets";
+"widget.config.showFilmInfo" = "Filminfo anzeigen";
+"widget.config.infoPosition" = "Info-Position";
+"widget.config.position" = "Position";
+"widget.config.position.top" = "Oben";
+"widget.config.position.bottom" = "Unten";
 

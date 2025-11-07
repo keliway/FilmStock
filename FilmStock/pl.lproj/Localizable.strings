@@ -243,5 +243,12 @@
 "widget.description" = "Zobacz aktualnie załadowane filmy";
 "widget.noFilms" = "Brak załadowanych filmów";
 "widget.unsupportedSize" = "Obsługiwany jest tylko mały rozmiar";
+"widget.config.title" = "Konfiguracja widżetu";
+"widget.config.description" = "Skonfiguruj wyświetlanie widżetu";
+"widget.config.showFilmInfo" = "Pokaż informacje o filmie";
+"widget.config.infoPosition" = "Pozycja informacji";
+"widget.config.position" = "Pozycja";
+"widget.config.position.top" = "Góra";
+"widget.config.position.bottom" = "Dół";
 
 

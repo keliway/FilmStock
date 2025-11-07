@@ -17,10 +17,29 @@ struct SwipeableFilmCard: View {
     var body: some View {
         FilmCardView(groupedFilm: groupedFilm)
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                Button(role: .destructive) {
-                    deleteFilm()
-                } label: {
-                    Label("action.delete", systemImage: "trash")
+                if isFilmLoaded {
+                    Button {
+                        // Show error message instead of deleting
+                        let filmsToCheck = dataManager.filmStocks.filter { film in
+                            film.name == groupedFilm.name &&
+                            film.manufacturer == groupedFilm.manufacturer &&
+                            film.type == groupedFilm.type &&
+                            film.filmSpeed == groupedFilm.filmSpeed
+                        }
+                        if let loadedFilm = filmsToCheck.first {
+                            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+                            showingDeleteError = true
+                        }
+                    } label: {
+                        Label("action.delete", systemImage: "trash")
+                    }
+                    .tint(.gray)
+                } else {
+                    Button(role: .destructive) {
+                        deleteFilm()
+                    } label: {
+                        Label("action.delete", systemImage: "trash")
+                    }
                 }
                 
                 Button {
@@ -44,6 +63,16 @@ struct SwipeableFilmCard: View {
     
     private var hasAvailableFormats: Bool {
         groupedFilm.formats.contains { $0.quantity > 0 }
+    }
+    
+    private var isFilmLoaded: Bool {
+        let filmsToCheck = dataManager.filmStocks.filter { film in
+            film.name == groupedFilm.name &&
+            film.manufacturer == groupedFilm.manufacturer &&
+            film.type == groupedFilm.type &&
+            film.filmSpeed == groupedFilm.filmSpeed
+        }
+        return filmsToCheck.contains { dataManager.isFilmLoaded($0) }
     }
     
     private func deleteFilm() {

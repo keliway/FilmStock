@@ -77,10 +77,17 @@ struct SettingsView: View {
                         SupportView()
                     } label: {
                         HStack(spacing: 16) {
-                            Image(systemName: "cup.and.heat.waves.fill")
-                                .font(.title2)
-                                .foregroundColor(.orange)
-                                .frame(width: 32)
+                            if #available(iOS 17.4, *) {
+                                Image(systemName: "cup.and.heat.waves.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.orange)
+                                    .frame(width: 32)
+                            } else {
+                                Image(systemName: "heart.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.orange)
+                                    .frame(width: 32)
+                            }
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("support.buyMeCoffee")

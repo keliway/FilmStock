@@ -95,11 +95,11 @@ class FilmStockDataManager: ObservableObject {
         }
     }
     
-    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) async -> Bool {
+    func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) -> Bool {
         guard let context = modelContext else { return false }
         
         // Find or create manufacturer
-        let manufacturer = await findOrCreateManufacturer(name: filmStock.manufacturer, context: context)
+        let manufacturer = findOrCreateManufacturer(name: filmStock.manufacturer, context: context)
         
         // Check if a film with the same name + manufacturer exists (regardless of ISO)
         let descriptor = FetchDescriptor<Film>()
@@ -138,21 +138,19 @@ class FilmStockDataManager: ObservableObject {
                         comments: filmStock.comments,
                         createdAt: filmStock.createdAt,
                         updatedAt: filmStock.updatedAt,
-                        film: existingFilm
+                        film: nil  // Don't set relationship in initializer
                     )
                     context.insert(myFilm)
+                    myFilm.film = existingFilm  // Establish relationship after insertion
                 }
                 
                 try? context.save()
-                
-                await MainActor.run {
-                    loadFilmStocks()
-                }
+                loadFilmStocks()
                 
                 return true // Film was updated
             } else {
                 // ISO doesn't match - create new film
-                let film = await findOrCreateFilm(
+                let film = findOrCreateFilm(
                     name: filmStock.name,
                     manufacturer: manufacturer,
                     type: filmStock.type.rawValue,
@@ -171,21 +169,19 @@ class FilmStockDataManager: ObservableObject {
                     comments: filmStock.comments,
                     createdAt: filmStock.createdAt,
                     updatedAt: filmStock.updatedAt,
-                    film: film
+                    film: nil  // Don't set relationship in initializer
                 )
                 
                 context.insert(myFilm)
+                myFilm.film = film  // Establish relationship after insertion
                 try? context.save()
-                
-                await MainActor.run {
-                    loadFilmStocks()
-                }
+                loadFilmStocks()
                 
                 return false // Film was created
             }
         } else {
             // No existing film with same name + manufacturer - create new film
-            let film = await findOrCreateFilm(
+            let film = findOrCreateFilm(
                 name: filmStock.name,
                 manufacturer: manufacturer,
                 type: filmStock.type.rawValue,
@@ -204,15 +200,13 @@ class FilmStockDataManager: ObservableObject {
                 comments: filmStock.comments,
                 createdAt: filmStock.createdAt,
                 updatedAt: filmStock.updatedAt,
-                film: film
+                film: nil  // Don't set relationship in initializer
             )
             
             context.insert(myFilm)
+            myFilm.film = film  // Establish relationship after insertion
             try? context.save()
-            
-            await MainActor.run {
-                loadFilmStocks()
-            }
+            loadFilmStocks()
             
             return false // Film was created
         }
@@ -456,7 +450,7 @@ class FilmStockDataManager: ObservableObject {
     
     // MARK: - Helper Methods
     
-    private func findOrCreateManufacturer(name: String, context: ModelContext) async -> Manufacturer {
+    private func findOrCreateManufacturer(name: String, context: ModelContext) -> Manufacturer {
         let descriptor = FetchDescriptor<Manufacturer>(
             predicate: #Predicate { $0.name == name }
         )
@@ -467,11 +461,11 @@ class FilmStockDataManager: ObservableObject {
         
         let manufacturer = Manufacturer(name: name, isCustom: true)
         context.insert(manufacturer)
-        try? context.save()
+        // Don't save here - save will happen after all relationships are established
         return manufacturer
     }
     
-    private func findOrCreateFilm(name: String, manufacturer: Manufacturer, type: String, filmSpeed: Int, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue, context: ModelContext) async -> Film {
+    private func findOrCreateFilm(name: String, manufacturer: Manufacturer, type: String, filmSpeed: Int, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue, context: ModelContext) -> Film {
         // Fetch all films and filter in memory to avoid complex predicate issues
         let descriptor = FetchDescriptor<Film>()
         let allFilms = (try? context.fetch(descriptor)) ?? []
@@ -494,13 +488,15 @@ class FilmStockDataManager: ObservableObject {
         
         let film = Film(
             name: name,
-            manufacturer: manufacturer,
+            manufacturer: nil,  // Don't set relationship in initializer
             type: type,
             filmSpeed: filmSpeed,
             imageName: imageName,
             imageSource: imageSource
         )
         context.insert(film)
+        // Now establish the relationship after both objects are in the context
+        film.manufacturer = manufacturer
         try? context.save()
         return film
     }
@@ -597,16 +593,20 @@ class FilmStockDataManager: ObservableObject {
             context.insert(camera)
         }
         
-        // Create loaded film entry
+        // Create loaded film entry - don't set relationships in initializer
         let loadedFilm = LoadedFilm(
             id: UUID().uuidString,
-            film: film,
+            film: nil,
             format: format.rawValue,
-            camera: camera,
-            myFilm: myFilm,
+            camera: nil,
+            myFilm: nil,
             quantity: quantity
         )
         context.insert(loadedFilm)
+        // Establish relationships after insertion
+        loadedFilm.film = film
+        loadedFilm.camera = camera
+        loadedFilm.myFilm = myFilm
         
         // Decrease quantity by the amount loaded
         myFilm.quantity = max(0, myFilm.quantity - quantity)

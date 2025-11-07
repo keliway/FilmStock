@@ -243,5 +243,12 @@
 "widget.description" = "Se dine innlagte filmer";
 "widget.noFilms" = "Ingen innlagte filmer";
 "widget.unsupportedSize" = "Kun liten størrelse støttes";
+"widget.config.title" = "Widget-konfigurasjon";
+"widget.config.description" = "Konfigurer widget-visningen";
+"widget.config.showFilmInfo" = "Vis filminfo";
+"widget.config.infoPosition" = "Info-posisjon";
+"widget.config.position" = "Posisjon";
+"widget.config.position.top" = "Topp";
+"widget.config.position.bottom" = "Bunn";
 
 
