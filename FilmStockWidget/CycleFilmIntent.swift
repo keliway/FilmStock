@@ -60,7 +60,7 @@ struct NextFilmIntent: AppIntent {
             }
         }
         
-        guard let dbURL = databaseURL else {
+        guard databaseURL != nil else {
             return 0
         }
         
@@ -134,7 +134,7 @@ struct PreviousFilmIntent: AppIntent {
             }
         }
         
-        guard let dbURL = databaseURL else {
+        guard databaseURL != nil else {
             return 0
         }
         

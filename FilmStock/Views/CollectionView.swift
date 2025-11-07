@@ -127,14 +127,17 @@ struct CollectionView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                if isEditMode {
-                    Button("Done") {
-                        isEditMode = false
-                        selectedItems.removeAll()
-                    }
-                } else {
-                    Button("Edit") {
-                        isEditMode = true
+                // Only show Edit button when there are images in the collection
+                if !filmsWithImages.isEmpty {
+                    if isEditMode {
+                        Button("Done") {
+                            isEditMode = false
+                            selectedItems.removeAll()
+                        }
+                    } else {
+                        Button("Edit") {
+                            isEditMode = true
+                        }
                     }
                 }
             }

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "v2.1-iOS-Default-1024x1024@1x.png",
+      "filename" : "Filmstock Appicon-iOS-Default-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "v2.1-iOS-Dark-1024x1024@1x.png",
+      "filename" : "Filmstock Appicon-iOS-Dark-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "v2.1-iOS-ClearLight-1024x1024@1x.png",
+      "filename" : "Filmstock Appicon-iOS-ClearLight-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

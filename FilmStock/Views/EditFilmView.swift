@@ -359,7 +359,7 @@ struct EditFilmView: View {
         
         // Handle image based on source
         var imageName: String? = nil
-        var finalImageSource = imageSource
+        let finalImageSource = imageSource
         
         switch imageSource {
         case .custom:

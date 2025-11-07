@@ -84,7 +84,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
             }
         }
         
-        guard let dbURL = databaseURL else {
+        guard databaseURL != nil else {
             return []
         }
         
@@ -116,23 +116,35 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
             return loadedFilms.compactMap { loadedFilm -> LoadedFilmWidgetData? in
                 guard let film = loadedFilm.film else { return nil }
                 
-                // Load image
+                // Load image based on imageSource
                 var imageData: Data?
+                let manufacturerName = film.manufacturer?.name ?? ""
                 
-                // Try custom image first
-                if let imageName = film.imageName {
-                    imageData = loadImageData(filename: imageName, manufacturer: film.manufacturer?.name ?? "")
-                }
+                // Determine image source (default to auto-detected if not set)
+                let imageSourceRaw = film.imageSource
                 
-                // Fallback to default image
-                if imageData == nil {
-                    imageData = loadDefaultImageData(filmName: film.name, manufacturer: film.manufacturer?.name ?? "")
+                switch imageSourceRaw {
+                case "custom":
+                    // Load user-taken photo
+                    if let imageName = film.imageName {
+                        imageData = loadImageData(filename: imageName, manufacturer: manufacturerName)
+                    }
+                    
+                case "catalog":
+                    // Load catalog image from bundle
+                    if let catalogFilename = film.imageName {
+                        imageData = loadCatalogImageData(filename: catalogFilename)
+                    }
+                    
+                case "auto", "none", _:
+                    // Auto-detect or no image - try to load default image
+                    imageData = loadDefaultImageData(filmName: film.name, manufacturer: manufacturerName)
                 }
                 
                 return LoadedFilmWidgetData(
                     id: loadedFilm.id,
                     filmName: film.name,
-                    manufacturer: film.manufacturer?.name ?? "",
+                    manufacturer: manufacturerName,
                     format: loadedFilm.format,
                     camera: loadedFilm.camera?.name ?? "",
                     imageData: imageData,
@@ -170,33 +182,22 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
         return try? Data(contentsOf: fileURL)
     }
     
-    private func loadDefaultImageData(filmName: String, manufacturer: String) -> Data? {
-        let baseName = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression)
-        var variations = [
-            baseName + ".png",
-            baseName.lowercased() + ".png",
-            baseName.capitalized + ".png",
-            baseName.uppercased() + ".png"
-        ]
-        
-        if baseName.count > 1 {
-            let firstChar = String(baseName.prefix(1)).uppercased()
-            let rest = String(baseName.dropFirst()).lowercased()
-            variations.append((firstChar + rest) + ".png")
-        }
-        
-        // Only check App Group container (images copied by main app)
-        // Widget extensions can't access main app bundle directly
+    private func loadCatalogImageData(filename: String) -> Data? {
+        // Load catalog image directly by filename (e.g., "ilford_hp5")
         let appGroupID = "group.halbe.no.FilmStock"
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
             return nil
         }
         
+        // Catalog images are stored flat in the root of DefaultImages
         let defaultImagesURL = containerURL.appendingPathComponent("DefaultImages", isDirectory: true)
-        let manufacturerURL = defaultImagesURL.appendingPathComponent(manufacturer, isDirectory: true)
         
-        for variation in variations {
-            let imageURL = manufacturerURL.appendingPathComponent(variation, isDirectory: false)
+        // Parse manufacturer from filename (manufacturer_filmname format)
+        if let underscoreIndex = filename.firstIndex(of: "_") {
+            let manufacturer = String(filename[..<underscoreIndex])
+            let manufacturerURL = defaultImagesURL.appendingPathComponent(manufacturer, isDirectory: true)
+            let imageURL = manufacturerURL.appendingPathComponent(filename + ".png")
+            
             if FileManager.default.fileExists(atPath: imageURL.path),
                let data = try? Data(contentsOf: imageURL) {
                 return data
@@ -204,6 +205,82 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
         }
         
         return nil
+    }
+    
+    private func loadDefaultImageData(filmName: String, manufacturer: String) -> Data? {
+        // Load manufacturers.json from App Group to match film names properly
+        let appGroupID = "group.halbe.no.FilmStock"
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            return nil
+        }
+        
+        let manufacturersJSONURL = containerURL.appendingPathComponent("manufacturers.json")
+        
+        // Try to use manufacturers.json for proper matching
+        if let jsonData = try? Data(contentsOf: manufacturersJSONURL),
+           let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: jsonData) {
+            
+            // Find manufacturer (case-insensitive)
+            guard let manufacturerInfo = manufacturersWrapper.manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
+                return trySimpleMatching(filmName: filmName, manufacturer: manufacturer)
+            }
+            
+            // Normalize user input
+            let normalizedUserInput = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+            
+            // Try to find matching film
+            for filmInfo in manufacturerInfo.films {
+                let allNames = [filmInfo.filename] + filmInfo.aliases
+                
+                for alias in allNames {
+                    let normalizedAlias = alias.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+                    
+                    if normalizedUserInput == normalizedAlias {
+                        let filename = "\(manufacturer.lowercased())_\(filmInfo.filename)"
+                        
+                        if let data = loadCatalogImageData(filename: filename) {
+                            return data
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Fallback to simple matching
+        return trySimpleMatching(filmName: filmName, manufacturer: manufacturer)
+    }
+    
+    private func trySimpleMatching(filmName: String, manufacturer: String) -> Data? {
+        let normalizedFilmName = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+        let normalizedManufacturer = manufacturer.lowercased()
+        
+        let variations = [
+            "\(normalizedManufacturer)_\(normalizedFilmName)",
+            "\(manufacturer.lowercased())_\(filmName.lowercased())",
+        ]
+        
+        for variation in variations {
+            if let data = loadCatalogImageData(filename: variation) {
+                return data
+            }
+        }
+        
+        return nil
+    }
+    
+    // Add the required structs for decoding manufacturers.json
+    struct FilmInfo: Codable {
+        let filename: String
+        let aliases: [String]
+    }
+    
+    struct ManufacturerInfo: Codable {
+        let name: String
+        var films: [FilmInfo]
+    }
+    
+    struct ManufacturersDataWrapper: Codable {
+        var manufacturers: [ManufacturerInfo]
     }
 }
 

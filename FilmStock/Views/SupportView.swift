@@ -10,14 +10,12 @@ import StoreKit
 import Combine
 
 struct SupportView: View {
-    @Environment(\.dismiss) var dismiss
     @StateObject private var storeManager = StoreManager()
     @State private var showConfirmation = false
     @State private var showThankYou = false
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
+        ScrollView {
                 VStack(spacing: 24) {
                     // Icon
                     Image(systemName: "cup.and.heat.waves.fill")
@@ -127,17 +125,10 @@ struct SupportView: View {
                     Spacer()
                 }
                 .padding()
-            }
-            .navigationTitle("Support")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-            .confirmationDialog("Confirm Support", isPresented: $showConfirmation, titleVisibility: .visible) {
+        }
+        .navigationTitle("Support")
+        .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog("Confirm Support", isPresented: $showConfirmation, titleVisibility: .visible) {
                 Button("Yes, Support FilmStock") {
                     storeManager.purchaseCoffee()
                 }
@@ -149,18 +140,13 @@ struct SupportView: View {
                     Text("This will purchase a support contribution. Thank you for your generosity!")
                 }
             }
-            .onChange(of: storeManager.purchaseSuccessful) { oldValue, newValue in
-                if newValue {
-                    showThankYou = true
-                    // Auto-dismiss after 3 seconds
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        dismiss()
-                    }
-                }
+        .onChange(of: storeManager.purchaseSuccessful) { oldValue, newValue in
+            if newValue {
+                showThankYou = true
             }
-            .onAppear {
-                storeManager.loadProducts()
-            }
+        }
+        .onAppear {
+            storeManager.loadProducts()
         }
     }
 }

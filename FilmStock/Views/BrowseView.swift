@@ -15,14 +15,14 @@ struct BrowseView: View {
     @State private var selectedSpeedRanges: Set<String> = []
     @State private var selectedFormats: Set<FilmStock.FilmFormat> = []
     @State private var showExpiredOnly = false
-    @State private var hideEmpty = true
-    @State private var viewMode: ViewMode = .cards
+    @State private var hideEmpty = SettingsManager.shared.hideEmptyByDefault
+    @State private var viewMode: ViewMode = SettingsManager.shared.useTableViewByDefault ? .list : .cards
     @State private var showingAddFilm = false
     @State private var filmToEdit: GroupedFilm?
     @State private var filmToLoad: GroupedFilm?
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
-    @State private var showingSupport = false
+    @State private var showingSettings = false
     @State private var showAddFilmTooltip = false
     @State private var showFilterTooltip = false
     @State private var tooltipPreferences: [TooltipPreference] = []
@@ -159,7 +159,7 @@ struct BrowseView: View {
                         ForEach(filteredFilms) { group in
                             if viewMode == .cards {
                                 cardView(for: group)
-                            } else {
+                        } else {
                                 listView(for: group)
                             }
                         }
@@ -175,9 +175,9 @@ struct BrowseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        showingSupport = true
+                        showingSettings = true
                     } label: {
-                        Image(systemName: "cup.and.heat.waves.fill")
+                        Image(systemName: "gearshape")
                     }
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -266,8 +266,8 @@ struct BrowseView: View {
                     dataManager: dataManager
                 )
             }
-            .sheet(isPresented: $showingSupport) {
-                SupportView()
+            .sheet(isPresented: $showingSettings) {
+                SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
             }
             .onAppear {
                 if OnboardingManager.shared.hasCompletedOnboarding {

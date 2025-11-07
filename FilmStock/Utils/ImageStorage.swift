@@ -33,7 +33,11 @@ class ImageStorage {
     /// This is called once on app launch to make images available to the widget extension
     func copyDefaultImagesToAppGroup() {
         // Check if images have already been copied
-        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup"
+        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup_v2" // Changed key to force re-copy with new structure
+        
+        // Clear old flag to force re-copy
+        UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup")
+        
         if UserDefaults.standard.bool(forKey: hasCopiedImagesKey) {
             return // Already copied
         }
@@ -42,12 +46,6 @@ class ImageStorage {
             return
         }
         
-        guard let resourcePath = Bundle.main.resourcePath else {
-            return
-        }
-        
-        let resourceURL = URL(fileURLWithPath: resourcePath, isDirectory: true)
-        let imagesURL = resourceURL.appendingPathComponent("images", isDirectory: true)
         let destinationImagesURL = containerURL.appendingPathComponent("DefaultImages", isDirectory: true)
         
         // Create destination directory if it doesn't exist
@@ -55,24 +53,18 @@ class ImageStorage {
             try? FileManager.default.createDirectory(at: destinationImagesURL, withIntermediateDirectories: true)
         }
         
-        // Get all png files from the images directory (new format: manufacturer_filmname.png)
-        guard let pngFiles = try? FileManager.default.contentsOfDirectory(
-            at: imagesURL,
-            includingPropertiesForKeys: nil,
-            options: [.skipsHiddenFiles]
-        ) else {
-            return
-        }
+        // Get all png files from the bundle root (new format: manufacturer_filmname.png)
+        let allImagePaths = Bundle.main.paths(forResourcesOfType: "png", inDirectory: nil)
         
         // Copy each image to the appropriate manufacturer directory
-        for imageFile in pngFiles.filter({ $0.pathExtension.lowercased() == "png" }) {
-            let fileName = imageFile.lastPathComponent
-            let filenameWithoutExt = fileName.replacingOccurrences(of: ".png", with: "", options: .caseInsensitive)
+        for imagePath in allImagePaths {
+            let imageURL = URL(fileURLWithPath: imagePath)
+            let fileName = imageURL.lastPathComponent
+            let filenameWithoutExt = imageURL.deletingPathExtension().lastPathComponent
             
             // Parse manufacturer_filmname format
             if let underscoreIndex = filenameWithoutExt.firstIndex(of: "_") {
                 let manufacturerName = String(filenameWithoutExt[..<underscoreIndex])
-                let filmName = String(filenameWithoutExt[filenameWithoutExt.index(after: underscoreIndex)...])
                 
                 let destinationManufacturerURL = destinationImagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
                 
@@ -84,10 +76,17 @@ class ImageStorage {
                 let destinationFile = destinationManufacturerURL.appendingPathComponent(fileName)
                 
                 if !FileManager.default.fileExists(atPath: destinationFile.path),
-                   let imageData = try? Data(contentsOf: imageFile) {
+                   let imageData = try? Data(contentsOf: imageURL) {
                     try? imageData.write(to: destinationFile)
                 }
             }
+        }
+        
+        // Also copy manufacturers.json to App Group for widget access
+        if let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+           let jsonData = try? Data(contentsOf: manufacturersURL) {
+            let destinationJSON = containerURL.appendingPathComponent("manufacturers.json")
+            try? jsonData.write(to: destinationJSON)
         }
         
         // Mark as copied
