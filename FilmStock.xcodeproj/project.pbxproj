@@ -410,7 +410,7 @@
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MPTKM85UHG;
+				DEVELOPMENT_TEAM = K29M267J26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
@@ -427,7 +427,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = halbe.no.FilmStock;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -450,7 +450,7 @@
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MPTKM85UHG;
+				DEVELOPMENT_TEAM = K29M267J26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
@@ -467,7 +467,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = halbe.no.FilmStock;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -487,7 +487,7 @@
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MPTKM85UHG;
+				DEVELOPMENT_TEAM = K29M267J26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStockWidget;
@@ -498,7 +498,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = halbe.no.FilmStock.FilmStockWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -518,7 +518,7 @@
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MPTKM85UHG;
+				DEVELOPMENT_TEAM = K29M267J26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStockWidget;
@@ -529,7 +529,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = halbe.no.FilmStock.FilmStockWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

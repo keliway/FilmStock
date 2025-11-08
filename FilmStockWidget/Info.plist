@@ -7,7 +7,5 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2024 Jonas Halbe. All rights reserved.</string>
 </dict>
 </plist>
