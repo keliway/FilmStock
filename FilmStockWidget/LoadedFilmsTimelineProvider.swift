@@ -47,7 +47,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
         let loadedFilms = fetchLoadedFilms()
         
         // Get current index from UserDefaults
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         let userDefaults = UserDefaults(suiteName: appGroupID)
         var currentIndex = userDefaults?.integer(forKey: "currentFilmIndex") ?? 0
         
@@ -84,7 +84,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
         // For widget extensions, we need to use App Groups to share the database
         // with the main app. If App Groups are not set up, try using the default location.
         // First, try App Group container (recommended for widget extensions)
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         var databaseURL: URL?
         
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
@@ -172,7 +172,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     
     private func loadImageData(filename: String, manufacturer: String) -> Data? {
         // Try App Group container first
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
             let userImagesDir = containerURL.appendingPathComponent("UserImages", isDirectory: true)
             let manufacturerDir = userImagesDir.appendingPathComponent(manufacturer, isDirectory: true)
@@ -198,7 +198,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     
     private func loadCatalogImageData(filename: String) -> Data? {
         // Load catalog image directly by filename (e.g., "ilford_hp5")
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
             return nil
         }
@@ -223,7 +223,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     
     private func loadDefaultImageData(filmName: String, manufacturer: String) -> Data? {
         // Load manufacturers.json from App Group to match film names properly
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
             return nil
         }

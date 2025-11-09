@@ -58,7 +58,7 @@ struct MainTabView: View {
                     selectedTab = 1
                 } else if url.host == "widget" {
                     // Handle widget navigation
-                    let appGroupID = "group.halbe.no.FilmStock"
+                    let appGroupID = "group.app.halbe.no.FilmStock"
                     if let userDefaults = UserDefaults(suiteName: appGroupID) {
                         var currentIndex = userDefaults.integer(forKey: "currentFilmIndex")
                         

@@ -16,7 +16,7 @@ struct NextFilmIntent: AppIntent {
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         guard let userDefaults = UserDefaults(suiteName: appGroupID) else {
             return .result()
         }
@@ -49,7 +49,7 @@ struct NextFilmIntent: AppIntent {
             LoadedFilm.self
         ])
         
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         var databaseURL: URL?
         
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
@@ -91,7 +91,7 @@ struct PreviousFilmIntent: AppIntent {
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         guard let userDefaults = UserDefaults(suiteName: appGroupID) else {
             return .result()
         }
@@ -123,7 +123,7 @@ struct PreviousFilmIntent: AppIntent {
             LoadedFilm.self
         ])
         
-        let appGroupID = "group.halbe.no.FilmStock"
+        let appGroupID = "group.app.halbe.no.FilmStock"
         var databaseURL: URL?
         
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {

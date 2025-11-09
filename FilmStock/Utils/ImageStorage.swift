@@ -12,7 +12,7 @@ class ImageStorage {
     static let shared = ImageStorage()
     
     private let userImagesDirectory: URL
-    private let appGroupID = "group.halbe.no.FilmStock"
+    private let appGroupID = "group.app.halbe.no.FilmStock"
     
     private init() {
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -33,10 +33,11 @@ class ImageStorage {
     /// This is called once on app launch to make images available to the widget extension
     func copyDefaultImagesToAppGroup() {
         // Check if images have already been copied
-        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup_v2" // Changed key to force re-copy with new structure
+        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup_v3" // Incremented to force re-copy
         
-        // Clear old flag to force re-copy
+        // Clear old flags to force re-copy
         UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup")
+        UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup_v2")
         
         if UserDefaults.standard.bool(forKey: hasCopiedImagesKey) {
             return // Already copied
