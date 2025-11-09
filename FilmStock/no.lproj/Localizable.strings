@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "Min Samling";
-"help.collection.message" = "Dette er ditt galleri med egne filmpåminnelsesbilder. Når du tar et bilde med kameraet mens du legger til eller redigerer en film, vises det her. Disse bildene hjelper deg med å huske hvordan filmeskene dine ser ut og kan være nyttige for rask identifisering. Du kan slette bilder du ikke lenger trenger eller gjenbruke dem hvis du bestiller favorittfilmen din på nytt.";
+"help.collection.message" = "Dette er ditt galleri med egne filmpåminnelseskort. Når du tar et bilde med kameraet mens du legger til eller redigerer en film, vises det her. Du kan slette bilder du ikke lenger trenger eller gjenbruke dem hvis du bestiller favorittfilmen din på nytt.";
 "help.loadedFilms.title" = "Innlagte Filmer";
 "help.loadedFilms.message" = "Denne visningen viser alle filmer som for øyeblikket er innlagt i kameraene dine. Når du legger inn en film fra Mine Filmer-fanen, vises den her sammen med kameranavn og innleggingsdato. Sveip til venstre på en film for å ta den ut når du er ferdig med rullen.";
 

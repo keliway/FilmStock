@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "Moja Kolekcja";
-"help.collection.message" = "To jest twoja galeria niestandardowych zdjęć kart przypomnień filmowych. Kiedy robisz zdjęcie aparatem podczas dodawania lub edytowania filmu, pojawia się ono tutaj. Te zdjęcia pomagają ci zapamiętać, jak wyglądają twoje pudełka filmowe i mogą być przydatne do szybkiej identyfikacji. Możesz usuwać obrazy, których już nie potrzebujesz lub ponownie wykorzystać je, jeśli ponownie zamówisz swój ulubiony film.";
+"help.collection.message" = "To jest twoja galeria niestandardowych kart przypomnień filmowych. Kiedy robisz zdjęcie aparatem podczas dodawania lub edytowania filmu, pojawia się ono tutaj. Możesz usuwać obrazy, których już nie potrzebujesz lub ponownie wykorzystać je, jeśli ponownie zamówisz swój ulubiony film.";
 "help.loadedFilms.title" = "Załadowane Filmy";
 "help.loadedFilms.message" = "Ten widok pokazuje wszystkie filmy aktualnie załadowane w twoich aparatach. Kiedy ładujesz film z zakładki Moje Filmy, pojawia się on tutaj wraz z nazwą aparatu i datą załadowania. Przesuń w lewo na filmie, aby go wyjąć, gdy skończysz rolkę.";
 

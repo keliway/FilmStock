@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "Ma Collection";
-"help.collection.message" = "Ceci est votre galerie de photos de cartes de rappel de film personnalisées. Lorsque vous prenez une photo avec l'appareil lors de l'ajout ou de la modification d'un film, elle apparaît ici. Ces photos vous aident à vous souvenir de l'apparence de vos boîtes de film et peuvent être utiles pour une identification rapide. Vous pouvez supprimer les images dont vous n'avez plus besoin ou les réutiliser si vous vous réapprovisionnez en votre film préféré.";
+"help.collection.message" = "Ceci est votre galerie de cartes de rappel de film personnalisées. Lorsque vous prenez une photo avec l'appareil lors de l'ajout ou de la modification d'un film, elle apparaît ici. Vous pouvez supprimer les images dont vous n'avez plus besoin ou les réutiliser si vous vous réapprovisionnez en votre film préféré.";
 "help.loadedFilms.title" = "Films Chargés";
 "help.loadedFilms.message" = "Cette vue affiche tous les films actuellement chargés dans vos appareils. Lorsque vous chargez un film depuis l'onglet Mes Films, il apparaît ici avec le nom de l'appareil et la date de chargement. Balayez vers la gauche sur un film pour le décharger lorsque vous avez terminé votre bobine.";
 

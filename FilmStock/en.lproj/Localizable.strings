@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "My Collection";
-"help.collection.message" = "This is your gallery of custom film reminder card photos. When you take a photo using the camera while adding or editing a film, it appears here. These photos help you remember what your film boxes look like and can be useful for quick identification. You can delete images you no longer need or re-use them if you stock up on your favourite film.";
+"help.collection.message" = "This is your gallery of custom film reminder cards. When you take a photo using the camera while adding or editing a film, it appears here. You can delete images you no longer need or re-use them if you stock up on your favourite film.";
 "help.loadedFilms.title" = "Loaded Films";
 "help.loadedFilms.message" = "This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it when you have finished your roll.";
 

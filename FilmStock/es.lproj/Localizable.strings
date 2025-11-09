@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "Mi Colección";
-"help.collection.message" = "Esta es tu galería de fotos de tarjetas recordatorias de película personalizadas. Cuando tomas una foto con la cámara al añadir o editar una película, aparece aquí. Estas fotos te ayudan a recordar cómo se ven tus cajas de película y pueden ser útiles para una identificación rápida. Puedes eliminar imágenes que ya no necesites o reutilizarlas si reordenas tu película favorita.";
+"help.collection.message" = "Esta es tu galería de tarjetas recordatorias de película personalizadas. Cuando tomas una foto con la cámara al añadir o editar una película, aparece aquí. Puedes eliminar imágenes que ya no necesites o reutilizarlas si reordenas tu película favorita.";
 "help.loadedFilms.title" = "Películas Cargadas";
 "help.loadedFilms.message" = "Esta vista muestra todas las películas actualmente cargadas en tus cámaras. Cuando cargas una película desde la pestaña Mis Películas, aparece aquí junto con el nombre de la cámara y la fecha de carga. Desliza hacia la izquierda en una película para descargarla cuando hayas terminado tu rollo.";
 

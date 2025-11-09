@@ -230,7 +230,7 @@
 
 // MARK: - Help
 "help.collection.title" = "Meine Sammlung";
-"help.collection.message" = "Dies ist deine Galerie mit eigenen Film-Erinnerungskarten-Fotos. Wenn du ein Foto mit der Kamera beim Hinzufügen oder Bearbeiten eines Films aufnimmst, erscheint es hier. Diese Fotos helfen dir, dich zu erinnern, wie deine Filmschachteln aussehen, und können zur schnellen Identifizierung nützlich sein. Du kannst Bilder löschen, die du nicht mehr benötigst, oder sie wiederverwenden, wenn du deinen Lieblingsfilm nachbestellst.";
+"help.collection.message" = "Dies ist deine Galerie mit eigenen Film-Erinnerungskarten. Wenn du ein Foto mit der Kamera beim Hinzufügen oder Bearbeiten eines Films aufnimmst, erscheint es hier. Du kannst Bilder löschen, die du nicht mehr benötigst, oder sie wiederverwenden, wenn du deinen Lieblingsfilm nachbestellst.";
 "help.loadedFilms.title" = "Eingelegte Filme";
 "help.loadedFilms.message" = "Diese Ansicht zeigt alle derzeit in deinen Kameras eingelegten Filme. Wenn du einen Film aus dem Tab 'Meine Filme' einlegst, erscheint er hier zusammen mit dem Kameranamen und dem Ladedatum. Wische nach links auf einen Film, um ihn zu entnehmen, wenn du deine Rolle fertig hast.";
 
