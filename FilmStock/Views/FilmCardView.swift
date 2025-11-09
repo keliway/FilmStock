@@ -46,6 +46,8 @@ struct FilmCardView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(groupedFilm.manufacturer) \(groupedFilm.name)")
                         .font(.headline)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                     
                     HStack(spacing: 4) {
                         Text("ISO \(groupedFilm.filmSpeed)")
@@ -117,6 +119,7 @@ struct FilmCardView: View {
             }
             .padding(.vertical, 4)
             .padding(.horizontal, 16)
+            .padding(.trailing, isExpired ? 70 : 0)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
             // Red "EXPIRED" chip in top right
