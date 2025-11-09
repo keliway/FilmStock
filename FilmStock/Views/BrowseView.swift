@@ -158,7 +158,7 @@ struct BrowseView: View {
                             .textCase(nil)
                         }
                         
-                        ForEach(filteredFilms) { group in
+                                ForEach(filteredFilms) { group in
                             if viewMode == .cards {
                                 cardView(for: group)
                         } else {
@@ -201,9 +201,9 @@ struct BrowseView: View {
                                     .background(Color.accentColor)
                                     .foregroundColor(.white)
                                     .clipShape(Capsule())
-                            }
-                        }
                     }
+                }
+            }
                     .onboardingTooltip(
                         id: "filter",
                         title: "Filter Your Collection",

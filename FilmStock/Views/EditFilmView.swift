@@ -64,6 +64,7 @@ struct EditFilmView: View {
                     }
                     
                     TextField("film.name", text: $name)
+                        .autocorrectionDisabled()
                     
                     Picker("film.type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
@@ -207,8 +208,26 @@ struct EditFilmView: View {
                     ForEach(expireDates.indices, id: \.self) { index in
                         TextField("film.expiryDateFormat", text: Binding(
                             get: { expireDates[index] },
-                            set: { expireDates[index] = $0 }
+                            set: { newValue in
+                                // Remove any non-numeric characters
+                                let filtered = newValue.filter { $0.isNumber }
+                                
+                                // Limit to 6 characters
+                                let limited = String(filtered.prefix(6))
+                                
+                                // Auto-format based on length
+                                if limited.count == 6 {
+                                    // Format as MM/YYYY
+                                    let month = limited.prefix(2)
+                                    let year = limited.suffix(4)
+                                    expireDates[index] = "\(month)/\(year)"
+                                } else {
+                                    // Keep as-is (for 4-digit year or incomplete input)
+                                    expireDates[index] = limited
+                                }
+                            }
                         ))
+                        .keyboardType(.numberPad)
                     }
                     .onDelete { indexSet in
                         expireDates.remove(atOffsets: indexSet)

@@ -44,7 +44,7 @@
 "film.rollCount" = "%d本";
 "Quantity: %d" = "数量：%d";
 "Sheets: %d" = "枚数：%d";
-"film.expiryDateFormat" = "MM/YYYY または YYYY";
+"film.expiryDateFormat" = "MMYYYY または YYYY";
 "film.searchManufacturer" = "メーカーを検索または追加";
 
 // MARK: - Film Types

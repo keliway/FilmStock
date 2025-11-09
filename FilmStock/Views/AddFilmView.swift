@@ -61,6 +61,7 @@ struct AddFilmView: View {
                     }
                     
                     TextField("film.name", text: $name)
+                        .autocorrectionDisabled()
                         .submitLabel(.done)
                         .onSubmit {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -208,12 +209,27 @@ struct AddFilmView: View {
                     ForEach(expireDates.indices, id: \.self) { index in
                         TextField("film.expiryDateFormat", text: Binding(
                             get: { expireDates[index] },
-                            set: { expireDates[index] = $0 }
+                            set: { newValue in
+                                // Remove any non-numeric characters
+                                let filtered = newValue.filter { $0.isNumber }
+                                
+                                // Limit to 6 characters
+                                let limited = String(filtered.prefix(6))
+                                
+                                // Auto-format based on length
+                                if limited.count == 6 {
+                                    // Format as MM/YYYY
+                                    let month = limited.prefix(2)
+                                    let year = limited.suffix(4)
+                                    expireDates[index] = "\(month)/\(year)"
+                                } else {
+                                    // Keep as-is (for 4-digit year or incomplete input)
+                                    expireDates[index] = limited
+                                }
+                            }
                         ))
+                        .keyboardType(.numberPad)
                         .submitLabel(.done)
-                        .onSubmit {
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                        }
                     }
                     .onDelete { indexSet in
                         expireDates.remove(atOffsets: indexSet)

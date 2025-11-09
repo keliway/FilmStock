@@ -44,7 +44,7 @@
 "film.rollCount" = "%d rollo";
 "Quantity: %d" = "Cantidad: %d";
 "Sheets: %d" = "Hojas: %d";
-"film.expiryDateFormat" = "MM/AAAA o AAAA";
+"film.expiryDateFormat" = "MMAAAA o AAAA";
 "film.searchManufacturer" = "Buscar o añadir fabricante";
 
 // MARK: - Film Types
