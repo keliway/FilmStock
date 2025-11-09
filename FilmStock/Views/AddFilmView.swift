@@ -33,6 +33,10 @@ struct AddFilmView: View {
     @State private var toastMessage = ""
     @State private var hasAutoPopulatedMetadata = false // Track if we've auto-populated speed/type
     
+    // Validation errors
+    @State private var nameError: String?
+    @State private var expireDateErrors: [Int: String] = [:]
+    
     // For editing
     var filmToEdit: FilmStock?
     
@@ -60,12 +64,26 @@ struct AddFilmView: View {
                         }
                     }
                     
-                    TextField("film.name", text: $name)
-                        .autocorrectionDisabled()
-                        .submitLabel(.done)
-                        .onSubmit {
-                            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    VStack(alignment: .leading, spacing: 4) {
+                        TextField("film.name", text: $name)
+                            .autocorrectionDisabled()
+                            .submitLabel(.done)
+                            .onSubmit {
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            }
+                            .onChange(of: name) { oldValue, newValue in
+                                // Clear error when user starts typing
+                                if nameError != nil {
+                                    nameError = nil
+                                }
+                            }
+                        
+                        if let error = nameError {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
                         }
+                    }
                     
                     Picker("film.type", selection: $type) {
                         ForEach(FilmStock.FilmType.allCases, id: \.self) { type in
@@ -207,32 +225,47 @@ struct AddFilmView: View {
                 
                 Section("film.expiryDate") {
                     ForEach(expireDates.indices, id: \.self) { index in
-                        TextField("film.expiryDateFormat", text: Binding(
-                            get: { expireDates[index] },
-                            set: { newValue in
-                                // Remove any non-numeric characters
-                                let filtered = newValue.filter { $0.isNumber }
-                                
-                                // Limit to 6 characters
-                                let limited = String(filtered.prefix(6))
-                                
-                                // Auto-format based on length
-                                if limited.count == 6 {
-                                    // Format as MM/YYYY
-                                    let month = limited.prefix(2)
-                                    let year = limited.suffix(4)
-                                    expireDates[index] = "\(month)/\(year)"
-                                } else {
-                                    // Keep as-is (for 4-digit year or incomplete input)
-                                    expireDates[index] = limited
+                        VStack(alignment: .leading, spacing: 4) {
+                            TextField("film.expiryDateFormat", text: Binding(
+                                get: { expireDates[index] },
+                                set: { newValue in
+                                    // Remove any non-numeric characters
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    
+                                    // Limit to 6 characters
+                                    let limited = String(filtered.prefix(6))
+                                    
+                                    // Auto-format based on length
+                                    if limited.count == 6 {
+                                        // Format as MM/YYYY
+                                        let month = limited.prefix(2)
+                                        let year = limited.suffix(4)
+                                        expireDates[index] = "\(month)/\(year)"
+                                    } else {
+                                        // Keep as-is (for 4-digit year or incomplete input)
+                                        expireDates[index] = limited
+                                    }
+                                    
+                                    // Clear error when user edits
+                                    expireDateErrors.removeValue(forKey: index)
                                 }
+                            ))
+                            .keyboardType(.numberPad)
+                            .submitLabel(.done)
+                            
+                            if let error = expireDateErrors[index] {
+                                Text(error)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
                             }
-                        ))
-                        .keyboardType(.numberPad)
-                        .submitLabel(.done)
+                        }
                     }
                     .onDelete { indexSet in
                         expireDates.remove(atOffsets: indexSet)
+                        // Clean up error states for removed indices
+                        for index in indexSet {
+                            expireDateErrors.removeValue(forKey: index)
+                        }
                     }
                     
                     Button("film.addExpiryDate") {
@@ -427,7 +460,76 @@ struct AddFilmView: View {
         }
     }
     
+    private func validateForm() -> Bool {
+        var isValid = true
+        
+        // Clear all errors first
+        nameError = nil
+        expireDateErrors.removeAll()
+        
+        // Validate name
+        if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            nameError = NSLocalizedString("error.nameEmpty", comment: "")
+            isValid = false
+        }
+        
+        // Validate expiry dates
+        for (index, dateString) in expireDates.enumerated() {
+            // Skip empty dates (they're optional)
+            if dateString.isEmpty {
+                continue
+            }
+            
+            // Remove any slashes to check numeric content
+            let numericOnly = dateString.filter { $0.isNumber }
+            
+            if numericOnly.count == 4 {
+                // YYYY format - validate year
+                guard let year = Int(numericOnly), year >= 1950, year <= 2100 else {
+                    expireDateErrors[index] = NSLocalizedString("error.invalidYear", comment: "")
+                    isValid = false
+                    continue
+                }
+            } else if numericOnly.count == 6 {
+                // MMYYYY format - validate month and year
+                let monthStr = String(numericOnly.prefix(2))
+                let yearStr = String(numericOnly.suffix(4))
+                
+                guard let month = Int(monthStr), let year = Int(yearStr) else {
+                    expireDateErrors[index] = NSLocalizedString("error.invalidDate", comment: "")
+                    isValid = false
+                    continue
+                }
+                
+                // Validate month (01-12)
+                guard month >= 1 && month <= 12 else {
+                    expireDateErrors[index] = NSLocalizedString("error.invalidMonth", comment: "")
+                    isValid = false
+                    continue
+                }
+                
+                // Validate year (1950-2100)
+                guard year >= 1950 && year <= 2100 else {
+                    expireDateErrors[index] = NSLocalizedString("error.invalidYear", comment: "")
+                    isValid = false
+                    continue
+                }
+            } else {
+                // Invalid length (not 4 or 6 digits)
+                expireDateErrors[index] = NSLocalizedString("error.invalidDateFormat", comment: "")
+                isValid = false
+            }
+        }
+        
+        return isValid
+    }
+    
     private func saveFilm() {
+        // Validate form before saving
+        guard validateForm() else {
+            return
+        }
+        
         let filteredDates = expireDates.filter { !$0.isEmpty }
         
         // Handle image based on source

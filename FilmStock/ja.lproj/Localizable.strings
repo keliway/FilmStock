@@ -174,6 +174,11 @@
 // MARK: - Error Messages
 "error.cannotDelete.title" = "フィルムを取り除けません";
 "error.cannotDeleteLoaded" = "\"%@\" は現在カメラに装填されています。取り除く前に取り出してください。";
+"error.nameEmpty" = "フィルム名を入力してください";
+"error.invalidYear" = "年は1950から2100の間で入力してください";
+"error.invalidMonth" = "月は01から12の間で入力してください";
+"error.invalidDate" = "無効な日付形式です";
+"error.invalidDateFormat" = "日付はYYYYまたはMM/YYYY形式で入力してください";
 
 // MARK: - Load Film
 "load.title" = "フィルムを装填";

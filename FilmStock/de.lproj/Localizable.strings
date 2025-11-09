@@ -174,6 +174,11 @@
 // MARK: - Error Messages
 "error.cannotDelete.title" = "Film kann nicht entfernt werden";
 "error.cannotDeleteLoaded" = "\"%@\" ist derzeit in einer Kamera eingelegt. Bitte nimm ihn zuerst heraus, bevor du ihn entfernst.";
+"error.nameEmpty" = "Filmname darf nicht leer sein";
+"error.invalidYear" = "Jahr muss zwischen 1950 und 2100 liegen";
+"error.invalidMonth" = "Monat muss zwischen 01 und 12 liegen";
+"error.invalidDate" = "Ungültiges Datumsformat";
+"error.invalidDateFormat" = "Datum muss JJJJ oder MM/JJJJ sein";
 
 // MARK: - Load Film
 "load.title" = "Film einlegen";

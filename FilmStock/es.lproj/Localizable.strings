@@ -174,6 +174,11 @@
 // MARK: - Error Messages
 "error.cannotDelete.title" = "No se puede quitar la película";
 "error.cannotDeleteLoaded" = "\"%@\" está actualmente cargada en una cámara. Por favor descárgala primero antes de quitarla.";
+"error.nameEmpty" = "El nombre de la película no puede estar vacío";
+"error.invalidYear" = "El año debe estar entre 1950 y 2100";
+"error.invalidMonth" = "El mes debe estar entre 01 y 12";
+"error.invalidDate" = "Formato de fecha inválido";
+"error.invalidDateFormat" = "La fecha debe ser AAAA o MM/AAAA";
 
 // MARK: - Load Film
 "load.title" = "Cargar película";
