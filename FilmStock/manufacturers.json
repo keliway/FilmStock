@@ -9,6 +9,8 @@
       "films": [
         {
           "filename": "apx400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "apx400",
             "apx 400",
@@ -18,6 +20,8 @@
         },
         {
           "filename": "apx100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "apx100",
             "apx 100",
@@ -52,6 +56,8 @@
       "films": [
         {
           "filename": "50d",
+          "speed": 50,
+          "type": "Color",
           "aliases": [
             "50d",
             "50 d",
@@ -61,6 +67,8 @@
         },
         {
           "filename": "400d",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "400d",
             "400 d",
@@ -70,6 +78,8 @@
         },
         {
           "filename": "800t",
+          "speed": 800,
+          "type": "Color",
           "aliases": [
             "800t",
             "800 t",
@@ -100,6 +110,8 @@
       "films": [
         {
           "filename": "fomapan400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "fomapan400",
             "foma 400",
@@ -110,6 +122,8 @@
         },
         {
           "filename": "fomapan200",
+          "speed": 200,
+          "type": "BW",
           "aliases": [
             "fomapan200",
             "foma 200",
@@ -120,6 +134,8 @@
         },
         {
           "filename": "fomapanr",
+          "speed": 100,
+          "type": "Slide",
           "aliases": [
             "fomapanr",
             "foma r",
@@ -131,6 +147,8 @@
         },
         {
           "filename": "fomapan100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "fomapan100",
             "foma 100",
@@ -142,6 +160,8 @@
         },
         {
           "filename": "ortho400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "ortho400",
             "ortho 400",
@@ -161,6 +181,8 @@
       "films": [
         {
           "filename": "velvia100",
+          "speed": 100,
+          "type": "Slide",
           "aliases": [
             "velvia100",
             "velvia 100",
@@ -170,6 +192,8 @@
         },
         {
           "filename": "velvia50",
+          "speed": 50,
+          "type": "Slide",
           "aliases": [
             "velvia50",
             "velvia 50",
@@ -178,6 +202,8 @@
         },
         {
           "filename": "nps160",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "nps160",
             "nps 160",
@@ -188,6 +214,8 @@
         },
         {
           "filename": "pro160s",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "pro160s",
             "pro 160s",
@@ -198,6 +226,8 @@
         },
         {
           "filename": "c200",
+          "speed": 200,
+          "type": "Color",
           "aliases": [
             "c200",
             "c 200",
@@ -208,6 +238,8 @@
         },
         {
           "filename": "Acros",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "Acros",
             "acros 100",
@@ -218,6 +250,8 @@
         },
         {
           "filename": "Pro400h",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "Pro400h",
             "pro 400h",
@@ -228,6 +262,8 @@
         },
         {
           "filename": "provia100f",
+          "speed": 100,
+          "type": "Slide",
           "aliases": [
             "provia100f",
             "provia 100f",
@@ -239,7 +275,23 @@
           ]
         },
         {
+          "filename": "provia400f",
+          "speed": 400,
+          "type": "Slide",
+          "aliases": [
+            "provia400f",
+            "provia 400f",
+            "provia 400 f",
+            "400F",
+            "fuji provia 400f",
+            "provia 400",
+            "provia"
+          ]
+        },
+        {
           "filename": "pro160c",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "pro160c",
             "pro 160c",
@@ -250,6 +302,8 @@
         },
         {
           "filename": "400",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "400",
             "fuji 400",
@@ -259,6 +313,8 @@
         },
         {
           "filename": "200",
+          "speed": 200,
+          "type": "Color",
           "aliases": [
             "200",
             "fuji 200",
@@ -268,6 +324,8 @@
         },
         {
           "filename": "Neopan400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "Neopan400",
             "neopan 400",
@@ -276,6 +334,8 @@
         },
         {
           "filename": "pro160ns",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "pro160ns",
             "pro 160ns",
@@ -286,6 +346,8 @@
         },
         {
           "filename": "Neopan1600",
+          "speed": 1600,
+          "type": "BW",
           "aliases": [
             "Neopan1600",
             "neopan 1600",
@@ -299,6 +361,8 @@
       "films": [
         {
           "filename": "delta100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "delta100",
             "delta 100",
@@ -307,6 +371,8 @@
         },
         {
           "filename": "delta400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "delta400",
             "delta 400",
@@ -315,6 +381,8 @@
         },
         {
           "filename": "ortho80",
+          "speed": 80,
+          "type": "BW",
           "aliases": [
             "ortho80",
             "ortho 80",
@@ -324,6 +392,8 @@
         },
         {
           "filename": "xp2",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "xp2",
             "xp 2",
@@ -333,6 +403,8 @@
         },
         {
           "filename": "delta3200",
+          "speed": 3200,
+          "type": "BW",
           "aliases": [
             "delta3200",
             "delta 3200",
@@ -342,6 +414,8 @@
         },
         {
           "filename": "fp4",
+          "speed": 125,
+          "type": "BW",
           "aliases": [
             "fp4",
             "fp 4",
@@ -351,6 +425,8 @@
         },
         {
           "filename": "hp5",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "hp5",
             "hp 5",
@@ -360,6 +436,8 @@
         },
         {
           "filename": "panf",
+          "speed": 50,
+          "type": "BW",
           "aliases": [
             "panf",
             "pan f",
@@ -369,6 +447,8 @@
         },
         {
           "filename": "sfx200",
+          "speed": 200,
+          "type": "BW",
           "aliases": [
             "sfx200",
             "sfx 200",
@@ -387,6 +467,8 @@
       "films": [
         {
           "filename": "pan100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "pan100",
             "pan 100",
@@ -396,6 +478,8 @@
         },
         {
           "filename": "pan200",
+          "speed": 200,
+          "type": "BW",
           "aliases": [
             "pan200",
             "pan 200",
@@ -405,6 +489,8 @@
         },
         {
           "filename": "pan400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "pan400",
             "pan 400",
@@ -419,6 +505,8 @@
       "films": [
         {
           "filename": "Portra160NC",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "Portra160NC",
             "portra 160nc",
@@ -429,6 +517,8 @@
         },
         {
           "filename": "50D",
+          "speed": 50,
+          "type": "Color",
           "aliases": [
             "50D",
             "50 d",
@@ -441,6 +531,8 @@
         },
         {
           "filename": "Ektachrome400",
+          "speed": 400,
+          "type": "Slide",
           "aliases": [
             "Ektachrome400",
             "ektachrome 400",
@@ -449,6 +541,8 @@
         },
         {
           "filename": "200T",
+          "speed": 200,
+          "type": "Color",
           "aliases": [
             "200T",
             "200 t",
@@ -461,6 +555,8 @@
         },
         {
           "filename": "Ektachrome200",
+          "speed": 200,
+          "type": "Slide",
           "aliases": [
             "Ektachrome200",
             "ektachrome 200",
@@ -470,6 +566,8 @@
         },
         {
           "filename": "Portra160VC",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "Portra160VC",
             "portra 160vc",
@@ -480,6 +578,8 @@
         },
         {
           "filename": "Ektachrome100Plus",
+          "speed": 100,
+          "type": "Slide",
           "aliases": [
             "Ektachrome100Plus",
             "ektachrome 100 plus",
@@ -491,6 +591,8 @@
         },
         {
           "filename": "TMax100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "TMax100",
             "tmax 100",
@@ -503,6 +605,8 @@
         },
         {
           "filename": "Ektar100",
+          "speed": 100,
+          "type": "Color",
           "aliases": [
             "Ektar100",
             "ektar 100",
@@ -512,6 +616,8 @@
         },
         {
           "filename": "TriX400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "TriX400",
             "trix 400",
@@ -525,6 +631,8 @@
         },
         {
           "filename": "Portra800",
+          "speed": 800,
+          "type": "Color",
           "aliases": [
             "Portra800",
             "portra 800",
@@ -533,6 +641,8 @@
         },
         {
           "filename": "250D",
+          "speed": 250,
+          "type": "Color",
           "aliases": [
             "250D",
             "250 d",
@@ -545,6 +655,8 @@
         },
         {
           "filename": "TMax400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "TMax400",
             "tmax 400",
@@ -557,6 +669,8 @@
         },
         {
           "filename": "TMax3200",
+          "speed": 3200,
+          "type": "BW",
           "aliases": [
             "TMax3200",
             "tmax 3200",
@@ -569,6 +683,8 @@
         },
         {
           "filename": "Ektachrome100",
+          "speed": 100,
+          "type": "Slide",
           "aliases": [
             "Ektachrome100",
             "ektachrome 100",
@@ -578,6 +694,8 @@
         },
         {
           "filename": "DoubleX",
+          "speed": 250,
+          "type": "BW",
           "aliases": [
             "DoubleX",
             "double x",
@@ -588,6 +706,8 @@
         },
         {
           "filename": "ultramax",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "ultramax",
             "ultra max",
@@ -597,6 +717,8 @@
         },
         {
           "filename": "Portra400VC",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "Portra400VC",
             "portra 400vc",
@@ -607,6 +729,8 @@
         },
         {
           "filename": "Gold",
+          "speed": 200,
+          "type": "Color",
           "aliases": [
             "Gold",
             "gold 200",
@@ -617,6 +741,8 @@
         },
         {
           "filename": "Portra160",
+          "speed": 160,
+          "type": "Color",
           "aliases": [
             "Portra160",
             "portra 160",
@@ -626,6 +752,8 @@
         },
         {
           "filename": "Portra400NC",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "Portra400NC",
             "portra 400nc",
@@ -636,6 +764,8 @@
         },
         {
           "filename": "Colorplus",
+          "speed": 200,
+          "type": "Color",
           "aliases": [
             "Colorplus",
             "color plus",
@@ -645,6 +775,8 @@
         },
         {
           "filename": "Portra400",
+          "speed": 400,
+          "type": "Color",
           "aliases": [
             "Portra400",
             "portra 400",
@@ -654,6 +786,8 @@
         },
         {
           "filename": "Ektachrome64T",
+          "speed": 64,
+          "type": "Slide",
           "aliases": [
             "Ektachrome64T",
             "ektachrome 64t",
@@ -664,6 +798,8 @@
         },
         {
           "filename": "TechnicalPan",
+          "speed": 25,
+          "type": "BW",
           "aliases": [
             "TechnicalPan",
             "technical pan",
@@ -677,6 +813,8 @@
         },
         {
           "filename": "500T",
+          "speed": 500,
+          "type": "Color",
           "aliases": [
             "500T",
             "500 t",
@@ -689,6 +827,8 @@
         },
         {
           "filename": "PlusX",
+          "speed": 125,
+          "type": "BW",
           "aliases": [
             "PlusX",
             "plus x",
@@ -699,6 +839,8 @@
         },
         {
           "filename": "Ektachrome160T",
+          "speed": 160,
+          "type": "Slide",
           "aliases": [
             "Ektachrome160T",
             "ektachrome 160t",
@@ -710,6 +852,8 @@
         },
         {
           "filename": "Ektachrome320T",
+          "speed": 320,
+          "type": "Slide",
           "aliases": [
             "Ektachrome320T",
             "ektachrome 320t",
@@ -721,6 +865,8 @@
         },
         {
           "filename": "Portra100T",
+          "speed": 100,
+          "type": "Color",
           "aliases": [
             "Portra100T",
             "portra 100t",
@@ -731,6 +877,8 @@
         },
         {
           "filename": "TriX320",
+          "speed": 320,
+          "type": "BW",
           "aliases": [
             "TriX320",
             "trix 320",
@@ -770,6 +918,8 @@
       "films": [
         {
           "filename": "retro400s",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "retro400s",
             "retro 400s",
@@ -781,6 +931,8 @@
         },
         {
           "filename": "retro80s",
+          "speed": 80,
+          "type": "BW",
           "aliases": [
             "retro80s",
             "retro 80s",
@@ -792,6 +944,8 @@
         },
         {
           "filename": "rpx25",
+          "speed": 25,
+          "type": "BW",
           "aliases": [
             "rpx25",
             "rpx 25",
@@ -801,6 +955,8 @@
         },
         {
           "filename": "rpx100",
+          "speed": 100,
+          "type": "BW",
           "aliases": [
             "rpx100",
             "rpx 100",
@@ -810,6 +966,8 @@
         },
         {
           "filename": "rpx400",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "rpx400",
             "rpx 400",
@@ -819,6 +977,8 @@
         },
         {
           "filename": "infrared",
+          "speed": 400,
+          "type": "BW",
           "aliases": [
             "infrared",
             "ir",
@@ -827,6 +987,8 @@
         },
         {
           "filename": "ortho25plus",
+          "speed": 25,
+          "type": "BW",
           "aliases": [
             "ortho25plus",
             "ortho 25 plus",

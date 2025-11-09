@@ -31,6 +31,7 @@ struct AddFilmView: View {
     @State private var catalogSelectedSource: ImageSource? // Tracks what was selected from catalog
     @State private var showToast = false
     @State private var toastMessage = ""
+    @State private var hasAutoPopulatedMetadata = false // Track if we've auto-populated speed/type
     
     // For editing
     var filmToEdit: FilmStock?
@@ -350,17 +351,59 @@ struct AddFilmView: View {
                 }
             }
             .onChange(of: manufacturer) { oldValue, newValue in
-                // Always try to load default image when manufacturer changes (for auto-detection)
+                // Always try to load default image and metadata when manufacturer changes (for auto-detection)
                 if !name.isEmpty && !newValue.isEmpty {
-                    defaultImage = ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue)
+                    let metadata = ImageStorage.shared.detectFilmMetadata(filmName: name, manufacturer: newValue)
+                    defaultImage = metadata.hasImage ? ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue) : nil
+                    
+                    // Auto-populate speed and type if detected (only once, or when changing from one detected film to another)
+                    if let detectedSpeed = metadata.filmSpeed {
+                        filmSpeed = detectedSpeed
+                        hasAutoPopulatedMetadata = true
+                    }
+                    if let detectedType = metadata.type {
+                        // Map type string to FilmType enum
+                        switch detectedType {
+                        case "BW":
+                            type = .bw
+                        case "Color":
+                            type = .color
+                        case "Slide":
+                            type = .slide
+                        default:
+                            break
+                        }
+                        hasAutoPopulatedMetadata = true
+                    }
                 } else {
                     defaultImage = nil
                 }
             }
             .onChange(of: name) { oldValue, newValue in
-                // Always try to load default image when name changes (for auto-detection)
+                // Always try to load default image and metadata when name changes (for auto-detection)
                 if !newValue.isEmpty && !manufacturer.isEmpty {
-                    defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
+                    let metadata = ImageStorage.shared.detectFilmMetadata(filmName: newValue, manufacturer: manufacturer)
+                    defaultImage = metadata.hasImage ? ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer) : nil
+                    
+                    // Auto-populate speed and type if detected (only once, or when changing from one detected film to another)
+                    if let detectedSpeed = metadata.filmSpeed {
+                        filmSpeed = detectedSpeed
+                        hasAutoPopulatedMetadata = true
+                    }
+                    if let detectedType = metadata.type {
+                        // Map type string to FilmType enum
+                        switch detectedType {
+                        case "BW":
+                            type = .bw
+                        case "Color":
+                            type = .color
+                        case "Slide":
+                            type = .slide
+                        default:
+                            break
+                        }
+                        hasAutoPopulatedMetadata = true
+                    }
                 } else {
                     defaultImage = nil
                 }

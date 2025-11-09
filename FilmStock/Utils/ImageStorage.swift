@@ -96,6 +96,8 @@ class ImageStorage {
     // Helper struct for decoding manufacturers.json
     struct FilmInfo: Codable {
         let filename: String
+        let speed: Int?
+        let type: String?
         let aliases: [String]
     }
     
@@ -106,6 +108,13 @@ class ImageStorage {
     
     struct ManufacturersDataWrapper: Codable {
         var manufacturers: [ManufacturerInfo]
+    }
+    
+    // Result type for film detection
+    struct FilmMetadata {
+        let filmSpeed: Int?
+        let type: String?
+        let hasImage: Bool
     }
     
     // Helper function to get common image names for a manufacturer
@@ -344,6 +353,50 @@ class ImageStorage {
     /// - Returns: The UIImage if found, nil otherwise
     func loadCatalogImage(filename: String) -> UIImage? {
         return loadImageFromBundle(filename: filename)
+    }
+    
+    /// Detect film metadata (speed, type, and whether a default image exists)
+    /// - Parameters:
+    ///   - filmName: The film name entered by the user
+    ///   - manufacturer: The manufacturer name entered by the user
+    /// - Returns: FilmMetadata containing speed, type, and image availability
+    func detectFilmMetadata(filmName: String, manufacturer: String) -> FilmMetadata {
+        // Load manufacturers.json to get film information
+        guard let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+              let manufacturersData = try? Data(contentsOf: manufacturersURL),
+              let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) else {
+            return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
+        }
+        
+        // Find the manufacturer in the JSON (case-insensitive)
+        guard let manufacturerInfo = manufacturersWrapper.manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
+            return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
+        }
+        
+        // Normalize the user's film name for comparison
+        let normalizedUserInput = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+        
+        // Try to find a matching film by checking all aliases
+        for filmInfo in manufacturerInfo.films {
+            let allNames = [filmInfo.filename] + filmInfo.aliases
+            
+            for alias in allNames {
+                let normalizedAlias = alias.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+                
+                if normalizedUserInput == normalizedAlias {
+                    // Found a match! Return the metadata
+                    let hasImage = loadDefaultImage(filmName: filmName, manufacturer: manufacturer) != nil
+                    return FilmMetadata(
+                        filmSpeed: filmInfo.speed,
+                        type: filmInfo.type,
+                        hasImage: hasImage
+                    )
+                }
+            }
+        }
+        
+        // No match found
+        return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
     }
     
     /// Get all custom images grouped by manufacturer

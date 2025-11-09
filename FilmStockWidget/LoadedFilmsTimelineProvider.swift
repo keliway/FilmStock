@@ -285,6 +285,8 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
     // Add the required structs for decoding manufacturers.json
     struct FilmInfo: Codable {
         let filename: String
+        let speed: Int?
+        let type: String?
         let aliases: [String]
     }
     
