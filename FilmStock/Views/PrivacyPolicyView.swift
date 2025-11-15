@@ -20,6 +20,11 @@ struct PrivacyPolicyView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
+                Text("legal.englishOnly")
+                    .font(.caption)
+                    .foregroundColor(.orange)
+                    .padding(.top, 4)
+                
                 Divider()
                 
                 Group {

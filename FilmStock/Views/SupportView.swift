@@ -88,6 +88,18 @@ struct SupportView: View {
                     }
                     .padding(.horizontal, 32)
                     .disabled(storeManager.isPurchasing || storeManager.products.isEmpty)
+                    .confirmationDialog("support.confirm.title", isPresented: $showConfirmation, titleVisibility: .visible) {
+                        Button("support.confirm", role: .none) {
+                            storeManager.purchaseCoffee()
+                        }
+                        Button("action.cancel", role: .cancel) { }
+                    } message: {
+                        if let product = storeManager.products.first {
+                            Text(String(format: NSLocalizedString("support.confirm.message", comment: ""), product.displayPrice))
+                        } else {
+                            Text("support.confirm.message.noPrice")
+                        }
+                    }
                     
                     if storeManager.products.isEmpty && !storeManager.isPurchasing {
                         HStack {
@@ -139,18 +151,6 @@ struct SupportView: View {
         }
         .navigationTitle("support.title")
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog("support.confirm.title", isPresented: $showConfirmation, titleVisibility: .visible) {
-                Button("support.confirm", role: .none) {
-                    storeManager.purchaseCoffee()
-                }
-                Button("action.cancel", role: .cancel) { }
-            } message: {
-                if let product = storeManager.products.first {
-                    Text(String(format: NSLocalizedString("support.confirm.message", comment: ""), product.displayPrice))
-                } else {
-                    Text("support.confirm.message.noPrice")
-                }
-            }
         .onChange(of: storeManager.purchaseSuccessful) { oldValue, newValue in
             if newValue {
                 showThankYou = true
@@ -170,6 +170,49 @@ class StoreManager: ObservableObject {
     @Published var products: [Product] = []
     
     private let productID = "halbe.no.FilmStock.support.coffee"
+    private var updateListenerTask: Task<Void, Error>?
+    
+    init() {
+        // Start listening for transaction updates
+        updateListenerTask = listenForTransactions()
+    }
+    
+    deinit {
+        updateListenerTask?.cancel()
+    }
+    
+    private func listenForTransactions() -> Task<Void, Error> {
+        return Task.detached {
+            // Iterate through any unfinished transactions
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try self.checkVerified(result)
+                    
+                    // Deliver content or update UI
+                    await MainActor.run {
+                        self.purchaseSuccessful = true
+                    }
+                    
+                    // Always finish the transaction
+                    await transaction.finish()
+                } catch {
+                    // StoreKit has a transaction that fails verification. Don't deliver content.
+                }
+            }
+        }
+    }
+    
+    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+        // Check if the transaction passes StoreKit verification
+        switch result {
+        case .unverified:
+            // StoreKit parses the JWS, but it fails verification
+            throw StoreError.failedVerification
+        case .verified(let safe):
+            // The result is verified, return the unwrapped value
+            return safe
+        }
+    }
     
     func loadProducts() {
         Task {
@@ -201,16 +244,16 @@ class StoreManager: ObservableObject {
                 
                 switch result {
                 case .success(let verification):
-                    switch verification {
-                    case .verified(let transaction):
+                    do {
+                        let transaction = try checkVerified(verification)
                         await transaction.finish()
                         await MainActor.run {
                             purchaseSuccessful = true
                             isPurchasing = false
                         }
-                    case .unverified(_, let error):
+                    } catch {
                         await MainActor.run {
-                            purchaseError = String(format: NSLocalizedString("support.error.verificationFailed", comment: ""), error.localizedDescription)
+                            purchaseError = NSLocalizedString("support.error.verificationFailed", comment: "")
                             isPurchasing = false
                         }
                     }
@@ -239,3 +282,6 @@ class StoreManager: ObservableObject {
     }
 }
 
+enum StoreError: Error {
+    case failedVerification
+}

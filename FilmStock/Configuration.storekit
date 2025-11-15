@@ -1,0 +1,62 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "F62F3C82",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6755329442",
+      "localizations" : [
+        {
+          "description" : "Unterstütze die App mit einer kleinen Spende ",
+          "displayName" : "Spendier einen Kaffee ",
+          "locale" : "de"
+        },
+        {
+          "description" : "Support the development of this app with a little tip ",
+          "displayName" : "Buy Me a Coffee",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "halbe.no.FilmStock.support.coffee",
+      "referenceName" : "Support Coffee",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6755291709",
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "K29M267J26",
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 784911689.69218504,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

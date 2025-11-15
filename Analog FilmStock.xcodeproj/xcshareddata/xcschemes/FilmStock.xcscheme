@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-               BuildableName = "FilmStock.app"
-               BlueprintName = "FilmStock"
-               ReferencedContainer = "container:FilmStock.xcodeproj">
+               BuildableName = "Analog FilmStock.app"
+               BlueprintName = "Analog FilmStock"
+               ReferencedContainer = "container:Analog FilmStock.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,11 +45,14 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-            BuildableName = "FilmStock.app"
-            BlueprintName = "FilmStock"
-            ReferencedContainer = "container:FilmStock.xcodeproj">
+            BuildableName = "Analog FilmStock.app"
+            BlueprintName = "Analog FilmStock"
+            ReferencedContainer = "container:Analog FilmStock.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "../../FilmStock/Configuration.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -62,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-            BuildableName = "FilmStock.app"
-            BlueprintName = "FilmStock"
-            ReferencedContainer = "container:FilmStock.xcodeproj">
+            BuildableName = "Analog FilmStock.app"
+            BlueprintName = "Analog FilmStock"
+            ReferencedContainer = "container:Analog FilmStock.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

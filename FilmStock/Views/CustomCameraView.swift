@@ -233,7 +233,7 @@ class CameraViewController: UIViewController {
         
         // Add cancel button
         let cancelButton = UIButton(type: .system)
-        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.setTitle(NSLocalizedString("action.cancel", comment: ""), for: .normal)
         cancelButton.setTitleColor(.white, for: .normal)
         cancelButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)

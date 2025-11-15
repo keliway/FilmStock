@@ -1,0 +1,118 @@
+{
+  "identifier" : "D6E7F8A9",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6670950917",
+      "localizations" : [
+        {
+          "description" : "Support the development of FilmStock with a one-time tip",
+          "displayName" : "Buy Me a Coffee",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Unterstütze die Entwicklung von FilmStock mit einem einmaligen Trinkgeld",
+          "displayName" : "Kauf mir einen Kaffee",
+          "locale" : "de_DE"
+        },
+        {
+          "description" : "Soutenez le développement de FilmStock avec un pourboire unique",
+          "displayName" : "Offre-moi un café",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "FilmStockの開発を一度限りのチップでサポートしてください",
+          "displayName" : "コーヒーをおごる",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "Apoya el desarrollo de FilmStock con una propina única",
+          "displayName" : "Cómprame un café",
+          "locale" : "es_ES"
+        },
+        {
+          "description" : "Støtt utviklingen av FilmStock med et engangs tips",
+          "displayName" : "Kjøp meg en kaffe",
+          "locale" : "nb_NO"
+        },
+        {
+          "description" : "Wesprzyj rozwój FilmStock jednorazową napiwkiem",
+          "displayName" : "Kup mi kawę",
+          "locale" : "pl_PL"
+        }
+      ],
+      "productID" : "halbe.no.FilmStock.support.coffee",
+      "referenceName" : "Support Coffee",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Message Extensions"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Renewal"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
+

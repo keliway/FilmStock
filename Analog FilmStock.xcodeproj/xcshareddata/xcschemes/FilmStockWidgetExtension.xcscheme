@@ -17,9 +17,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "95DA01DB2EBA296E0040E997"
-               BuildableName = "FilmStockWidgetExtension.appex"
-               BlueprintName = "FilmStockWidgetExtension"
-               ReferencedContainer = "container:FilmStock.xcodeproj">
+               BuildableName = "Analog FilmStockWidgetExtension.appex"
+               BlueprintName = "Analog FilmStockWidgetExtension"
+               ReferencedContainer = "container:Analog FilmStock.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,9 +31,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-               BuildableName = "FilmStock.app"
-               BlueprintName = "FilmStock"
-               ReferencedContainer = "container:FilmStock.xcodeproj">
+               BuildableName = "Analog FilmStock.app"
+               BlueprintName = "Analog FilmStock"
+               ReferencedContainer = "container:Analog FilmStock.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-            BuildableName = "FilmStock.app"
-            BlueprintName = "FilmStock"
-            ReferencedContainer = "container:FilmStock.xcodeproj">
+            BuildableName = "Analog FilmStock.app"
+            BlueprintName = "Analog FilmStock"
+            ReferencedContainer = "container:Analog FilmStock.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -98,9 +98,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95D20FB62EB901CB00EF7348"
-            BuildableName = "FilmStock.app"
-            BlueprintName = "FilmStock"
-            ReferencedContainer = "container:FilmStock.xcodeproj">
+            BuildableName = "Analog FilmStock.app"
+            BlueprintName = "Analog FilmStock"
+            ReferencedContainer = "container:Analog FilmStock.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

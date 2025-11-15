@@ -11,9 +11,11 @@
 		950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */; };
 		950B974B2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */; };
 		950B974C2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */; };
+		954E69332EC8CD1400FFCD84 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 954E69322EC8CD1400FFCD84 /* Configuration.storekit */; };
+		954E69342EC8CD1400FFCD84 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 954E69322EC8CD1400FFCD84 /* Configuration.storekit */; };
 		95DA01DF2EBA296E0040E997 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01DE2EBA296E0040E997 /* WidgetKit.framework */; };
 		95DA01E12EBA296E0040E997 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95DA01E02EBA296E0040E997 /* SwiftUI.framework */; };
-		95DA01F02EBA29700040E997 /* FilmStockWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		95DA01F02EBA29700040E997 /* Analog FilmStockWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +35,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				95DA01F02EBA29700040E997 /* FilmStockWidgetExtension.appex in Embed Foundation Extensions */,
+				95DA01F02EBA29700040E997 /* Analog FilmStockWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,22 +45,23 @@
 /* Begin PBXFileReference section */
 		950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Filmstock Appicon.icon"; sourceTree = "<group>"; };
 		950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		95D20FB72EB901CB00EF7348 /* FilmStock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FilmStock.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FilmStockWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		954E69322EC8CD1400FFCD84 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Configuration.storekit; path = FilmStock/Configuration.storekit; sourceTree = "<group>"; };
+		95D20FB72EB901CB00EF7348 /* Analog FilmStock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Analog FilmStock.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Analog FilmStockWidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA01DE2EBA296E0040E997 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		95DA01E02EBA296E0040E997 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FilmStockWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		95DA01F12EBA29700040E997 /* Exceptions for "FilmStockWidget" folder in "FilmStockWidgetExtension" target */ = {
+		95DA01F12EBA29700040E997 /* Exceptions for "FilmStockWidget" folder in "Analog FilmStockWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 95DA01DB2EBA296E0040E997 /* FilmStockWidgetExtension */;
+			target = 95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */;
 		};
-		95DA01FE2EBA2B8D0040E997 /* Exceptions for "FilmStock" folder in "FilmStockWidgetExtension" target */ = {
+		95DA01FE2EBA2B8D0040E997 /* Exceptions for "FilmStock" folder in "Analog FilmStockWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"/Localized: Localizable.strings",
@@ -140,7 +143,7 @@
 				Models/FilmDataModel.swift,
 				Models/FilmStock.swift,
 			);
-			target = 95DA01DB2EBA296E0040E997 /* FilmStockWidgetExtension */;
+			target = 95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -148,7 +151,7 @@
 		95D20FB92EB901CB00EF7348 /* FilmStock */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				95DA01FE2EBA2B8D0040E997 /* Exceptions for "FilmStock" folder in "FilmStockWidgetExtension" target */,
+				95DA01FE2EBA2B8D0040E997 /* Exceptions for "FilmStock" folder in "Analog FilmStockWidgetExtension" target */,
 			);
 			path = FilmStock;
 			sourceTree = "<group>";
@@ -156,7 +159,7 @@
 		95DA01E22EBA296E0040E997 /* FilmStockWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				95DA01F12EBA29700040E997 /* Exceptions for "FilmStockWidget" folder in "FilmStockWidgetExtension" target */,
+				95DA01F12EBA29700040E997 /* Exceptions for "FilmStockWidget" folder in "Analog FilmStockWidgetExtension" target */,
 			);
 			path = FilmStockWidget;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 		95D20FAE2EB901CB00EF7348 = {
 			isa = PBXGroup;
 			children = (
+				954E69322EC8CD1400FFCD84 /* Configuration.storekit */,
 				950B974A2EBEB58F003901B5 /* Launch Screen.storyboard */,
 				950B954B2EBE04DF003901B5 /* Filmstock Appicon.icon */,
 				95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */,
@@ -199,8 +203,8 @@
 		95D20FB82EB901CB00EF7348 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				95D20FB72EB901CB00EF7348 /* FilmStock.app */,
-				95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */,
+				95D20FB72EB901CB00EF7348 /* Analog FilmStock.app */,
+				95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -217,9 +221,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		95D20FB62EB901CB00EF7348 /* FilmStock */ = {
+		95D20FB62EB901CB00EF7348 /* Analog FilmStock */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 95D20FC22EB901CB00EF7348 /* Build configuration list for PBXNativeTarget "FilmStock" */;
+			buildConfigurationList = 95D20FC22EB901CB00EF7348 /* Build configuration list for PBXNativeTarget "Analog FilmStock" */;
 			buildPhases = (
 				95D20FB32EB901CB00EF7348 /* Sources */,
 				95D20FB42EB901CB00EF7348 /* Frameworks */,
@@ -234,16 +238,16 @@
 			fileSystemSynchronizedGroups = (
 				95D20FB92EB901CB00EF7348 /* FilmStock */,
 			);
-			name = FilmStock;
+			name = "Analog FilmStock";
 			packageProductDependencies = (
 			);
 			productName = FilmStock;
-			productReference = 95D20FB72EB901CB00EF7348 /* FilmStock.app */;
+			productReference = 95D20FB72EB901CB00EF7348 /* Analog FilmStock.app */;
 			productType = "com.apple.product-type.application";
 		};
-		95DA01DB2EBA296E0040E997 /* FilmStockWidgetExtension */ = {
+		95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 95DA01F22EBA29700040E997 /* Build configuration list for PBXNativeTarget "FilmStockWidgetExtension" */;
+			buildConfigurationList = 95DA01F22EBA29700040E997 /* Build configuration list for PBXNativeTarget "Analog FilmStockWidgetExtension" */;
 			buildPhases = (
 				95DA01D82EBA296E0040E997 /* Sources */,
 				95DA01D92EBA296E0040E997 /* Frameworks */,
@@ -256,11 +260,11 @@
 			fileSystemSynchronizedGroups = (
 				95DA01E22EBA296E0040E997 /* FilmStockWidget */,
 			);
-			name = FilmStockWidgetExtension;
+			name = "Analog FilmStockWidgetExtension";
 			packageProductDependencies = (
 			);
 			productName = FilmStockWidgetExtension;
-			productReference = 95DA01DC2EBA296E0040E997 /* FilmStockWidgetExtension.appex */;
+			productReference = 95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -282,7 +286,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 95D20FB22EB901CB00EF7348 /* Build configuration list for PBXProject "FilmStock" */;
+			buildConfigurationList = 95D20FB22EB901CB00EF7348 /* Build configuration list for PBXProject "Analog FilmStock" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -303,8 +307,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				95D20FB62EB901CB00EF7348 /* FilmStock */,
-				95DA01DB2EBA296E0040E997 /* FilmStockWidgetExtension */,
+				95D20FB62EB901CB00EF7348 /* Analog FilmStock */,
+				95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -314,6 +318,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				954E69332EC8CD1400FFCD84 /* Configuration.storekit in Resources */,
 				950B974C2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */,
 				950B954C2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
 			);
@@ -324,6 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				950B954D2EBE04DF003901B5 /* Filmstock Appicon.icon in Resources */,
+				954E69342EC8CD1400FFCD84 /* Configuration.storekit in Resources */,
 				950B974B2EBEB58F003901B5 /* Launch Screen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,7 +356,7 @@
 /* Begin PBXTargetDependency section */
 		95DA01EF2EBA29700040E997 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 95DA01DB2EBA296E0040E997 /* FilmStockWidgetExtension */;
+			target = 95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */;
 			targetProxy = 95DA01EE2EBA29700040E997 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -619,7 +625,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		95D20FB22EB901CB00EF7348 /* Build configuration list for PBXProject "FilmStock" */ = {
+		95D20FB22EB901CB00EF7348 /* Build configuration list for PBXProject "Analog FilmStock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95D20FC02EB901CB00EF7348 /* Debug */,
@@ -628,7 +634,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95D20FC22EB901CB00EF7348 /* Build configuration list for PBXNativeTarget "FilmStock" */ = {
+		95D20FC22EB901CB00EF7348 /* Build configuration list for PBXNativeTarget "Analog FilmStock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95D20FC32EB901CB00EF7348 /* Debug */,
@@ -637,7 +643,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95DA01F22EBA29700040E997 /* Build configuration list for PBXNativeTarget "FilmStockWidgetExtension" */ = {
+		95DA01F22EBA29700040E997 /* Build configuration list for PBXNativeTarget "Analog FilmStockWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95DA01F32EBA29700040E997 /* Debug */,

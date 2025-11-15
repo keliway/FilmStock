@@ -141,6 +141,7 @@
 "legal.termsOfService" = "Nutzungsbedingungen";
 "legal.copyright" = "© %d Jonas Halbe. Alle Rechte vorbehalten.";
 "legal.lastUpdated" = "Letzte Aktualisierung: November 2024";
+"legal.englishOnly" = "Dieses Dokument ist nur auf Englisch verfügbar.";
 
 // MARK: - Support / Buy Me a Coffee
 "support.title" = "Unterstützung";
