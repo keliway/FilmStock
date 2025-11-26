@@ -51,7 +51,7 @@ struct FilmDetailView: View {
                 Section("detail.otherFormats") {
                     ForEach(relatedFilms.filter { $0.id != displayGroupedFilm.formats.first?.filmId }) { film in
                             HStack {
-                                Text(film.format.displayName)
+                                Text(film.formatDisplayName)
                                 Spacer()
                                 Text("\(film.quantity) \(film.format.quantityUnit)")
                                     .foregroundColor(.secondary)
@@ -66,7 +66,7 @@ struct FilmDetailView: View {
                     ForEach(displayGroupedFilm.formats) { formatInfo in
                         if let film = relatedFilms.first(where: { $0.id == formatInfo.filmId }) {
                             HStack {
-                                Text(formatInfo.format.displayName)
+                                Text(formatInfo.formatDisplayName)
                                     .foregroundColor(.secondary)
                                 Spacer()
                                 QuantityControlView(film: film)
@@ -174,7 +174,7 @@ struct FormatDetailRow: View {
     
     var body: some View {
         HStack {
-            Text(format.format.displayName)
+            Text(format.formatDisplayName)
             Spacer()
             Text(quantityText)
                 .foregroundColor(.secondary)

@@ -103,7 +103,7 @@ struct FilmCardView: View {
                         ForEach(groupedFilm.formats) { formatInfo in
                             if formatInfo.quantity > 0 {
                                 HStack(spacing: 2) {
-                                    Text(formatInfo.format.displayName)
+                                    Text(formatInfo.formatDisplayName)
                                     Text(": ")
                                     Text("\(formatInfo.quantity)")
                                         .foregroundColor(.accentColor)

@@ -134,6 +134,24 @@
 "settings.version" = "Versjon";
 "settings.about" = "Om";
 "settings.contact" = "Kontakt";
+"settings.formats" = "Filmformater";
+"settings.formats.header" = "Filmformater";
+"settings.formats.footer" = "Velg hvilke filmformater som vises når du legger til eller redigerer filmer.";
+
+// MARK: - Manage Formats
+"formats.manage" = "Administrer formater";
+"formats.builtIn" = "Innebygde formater";
+"formats.builtIn.footer" = "Trykk for å vise eller skjule formater i Legg til film og Rediger film.";
+"formats.custom" = "Egendefinerte formater";
+"formats.custom.footer" = "Sveip til venstre for å slette egendefinerte formater.";
+"formats.noCustom" = "Ingen egendefinerte formater lagt til";
+"formats.add" = "Legg til format";
+"formats.name" = "Formatnavn";
+"formats.addMessage" = "Skriv inn navnet på det egendefinerte formatet.";
+"formats.duplicateError" = "Dette formatet finnes allerede.";
+"formats.duplicateTitle" = "Duplikatformat";
+"formats.duplicateMessage" = "Et format med dette navnet finnes allerede.";
+"formats.addCustom" = "Legg til egendefinert format";
 
 // MARK: - About
 "about.title" = "Om";

@@ -93,9 +93,11 @@ struct LoadFilmView: View {
         let quantity = formatInfo?.quantity ?? 0
         let quantityUnit = format.quantityUnit
         let isSelected = selectedFormat == format
+        // Use custom format name if available
+        let displayName = formatInfo?.formatDisplayName ?? format.displayName
         
         return HStack {
-            Text(format.displayName)
+            Text(displayName)
             Spacer()
             Text("\(quantity) \(quantityUnit)")
                 .foregroundColor(.secondary)

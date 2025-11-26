@@ -10,6 +10,7 @@ import SwiftUI
 struct AddFilmView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     
     @State private var name = ""
     @State private var manufacturer = ""
@@ -18,6 +19,31 @@ struct AddFilmView: View {
     
     private let isoValues = [1, 2, 4, 5, 8, 10, 12, 16, 20, 25, 32, 40, 50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200, 6400]
     @State private var format: FilmStock.FilmFormat = .thirtyFive
+    @State private var selectedFormatString: String = "35mm"
+    
+    private var allEnabledFormats: [String] {
+        var formats: [String] = []
+        // Add enabled built-in formats
+        for builtIn in FilmStock.FilmFormat.allCases {
+            if settingsManager.isFormatEnabled(builtIn.displayName) {
+                formats.append(builtIn.displayName)
+            }
+        }
+        // Add enabled custom formats
+        for custom in settingsManager.customFormats {
+            if settingsManager.isFormatEnabled(custom) {
+                formats.append(custom)
+            }
+        }
+        return formats
+    }
+    
+    private func formatFromString(_ str: String) -> FilmStock.FilmFormat {
+        if let builtIn = FilmStock.FilmFormat.allCases.first(where: { $0.displayName == str }) {
+            return builtIn
+        }
+        return .other
+    }
     @State private var quantity = 1
     @State private var expireDates: [String] = [""]
     @State private var comments = ""
@@ -99,10 +125,13 @@ struct AddFilmView: View {
                     }
                     .pickerStyle(.wheel)
                     
-                    Picker("film.format", selection: $format) {
-                        ForEach(FilmStock.FilmFormat.allCases, id: \.self) { format in
-                            Text(format.displayName).tag(format)
+                    Picker("film.format", selection: $selectedFormatString) {
+                        ForEach(allEnabledFormats, id: \.self) { formatStr in
+                            Text(formatStr).tag(formatStr)
                         }
+                    }
+                    .onChange(of: selectedFormatString) { _, newValue in
+                        format = formatFromString(newValue)
                     }
                     
                     // Image selection
@@ -562,6 +591,9 @@ struct AddFilmView: View {
             imageName = nil
         }
         
+        // Determine custom format name if using a custom format
+        let customFormatName: String? = format == .other ? selectedFormatString : nil
+        
         if let existingFilm = filmToEdit {
             // Update existing film - create new instance with updated values
             let updated = FilmStock(
@@ -571,6 +603,7 @@ struct AddFilmView: View {
                 type: type,
                 filmSpeed: filmSpeed,
                 format: format,
+                customFormatName: customFormatName,
                 quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
                 comments: comments.isEmpty ? nil : comments,
@@ -591,6 +624,7 @@ struct AddFilmView: View {
             type: type,
             filmSpeed: filmSpeed,
             format: format,
+            customFormatName: customFormatName,
             quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
             comments: comments.isEmpty ? nil : comments,

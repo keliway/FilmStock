@@ -134,6 +134,24 @@
 "settings.version" = "Version";
 "settings.about" = "About";
 "settings.contact" = "Contact";
+"settings.formats" = "Film Formats";
+"settings.formats.header" = "Film Formats";
+"settings.formats.footer" = "Choose which film formats appear when adding or editing films.";
+
+// MARK: - Manage Formats
+"formats.manage" = "Manage Formats";
+"formats.builtIn" = "Built-in Formats";
+"formats.builtIn.footer" = "Tap to show or hide formats in the Add Film and Edit Film views.";
+"formats.custom" = "Custom Formats";
+"formats.custom.footer" = "Swipe left to delete custom formats.";
+"formats.noCustom" = "No custom formats added yet";
+"formats.add" = "Add Format";
+"formats.name" = "Format Name";
+"formats.addMessage" = "Enter the name for the custom format.";
+"formats.duplicateError" = "This format already exists.";
+"formats.duplicateTitle" = "Duplicate Format";
+"formats.duplicateMessage" = "A format with this name already exists.";
+"formats.addCustom" = "Add Custom Format";
 
 // MARK: - About
 "about.title" = "About";

@@ -160,6 +160,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                     filmName: film.name,
                     manufacturer: manufacturerName,
                     format: loadedFilm.format,
+                    customFormatName: loadedFilm.myFilm?.customFormatName,
                     camera: loadedFilm.camera?.name ?? "",
                     imageData: imageData,
                     loadedAt: loadedFilm.loadedAt

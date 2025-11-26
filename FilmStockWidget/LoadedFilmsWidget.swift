@@ -46,11 +46,16 @@ struct LoadedFilmWidgetData: Identifiable {
     let filmName: String
     let manufacturer: String
     let format: String
+    let customFormatName: String?
     let camera: String
     let imageData: Data?
     let loadedAt: Date?
     
     var formatDisplayName: String {
+        // Use custom format name if available
+        if let customName = customFormatName, !customName.isEmpty {
+            return customName
+        }
         // Format display name mapping
         switch format {
         case "35": return "35mm"
@@ -240,6 +245,7 @@ struct EmptyWidgetView: View {
                 filmName: "Portra 400",
                 manufacturer: "Kodak",
                 format: "120",
+                customFormatName: nil,
                 camera: "Hasselblad 500CM",
                 imageData: nil,
                 loadedAt: Date()

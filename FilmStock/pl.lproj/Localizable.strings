@@ -134,6 +134,24 @@
 "settings.version" = "Wersja";
 "settings.about" = "O aplikacji";
 "settings.contact" = "Kontakt";
+"settings.formats" = "Formaty filmów";
+"settings.formats.header" = "Formaty filmów";
+"settings.formats.footer" = "Wybierz, które formaty filmów są wyświetlane podczas dodawania lub edycji filmów.";
+
+// MARK: - Manage Formats
+"formats.manage" = "Zarządzaj formatami";
+"formats.builtIn" = "Wbudowane formaty";
+"formats.builtIn.footer" = "Dotknij, aby pokazać lub ukryć formaty w widokach Dodaj film i Edytuj film.";
+"formats.custom" = "Własne formaty";
+"formats.custom.footer" = "Przesuń w lewo, aby usunąć własne formaty.";
+"formats.noCustom" = "Nie dodano jeszcze własnych formatów";
+"formats.add" = "Dodaj format";
+"formats.name" = "Nazwa formatu";
+"formats.addMessage" = "Wprowadź nazwę własnego formatu.";
+"formats.duplicateError" = "Ten format już istnieje.";
+"formats.duplicateTitle" = "Duplikat formatu";
+"formats.duplicateMessage" = "Format o tej nazwie już istnieje.";
+"formats.addCustom" = "Dodaj własny format";
 
 // MARK: - About
 "about.title" = "O aplikacji";

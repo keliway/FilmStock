@@ -134,6 +134,24 @@
 "settings.version" = "バージョン";
 "settings.about" = "について";
 "settings.contact" = "連絡先";
+"settings.formats" = "フィルムフォーマット";
+"settings.formats.header" = "フィルムフォーマット";
+"settings.formats.footer" = "フィルムの追加・編集時に表示するフォーマットを選択します。";
+
+// MARK: - Manage Formats
+"formats.manage" = "フォーマットを管理";
+"formats.builtIn" = "標準フォーマット";
+"formats.builtIn.footer" = "タップしてフィルム追加・編集画面でフォーマットの表示/非表示を切り替えます。";
+"formats.custom" = "カスタムフォーマット";
+"formats.custom.footer" = "左にスワイプしてカスタムフォーマットを削除。";
+"formats.noCustom" = "カスタムフォーマットはありません";
+"formats.add" = "フォーマットを追加";
+"formats.name" = "フォーマット名";
+"formats.addMessage" = "カスタムフォーマットの名前を入力してください。";
+"formats.duplicateError" = "このフォーマットは既に存在します。";
+"formats.duplicateTitle" = "重複するフォーマット";
+"formats.duplicateMessage" = "この名前のフォーマットは既に存在します。";
+"formats.addCustom" = "カスタムフォーマットを追加";
 
 // MARK: - About
 "about.title" = "について";

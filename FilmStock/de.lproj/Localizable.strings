@@ -134,6 +134,24 @@
 "settings.version" = "Version";
 "settings.about" = "Über";
 "settings.contact" = "Kontakt";
+"settings.formats" = "Filmformate";
+"settings.formats.header" = "Filmformate";
+"settings.formats.footer" = "Wähle aus, welche Filmformate beim Hinzufügen oder Bearbeiten von Filmen angezeigt werden.";
+
+// MARK: - Manage Formats
+"formats.manage" = "Formate verwalten";
+"formats.builtIn" = "Standard-Formate";
+"formats.builtIn.footer" = "Tippe, um Formate in der Ansicht zum Hinzufügen und Bearbeiten von Filmen ein- oder auszublenden.";
+"formats.custom" = "Eigene Formate";
+"formats.custom.footer" = "Nach links wischen, um eigene Formate zu löschen.";
+"formats.noCustom" = "Noch keine eigenen Formate hinzugefügt";
+"formats.add" = "Format hinzufügen";
+"formats.name" = "Formatname";
+"formats.addMessage" = "Gib den Namen für das eigene Format ein.";
+"formats.duplicateError" = "Dieses Format existiert bereits.";
+"formats.duplicateTitle" = "Doppeltes Format";
+"formats.duplicateMessage" = "Ein Format mit diesem Namen existiert bereits.";
+"formats.addCustom" = "Eigenes Format hinzufügen";
 
 // MARK: - About
 "about.title" = "Über";
@@ -233,7 +251,7 @@
 "cameras.empty" = "Noch keine Kameras";
 "cameras.swipeToDelete" = "Nach links wischen um zu löschen";
 "cameras.info.title" = "Kameras verwalten";
-"cameras.info.message" = "Du kannst Kameras im Tab „Geladene Filme" über das Kamera-Symbol oben links hinzufügen und verwalten.";
+"cameras.info.message" = "Du kannst Kameras im Tab 'Geladene Filme' über das Kamera-Symbol oben links hinzufügen und verwalten.";
 
 // MARK: - Film Detail
 "detail.information" = "Film-Informationen";

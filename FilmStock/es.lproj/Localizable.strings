@@ -134,6 +134,24 @@
 "settings.version" = "Versión";
 "settings.about" = "Acerca de";
 "settings.contact" = "Contacto";
+"settings.formats" = "Formatos de película";
+"settings.formats.header" = "Formatos de película";
+"settings.formats.footer" = "Elige qué formatos de película aparecen al añadir o editar películas.";
+
+// MARK: - Manage Formats
+"formats.manage" = "Gestionar formatos";
+"formats.builtIn" = "Formatos integrados";
+"formats.builtIn.footer" = "Toca para mostrar u ocultar formatos en las vistas de Añadir y Editar película.";
+"formats.custom" = "Formatos personalizados";
+"formats.custom.footer" = "Desliza a la izquierda para eliminar formatos personalizados.";
+"formats.noCustom" = "No hay formatos personalizados añadidos";
+"formats.add" = "Añadir formato";
+"formats.name" = "Nombre del formato";
+"formats.addMessage" = "Introduce el nombre del formato personalizado.";
+"formats.duplicateError" = "Este formato ya existe.";
+"formats.duplicateTitle" = "Formato duplicado";
+"formats.duplicateMessage" = "Ya existe un formato con este nombre.";
+"formats.addCustom" = "Añadir formato personalizado";
 
 // MARK: - About
 "about.title" = "Acerca de";

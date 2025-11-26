@@ -14,6 +14,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
     var type: FilmType
     var filmSpeed: Int
     var format: FilmFormat
+    var customFormatName: String? // Store custom format name when format is .other
     var quantity: Int
     var expireDate: [String]? // Array of date strings (YYYY, MM/YYYY, or MM/DD/YYYY) - optional to handle null
     var comments: String?
@@ -21,9 +22,17 @@ struct FilmStock: Identifiable, Codable, Hashable {
     var createdAt: String?
     var updatedAt: String?
     
+    // Returns the display name for the format (custom name if available, otherwise enum displayName)
+    var formatDisplayName: String {
+        if format == .other, let customName = customFormatName, !customName.isEmpty {
+            return customName
+        }
+        return format.displayName
+    }
+    
     // Custom decoder to handle null expireDate values
     enum CodingKeys: String, CodingKey {
-        case id, name, manufacturer, type, filmSpeed, format, quantity, expireDate, comments, isFrozen, createdAt, updatedAt
+        case id, name, manufacturer, type, filmSpeed, format, customFormatName, quantity, expireDate, comments, isFrozen, createdAt, updatedAt
     }
     
     init(from decoder: Decoder) throws {
@@ -34,6 +43,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
         type = try container.decode(FilmType.self, forKey: .type)
         filmSpeed = try container.decode(Int.self, forKey: .filmSpeed)
         format = try container.decode(FilmFormat.self, forKey: .format)
+        customFormatName = try container.decodeIfPresent(String.self, forKey: .customFormatName)
         quantity = try container.decode(Int.self, forKey: .quantity)
         expireDate = try container.decodeIfPresent([String].self, forKey: .expireDate)
         comments = try container.decodeIfPresent(String.self, forKey: .comments)
@@ -42,13 +52,14 @@ struct FilmStock: Identifiable, Codable, Hashable {
         updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
     }
     
-    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil) {
+    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil) {
         self.id = id
         self.name = name
         self.manufacturer = manufacturer
         self.type = type
         self.filmSpeed = filmSpeed
         self.format = format
+        self.customFormatName = customFormatName
         self.quantity = quantity
         self.expireDate = expireDate
         self.comments = comments
@@ -121,10 +132,18 @@ struct GroupedFilm: Identifiable, Hashable {
     struct FormatInfo: Identifiable, Hashable {
         let id: String
         let format: FilmStock.FilmFormat
+        let customFormatName: String?
         let quantity: Int
         let expireDate: [String]?
         let isFrozen: Bool
         let filmId: String
+        
+        var formatDisplayName: String {
+            if format == .other, let customName = customFormatName, !customName.isEmpty {
+                return customName
+            }
+            return format.displayName
+        }
     }
     
     static func == (lhs: GroupedFilm, rhs: GroupedFilm) -> Bool {

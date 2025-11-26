@@ -38,6 +38,24 @@ struct SettingsView: View {
                     Text("settings.hideEmpty.footer")
                 }
                 
+                // Film Formats Section
+                Section {
+                    NavigationLink {
+                        ManageFormatsView()
+                    } label: {
+                        HStack {
+                            Text("settings.formats")
+                            Spacer()
+                            Text("\(settingsManager.enabledFormats.count)")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("settings.formats.header")
+                } footer: {
+                    Text("settings.formats.footer")
+                }
+                
                 // General Section
                 Section {
                     // Appearance

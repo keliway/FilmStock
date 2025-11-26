@@ -56,6 +56,7 @@ final class Film {
 final class MyFilm {
     var id: String
     var format: String // FilmFormat rawValue
+    var customFormatName: String? // Store custom format name when format is "Other"
     var quantity: Int
     var expireDate: String? // Store as comma-separated string for SwiftData compatibility
     var comments: String?
@@ -65,9 +66,10 @@ final class MyFilm {
     @Relationship(deleteRule: .nullify)
     var film: Film?
     
-    init(id: String, format: String, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
+    init(id: String, format: String, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
         self.id = id
         self.format = format
+        self.customFormatName = customFormatName
         self.quantity = quantity
         // Convert array to comma-separated string for storage
         self.expireDate = expireDate?.joined(separator: ",")

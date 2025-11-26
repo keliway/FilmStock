@@ -207,6 +207,10 @@ struct LoadedFilmRow: View {
     }
     
     private var formatDisplayName: String {
+        // Check for custom format name first
+        if let customName = loadedFilm.myFilm?.customFormatName, !customName.isEmpty {
+            return customName
+        }
         guard let format = FilmStock.FilmFormat(rawValue: loadedFilm.format) else {
             return loadedFilm.format
         }

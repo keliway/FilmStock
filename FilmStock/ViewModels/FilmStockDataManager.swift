@@ -126,6 +126,7 @@ class FilmStockDataManager: ObservableObject {
                    let existingMyFilm = myFilms.first(where: { $0.format == filmStock.format.rawValue }) {
                     // Update existing MyFilm entry
                     existingMyFilm.quantity = filmStock.quantity
+                    existingMyFilm.customFormatName = filmStock.customFormatName
                     existingMyFilm.expireDateArray = filmStock.expireDate
                     existingMyFilm.comments = filmStock.comments
                     existingMyFilm.isFrozen = filmStock.isFrozen
@@ -135,6 +136,7 @@ class FilmStockDataManager: ObservableObject {
                     let myFilm = MyFilm(
                         id: filmStock.id,
                         format: filmStock.format.rawValue,
+                        customFormatName: filmStock.customFormatName,
                         quantity: filmStock.quantity,
                         expireDate: filmStock.expireDate,
                         comments: filmStock.comments,
@@ -167,6 +169,7 @@ class FilmStockDataManager: ObservableObject {
                 let myFilm = MyFilm(
                     id: filmStock.id,
                     format: filmStock.format.rawValue,
+                    customFormatName: filmStock.customFormatName,
                     quantity: filmStock.quantity,
                     expireDate: filmStock.expireDate,
                     comments: filmStock.comments,
@@ -199,6 +202,7 @@ class FilmStockDataManager: ObservableObject {
             let myFilm = MyFilm(
                 id: filmStock.id,
                 format: filmStock.format.rawValue,
+                customFormatName: filmStock.customFormatName,
                 quantity: filmStock.quantity,
                 expireDate: filmStock.expireDate,
                 comments: filmStock.comments,
@@ -272,6 +276,9 @@ class FilmStockDataManager: ObservableObject {
         if myFilm.format != filmStock.format.rawValue {
             myFilm.format = filmStock.format.rawValue
         }
+        
+        // Always update customFormatName (can be nil for built-in formats)
+        myFilm.customFormatName = filmStock.customFormatName
         
         try? context.save()
         loadFilmStocks()
@@ -393,6 +400,7 @@ class FilmStockDataManager: ObservableObject {
             groups[key]?.formats.append(GroupedFilm.FormatInfo(
                             id: myFilm.id,
                             format: format,
+                            customFormatName: myFilm.customFormatName,
                             quantity: myFilm.quantity,
                             expireDate: myFilm.expireDateArray,
                             isFrozen: myFilm.isFrozen ?? false,
