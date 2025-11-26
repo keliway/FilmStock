@@ -97,6 +97,17 @@
 "filter.format" = "フォーマット";
 "filter.manufacturer" = "メーカー";
 "filter.speed" = "感度";
+
+// Sorting
+"sort.title" = "並べ替え";
+"sort.by" = "並べ替え";
+"sort.order" = "順序";
+"sort.ascending" = "昇順";
+"sort.descending" = "降順";
+"sort.manufacturer" = "メーカー";
+"sort.filmType" = "フィルムタイプ";
+"sort.iso" = "ISO";
+"sort.expiryDate" = "有効期限";
 "filter.filmSpeed" = "感度";
 "filter.options" = "オプション";
 "filter.showExpiredOnly" = "期限切れのみ表示";

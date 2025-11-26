@@ -95,6 +95,17 @@
 "filter.hideEmpty" = "Masquer les vides";
 "filter.type" = "Type";
 "filter.format" = "Format";
+
+// Sorting
+"sort.title" = "Trier";
+"sort.by" = "Trier par";
+"sort.order" = "Ordre";
+"sort.ascending" = "A → Z";
+"sort.descending" = "Z → A";
+"sort.manufacturer" = "Fabricant";
+"sort.filmType" = "Type de film";
+"sort.iso" = "ISO";
+"sort.expiryDate" = "Date d'expiration";
 "filter.manufacturer" = "Fabricant";
 "filter.speed" = "Sensibilité";
 "filter.filmSpeed" = "Sensibilité";

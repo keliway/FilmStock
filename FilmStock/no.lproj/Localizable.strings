@@ -95,6 +95,17 @@
 "filter.hideEmpty" = "Skjul tomme";
 "filter.type" = "Type";
 "filter.format" = "Format";
+
+// Sorting
+"sort.title" = "Sorter";
+"sort.by" = "Sorter etter";
+"sort.order" = "Rekkefølge";
+"sort.ascending" = "A → Å";
+"sort.descending" = "Å → A";
+"sort.manufacturer" = "Produsent";
+"sort.filmType" = "Filmtype";
+"sort.iso" = "ISO";
+"sort.expiryDate" = "Utløpsdato";
 "filter.manufacturer" = "Produsent";
 "filter.speed" = "Følsomhet";
 "filter.filmSpeed" = "Filmfølsomhet";

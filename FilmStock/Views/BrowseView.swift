@@ -30,9 +30,27 @@ struct BrowseView: View {
     @State private var tooltipPreferences: [TooltipPreference] = []
     @State private var showingDeleteError = false
     @State private var deleteErrorMessage = ""
+    @State private var sortField: SortField = .manufacturer
+    @State private var sortAscending: Bool = true
     
     enum ViewMode {
         case cards, list
+    }
+    
+    enum SortField: String, CaseIterable {
+        case manufacturer = "manufacturer"
+        case filmType = "filmType"
+        case iso = "iso"
+        case expiryDate = "expiryDate"
+        
+        var displayName: String {
+            switch self {
+            case .manufacturer: return NSLocalizedString("sort.manufacturer", comment: "")
+            case .filmType: return NSLocalizedString("sort.filmType", comment: "")
+            case .iso: return NSLocalizedString("sort.iso", comment: "")
+            case .expiryDate: return NSLocalizedString("sort.expiryDate", comment: "")
+            }
+        }
     }
     
     private struct SpeedRange {
@@ -102,7 +120,62 @@ struct BrowseView: View {
             }
         }
         
+        // Apply sorting
+        grouped = grouped.sorted { film1, film2 in
+            let result: Bool
+            switch sortField {
+            case .manufacturer:
+                let cmp = film1.manufacturer.localizedCaseInsensitiveCompare(film2.manufacturer)
+                if cmp == .orderedSame {
+                    result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                } else {
+                    result = cmp == .orderedAscending
+                }
+            case .filmType:
+                let cmp = film1.type.displayName.localizedCaseInsensitiveCompare(film2.type.displayName)
+                if cmp == .orderedSame {
+                    result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                } else {
+                    result = cmp == .orderedAscending
+                }
+            case .iso:
+                if film1.filmSpeed == film2.filmSpeed {
+                    result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                } else {
+                    result = film1.filmSpeed < film2.filmSpeed
+                }
+            case .expiryDate:
+                let date1 = getEarliestExpiryDate(for: film1)
+                let date2 = getEarliestExpiryDate(for: film2)
+                if let d1 = date1, let d2 = date2 {
+                    result = d1 < d2
+                } else if date1 != nil {
+                    result = true // Films with dates come before those without
+                } else if date2 != nil {
+                    result = false
+                } else {
+                    result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                }
+            }
+            return sortAscending ? result : !result
+        }
+        
         return grouped
+    }
+    
+    private func getEarliestExpiryDate(for film: GroupedFilm) -> Date? {
+        var earliestDate: Date? = nil
+        for formatInfo in film.formats {
+            guard let expireDates = formatInfo.expireDate, !expireDates.isEmpty else { continue }
+            for dateString in expireDates {
+                if let date = FilmStock.parseExpireDate(dateString) {
+                    if earliestDate == nil || date < earliestDate! {
+                        earliestDate = date
+                    }
+                }
+            }
+        }
+        return earliestDate
     }
     
     var totalRolls: Int {
@@ -285,6 +358,8 @@ struct BrowseView: View {
                     showExpiredOnly: $showExpiredOnly,
                     showFrozenOnly: $showFrozenOnly,
                     hideEmpty: $hideEmpty,
+                    sortField: $sortField,
+                    sortAscending: $sortAscending,
                     dataManager: dataManager
                 )
             }

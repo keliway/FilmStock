@@ -15,6 +15,8 @@ struct FilterPopoverView: View {
     @Binding var showExpiredOnly: Bool
     @Binding var showFrozenOnly: Bool
     @Binding var hideEmpty: Bool
+    @Binding var sortField: BrowseView.SortField
+    @Binding var sortAscending: Bool
     @ObservedObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     
@@ -168,6 +170,31 @@ struct FilterPopoverView: View {
                         Toggle("filter.showExpiredOnly", isOn: $showExpiredOnly)
                         Toggle("filter.showFrozenOnly", isOn: $showFrozenOnly)
                         Toggle("filter.hideEmpty", isOn: $hideEmpty)
+                    }
+                    
+                    // Sorting
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("sort.title")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        HStack {
+                            Picker("sort.by", selection: $sortField) {
+                                ForEach(BrowseView.SortField.allCases, id: \.self) { field in
+                                    Text(field.displayName).tag(field)
+                                }
+                            }
+                            .labelsHidden()
+                            
+                            Spacer()
+                            
+                            Picker("sort.order", selection: $sortAscending) {
+                                Image(systemName: "arrow.up").tag(true)
+                                Image(systemName: "arrow.down").tag(false)
+                            }
+                            .pickerStyle(.segmented)
+                            .frame(width: 100)
+                        }
                     }
                 }
                 .padding()
