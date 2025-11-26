@@ -34,6 +34,7 @@ struct EditFilmView: View {
     @State private var quantity = 0
     @State private var expireDates: [String] = [""]
     @State private var comments = ""
+    @State private var isFrozen = false
     @State private var filmToEdit: FilmStock?
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
@@ -271,6 +272,10 @@ struct EditFilmView: View {
                     }
                 }
                 
+                Section {
+                    Toggle("film.isFrozen", isOn: $isFrozen)
+                }
+                
                 Section("film.comments") {
                     TextEditor(text: $comments)
                         .frame(minHeight: 100)
@@ -381,6 +386,7 @@ struct EditFilmView: View {
                 expireDates = [""]
             }
             comments = film.comments ?? ""
+            isFrozen = film.isFrozen
             
             // Load images based on image source
             let filmImageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
@@ -537,6 +543,7 @@ struct EditFilmView: View {
                 quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
                 comments: comments.isEmpty ? nil : comments,
+                isFrozen: isFrozen,
                 createdAt: existingFilm.createdAt,
                 updatedAt: ISO8601DateFormatter().string(from: Date())
             )
@@ -555,6 +562,7 @@ struct EditFilmView: View {
                 quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
                 comments: comments.isEmpty ? nil : comments,
+                isFrozen: isFrozen,
                 createdAt: ISO8601DateFormatter().string(from: Date()),
                 updatedAt: nil
             )

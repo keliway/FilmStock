@@ -119,23 +119,45 @@ struct FilmCardView: View {
             }
             .padding(.vertical, 4)
             .padding(.horizontal, 16)
-            .padding(.trailing, isExpired ? 70 : 0)
+            .padding(.trailing, (isExpired || isFrozen) ? 70 : 0)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-            // Red "EXPIRED" chip in top right
-            if isExpired {
-                Text("EXPIRED")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                        .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.red, lineWidth: 1)
-                        )
-                    .padding(.top, 4)
-                    .padding(.trailing, 4)
+            // Status chips in top right
+            if isExpired || isFrozen {
+                VStack(spacing: 4) {
+                    // Red "EXPIRED" chip
+                    if isExpired {
+                        Text("EXPIRED")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .fixedSize()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.red, lineWidth: 1)
+                            )
+                    }
+                    
+                    // Blue "FROZEN" chip
+                    if isFrozen {
+                        Text("FROZEN")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .frame(minWidth: 62)
+                            .fixedSize()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.blue, lineWidth: 1)
+                            )
+                    }
+                }
+                .padding(.top, 4)
+                .padding(.trailing, 4)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -189,6 +211,11 @@ struct FilmCardView: View {
             filmImage = nil
             return
         }
+    }
+    
+    private var isFrozen: Bool {
+        // Check if any format is frozen
+        return groupedFilm.formats.contains { $0.isFrozen }
     }
     
     private var isExpired: Bool {

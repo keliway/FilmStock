@@ -17,12 +17,13 @@ struct FilmStock: Identifiable, Codable, Hashable {
     var quantity: Int
     var expireDate: [String]? // Array of date strings (YYYY, MM/YYYY, or MM/DD/YYYY) - optional to handle null
     var comments: String?
+    var isFrozen: Bool
     var createdAt: String?
     var updatedAt: String?
     
     // Custom decoder to handle null expireDate values
     enum CodingKeys: String, CodingKey {
-        case id, name, manufacturer, type, filmSpeed, format, quantity, expireDate, comments, createdAt, updatedAt
+        case id, name, manufacturer, type, filmSpeed, format, quantity, expireDate, comments, isFrozen, createdAt, updatedAt
     }
     
     init(from decoder: Decoder) throws {
@@ -36,11 +37,12 @@ struct FilmStock: Identifiable, Codable, Hashable {
         quantity = try container.decode(Int.self, forKey: .quantity)
         expireDate = try container.decodeIfPresent([String].self, forKey: .expireDate)
         comments = try container.decodeIfPresent(String.self, forKey: .comments)
+        isFrozen = try container.decodeIfPresent(Bool.self, forKey: .isFrozen) ?? false
         createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
     }
     
-    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, createdAt: String? = nil, updatedAt: String? = nil) {
+    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil) {
         self.id = id
         self.name = name
         self.manufacturer = manufacturer
@@ -50,6 +52,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
         self.quantity = quantity
         self.expireDate = expireDate
         self.comments = comments
+        self.isFrozen = isFrozen
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -120,6 +123,7 @@ struct GroupedFilm: Identifiable, Hashable {
         let format: FilmStock.FilmFormat
         let quantity: Int
         let expireDate: [String]?
+        let isFrozen: Bool
         let filmId: String
     }
     

@@ -59,18 +59,20 @@ final class MyFilm {
     var quantity: Int
     var expireDate: String? // Store as comma-separated string for SwiftData compatibility
     var comments: String?
+    var isFrozen: Bool? // Optional for backward compatibility - nil means false
     var createdAt: String?
     var updatedAt: String?
     @Relationship(deleteRule: .nullify)
     var film: Film?
     
-    init(id: String, format: String, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
+    init(id: String, format: String, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
         self.id = id
         self.format = format
         self.quantity = quantity
         // Convert array to comma-separated string for storage
         self.expireDate = expireDate?.joined(separator: ",")
         self.comments = comments
+        self.isFrozen = isFrozen
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.film = film

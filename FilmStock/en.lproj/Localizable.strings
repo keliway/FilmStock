@@ -37,6 +37,8 @@
 "film.quantity" = "Quantity";
 "film.expiryDate" = "Expiry Date";
 "film.comments" = "Comments";
+"film.isFrozen" = "Film is frozen";
+"film.frozen" = "FROZEN";
 "film.filmInformation" = "Film Information";
 "film.filmReminder" = "Film reminder";
 "film.addExpiryDate" = "Add Expiry Date";

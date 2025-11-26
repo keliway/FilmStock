@@ -37,6 +37,8 @@
 "film.quantity" = "Cantidad";
 "film.expiryDate" = "Fecha de caducidad";
 "film.comments" = "Comentarios";
+"film.isFrozen" = "La película está congelada";
+"film.frozen" = "CONGELADO";
 "film.filmInformation" = "Información de la película";
 "film.filmReminder" = "Recordatorio de película";
 "film.addExpiryDate" = "Añadir fecha de caducidad";

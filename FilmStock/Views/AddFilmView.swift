@@ -21,6 +21,7 @@ struct AddFilmView: View {
     @State private var quantity = 1
     @State private var expireDates: [String] = [""]
     @State private var comments = ""
+    @State private var isFrozen = false
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
     @State private var showingImagePicker = false
@@ -273,6 +274,10 @@ struct AddFilmView: View {
                     }
                 }
                 
+                Section {
+                    Toggle("film.isFrozen", isOn: $isFrozen)
+                }
+                
                 Section("film.comments") {
                     TextEditor(text: $comments)
                         .frame(height: 120)
@@ -377,6 +382,7 @@ struct AddFilmView: View {
                         expireDates = [""]
                     }
                     comments = film.comments ?? ""
+                    isFrozen = film.isFrozen
                     
                     // Load default image for auto-detection
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: film.manufacturer)
@@ -568,6 +574,7 @@ struct AddFilmView: View {
                 quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
                 comments: comments.isEmpty ? nil : comments,
+                isFrozen: isFrozen,
                 createdAt: existingFilm.createdAt,
                 updatedAt: ISO8601DateFormatter().string(from: Date())
             )
@@ -587,6 +594,7 @@ struct AddFilmView: View {
             quantity: quantity,
                 expireDate: filteredDates.isEmpty ? nil : filteredDates,
             comments: comments.isEmpty ? nil : comments,
+            isFrozen: isFrozen,
             createdAt: ISO8601DateFormatter().string(from: Date()),
             updatedAt: nil
         )

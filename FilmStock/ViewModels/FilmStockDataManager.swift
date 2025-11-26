@@ -89,6 +89,7 @@ class FilmStockDataManager: ObservableObject {
                 quantity: myFilm.quantity,
                 expireDate: myFilm.expireDateArray,
                 comments: myFilm.comments,
+                isFrozen: myFilm.isFrozen ?? false,
                 createdAt: myFilm.createdAt,
                 updatedAt: myFilm.updatedAt
             )
@@ -127,6 +128,7 @@ class FilmStockDataManager: ObservableObject {
                     existingMyFilm.quantity = filmStock.quantity
                     existingMyFilm.expireDateArray = filmStock.expireDate
                     existingMyFilm.comments = filmStock.comments
+                    existingMyFilm.isFrozen = filmStock.isFrozen
                     existingMyFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
                 } else {
                     // Create new MyFilm entry for this format
@@ -136,6 +138,7 @@ class FilmStockDataManager: ObservableObject {
                         quantity: filmStock.quantity,
                         expireDate: filmStock.expireDate,
                         comments: filmStock.comments,
+                        isFrozen: filmStock.isFrozen,
                         createdAt: filmStock.createdAt,
                         updatedAt: filmStock.updatedAt,
                         film: nil  // Don't set relationship in initializer
@@ -167,6 +170,7 @@ class FilmStockDataManager: ObservableObject {
                     quantity: filmStock.quantity,
                     expireDate: filmStock.expireDate,
                     comments: filmStock.comments,
+                    isFrozen: filmStock.isFrozen,
                     createdAt: filmStock.createdAt,
                     updatedAt: filmStock.updatedAt,
                     film: nil  // Don't set relationship in initializer
@@ -198,6 +202,7 @@ class FilmStockDataManager: ObservableObject {
                 quantity: filmStock.quantity,
                 expireDate: filmStock.expireDate,
                 comments: filmStock.comments,
+                isFrozen: filmStock.isFrozen,
                 createdAt: filmStock.createdAt,
                 updatedAt: filmStock.updatedAt,
                 film: nil  // Don't set relationship in initializer
@@ -260,6 +265,7 @@ class FilmStockDataManager: ObservableObject {
         myFilm.quantity = filmStock.quantity
         myFilm.expireDateArray = filmStock.expireDate
         myFilm.comments = filmStock.comments
+        myFilm.isFrozen = filmStock.isFrozen
         myFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
         
         // If format changed, we need to update it
@@ -389,6 +395,7 @@ class FilmStockDataManager: ObservableObject {
                             format: format,
                             quantity: myFilm.quantity,
                             expireDate: myFilm.expireDateArray,
+                            isFrozen: myFilm.isFrozen ?? false,
                             filmId: myFilm.id
             ))
                     }

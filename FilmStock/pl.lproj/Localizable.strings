@@ -37,6 +37,8 @@
 "film.quantity" = "Ilość";
 "film.expiryDate" = "Data ważności";
 "film.comments" = "Komentarze";
+"film.isFrozen" = "Film jest zamrożony";
+"film.frozen" = "ZAMROŻONY";
 "film.filmInformation" = "Informacje o filmie";
 "film.filmReminder" = "Przypomnienie o filmie";
 "film.addExpiryDate" = "Dodaj datę ważności";

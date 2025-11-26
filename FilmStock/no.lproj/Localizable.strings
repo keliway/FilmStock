@@ -37,6 +37,8 @@
 "film.quantity" = "Antall";
 "film.expiryDate" = "Utløpsdato";
 "film.comments" = "Kommentarer";
+"film.isFrozen" = "Filmen er frossen";
+"film.frozen" = "FROSSEN";
 "film.filmInformation" = "Filminformasjon";
 "film.filmReminder" = "Filmpåminnelse";
 "film.addExpiryDate" = "Legg til utløpsdato";

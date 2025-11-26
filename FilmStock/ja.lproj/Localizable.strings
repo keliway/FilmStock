@@ -37,6 +37,8 @@
 "film.quantity" = "数量";
 "film.expiryDate" = "有効期限";
 "film.comments" = "コメント";
+"film.isFrozen" = "フィルムは冷凍されています";
+"film.frozen" = "冷凍";
 "film.filmInformation" = "フィルム情報";
 "film.filmReminder" = "フィルムリマインダー";
 "film.addExpiryDate" = "有効期限を追加";
