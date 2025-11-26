@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Never show empty films";
 "settings.hideEmpty.footer" = "These settings control the default view when you open the app.";
 "settings.tableView" = "Always show the table view";
+"settings.showExpiryDate" = "Show expiry date in chip";
+"settings.showExpiryDate.footer" = "When enabled, films with an expiry date will always show a date chip. Red if expired, black if not.";
 "settings.appearance" = "Appearance";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Light";

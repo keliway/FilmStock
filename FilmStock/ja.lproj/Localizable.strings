@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "空のフィルムを表示しない";
 "settings.hideEmpty.footer" = "これらの設定は、アプリを開いたときのデフォルトビューを制御します。";
 "settings.tableView" = "常にテーブルビューを表示";
+"settings.showExpiryDate" = "期限切れ日を表示";
+"settings.showExpiryDate.footer" = "有効にすると、有効期限のあるフィルムは常に日付チップを表示します。期限切れなら赤、そうでなければ黒。";
 "settings.appearance" = "外観";
 "settings.appearance.system" = "システム";
 "settings.appearance.light" = "ライト";

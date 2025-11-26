@@ -17,6 +17,7 @@ class SettingsManager: ObservableObject {
     private let appearanceKey = "settings_appearance"
     private let enabledFormatsKey = "settings_enabledFormats"
     private let customFormatsKey = "settings_customFormats"
+    private let showExpiryDateInChipKey = "settings_showExpiryDateInChip"
     
     @Published var hideEmptyByDefault: Bool {
         didSet {
@@ -45,6 +46,12 @@ class SettingsManager: ObservableObject {
     @Published var customFormats: [String] {
         didSet {
             UserDefaults.standard.set(customFormats, forKey: customFormatsKey)
+        }
+    }
+    
+    @Published var showExpiryDateInChip: Bool {
+        didSet {
+            UserDefaults.standard.set(showExpiryDateInChip, forKey: showExpiryDateInChipKey)
         }
     }
     
@@ -94,6 +101,7 @@ class SettingsManager: ObservableObject {
         // Load saved settings or use defaults
         self.hideEmptyByDefault = UserDefaults.standard.object(forKey: hideEmptyKey) as? Bool ?? true
         self.useTableViewByDefault = UserDefaults.standard.object(forKey: defaultViewModeKey) as? Bool ?? false
+        self.showExpiryDateInChip = UserDefaults.standard.object(forKey: showExpiryDateInChipKey) as? Bool ?? false
         
         if let savedAppearance = UserDefaults.standard.string(forKey: appearanceKey),
            let mode = AppearanceMode(rawValue: savedAppearance) {

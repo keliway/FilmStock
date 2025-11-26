@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Ne jamais afficher les films vides";
 "settings.hideEmpty.footer" = "Ces paramètres contrôlent la vue par défaut à l'ouverture de l'application.";
 "settings.tableView" = "Toujours afficher la vue en liste";
+"settings.showExpiryDate" = "Afficher la date d'expiration";
+"settings.showExpiryDate.footer" = "Si activé, les films avec une date d'expiration afficheront toujours un badge de date. Rouge si expiré, noir sinon.";
 "settings.appearance" = "Apparence";
 "settings.appearance.system" = "Système";
 "settings.appearance.light" = "Clair";

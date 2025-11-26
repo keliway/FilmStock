@@ -32,10 +32,11 @@ struct SettingsView: View {
                             viewMode = newValue ? .list : .cards
                         }
                     ))
+                    Toggle("settings.showExpiryDate", isOn: $settingsManager.showExpiryDateInChip)
                 } header: {
                     Text("settings.myFilms")
                 } footer: {
-                    Text("settings.hideEmpty.footer")
+                    Text("settings.showExpiryDate.footer")
                 }
                 
                 // Film Formats Section

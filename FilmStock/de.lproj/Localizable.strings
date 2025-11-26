@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Leere Filme nie anzeigen";
 "settings.hideEmpty.footer" = "Diese Einstellungen steuern die Standardansicht beim Öffnen der App.";
 "settings.tableView" = "Immer die Tabellenansicht anzeigen";
+"settings.showExpiryDate" = "Ablaufdatum im Chip anzeigen";
+"settings.showExpiryDate.footer" = "Wenn aktiviert, zeigen Filme mit Ablaufdatum immer einen Datums-Chip. Rot wenn abgelaufen, schwarz wenn nicht.";
 "settings.appearance" = "Erscheinungsbild";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Hell";

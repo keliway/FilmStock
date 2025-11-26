@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Nunca mostrar películas vacías";
 "settings.hideEmpty.footer" = "Estos ajustes controlan la vista predeterminada al abrir la aplicación.";
 "settings.tableView" = "Mostrar siempre la vista de tabla";
+"settings.showExpiryDate" = "Mostrar fecha de caducidad";
+"settings.showExpiryDate.footer" = "Si está activado, las películas con fecha de caducidad siempre mostrarán una etiqueta de fecha. Rojo si está caducado, negro si no.";
 "settings.appearance" = "Apariencia";
 "settings.appearance.system" = "Sistema";
 "settings.appearance.light" = "Claro";

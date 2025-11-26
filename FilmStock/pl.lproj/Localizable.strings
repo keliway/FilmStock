@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Nigdy nie pokazuj pustych filmów";
 "settings.hideEmpty.footer" = "Te ustawienia kontrolują domyślny widok po otwarciu aplikacji.";
 "settings.tableView" = "Zawsze pokazuj widok tabeli";
+"settings.showExpiryDate" = "Pokaż datę ważności";
+"settings.showExpiryDate.footer" = "Po włączeniu filmy z datą ważności zawsze będą pokazywać etykietę z datą. Czerwona jeśli przeterminowana, czarna jeśli nie.";
 "settings.appearance" = "Wygląd";
 "settings.appearance.system" = "Systemowy";
 "settings.appearance.light" = "Jasny";

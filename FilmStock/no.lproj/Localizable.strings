@@ -127,6 +127,8 @@
 "settings.hideEmpty" = "Aldri vis tomme filmer";
 "settings.hideEmpty.footer" = "Disse innstillingene styrer standardvisningen når du åpner appen.";
 "settings.tableView" = "Vis alltid tabellvisning";
+"settings.showExpiryDate" = "Vis utløpsdato i merkelapp";
+"settings.showExpiryDate.footer" = "Når aktivert, viser filmer med utløpsdato alltid en datomerkelapp. Rød hvis utløpt, svart hvis ikke.";
 "settings.appearance" = "Utseende";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Lys";
