@@ -35,42 +35,26 @@ struct FilmDetailView: View {
                 InfoRow(label: "film.speed", value: "ISO \(displayGroupedFilm.filmSpeed)")
             }
             
-            // Formats section
+            // Formats section with quantity controls
             Section("detail.formats") {
                 ForEach(displayGroupedFilm.formats) { format in
                     if let film = relatedFilms.first(where: { $0.id == format.filmId }) {
-                        FormatDetailRow(format: format, currentQuantity: film.quantity)
-                    } else {
-                        FormatDetailRow(format: format, currentQuantity: format.quantity)
+                        FormatRowWithStepper(format: format, film: film)
+                            .environmentObject(dataManager)
                     }
                 }
             }
             
-            // Other formats if exists
-            if relatedFilms.count > 1 {
+            // Other formats if exists (films not already shown in the main formats section)
+            let shownFormatIds = Set(displayGroupedFilm.formats.map { $0.filmId })
+            let otherFormats = relatedFilms.filter { !shownFormatIds.contains($0.id) }
+            if !otherFormats.isEmpty {
                 Section("detail.otherFormats") {
-                    ForEach(relatedFilms.filter { $0.id != displayGroupedFilm.formats.first?.filmId }) { film in
-                            HStack {
-                                Text(film.formatDisplayName)
-                                Spacer()
-                                Text("\(film.quantity) \(film.format.quantityUnit)")
-                                    .foregroundColor(.secondary)
-                        }
-                    }
-                }
-            }
-            
-            // Quantity control - for each format
-            if !displayGroupedFilm.formats.isEmpty {
-                Section("film.quantity") {
-                    ForEach(displayGroupedFilm.formats) { formatInfo in
-                        if let film = relatedFilms.first(where: { $0.id == formatInfo.filmId }) {
-                            HStack {
-                                Text(formatInfo.formatDisplayName)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                QuantityControlView(film: film)
-                            }
+                    ForEach(otherFormats) { film in
+                        HStack {
+                            Text(film.formatDisplayName)
+                            Spacer()
+                            QuantityControlView(film: film)
                         }
                     }
                 }
@@ -168,34 +152,55 @@ struct InfoRow: View {
     }
 }
 
-struct FormatDetailRow: View {
+struct FormatRowWithStepper: View {
     let format: GroupedFilm.FormatInfo
-    let currentQuantity: Int
+    let film: FilmStock
+    @EnvironmentObject var dataManager: FilmStockDataManager
+    @State private var quantity: Int
+    
+    init(format: GroupedFilm.FormatInfo, film: FilmStock) {
+        self.format = format
+        self.film = film
+        _quantity = State(initialValue: film.quantity)
+    }
     
     var body: some View {
-        HStack {
-            Text(format.formatDisplayName)
-            Spacer()
-            Text(quantityText)
-                .foregroundColor(.secondary)
-            if let expireDate = format.expireDate, !expireDate.isEmpty {
-                Text(formatExpireDates(expireDate))
-                    .font(.caption)
+        VStack(alignment: .leading, spacing: 4) {
+            // Format name and expiry date
+            HStack {
+                Text(format.formatDisplayName)
+                    .font(.body)
+                if let expireDate = format.expireDate, !expireDate.isEmpty {
+                    Text("(\(formatExpireDates(expireDate)))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            // Stepper for quantity
+            Stepper(value: $quantity, in: 0...999) {
+                Text(quantityText)
                     .foregroundColor(.secondary)
             }
+            .onChange(of: quantity) { oldValue, newValue in
+                var updated = film
+                updated.quantity = newValue
+                dataManager.updateFilmStock(updated)
+            }
         }
+        .padding(.vertical, 4)
     }
     
     private var quantityText: String {
         let unit = format.format.quantityUnit
         if unit == "roll(s)" {
-            return currentQuantity == 1 
-                ? String(format: NSLocalizedString("film.rollCount", comment: ""), currentQuantity)
-                : String(format: NSLocalizedString("film.rollsCount", comment: ""), currentQuantity)
+            return quantity == 1 
+                ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
+                : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
         } else if unit == "sheet(s)" {
-            return String(format: NSLocalizedString("Sheets: %d", comment: ""), currentQuantity)
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
         }
-        return "\(currentQuantity) \(unit)"
+        return "\(quantity) \(unit)"
     }
     
     private func formatExpireDates(_ dates: [String]) -> String {

@@ -124,11 +124,25 @@ class FilmStockDataManager: ObservableObject {
                 // Check if a MyFilm entry with the same format already exists
                 if let myFilms = existingFilm.myFilms,
                    let existingMyFilm = myFilms.first(where: { $0.format == filmStock.format.rawValue }) {
-                    // Update existing MyFilm entry
-                    existingMyFilm.quantity = filmStock.quantity
+                    // Update existing MyFilm entry - ADD quantity, MERGE expiry dates
+                    existingMyFilm.quantity += filmStock.quantity
                     existingMyFilm.customFormatName = filmStock.customFormatName
-                    existingMyFilm.expireDateArray = filmStock.expireDate
-                    existingMyFilm.comments = filmStock.comments
+                    
+                    // Merge expiry dates - add new ones without duplicates
+                    var existingDates = existingMyFilm.expireDateArray ?? []
+                    if let newDates = filmStock.expireDate {
+                        for newDate in newDates where !newDate.isEmpty {
+                            if !existingDates.contains(newDate) {
+                                existingDates.append(newDate)
+                            }
+                        }
+                    }
+                    existingMyFilm.expireDateArray = existingDates.isEmpty ? nil : existingDates
+                    
+                    // Only update comments if new comments are provided
+                    if let newComments = filmStock.comments, !newComments.isEmpty {
+                        existingMyFilm.comments = newComments
+                    }
                     existingMyFilm.isFrozen = filmStock.isFrozen
                     existingMyFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
                 } else {
