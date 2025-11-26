@@ -92,6 +92,7 @@
 "filter.filmSpeed" = "Filmfølsomhet";
 "filter.options" = "Alternativer";
 "filter.showExpiredOnly" = "Vis kun utgåtte";
+"filter.showFrozenOnly" = "Vis kun frosne";
 "filter.clearAll" = "Tøm alle";
 "filter.apply" = "Bruk";
 "filter.reset" = "Tilbakestill";

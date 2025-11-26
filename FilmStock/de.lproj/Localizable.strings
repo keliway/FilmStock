@@ -92,6 +92,7 @@
 "filter.filmSpeed" = "Empfindlichkeit";
 "filter.options" = "Optionen";
 "filter.showExpiredOnly" = "Nur abgelaufene anzeigen";
+"filter.showFrozenOnly" = "Nur eingefrorene anzeigen";
 "filter.clearAll" = "Alle löschen";
 "filter.apply" = "Anwenden";
 "filter.reset" = "Zurücksetzen";

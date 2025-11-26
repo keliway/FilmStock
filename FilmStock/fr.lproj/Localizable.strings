@@ -92,6 +92,7 @@
 "filter.filmSpeed" = "Sensibilité";
 "filter.options" = "Options";
 "filter.showExpiredOnly" = "Afficher uniquement les expirés";
+"filter.showFrozenOnly" = "Afficher uniquement les congelés";
 "filter.clearAll" = "Tout effacer";
 "filter.apply" = "Appliquer";
 "filter.reset" = "Réinitialiser";

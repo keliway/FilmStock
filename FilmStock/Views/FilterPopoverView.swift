@@ -13,6 +13,7 @@ struct FilterPopoverView: View {
     @Binding var selectedSpeedRanges: Set<String>
     @Binding var selectedFormats: Set<FilmStock.FilmFormat>
     @Binding var showExpiredOnly: Bool
+    @Binding var showFrozenOnly: Bool
     @Binding var hideEmpty: Bool
     @ObservedObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
@@ -165,6 +166,7 @@ struct FilterPopoverView: View {
                             .foregroundColor(.secondary)
                         
                         Toggle("filter.showExpiredOnly", isOn: $showExpiredOnly)
+                        Toggle("filter.showFrozenOnly", isOn: $showFrozenOnly)
                         Toggle("filter.hideEmpty", isOn: $hideEmpty)
                     }
                 }
@@ -180,6 +182,7 @@ struct FilterPopoverView: View {
                         selectedSpeedRanges.removeAll()
                         selectedFormats.removeAll()
                         showExpiredOnly = false
+                        showFrozenOnly = false
                         hideEmpty = true
                     }
                     .foregroundColor(.orange)

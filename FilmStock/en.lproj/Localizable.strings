@@ -92,6 +92,7 @@
 "filter.filmSpeed" = "Film Speed";
 "filter.options" = "Options";
 "filter.showExpiredOnly" = "Show expired only";
+"filter.showFrozenOnly" = "Show frozen only";
 "filter.clearAll" = "Clear All";
 "filter.apply" = "Apply";
 "filter.reset" = "Reset";

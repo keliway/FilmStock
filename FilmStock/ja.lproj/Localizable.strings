@@ -92,6 +92,7 @@
 "filter.filmSpeed" = "感度";
 "filter.options" = "オプション";
 "filter.showExpiredOnly" = "期限切れのみ表示";
+"filter.showFrozenOnly" = "冷凍のみ表示";
 "filter.clearAll" = "すべてクリア";
 "filter.apply" = "適用";
 "filter.reset" = "リセット";

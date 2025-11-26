@@ -15,6 +15,7 @@ struct BrowseView: View {
     @State private var selectedSpeedRanges: Set<String> = []
     @State private var selectedFormats: Set<FilmStock.FilmFormat> = []
     @State private var showExpiredOnly = false
+    @State private var showFrozenOnly = false
     @State private var hideEmpty = SettingsManager.shared.hideEmptyByDefault
     @State private var viewMode: ViewMode = SettingsManager.shared.useTableViewByDefault ? .list : .cards
     @State private var showingAddFilm = false
@@ -90,6 +91,13 @@ struct BrowseView: View {
         if hideEmpty {
             grouped = grouped.filter { group in
                 group.formats.contains { $0.quantity > 0 }
+            }
+        }
+        
+        // Apply show frozen only
+        if showFrozenOnly {
+            grouped = grouped.filter { group in
+                group.formats.contains { $0.isFrozen }
             }
         }
         
@@ -264,6 +272,7 @@ struct BrowseView: View {
                     selectedSpeedRanges: $selectedSpeedRanges,
                     selectedFormats: $selectedFormats,
                     showExpiredOnly: $showExpiredOnly,
+                    showFrozenOnly: $showFrozenOnly,
                     hideEmpty: $hideEmpty,
                     dataManager: dataManager
                 )
