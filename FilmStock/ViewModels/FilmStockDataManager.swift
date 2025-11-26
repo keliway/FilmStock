@@ -408,10 +408,57 @@ class FilmStockDataManager: ObservableObject {
     
     func getAllManufacturers() -> [Manufacturer] {
         guard let context = modelContext else { return [] }
-        let descriptor = FetchDescriptor<Manufacturer>(
-            sortBy: [SortDescriptor(\.name)]
-        )
-        return (try? context.fetch(descriptor)) ?? []
+        
+        // Fetch all manufacturers
+        let manufacturerDescriptor = FetchDescriptor<Manufacturer>()
+        guard let allManufacturers = try? context.fetch(manufacturerDescriptor) else { return [] }
+        
+        // Fetch all films to count usage
+        let filmDescriptor = FetchDescriptor<Film>()
+        let allFilms = (try? context.fetch(filmDescriptor)) ?? []
+        
+        // Count total quantity for each manufacturer
+        var manufacturerUsage: [String: Int] = [:]
+        for film in allFilms {
+            guard let manufacturerName = film.manufacturer?.name else { continue }
+            let totalQuantity = film.myFilms?.reduce(0) { $0 + $1.quantity } ?? 0
+            manufacturerUsage[manufacturerName, default: 0] += totalQuantity
+        }
+        
+        // Define pinned manufacturers (case-insensitive matching)
+        let pinnedNames = ["Kodak", "Ilford", "Fomapan", "Cinestill"]
+        
+        // Separate pinned and unpinned manufacturers
+        var pinned: [Manufacturer] = []
+        var unpinned: [Manufacturer] = []
+        
+        for manufacturer in allManufacturers {
+            if pinnedNames.contains(where: { $0.localizedCaseInsensitiveCompare(manufacturer.name) == .orderedSame }) {
+                pinned.append(manufacturer)
+            } else {
+                unpinned.append(manufacturer)
+            }
+        }
+        
+        // Sort pinned manufacturers in the order they appear in pinnedNames array
+        pinned.sort { m1, m2 in
+            let index1 = pinnedNames.firstIndex { $0.localizedCaseInsensitiveCompare(m1.name) == .orderedSame } ?? Int.max
+            let index2 = pinnedNames.firstIndex { $0.localizedCaseInsensitiveCompare(m2.name) == .orderedSame } ?? Int.max
+            return index1 < index2
+        }
+        
+        // Sort unpinned manufacturers by usage (most frequent first), then alphabetically
+        unpinned.sort { m1, m2 in
+            let usage1 = manufacturerUsage[m1.name] ?? 0
+            let usage2 = manufacturerUsage[m2.name] ?? 0
+            if usage1 != usage2 {
+                return usage1 > usage2 // Most used first
+            }
+            return m1.name < m2.name // Alphabetical for same usage
+        }
+        
+        // Combine: pinned first, then unpinned
+        return pinned + unpinned
     }
     
     func addManufacturer(name: String) -> Manufacturer {
