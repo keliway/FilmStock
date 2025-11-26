@@ -68,6 +68,8 @@ struct BrowseView: View {
     ]
     
     var filteredFilms: [GroupedFilm] {
+        // Access filmStocks to ensure view updates when data changes
+        let _ = dataManager.filmStocks.count
         var grouped = dataManager.groupedFilms()
         
         // Apply filters
@@ -251,6 +253,11 @@ struct BrowseView: View {
                     .listStyle(.plain)
                     .environment(\.defaultMinListHeaderHeight, 0)
                     .environment(\.defaultMinListRowHeight, 0)
+                    .refreshable {
+                        await Task { @MainActor in
+                            dataManager.loadFilmStocks()
+                        }.value
+                    }
                 }
             }
             .navigationTitle("tab.myFilms")
