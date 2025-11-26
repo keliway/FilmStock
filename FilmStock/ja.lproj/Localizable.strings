@@ -19,8 +19,10 @@
 "action.unload" = "取り出す";
 "action.unloadOne" = "1枚取り出す";
 "action.unloadAll" = "すべて取り出す";
+"action.changeDate" = "日付を変更";
 "action.close" = "閉じる";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "装填日を変更";
 "action.addNew" = "\"%@\" を追加";
 
 // MARK: - Film Management

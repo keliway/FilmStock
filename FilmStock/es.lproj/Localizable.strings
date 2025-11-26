@@ -19,8 +19,10 @@
 "action.unload" = "Descargar";
 "action.unloadOne" = "Descargar 1 hoja";
 "action.unloadAll" = "Descargar todo";
+"action.changeDate" = "Cambiar fecha";
 "action.close" = "Cerrar";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "Cambiar fecha de carga";
 "action.addNew" = "Añadir \"%@\"";
 
 // MARK: - Film Management

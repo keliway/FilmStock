@@ -19,8 +19,10 @@
 "action.unload" = "Wyjmij";
 "action.unloadOne" = "Wyjmij 1 arkusz";
 "action.unloadAll" = "Wyjmij wszystko";
+"action.changeDate" = "Zmień datę";
 "action.close" = "Zamknij";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "Zmień datę załadowania";
 "action.addNew" = "Dodaj \"%@\"";
 
 // MARK: - Film Management

@@ -19,8 +19,10 @@
 "action.unload" = "Ta ut";
 "action.unloadOne" = "Ta ut 1 ark";
 "action.unloadAll" = "Ta ut alle";
+"action.changeDate" = "Endre dato";
 "action.close" = "Lukk";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "Endre lastingsdato";
 "action.addNew" = "Legg til \"%@\"";
 
 // MARK: - Film Management

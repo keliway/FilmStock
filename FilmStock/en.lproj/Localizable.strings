@@ -19,8 +19,10 @@
 "action.unload" = "Unload";
 "action.unloadOne" = "Unload 1 Sheet";
 "action.unloadAll" = "Unload All";
+"action.changeDate" = "Change Date";
 "action.close" = "Close";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "Change Loaded Date";
 "action.addNew" = "Add \"%@\"";
 
 // MARK: - Film Management

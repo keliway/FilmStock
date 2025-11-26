@@ -759,6 +759,12 @@ class FilmStockDataManager: ObservableObject {
         UserDefaults.standard.set(current + amount, forKey: Self.finishedFilmsKey)
     }
     
+    func saveContext() {
+        guard let context = modelContext else { return }
+        try? context.save()
+        loadFilmStocks()
+    }
+    
     func canLoadFilm() -> Bool {
         guard let context = modelContext else { return false }
         let descriptor = FetchDescriptor<LoadedFilm>()

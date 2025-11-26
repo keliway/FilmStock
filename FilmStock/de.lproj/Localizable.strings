@@ -19,8 +19,10 @@
 "action.unload" = "Entnehmen";
 "action.unloadOne" = "1 Blatt entnehmen";
 "action.unloadAll" = "Alle entnehmen";
+"action.changeDate" = "Datum ändern";
 "action.close" = "Schließen";
 "action.ok" = "OK";
+"loaded.changeDate.title" = "Ladedatum ändern";
 "action.addNew" = "\"%@\" hinzufügen";
 
 // MARK: - Film Management

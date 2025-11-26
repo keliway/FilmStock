@@ -24,6 +24,9 @@ struct LoadedFilmsView: View {
     @State private var loadedFilms: [LoadedFilm] = []
     @State private var showingHelp = false
     @State private var showingManageCameras = false
+    @State private var showingDatePicker = false
+    @State private var filmToEditDate: LoadedFilm?
+    @State private var selectedDate = Date()
     
     var body: some View {
         NavigationStack {
@@ -39,7 +42,17 @@ struct LoadedFilmsView: View {
                         ForEach(loadedFilms, id: \.id) { loadedFilm in
                             LoadedFilmRow(loadedFilm: loadedFilm)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    // Primary action: Unload one sheet (for sheet films only) - detail swipe action
+                                    // Change loaded date
+                                    Button {
+                                        filmToEditDate = loadedFilm
+                                        selectedDate = loadedFilm.loadedAt
+                                        showingDatePicker = true
+                                    } label: {
+                                        Label("action.changeDate", systemImage: "calendar")
+                                    }
+                                    .tint(.orange)
+                                    
+                                    // Unload one sheet (for sheet films only)
                                     if isSheetFormat(loadedFilm.format) && loadedFilm.quantity > 1 {
                                         Button {
                                             unloadOneSheet(loadedFilm)
@@ -49,7 +62,7 @@ struct LoadedFilmsView: View {
                                         .tint(.orange)
                                     }
                                     
-                                    // Secondary action: Unload all
+                                    // Unload all
                                     Button {
                                         unloadFilm(loadedFilm)
                                     } label: {
@@ -84,6 +97,40 @@ struct LoadedFilmsView: View {
                 ManageCamerasView()
                     .environmentObject(dataManager)
             }
+            .sheet(isPresented: $showingDatePicker) {
+                NavigationStack {
+                    VStack(spacing: 20) {
+                        DatePicker(
+                            "loaded.changeDate.title",
+                            selection: $selectedDate,
+                            in: Date(timeIntervalSince1970: 0)...Date(),
+                            displayedComponents: [.date]
+                        )
+                        .datePickerStyle(.graphical)
+                        .padding()
+                        
+                        Spacer()
+                    }
+                    .navigationTitle("loaded.changeDate.title")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("action.cancel") {
+                                showingDatePicker = false
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("action.save") {
+                                if let film = filmToEditDate {
+                                    updateLoadedDate(film, newDate: selectedDate)
+                                }
+                                showingDatePicker = false
+                            }
+                        }
+                    }
+                }
+                .presentationDetents([.medium])
+            }
             .alert("help.loadedFilms.title", isPresented: $showingHelp) {
                 Button("action.done", role: .cancel) { }
             } message: {
@@ -109,6 +156,12 @@ struct LoadedFilmsView: View {
     
     private func unloadOneSheet(_ loadedFilm: LoadedFilm) {
         dataManager.unloadFilm(loadedFilm, quantity: 1)
+        loadFilms()
+    }
+    
+    private func updateLoadedDate(_ loadedFilm: LoadedFilm, newDate: Date) {
+        loadedFilm.loadedAt = newDate
+        dataManager.saveContext()
         loadFilms()
     }
     
