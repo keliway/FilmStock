@@ -166,6 +166,8 @@
 "support.error.pending" = "Zakup oczekuje na zatwierdzenie";
 "support.error.unknown" = "Nieznany wynik zakupu";
 "support.error.failed" = "Zakup nie powiódł się: %@";
+"support.error.nothingToRestore" = "Nie znaleziono poprzednich zakupów.";
+"support.error.restoreFailed" = "Przywracanie nie powiodło się: %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Usuń film";

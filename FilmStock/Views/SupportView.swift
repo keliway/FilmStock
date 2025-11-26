@@ -101,6 +101,17 @@ struct SupportView: View {
                         }
                     }
                     
+                    // Restore Purchases Button
+                    Button {
+                        storeManager.restorePurchases()
+                    } label: {
+                        Text("support.restore")
+                            .font(.subheadline)
+                            .foregroundColor(.orange)
+                    }
+                    .padding(.top, 8)
+                    .disabled(storeManager.isPurchasing)
+                    
                     if storeManager.products.isEmpty && !storeManager.isPurchasing {
                         HStack {
                             ProgressView()
@@ -275,6 +286,46 @@ class StoreManager: ObservableObject {
             } catch {
                 await MainActor.run {
                     purchaseError = String(format: NSLocalizedString("support.error.failed", comment: ""), error.localizedDescription)
+                    isPurchasing = false
+                }
+            }
+        }
+    }
+    
+    func restorePurchases() {
+        isPurchasing = true
+        purchaseError = nil
+        
+        Task {
+            do {
+                try await AppStore.sync()
+                
+                // Check if user has purchased the coffee
+                for await result in Transaction.currentEntitlements {
+                    do {
+                        let transaction = try checkVerified(result)
+                        
+                        if transaction.productID == productID {
+                            await MainActor.run {
+                                purchaseSuccessful = true
+                                isPurchasing = false
+                            }
+                            return
+                        }
+                    } catch {
+                        // Failed verification, skip this transaction
+                        continue
+                    }
+                }
+                
+                // No purchases found
+                await MainActor.run {
+                    purchaseError = NSLocalizedString("support.error.nothingToRestore", comment: "")
+                    isPurchasing = false
+                }
+            } catch {
+                await MainActor.run {
+                    purchaseError = String(format: NSLocalizedString("support.error.restoreFailed", comment: ""), error.localizedDescription)
                     isPurchasing = false
                 }
             }

@@ -166,6 +166,8 @@
 "support.error.pending" = "購入は承認待ちです";
 "support.error.unknown" = "不明な購入結果";
 "support.error.failed" = "購入に失敗しました：%@";
+"support.error.nothingToRestore" = "以前の購入が見つかりません。";
+"support.error.restoreFailed" = "復元に失敗しました：%@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "フィルムを取り除く";

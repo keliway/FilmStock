@@ -166,6 +166,8 @@
 "support.error.pending" = "Kauf wartet auf Genehmigung";
 "support.error.unknown" = "Unbekanntes Kaufergebnis";
 "support.error.failed" = "Kauf fehlgeschlagen: %@";
+"support.error.nothingToRestore" = "Keine früheren Käufe gefunden.";
+"support.error.restoreFailed" = "Wiederherstellung fehlgeschlagen: %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Film entfernen";

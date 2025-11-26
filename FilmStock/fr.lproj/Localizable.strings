@@ -166,6 +166,8 @@
 "support.error.pending" = "L'achat est en attente d'approbation";
 "support.error.unknown" = "Résultat d'achat inconnu";
 "support.error.failed" = "Échec de l'achat : %@";
+"support.error.nothingToRestore" = "Aucun achat précédent trouvé.";
+"support.error.restoreFailed" = "Échec de la restauration : %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Retirer le film";

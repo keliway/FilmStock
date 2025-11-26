@@ -166,6 +166,8 @@
 "support.error.pending" = "Kjøpet venter på godkjenning";
 "support.error.unknown" = "Ukjent kjøpsresultat";
 "support.error.failed" = "Kjøp mislyktes: %@";
+"support.error.nothingToRestore" = "Ingen tidligere kjøp funnet.";
+"support.error.restoreFailed" = "Gjenoppretting mislyktes: %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Fjern film";

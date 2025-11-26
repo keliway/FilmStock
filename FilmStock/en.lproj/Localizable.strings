@@ -166,6 +166,8 @@
 "support.error.pending" = "Purchase is pending approval";
 "support.error.unknown" = "Unknown purchase result";
 "support.error.failed" = "Purchase failed: %@";
+"support.error.nothingToRestore" = "No previous purchases found.";
+"support.error.restoreFailed" = "Restore failed: %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Remove Film";

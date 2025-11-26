@@ -166,6 +166,8 @@
 "support.error.pending" = "La compra está pendiente de aprobación";
 "support.error.unknown" = "Resultado de compra desconocido";
 "support.error.failed" = "La compra falló: %@";
+"support.error.nothingToRestore" = "No se encontraron compras anteriores.";
+"support.error.restoreFailed" = "La restauración falló: %@";
 
 // MARK: - Delete Confirmations  
 "delete.film.title" = "Quitar película";
