@@ -146,6 +146,21 @@
 "settings.appearance.dark" = "ダーク";
 "settings.version" = "バージョン";
 "settings.about" = "について";
+"settings.statistics" = "統計";
+
+// Statistics
+"stats.title" = "統計";
+"stats.summary" = "概要";
+"stats.totalRolls" = "合計本数";
+"stats.totalSheets" = "合計シート数";
+"stats.uniqueFilms" = "フィルム種類";
+"stats.finishedFilms" = "撮影済み";
+"stats.expiredFilms" = "期限切れフィルム";
+"stats.frozenFilms" = "冷凍フィルム";
+"stats.byType" = "タイプ別";
+"stats.byFormat" = "フォーマット別";
+"stats.largeFormat" = "大判フォーマット";
+"stats.noData" = "データなし";
 "settings.contact" = "連絡先";
 "settings.formats" = "フィルムフォーマット";
 "settings.formats.header" = "フィルムフォーマット";

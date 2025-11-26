@@ -146,6 +146,21 @@
 "settings.appearance.dark" = "Dark";
 "settings.version" = "Version";
 "settings.about" = "About";
+"settings.statistics" = "Statistics";
+
+// Statistics
+"stats.title" = "Statistics";
+"stats.summary" = "Summary";
+"stats.totalRolls" = "Total Rolls";
+"stats.totalSheets" = "Total Sheets";
+"stats.uniqueFilms" = "Unique Films";
+"stats.finishedFilms" = "Finished Rolls";
+"stats.expiredFilms" = "Expired Films";
+"stats.frozenFilms" = "Frozen Films";
+"stats.byType" = "By Type";
+"stats.byFormat" = "By Format";
+"stats.largeFormat" = "Large Format";
+"stats.noData" = "No data yet";
 "settings.contact" = "Contact";
 "settings.formats" = "Film Formats";
 "settings.formats.header" = "Film Formats";

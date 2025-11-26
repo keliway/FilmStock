@@ -146,6 +146,21 @@
 "settings.appearance.dark" = "Dunkel";
 "settings.version" = "Version";
 "settings.about" = "Über";
+"settings.statistics" = "Statistiken";
+
+// Statistics
+"stats.title" = "Statistiken";
+"stats.summary" = "Zusammenfassung";
+"stats.totalRolls" = "Gesamte Rollen";
+"stats.totalSheets" = "Gesamte Blätter";
+"stats.uniqueFilms" = "Einzigartige Filme";
+"stats.finishedFilms" = "Fertige Rollen";
+"stats.expiredFilms" = "Abgelaufene Filme";
+"stats.frozenFilms" = "Eingefrorene Filme";
+"stats.byType" = "Nach Typ";
+"stats.byFormat" = "Nach Format";
+"stats.largeFormat" = "Großformat";
+"stats.noData" = "Noch keine Daten";
 "settings.contact" = "Kontakt";
 "settings.formats" = "Filmformate";
 "settings.formats.header" = "Filmformate";

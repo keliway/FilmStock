@@ -59,6 +59,13 @@ struct SettingsView: View {
                 
                 // General Section
                 Section {
+                    // Statistics
+                    NavigationLink {
+                        StatisticsView()
+                    } label: {
+                        Text("settings.statistics")
+                    }
+                    
                     // Appearance
                     NavigationLink {
                         AppearanceSettingsView()

@@ -719,8 +719,12 @@ class FilmStockDataManager: ObservableObject {
     func unloadFilm(_ loadedFilm: LoadedFilm, quantity: Int? = nil) {
         guard let context = modelContext else { return }
         
+        // Track finished films count
+        let quantityFinished: Int
+        
         // If quantity is specified, unload only that amount
         if let quantityToUnload = quantity {
+            quantityFinished = min(quantityToUnload, loadedFilm.quantity)
             // Decrease the loaded quantity
             loadedFilm.quantity = max(0, loadedFilm.quantity - quantityToUnload)
             
@@ -729,15 +733,30 @@ class FilmStockDataManager: ObservableObject {
                 context.delete(loadedFilm)
             }
         } else {
+            quantityFinished = loadedFilm.quantity
             // Don't restore quantity - unloading means the film was used
             // Just delete the loaded film entry
             context.delete(loadedFilm)
         }
         
+        // Increment the finished films counter
+        incrementFinishedFilmsCount(by: quantityFinished)
+        
         try? context.save()
         loadFilmStocks() // Refresh the list
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+    }
+    
+    private static let finishedFilmsKey = "stats_finishedFilmsCount"
+    
+    func getFinishedFilmsCount() -> Int {
+        UserDefaults.standard.integer(forKey: Self.finishedFilmsKey)
+    }
+    
+    private func incrementFinishedFilmsCount(by amount: Int) {
+        let current = getFinishedFilmsCount()
+        UserDefaults.standard.set(current + amount, forKey: Self.finishedFilmsKey)
     }
     
     func canLoadFilm() -> Bool {

@@ -146,6 +146,21 @@
 "settings.appearance.dark" = "Ciemny";
 "settings.version" = "Wersja";
 "settings.about" = "O aplikacji";
+"settings.statistics" = "Statystyki";
+
+// Statistics
+"stats.title" = "Statystyki";
+"stats.summary" = "Podsumowanie";
+"stats.totalRolls" = "Łącznie rolek";
+"stats.totalSheets" = "Łącznie arkuszy";
+"stats.uniqueFilms" = "Unikalne filmy";
+"stats.finishedFilms" = "Ukończone rolki";
+"stats.expiredFilms" = "Przeterminowane filmy";
+"stats.frozenFilms" = "Zamrożone filmy";
+"stats.byType" = "Według typu";
+"stats.byFormat" = "Według formatu";
+"stats.largeFormat" = "Wielki format";
+"stats.noData" = "Brak danych";
 "settings.contact" = "Kontakt";
 "settings.formats" = "Formaty filmów";
 "settings.formats.header" = "Formaty filmów";

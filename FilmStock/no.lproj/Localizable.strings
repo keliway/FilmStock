@@ -146,6 +146,21 @@
 "settings.appearance.dark" = "Mørk";
 "settings.version" = "Versjon";
 "settings.about" = "Om";
+"settings.statistics" = "Statistikk";
+
+// Statistics
+"stats.title" = "Statistikk";
+"stats.summary" = "Sammendrag";
+"stats.totalRolls" = "Totalt ruller";
+"stats.totalSheets" = "Totalt ark";
+"stats.uniqueFilms" = "Unike filmer";
+"stats.finishedFilms" = "Ferdige ruller";
+"stats.expiredFilms" = "Utløpte filmer";
+"stats.frozenFilms" = "Frosne filmer";
+"stats.byType" = "Etter type";
+"stats.byFormat" = "Etter format";
+"stats.largeFormat" = "Storformat";
+"stats.noData" = "Ingen data ennå";
 "settings.contact" = "Kontakt";
 "settings.formats" = "Filmformater";
 "settings.formats.header" = "Filmformater";
