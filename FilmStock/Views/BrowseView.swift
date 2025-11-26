@@ -40,11 +40,11 @@ struct BrowseView: View {
     }
     
     private let speedRanges: [SpeedRange] = [
-        SpeedRange(name: "Super slow", min: 0, max: 99),
-        SpeedRange(name: "Slow", min: 100, max: 199),
-        SpeedRange(name: "Normal", min: 200, max: 300),
-        SpeedRange(name: "Fast", min: 301, max: 400),
-        SpeedRange(name: "Super fast", min: 401, max: Int.max)
+        SpeedRange(name: "<100", min: 0, max: 99),
+        SpeedRange(name: "100", min: 100, max: 199),
+        SpeedRange(name: "200", min: 200, max: 300),
+        SpeedRange(name: "400", min: 301, max: 400),
+        SpeedRange(name: "400+", min: 401, max: Int.max)
     ]
     
     var filteredFilms: [GroupedFilm] {
