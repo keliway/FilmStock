@@ -92,6 +92,7 @@
 "filter.showExpiredOnly" = "期限切れのみ表示";
 "filter.clearAll" = "すべてクリア";
 "filter.apply" = "適用";
+"filter.reset" = "リセット";
 "search.placeholder" = "フィルムを検索...";
 
 // MARK: - View Modes

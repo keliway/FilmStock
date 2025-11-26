@@ -92,6 +92,7 @@
 "filter.showExpiredOnly" = "Pokaż tylko przeterminowane";
 "filter.clearAll" = "Wyczyść wszystko";
 "filter.apply" = "Zastosuj";
+"filter.reset" = "Resetuj";
 "search.placeholder" = "Szukaj filmów...";
 
 // MARK: - View Modes

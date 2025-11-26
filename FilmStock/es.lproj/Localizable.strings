@@ -92,6 +92,7 @@
 "filter.showExpiredOnly" = "Mostrar solo caducados";
 "filter.clearAll" = "Borrar todo";
 "filter.apply" = "Aplicar";
+"filter.reset" = "Restablecer";
 "search.placeholder" = "Buscar películas...";
 
 // MARK: - View Modes

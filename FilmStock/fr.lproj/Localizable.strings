@@ -92,6 +92,7 @@
 "filter.showExpiredOnly" = "Afficher uniquement les expirés";
 "filter.clearAll" = "Tout effacer";
 "filter.apply" = "Appliquer";
+"filter.reset" = "Réinitialiser";
 "search.placeholder" = "Rechercher des films...";
 
 // MARK: - View Modes

@@ -92,6 +92,7 @@
 "filter.showExpiredOnly" = "Vis kun utgåtte";
 "filter.clearAll" = "Tøm alle";
 "filter.apply" = "Bruk";
+"filter.reset" = "Tilbakestill";
 "search.placeholder" = "Søk etter filmer...";
 
 // MARK: - View Modes

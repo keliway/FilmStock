@@ -173,6 +173,18 @@ struct FilterPopoverView: View {
             .navigationTitle("filter.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("filter.reset") {
+                        selectedManufacturers.removeAll()
+                        selectedTypes.removeAll()
+                        selectedSpeedRanges.removeAll()
+                        selectedFormats.removeAll()
+                        showExpiredOnly = false
+                        hideEmpty = true
+                    }
+                    .foregroundColor(.orange)
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("action.done") {
                         // Clean up any selections that are no longer available
