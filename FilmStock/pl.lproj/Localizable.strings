@@ -47,7 +47,15 @@
 "Quantity: %d" = "Ilość: %d";
 "Sheets: %d" = "Arkuszy: %d";
 "film.expiryDateFormat" = "MMRRRR lub RRRR";
-"film.searchManufacturer" = "Szukaj lub dodaj producenta";
+"film.searchManufacturer" = "Szukaj producenta";
+"manufacturer.add" = "Dodaj producenta";
+"manufacturer.name" = "Nazwa producenta";
+"manufacturer.addMessage" = "Wprowadź nazwę nowego producenta.";
+"manufacturer.duplicateError" = "Ten producent już istnieje.";
+"manufacturer.duplicateTitle" = "Duplikat producenta";
+"manufacturer.duplicateMessage" = "Producent o tej nazwie już istnieje na liście.";
+"manufacturer.deleteError" = "Nie można usunąć producenta";
+"manufacturer.deleteErrorMessage" = "Ten producent nie może zostać usunięty, ponieważ masz filmy tego producenta w swojej kolekcji.";
 
 // MARK: - Film Types
 "type.color" = "Kolorowy";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "Dodaj aparat";
 "camera.name" = "Nazwa aparatu";
 "camera.model" = "Model";
+"camera.add" = "Dodaj aparat";
+"camera.addMessage" = "Wprowadź nazwę nowego aparatu.";
+"camera.search" = "Szukaj aparatu";
+"camera.duplicateError" = "Ten aparat już istnieje.";
+"camera.duplicateTitle" = "Duplikat aparatu";
+"camera.duplicateMessage" = "Aparat o tej nazwie już istnieje na liście.";
+"camera.deleteError" = "Nie można usunąć aparatu";
+"camera.deleteErrorMessage" = "Ten aparat nie może zostać usunięty, ponieważ ma aktualnie załadowane filmy.";
+"camera.addFirst" = "Dodaj swój pierwszy aparat";
+"cameras.manage" = "Zarządzaj aparatami";
+"cameras.empty" = "Brak aparatów";
+"cameras.swipeToDelete" = "Przesuń w lewo, aby usunąć";
+"cameras.info.title" = "Zarządzanie aparatami";
+"cameras.info.message" = "Możesz dodawać i zarządzać aparatami z zakładki Załadowane filmy, używając ikony aparatu w lewym górnym rogu.";
 
 // MARK: - Film Detail
 "detail.information" = "Informacje o filmie";

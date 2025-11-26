@@ -21,6 +21,7 @@ struct BrowseView: View {
     @State private var showingAddFilm = false
     @State private var filmToEdit: GroupedFilm?
     @State private var filmToLoad: GroupedFilm?
+    @State private var showingLoadFilm = false
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
     @State private var showingSettings = false
@@ -261,9 +262,19 @@ struct BrowseView: View {
             .sheet(item: $filmToEdit) { film in
                 EditFilmView(groupedFilm: film)
             }
-            .sheet(item: $filmToLoad) { film in
-                LoadFilmView(groupedFilm: film)
-                    .environmentObject(dataManager)
+            .sheet(isPresented: $showingLoadFilm) {
+                if let film = filmToLoad {
+                    LoadFilmView(groupedFilm: film)
+                        .environmentObject(dataManager)
+                }
+            }
+            .onChange(of: filmToLoad) { _, newValue in
+                showingLoadFilm = newValue != nil
+            }
+            .onChange(of: showingLoadFilm) { _, newValue in
+                if !newValue {
+                    filmToLoad = nil
+                }
             }
             .sheet(isPresented: $showingFilters) {
                 FilterPopoverView(

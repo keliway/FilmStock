@@ -47,7 +47,15 @@
 "Quantity: %d" = "Cantidad: %d";
 "Sheets: %d" = "Hojas: %d";
 "film.expiryDateFormat" = "MMAAAA o AAAA";
-"film.searchManufacturer" = "Buscar o añadir fabricante";
+"film.searchManufacturer" = "Buscar fabricante";
+"manufacturer.add" = "Añadir fabricante";
+"manufacturer.name" = "Nombre del fabricante";
+"manufacturer.addMessage" = "Introduce el nombre del nuevo fabricante.";
+"manufacturer.duplicateError" = "Este fabricante ya existe.";
+"manufacturer.duplicateTitle" = "Fabricante duplicado";
+"manufacturer.duplicateMessage" = "Ya existe un fabricante con este nombre en la lista.";
+"manufacturer.deleteError" = "No se puede eliminar el fabricante";
+"manufacturer.deleteErrorMessage" = "Este fabricante no se puede eliminar porque tienes películas de este fabricante en tu colección.";
 
 // MARK: - Film Types
 "type.color" = "Color";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "Añadir cámara";
 "camera.name" = "Nombre de la cámara";
 "camera.model" = "Modelo";
+"camera.add" = "Añadir cámara";
+"camera.addMessage" = "Introduce el nombre de la nueva cámara.";
+"camera.search" = "Buscar cámara";
+"camera.duplicateError" = "Esta cámara ya existe.";
+"camera.duplicateTitle" = "Cámara duplicada";
+"camera.duplicateMessage" = "Ya existe una cámara con este nombre en la lista.";
+"camera.deleteError" = "No se puede eliminar la cámara";
+"camera.deleteErrorMessage" = "Esta cámara no se puede eliminar porque actualmente tiene películas cargadas.";
+"camera.addFirst" = "Añadir tu primera cámara";
+"cameras.manage" = "Gestionar cámaras";
+"cameras.empty" = "Sin cámaras todavía";
+"cameras.swipeToDelete" = "Desliza a la izquierda para eliminar";
+"cameras.info.title" = "Gestión de cámaras";
+"cameras.info.message" = "Puedes añadir y gestionar tus cámaras desde la pestaña Películas cargadas usando el icono de cámara arriba a la izquierda.";
 
 // MARK: - Film Detail
 "detail.information" = "Información de la película";

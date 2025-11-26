@@ -55,7 +55,8 @@ struct EditFilmView: View {
                 Section("film.filmInformation") {
                     NavigationLink {
                         ManufacturerPickerView(
-                            selectedManufacturer: $manufacturer
+                            selectedManufacturer: $manufacturer,
+                            allowAddingManufacturer: false
                         )
                         .environmentObject(dataManager)
                     } label: {

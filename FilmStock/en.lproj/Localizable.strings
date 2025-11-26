@@ -47,7 +47,15 @@
 "Quantity: %d" = "Quantity: %d";
 "Sheets: %d" = "Sheets: %d";
 "film.expiryDateFormat" = "MMYYYY or YYYY";
-"film.searchManufacturer" = "Search or add manufacturer";
+"film.searchManufacturer" = "Search manufacturer";
+"manufacturer.add" = "Add Manufacturer";
+"manufacturer.name" = "Manufacturer name";
+"manufacturer.addMessage" = "Enter the name of the new manufacturer.";
+"manufacturer.duplicateError" = "This manufacturer already exists.";
+"manufacturer.duplicateTitle" = "Duplicate Manufacturer";
+"manufacturer.duplicateMessage" = "A manufacturer with this name already exists in the list.";
+"manufacturer.deleteError" = "Cannot Delete Manufacturer";
+"manufacturer.deleteErrorMessage" = "This manufacturer cannot be deleted because you have films from this manufacturer in your collection.";
 
 // MARK: - Film Types
 "type.color" = "Color";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "Add Camera";
 "camera.name" = "Camera Name";
 "camera.model" = "Model";
+"camera.add" = "Add Camera";
+"camera.addMessage" = "Enter the name of the new camera.";
+"camera.search" = "Search camera";
+"camera.duplicateError" = "This camera already exists.";
+"camera.duplicateTitle" = "Duplicate Camera";
+"camera.duplicateMessage" = "A camera with this name already exists in the list.";
+"camera.deleteError" = "Cannot Delete Camera";
+"camera.deleteErrorMessage" = "This camera cannot be deleted because it currently has films loaded in it.";
+"camera.addFirst" = "Add Your First Camera";
+"cameras.manage" = "Manage Cameras";
+"cameras.empty" = "No cameras yet";
+"cameras.swipeToDelete" = "Swipe left on a camera to delete it";
+"cameras.info.title" = "Managing Cameras";
+"cameras.info.message" = "You can add and manage your cameras from the Loaded Films tab using the camera icon in the top left.";
 
 // MARK: - Film Detail
 "detail.information" = "Film Information";

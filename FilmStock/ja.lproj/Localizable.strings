@@ -47,7 +47,15 @@
 "Quantity: %d" = "数量：%d";
 "Sheets: %d" = "枚数：%d";
 "film.expiryDateFormat" = "MMYYYY または YYYY";
-"film.searchManufacturer" = "メーカーを検索または追加";
+"film.searchManufacturer" = "メーカーを検索";
+"manufacturer.add" = "メーカーを追加";
+"manufacturer.name" = "メーカー名";
+"manufacturer.addMessage" = "新しいメーカーの名前を入力してください。";
+"manufacturer.duplicateError" = "このメーカーは既に存在します。";
+"manufacturer.duplicateTitle" = "重複したメーカー";
+"manufacturer.duplicateMessage" = "この名前のメーカーは既にリストに存在します。";
+"manufacturer.deleteError" = "メーカーを削除できません";
+"manufacturer.deleteErrorMessage" = "このメーカーのフィルムがコレクションにあるため、削除できません。";
 
 // MARK: - Film Types
 "type.color" = "カラー";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "カメラを追加";
 "camera.name" = "カメラ名";
 "camera.model" = "モデル";
+"camera.add" = "カメラを追加";
+"camera.addMessage" = "新しいカメラの名前を入力してください。";
+"camera.search" = "カメラを検索";
+"camera.duplicateError" = "このカメラは既に存在します。";
+"camera.duplicateTitle" = "重複したカメラ";
+"camera.duplicateMessage" = "この名前のカメラは既にリストに存在します。";
+"camera.deleteError" = "カメラを削除できません";
+"camera.deleteErrorMessage" = "このカメラにフィルムが装填されているため、削除できません。";
+"camera.addFirst" = "最初のカメラを追加";
+"cameras.manage" = "カメラを管理";
+"cameras.empty" = "カメラがありません";
+"cameras.swipeToDelete" = "左にスワイプして削除";
+"cameras.info.title" = "カメラの管理";
+"cameras.info.message" = "「装填済みフィルム」タブの左上にあるカメラアイコンからカメラを追加・管理できます。";
 
 // MARK: - Film Detail
 "detail.information" = "フィルム情報";

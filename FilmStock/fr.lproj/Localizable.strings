@@ -47,7 +47,15 @@
 "Quantity: %d" = "Quantité : %d";
 "Sheets: %d" = "Feuilles : %d";
 "film.expiryDateFormat" = "MMAAAA ou AAAA";
-"film.searchManufacturer" = "Rechercher ou ajouter un fabricant";
+"film.searchManufacturer" = "Rechercher un fabricant";
+"manufacturer.add" = "Ajouter un fabricant";
+"manufacturer.name" = "Nom du fabricant";
+"manufacturer.addMessage" = "Saisissez le nom du nouveau fabricant.";
+"manufacturer.duplicateError" = "Ce fabricant existe déjà.";
+"manufacturer.duplicateTitle" = "Fabricant en double";
+"manufacturer.duplicateMessage" = "Un fabricant avec ce nom existe déjà dans la liste.";
+"manufacturer.deleteError" = "Impossible de supprimer le fabricant";
+"manufacturer.deleteErrorMessage" = "Ce fabricant ne peut pas être supprimé car vous avez des films de ce fabricant dans votre collection.";
 
 // MARK: - Film Types
 "type.color" = "Couleur";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "Ajouter un appareil";
 "camera.name" = "Nom de l'appareil";
 "camera.model" = "Modèle";
+"camera.add" = "Ajouter un appareil photo";
+"camera.addMessage" = "Saisissez le nom du nouvel appareil photo.";
+"camera.search" = "Rechercher un appareil photo";
+"camera.duplicateError" = "Cet appareil photo existe déjà.";
+"camera.duplicateTitle" = "Appareil photo en double";
+"camera.duplicateMessage" = "Un appareil photo avec ce nom existe déjà dans la liste.";
+"camera.deleteError" = "Impossible de supprimer l'appareil photo";
+"camera.deleteErrorMessage" = "Cet appareil photo ne peut pas être supprimé car il contient actuellement des films chargés.";
+"camera.addFirst" = "Ajouter votre premier appareil";
+"cameras.manage" = "Gérer les appareils";
+"cameras.empty" = "Aucun appareil photo";
+"cameras.swipeToDelete" = "Glissez vers la gauche pour supprimer";
+"cameras.info.title" = "Gestion des appareils";
+"cameras.info.message" = "Vous pouvez ajouter et gérer vos appareils photo depuis l'onglet Films chargés via l'icône appareil en haut à gauche.";
 
 // MARK: - Film Detail
 "detail.information" = "Informations sur le film";

@@ -23,6 +23,7 @@ struct LoadedFilmsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var loadedFilms: [LoadedFilm] = []
     @State private var showingHelp = false
+    @State private var showingManageCameras = false
     
     var body: some View {
         NavigationStack {
@@ -64,6 +65,13 @@ struct LoadedFilmsView: View {
             .navigationTitle("tab.loadedFilms")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingManageCameras = true
+                    } label: {
+                        Image(systemName: "camera")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showingHelp = true
@@ -71,6 +79,10 @@ struct LoadedFilmsView: View {
                         Image(systemName: "questionmark.circle")
                     }
                 }
+            }
+            .sheet(isPresented: $showingManageCameras) {
+                ManageCamerasView()
+                    .environmentObject(dataManager)
             }
             .alert("help.loadedFilms.title", isPresented: $showingHelp) {
                 Button("action.done", role: .cancel) { }

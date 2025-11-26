@@ -15,8 +15,6 @@ struct LoadFilmView: View {
     
     @State private var selectedFormat: FilmStock.FilmFormat?
     @State private var selectedCamera: String = ""
-    @State private var newCameraName: String = ""
-    @State private var showingCameraPicker = false
     @State private var errorMessage: String?
     @State private var sheetQuantity: Int = 1
     
@@ -114,7 +112,10 @@ struct LoadFilmView: View {
     
     private var cameraSelectionSection: some View {
         Section("load.selectCamera") {
-            NavigationLink(destination: CameraPickerView(selectedCamera: $selectedCamera, newCameraName: $newCameraName)) {
+            NavigationLink {
+                CameraPickerView(selectedCamera: $selectedCamera)
+                    .environmentObject(dataManager)
+            } label: {
                 HStack {
                     Text("camera.name")
                     Spacer()
@@ -199,22 +200,81 @@ struct LoadFilmView: View {
 
 struct CameraPickerView: View {
     @Binding var selectedCamera: String
-    @Binding var newCameraName: String
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     @State private var searchText: String = ""
     @State private var showingAddCamera = false
+    @State private var newCameraNameInput = ""
+    @State private var showDeleteError = false
+    @State private var showDuplicateError = false
+    @State private var showingCameraInfo = false
+    
+    var allCameras: [Camera] {
+        dataManager.getAllCameras()
+    }
     
     var filteredCameras: [Camera] {
-        let cameras = dataManager.getAllCameras()
         if searchText.isEmpty {
-            return cameras
+            return allCameras
         }
-        return cameras.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        return allCameras.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
+    
+    var isDuplicate: Bool {
+        let trimmedName = newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        return allCameras.contains(where: { $0.name.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame })
+    }
+    
+    var hasNoCameras: Bool {
+        allCameras.isEmpty
+    }
+    
+    var searchTextTrimmed: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    var canAddFromSearch: Bool {
+        !searchTextTrimmed.isEmpty && 
+        !allCameras.contains(where: { $0.name.localizedCaseInsensitiveCompare(searchTextTrimmed) == .orderedSame })
     }
     
     var body: some View {
         List {
+            // Show empty state with add button if no cameras
+            if hasNoCameras && searchText.isEmpty {
+                Section {
+                    VStack(spacing: 12) {
+                        Image(systemName: "camera")
+                            .font(.largeTitle)
+                            .foregroundColor(.secondary)
+                        Text("cameras.empty")
+                            .foregroundColor(.secondary)
+                        Button {
+                            newCameraNameInput = ""
+                            showingAddCamera = true
+                        } label: {
+                            Label("camera.addFirst", systemImage: "plus.circle.fill")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 20)
+                }
+            }
+            
+            // Show "Add camera" option when search doesn't match any existing camera
+            if canAddFromSearch {
+                Section {
+                    Button {
+                        let newCamera = dataManager.addCamera(name: searchTextTrimmed)
+                        selectedCamera = newCamera.name
+                        dismiss()
+                    } label: {
+                        Label(String(format: NSLocalizedString("action.addNew", comment: ""), searchTextTrimmed), systemImage: "plus.circle")
+                    }
+                }
+            }
+            
             ForEach(filteredCameras, id: \.name) { camera in
                 Button {
                     selectedCamera = camera.name
@@ -229,27 +289,80 @@ struct CameraPickerView: View {
                         }
                     }
                 }
-            }
-            
-            // Add new camera option
-            if !searchText.isEmpty && !filteredCameras.contains(where: { $0.name.localizedCaseInsensitiveContains(searchText) }) {
-                Button {
-                    newCameraName = searchText
-                    selectedCamera = searchText
-                    _ = dataManager.addCamera(name: searchText)
-                    dismiss()
-                } label: {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text(String(format: NSLocalizedString("action.addNew", comment: ""), searchText))
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) {
+                        let success = dataManager.deleteCamera(camera)
+                        if !success {
+                            showDeleteError = true
+                        }
+                    } label: {
+                        Label("action.delete", systemImage: "trash")
                     }
-                    .foregroundColor(.accentColor)
                 }
             }
         }
-        .searchable(text: $searchText, prompt: Text("load.searchCamera"))
+        .searchable(text: $searchText, prompt: Text("camera.search"))
         .navigationTitle("load.selectCamera")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                // Show info button if cameras exist, add button only if no cameras
+                if hasNoCameras {
+                    Button {
+                        newCameraNameInput = ""
+                        showingAddCamera = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                } else {
+                    Button {
+                        showingCameraInfo = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+            }
+        }
+        .alert("cameras.info.title", isPresented: $showingCameraInfo) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text("cameras.info.message")
+        }
+        .alert("camera.add", isPresented: $showingAddCamera) {
+            TextField("camera.name", text: $newCameraNameInput)
+                .autocorrectionDisabled()
+            Button("action.cancel", role: .cancel) {
+                newCameraNameInput = ""
+            }
+            Button("action.add") {
+                let trimmedName = newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmedName.isEmpty && !isDuplicate {
+                    let newCamera = dataManager.addCamera(name: trimmedName)
+                    selectedCamera = newCamera.name
+                    dismiss()
+                } else if isDuplicate {
+                    showDuplicateError = true
+                }
+                newCameraNameInput = ""
+            }
+            .disabled(newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isDuplicate)
+        } message: {
+            if isDuplicate {
+                Text("camera.duplicateError")
+            } else {
+                Text("camera.addMessage")
+            }
+        }
+        .alert("camera.duplicateTitle", isPresented: $showDuplicateError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text("camera.duplicateMessage")
+        }
+        .alert("camera.deleteError", isPresented: $showDeleteError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text("camera.deleteErrorMessage")
+        }
     }
 }
 

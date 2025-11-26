@@ -479,11 +479,11 @@ class FilmStockDataManager: ObservableObject {
         return manufacturer
     }
     
-    func deleteManufacturer(_ manufacturer: Manufacturer) {
-        guard let context = modelContext else { return }
+    func deleteManufacturer(_ manufacturer: Manufacturer) -> Bool {
+        guard let context = modelContext else { return false }
         
         // Only allow deletion of custom manufacturers
-        guard manufacturer.isCustom else { return }
+        guard manufacturer.isCustom else { return false }
         
         // Check if any films use this manufacturer - fetch all and filter in memory
         let descriptor = FetchDescriptor<Film>()
@@ -495,11 +495,12 @@ class FilmStockDataManager: ObservableObject {
         
         if !filmsUsingManufacturer.isEmpty {
             // Don't delete if films are using it
-            return
+            return false
         }
         
         context.delete(manufacturer)
         try? context.save()
+        return true
     }
     
     // MARK: - Helper Methods
@@ -599,6 +600,27 @@ class FilmStockDataManager: ObservableObject {
         context.insert(camera)
         try? context.save()
         return camera
+    }
+    
+    func deleteCamera(_ camera: Camera) -> Bool {
+        guard let context = modelContext else { return false }
+        
+        // Check if any loaded films use this camera
+        let descriptor = FetchDescriptor<LoadedFilm>()
+        let allLoadedFilms = (try? context.fetch(descriptor)) ?? []
+        
+        let filmsUsingCamera = allLoadedFilms.filter { loadedFilm in
+            loadedFilm.camera?.name == camera.name
+        }
+        
+        if !filmsUsingCamera.isEmpty {
+            // Don't delete if films are loaded in this camera
+            return false
+        }
+        
+        context.delete(camera)
+        try? context.save()
+        return true
     }
     
     // MARK: - Loaded Film Management

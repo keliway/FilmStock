@@ -47,7 +47,15 @@
 "Quantity: %d" = "Antall: %d";
 "Sheets: %d" = "Ark: %d";
 "film.expiryDateFormat" = "MMÅÅÅÅ eller ÅÅÅÅ";
-"film.searchManufacturer" = "Søk eller legg til produsent";
+"film.searchManufacturer" = "Søk produsent";
+"manufacturer.add" = "Legg til produsent";
+"manufacturer.name" = "Produsentnavn";
+"manufacturer.addMessage" = "Skriv inn navnet på den nye produsenten.";
+"manufacturer.duplicateError" = "Denne produsenten finnes allerede.";
+"manufacturer.duplicateTitle" = "Duplikat produsent";
+"manufacturer.duplicateMessage" = "En produsent med dette navnet finnes allerede i listen.";
+"manufacturer.deleteError" = "Kan ikke slette produsent";
+"manufacturer.deleteErrorMessage" = "Denne produsenten kan ikke slettes fordi du har filmer fra denne produsenten i samlingen din.";
 
 // MARK: - Film Types
 "type.color" = "Farge";
@@ -212,6 +220,20 @@
 "camera.addCamera" = "Legg til kamera";
 "camera.name" = "Kameranavn";
 "camera.model" = "Modell";
+"camera.add" = "Legg til kamera";
+"camera.addMessage" = "Skriv inn navnet på det nye kameraet.";
+"camera.search" = "Søk kamera";
+"camera.duplicateError" = "Dette kameraet finnes allerede.";
+"camera.duplicateTitle" = "Duplikat kamera";
+"camera.duplicateMessage" = "Et kamera med dette navnet finnes allerede i listen.";
+"camera.deleteError" = "Kan ikke slette kamera";
+"camera.deleteErrorMessage" = "Dette kameraet kan ikke slettes fordi det har filmer lastet i seg.";
+"camera.addFirst" = "Legg til ditt første kamera";
+"cameras.manage" = "Administrer kameraer";
+"cameras.empty" = "Ingen kameraer ennå";
+"cameras.swipeToDelete" = "Sveip til venstre for å slette";
+"cameras.info.title" = "Administrere kameraer";
+"cameras.info.message" = "Du kan legge til og administrere kameraer fra Lastede filmer-fanen ved hjelp av kameraikonet øverst til venstre.";
 
 // MARK: - Film Detail
 "detail.information" = "Filminformasjon";

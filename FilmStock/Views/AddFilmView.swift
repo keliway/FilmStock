@@ -619,7 +619,12 @@ struct ManufacturerPickerView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Binding var selectedManufacturer: String
     @Environment(\.dismiss) var dismiss
+    var allowAddingManufacturer: Bool = true
     @State private var searchText = ""
+    @State private var showingAddManufacturer = false
+    @State private var newManufacturerName = ""
+    @State private var showDuplicateError = false
+    @State private var showDeleteError = false
     
     var manufacturers: [Manufacturer] {
         dataManager.getAllManufacturers()
@@ -633,30 +638,18 @@ struct ManufacturerPickerView: View {
         }
     }
     
+    var isDuplicate: Bool {
+        let trimmedName = newManufacturerName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return manufacturers.contains(where: { $0.name.localizedCaseInsensitiveEquals(trimmedName) })
+    }
+    
     var body: some View {
         List {
-            // Option to add new manufacturer
-            if !searchText.isEmpty && !manufacturers.contains(where: { $0.name.localizedCaseInsensitiveEquals(searchText) }) {
-                Section {
-                    Button {
-                        let newManufacturer = dataManager.addManufacturer(name: searchText)
-                        selectedManufacturer = newManufacturer.name
-                        dismiss()
-                    } label: {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundColor(.accentColor)
-                            Text(String(format: NSLocalizedString("action.addNew", comment: ""), searchText))
-                        }
-                    }
-                }
-            }
-            
             // Existing manufacturers
             ForEach(filteredManufacturers, id: \.persistentModelID) { manufacturer in
                 Button {
                     selectedManufacturer = manufacturer.name
-        dismiss()
+                    dismiss()
                 } label: {
                     HStack {
                         Text(manufacturer.name)
@@ -667,11 +660,70 @@ struct ManufacturerPickerView: View {
                         }
                     }
                 }
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    if manufacturer.isCustom {
+                        Button(role: .destructive) {
+                            let success = dataManager.deleteManufacturer(manufacturer)
+                            if !success {
+                                showDeleteError = true
+                            }
+                        } label: {
+                            Label("action.delete", systemImage: "trash")
+                        }
+                    }
+                }
             }
         }
         .searchable(text: $searchText, prompt: Text("film.searchManufacturer"))
         .navigationTitle("film.selectManufacturer")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if allowAddingManufacturer {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        newManufacturerName = ""
+                        showingAddManufacturer = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+        }
+        .alert("manufacturer.add", isPresented: $showingAddManufacturer) {
+            TextField("manufacturer.name", text: $newManufacturerName)
+                .autocorrectionDisabled()
+            Button("action.cancel", role: .cancel) {
+                newManufacturerName = ""
+            }
+            Button("action.add") {
+                let trimmedName = newManufacturerName.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmedName.isEmpty && !isDuplicate {
+                    let newManufacturer = dataManager.addManufacturer(name: trimmedName)
+                    selectedManufacturer = newManufacturer.name
+                    dismiss()
+                } else if isDuplicate {
+                    showDuplicateError = true
+                }
+                newManufacturerName = ""
+            }
+            .disabled(newManufacturerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isDuplicate)
+        } message: {
+            if isDuplicate {
+                Text("manufacturer.duplicateError")
+            } else {
+                Text("manufacturer.addMessage")
+            }
+        }
+        .alert("manufacturer.duplicateTitle", isPresented: $showDuplicateError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text("manufacturer.duplicateMessage")
+        }
+        .alert("manufacturer.deleteError", isPresented: $showDeleteError) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text("manufacturer.deleteErrorMessage")
+        }
     }
 }
 
