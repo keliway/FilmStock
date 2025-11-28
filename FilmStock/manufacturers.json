@@ -353,6 +353,48 @@
             "neopan 1600",
             "fuji neopan 1600"
           ]
+        },
+        {
+          "filename": "FP100C",
+          "speed": 100,
+          "type": "Instant",
+          "aliases": [
+            "fp100",
+            "fp100c",
+            "100c"
+          ]
+        },
+        {
+          "filename": "FP100C45",
+          "speed": 100,
+          "type": "Instant",
+          "aliases": [
+            "fp10045",
+            "fp100c 45",
+            "100c 45"
+          ]
+        },
+        {
+          "filename": "FP100C_Silk",
+          "speed": 100,
+          "type": "Instant",
+          "aliases": [
+            "fp100silk",
+            "fp100c silk",
+            "100c",
+            "silk",
+            "pf 100c silk"
+          ]
+        },
+        {
+          "filename": "FP3000B",
+          "speed": 3000,
+          "type": "Instant",
+          "aliases": [
+            "fp3000",
+            "fp3000b",
+            "3000b"
+          ]
         }
       ]
     },
@@ -529,6 +571,51 @@
             "5203"
           ]
         },
+        {
+          "filename": "V2_50D",
+          "speed": 50,
+          "type": "Color",
+          "aliases": [
+            "vision2 50d",
+            "5201"
+          ]
+        },
+        {
+          "filename": "V2_250D",
+          "speed": 250,
+          "type": "Color",
+          "aliases": [
+            "vision2 2 50d",
+            "5205"
+          ]
+        },
+        {
+          "filename": "V2_200T",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "vision2 200T",
+            "5217"
+          ]
+        },
+        {
+          "filename": "V2_500T",
+          "speed": 500,
+          "type": "Color",
+          "aliases": [
+            "vision2 500T",
+            "5218"
+          ]
+        },
+        {
+            "filename": "V2_100T",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "vision2 100T",
+              "5212"
+            ]
+          },
         {
           "filename": "Ektachrome400",
           "speed": 400,
