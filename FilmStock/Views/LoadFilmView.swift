@@ -180,12 +180,6 @@ struct LoadFilmView: View {
             return
         }
         
-        // Check if we can load (max 5 films)
-        guard dataManager.canLoadFilm() else {
-            errorMessage = NSLocalizedString("load.error.maxFilms", comment: "")
-            return
-        }
-        
         // Determine quantity to load (1 for rolls, sheetQuantity for sheets)
         let quantityToLoad = isSheetFormat(format) ? sheetQuantity : 1
         

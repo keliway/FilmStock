@@ -671,13 +671,6 @@ class FilmStockDataManager: ObservableObject {
             return false
         }
         
-        // Check if already at max (5 films)
-        let loadedFilmsDescriptor = FetchDescriptor<LoadedFilm>()
-        let allLoadedFilms = (try? context.fetch(loadedFilmsDescriptor)) ?? []
-        if allLoadedFilms.count >= 5 {
-            return false
-        }
-        
         // Find or create camera
         let cameraDescriptor = FetchDescriptor<Camera>(
             predicate: #Predicate { $0.name == cameraName }
@@ -763,13 +756,6 @@ class FilmStockDataManager: ObservableObject {
         guard let context = modelContext else { return }
         try? context.save()
         loadFilmStocks()
-    }
-    
-    func canLoadFilm() -> Bool {
-        guard let context = modelContext else { return false }
-        let descriptor = FetchDescriptor<LoadedFilm>()
-        let loadedFilms = (try? context.fetch(descriptor)) ?? []
-        return loadedFilms.count < 5
     }
 }
 

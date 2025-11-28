@@ -249,7 +249,6 @@
 "load.selectFormat" = "Select Format";
 "load.searchCamera" = "Search or add camera";
 "load.error.noRolls" = "No rolls available for this format";
-"load.error.maxFilms" = "Maximum of 5 films can be loaded at once";
 "load.error.failed" = "Failed to load film. Make sure you have at least %d %@ available.";
 "load.noFormatsAvailable" = "No formats available";
 "load.rollsAvailable" = "roll(s) available";

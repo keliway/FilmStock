@@ -249,7 +249,6 @@
 "load.selectFormat" = "Seleccionar formato";
 "load.searchCamera" = "Buscar o añadir cámara";
 "load.error.noRolls" = "No hay rollos disponibles para este formato";
-"load.error.maxFilms" = "Se puede cargar un máximo de 5 películas a la vez";
 "load.error.failed" = "Error al cargar la película. Asegúrate de tener al menos %d %@ disponibles.";
 "load.noFormatsAvailable" = "No hay formatos disponibles";
 "load.rollsAvailable" = "rollo(s) disponible(s)";

@@ -249,7 +249,6 @@
 "load.selectFormat" = "フォーマットを選択";
 "load.searchCamera" = "カメラを検索または追加";
 "load.error.noRolls" = "このフォーマットで利用可能なロールがありません";
-"load.error.maxFilms" = "一度に最大5本のフィルムを装填できます";
 "load.error.failed" = "フィルムの装填に失敗しました。少なくとも %d %@ が利用可能であることを確認してください。";
 "load.noFormatsAvailable" = "利用可能なフォーマットがありません";
 "load.rollsAvailable" = "本利用可能";

@@ -249,7 +249,6 @@
 "load.selectFormat" = "Wybierz format";
 "load.searchCamera" = "Szukaj lub dodaj aparat";
 "load.error.noRolls" = "Brak dostępnych rolek dla tego formatu";
-"load.error.maxFilms" = "Maksymalnie 5 filmów może być załadowanych jednocześnie";
 "load.error.failed" = "Nie udało się załadować filmu. Upewnij się, że masz co najmniej %d %@ dostępnych.";
 "load.noFormatsAvailable" = "Brak dostępnych formatów";
 "load.rollsAvailable" = "rolka/rolki dostępne";

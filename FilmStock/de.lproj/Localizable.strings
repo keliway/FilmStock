@@ -249,7 +249,6 @@
 "load.selectFormat" = "Format auswählen";
 "load.searchCamera" = "Kamera suchen oder hinzufügen";
 "load.error.noRolls" = "Keine Rollen für dieses Format verfügbar";
-"load.error.maxFilms" = "Maximal 5 Filme können gleichzeitig eingelegt werden";
 "load.error.failed" = "Film konnte nicht eingelegt werden. Stelle sicher, dass mindestens %d %@ verfügbar sind.";
 "load.noFormatsAvailable" = "Keine Formate verfügbar";
 "load.rollsAvailable" = "Rolle(n) verfügbar";

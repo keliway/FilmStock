@@ -249,7 +249,6 @@
 "load.selectFormat" = "Velg format";
 "load.searchCamera" = "Søk eller legg til kamera";
 "load.error.noRolls" = "Ingen ruller tilgjengelig for dette formatet";
-"load.error.maxFilms" = "Maksimalt 5 filmer kan legges inn av gangen";
 "load.error.failed" = "Kunne ikke legge inn film. Sørg for at du har minst %d %@ tilgjengelig.";
 "load.noFormatsAvailable" = "Ingen formater tilgjengelig";
 "load.rollsAvailable" = "rulle(r) tilgjengelig";
