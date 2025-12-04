@@ -120,6 +120,13 @@ struct FilmCardView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
+                        
+                        // Comment indicator
+                        if hasComments {
+                            Image(systemName: "text.bubble")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
                     
@@ -225,6 +232,16 @@ struct FilmCardView: View {
     private var isFrozen: Bool {
         // Check if any format is frozen
         return groupedFilm.formats.contains { $0.isFrozen }
+    }
+    
+    private var hasComments: Bool {
+        // Check if any format has comments
+        return groupedFilm.formats.contains { 
+            if let comments = $0.comments, !comments.isEmpty {
+                return true
+            }
+            return false
+        }
     }
     
     // Whether to show any chip (expiry or frozen)

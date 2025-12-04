@@ -418,7 +418,8 @@ class FilmStockDataManager: ObservableObject {
                             quantity: myFilm.quantity,
                             expireDate: myFilm.expireDateArray,
                             isFrozen: myFilm.isFrozen ?? false,
-                            filmId: myFilm.id
+                            filmId: myFilm.id,
+                            comments: myFilm.comments
             ))
                     }
                 }

@@ -137,6 +137,7 @@ struct GroupedFilm: Identifiable, Hashable {
         let expireDate: [String]?
         let isFrozen: Bool
         let filmId: String
+        let comments: String?
         
         var formatDisplayName: String {
             if format == .other, let customName = customFormatName, !customName.isEmpty {
