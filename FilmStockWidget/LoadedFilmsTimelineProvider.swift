@@ -155,6 +155,9 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                     imageData = loadDefaultImageData(filmName: film.name, manufacturer: manufacturerName)
                 }
                 
+                // Get effective ISO (shot at ISO if set, otherwise film's native ISO)
+                let effectiveISO = loadedFilm.shotAtISO ?? film.filmSpeed
+                
                 return LoadedFilmWidgetData(
                     id: loadedFilm.id,
                     filmName: film.name,
@@ -163,7 +166,8 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                     customFormatName: loadedFilm.myFilm?.customFormatName,
                     camera: loadedFilm.camera?.name ?? "",
                     imageData: imageData,
-                    loadedAt: loadedFilm.loadedAt
+                    loadedAt: loadedFilm.loadedAt,
+                    effectiveISO: effectiveISO
                 )
             }
         } catch {

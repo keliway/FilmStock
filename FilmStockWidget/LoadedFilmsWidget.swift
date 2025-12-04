@@ -50,6 +50,7 @@ struct LoadedFilmWidgetData: Identifiable {
     let camera: String
     let imageData: Data?
     let loadedAt: Date?
+    let effectiveISO: Int
     
     var formatDisplayName: String {
         // Use custom format name if available
@@ -69,6 +70,10 @@ struct LoadedFilmWidgetData: Identifiable {
         case "Other": return "Other"
         default: return format
         }
+    }
+    
+    var isoDisplayString: String {
+        return "ISO \(effectiveISO)"
     }
     
     var loadedDateString: String {
@@ -132,12 +137,13 @@ struct LoadedFilmsWidgetEntryView: View {
                                     
                                     Spacer()
                                     
-                                    // Format chip on the right
-                                    Text(film.formatDisplayName)
+                                    // ISO chip on the right
+                                    Text(film.isoDisplayString)
                                         .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(.black)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
+                                        .fixedSize()
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color.white)
@@ -163,12 +169,13 @@ struct LoadedFilmsWidgetEntryView: View {
                                     
                                     Spacer()
                                     
-                                    // Format chip on the right
-                                    Text(film.formatDisplayName)
+                                    // ISO chip on the right
+                                    Text(film.isoDisplayString)
                                         .font(.system(size: 10, weight: .semibold))
                                         .foregroundColor(.black)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
+                                        .fixedSize()
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color.white)
@@ -248,7 +255,8 @@ struct EmptyWidgetView: View {
                 customFormatName: nil,
                 camera: "Hasselblad 500CM",
                 imageData: nil,
-                loadedAt: Date()
+                loadedAt: Date(),
+                effectiveISO: 400
             )
         ],
         currentIndex: 0,

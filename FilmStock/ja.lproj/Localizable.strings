@@ -269,6 +269,8 @@
 "load.cameraName" = "カメラ名";
 "load.addCamera" = "カメラを追加";
 "load.quantityToLoad" = "装填する数量";
+"load.shotAtISO" = "撮影ISO";
+"load.shotAtISO.hint" = "フィルムの定格ISOとは異なります";
 
 // MARK: - Cameras
 "camera.title" = "カメラ";

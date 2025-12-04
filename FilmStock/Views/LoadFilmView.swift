@@ -17,6 +17,7 @@ struct LoadFilmView: View {
     @State private var selectedCamera: String = ""
     @State private var errorMessage: String?
     @State private var sheetQuantity: Int = 1
+    @State private var shotAtISO: Int = 0
     
     var availableFormats: [FilmStock.FilmFormat] {
         let formatsWithQuantity = groupedFilm.formats.filter { formatInfo in
@@ -36,6 +37,7 @@ struct LoadFilmView: View {
             Form {
                 formatSelectionSection
                 cameraSelectionSection
+                isoSelectionSection
                 quantitySelectionSection
                 errorSection
             }
@@ -68,6 +70,9 @@ struct LoadFilmView: View {
             
             // Reset sheet quantity when format changes
             sheetQuantity = 1
+            
+            // Initialize ISO with film's native ISO
+            shotAtISO = groupedFilm.filmSpeed
         }
         .onChange(of: selectedFormat) { oldValue, newValue in
             // Reset sheet quantity when format changes
@@ -133,6 +138,32 @@ struct LoadFilmView: View {
         }
     }
     
+    private var isoSelectionSection: some View {
+        Section {
+            HStack {
+                Text("load.shotAtISO")
+                Spacer()
+                TextField("ISO", value: $shotAtISO, format: .number)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 80)
+            }
+        } footer: {
+            if shotAtISO != groupedFilm.filmSpeed {
+                Text("load.shotAtISO.hint")
+                    .foregroundColor(.orange)
+            }
+        }
+        .onChange(of: shotAtISO) { oldValue, newValue in
+            // Clamp value between 1 and 12800
+            if newValue < 1 {
+                shotAtISO = 1
+            } else if newValue > 12800 {
+                shotAtISO = 12800
+            }
+        }
+    }
+    
     private var quantitySelectionSection: some View {
         Group {
             if let format = selectedFormat, isSheetFormat(format) {
@@ -184,7 +215,9 @@ struct LoadFilmView: View {
         let quantityToLoad = isSheetFormat(format) ? sheetQuantity : 1
         
         // Load the film - use the filmId from formatInfo which is the MyFilm.id
-        if dataManager.loadFilm(filmStockId: formatInfo.filmId, format: format, cameraName: selectedCamera, quantity: quantityToLoad) {
+        // Pass ISO only if different from native
+        let isoToPass = shotAtISO != groupedFilm.filmSpeed ? shotAtISO : nil
+        if dataManager.loadFilm(filmStockId: formatInfo.filmId, format: format, cameraName: selectedCamera, quantity: quantityToLoad, shotAtISO: isoToPass) {
             dismiss()
             onLoadComplete?()
         } else {

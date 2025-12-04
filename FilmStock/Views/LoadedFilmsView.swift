@@ -203,7 +203,13 @@ struct LoadedFilmRow: View {
                             .font(.headline)
                         
                         HStack(spacing: 4) {
-                            Text("ISO \(film.filmSpeed)")
+                            // Show effective ISO (shot at ISO if different, otherwise native)
+                            if loadedFilm.shotAtISO != nil {
+                                Text("ISO \(loadedFilm.effectiveISO)")
+                                    .foregroundColor(.orange)
+                            } else {
+                                Text("ISO \(loadedFilm.effectiveISO)")
+                            }
                             Text("•")
                             Text(formatDisplayName)
                             if isSheetFormat(loadedFilm.format) {

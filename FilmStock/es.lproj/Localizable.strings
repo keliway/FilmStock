@@ -269,6 +269,8 @@
 "load.cameraName" = "Nombre de la cámara";
 "load.addCamera" = "Añadir cámara";
 "load.quantityToLoad" = "Cantidad a cargar";
+"load.shotAtISO" = "Disparar a ISO";
+"load.shotAtISO.hint" = "Diferente al ISO nativo de la película";
 
 // MARK: - Cameras
 "camera.title" = "Cámaras";

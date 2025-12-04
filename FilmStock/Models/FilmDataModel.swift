@@ -109,6 +109,7 @@ final class LoadedFilm {
     var id: String
     var loadedAt: Date
     var quantity: Int // Number of rolls/sheets loaded
+    var shotAtISO: Int? // ISO the film is being shot at (if different from film's native ISO)
     @Relationship(deleteRule: .nullify)
     var film: Film?
     var format: String // FilmFormat rawValue
@@ -117,7 +118,15 @@ final class LoadedFilm {
     @Relationship(deleteRule: .nullify)
     var myFilm: MyFilm? // Reference to the MyFilm entry that was loaded
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date()) {
+    // Computed property to get the effective ISO (shot ISO or film's native ISO)
+    var effectiveISO: Int {
+        if let shotISO = shotAtISO {
+            return shotISO
+        }
+        return film?.filmSpeed ?? 0
+    }
+    
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -125,6 +134,7 @@ final class LoadedFilm {
         self.myFilm = myFilm
         self.quantity = quantity
         self.loadedAt = loadedAt
+        self.shotAtISO = shotAtISO
     }
 }
 

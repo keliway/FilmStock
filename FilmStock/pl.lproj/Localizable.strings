@@ -269,6 +269,8 @@
 "load.cameraName" = "Nazwa aparatu";
 "load.addCamera" = "Dodaj aparat";
 "load.quantityToLoad" = "Ilość do załadowania";
+"load.shotAtISO" = "Fotografuj przy ISO";
+"load.shotAtISO.hint" = "Różni się od natywnego ISO filmu";
 
 // MARK: - Cameras
 "camera.title" = "Aparaty";

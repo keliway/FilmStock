@@ -269,6 +269,8 @@
 "load.cameraName" = "Kameranavn";
 "load.addCamera" = "Legg til kamera";
 "load.quantityToLoad" = "Antall å legge inn";
+"load.shotAtISO" = "Fotografer med ISO";
+"load.shotAtISO.hint" = "Forskjellig fra filmens opprinnelige ISO";
 
 // MARK: - Cameras
 "camera.title" = "Kameraer";

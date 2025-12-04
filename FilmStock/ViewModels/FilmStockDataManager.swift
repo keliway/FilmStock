@@ -656,7 +656,7 @@ class FilmStockDataManager: ObservableObject {
         return (try? context.fetch(descriptor)) ?? []
     }
     
-    func loadFilm(filmStockId: String, format: FilmStock.FilmFormat, cameraName: String, quantity: Int = 1) -> Bool {
+    func loadFilm(filmStockId: String, format: FilmStock.FilmFormat, cameraName: String, quantity: Int = 1, shotAtISO: Int? = nil) -> Bool {
         guard let context = modelContext else { return false }
         
         // Get the MyFilm entry - filmStockId is the MyFilm.id
@@ -685,6 +685,9 @@ class FilmStockDataManager: ObservableObject {
             context.insert(camera)
         }
         
+        // Determine if we need to store shotAtISO (only if different from film's native ISO)
+        let isoToStore: Int? = (shotAtISO != nil && shotAtISO != film.filmSpeed) ? shotAtISO : nil
+        
         // Create loaded film entry - don't set relationships in initializer
         let loadedFilm = LoadedFilm(
             id: UUID().uuidString,
@@ -692,7 +695,8 @@ class FilmStockDataManager: ObservableObject {
             format: format.rawValue,
             camera: nil,
             myFilm: nil,
-            quantity: quantity
+            quantity: quantity,
+            shotAtISO: isoToStore
         )
         context.insert(loadedFilm)
         // Establish relationships after insertion
