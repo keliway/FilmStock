@@ -130,6 +130,7 @@
 				images/kodak_Portra400NC.png,
 				images/kodak_Portra400VC.png,
 				images/kodak_Portra800.png,
+				images/kodak_proimage100.png,
 				images/kodak_TechnicalPan.png,
 				images/kodak_TMax100.png,
 				images/kodak_TMax400.png,
