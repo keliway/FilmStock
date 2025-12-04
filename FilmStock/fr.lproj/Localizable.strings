@@ -79,6 +79,14 @@
 "image.catalog" = "Catalogue d'images";
 "image.defaultCatalog" = "Catalogue par défaut";
 "image.myPhotos" = "Mes photos";
+"image.chooseFromLibrary" = "Choisir dans la galerie";
+"image.addPhoto" = "Ajouter une photo";
+"image.squareHint" = "Les photos seront recadrées au format carré";
+
+// MARK: - Camera
+"camera.permissionDenied" = "L'accès à la caméra est nécessaire pour prendre des photos. Veuillez l'activer dans les Réglages.";
+"cropper.title" = "Ajuster";
+"cropper.hint" = "Pincez pour zoomer, faites glisser pour positionner";
 
 // MARK: - Empty States
 "empty.noFilms.title" = "Aucun film pour le moment";

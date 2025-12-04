@@ -79,6 +79,14 @@
 "image.catalog" = "Image Catalog";
 "image.defaultCatalog" = "Default Catalog";
 "image.myPhotos" = "My Photos";
+"image.chooseFromLibrary" = "Choose from Library";
+"image.addPhoto" = "Add Photo";
+"image.squareHint" = "Photos will be cropped to square format";
+
+// MARK: - Camera
+"camera.permissionDenied" = "Camera access is required to take photos. Please enable it in Settings.";
+"cropper.title" = "Adjust";
+"cropper.hint" = "Pinch to zoom, drag to position";
 
 // MARK: - Empty States
 "empty.noFilms.title" = "No Films Yet";

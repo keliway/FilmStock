@@ -79,6 +79,14 @@
 "image.catalog" = "画像カタログ";
 "image.defaultCatalog" = "デフォルトカタログ";
 "image.myPhotos" = "マイフォト";
+"image.chooseFromLibrary" = "ライブラリから選択";
+"image.addPhoto" = "写真を追加";
+"image.squareHint" = "写真は正方形にトリミングされます";
+
+// MARK: - Camera
+"camera.permissionDenied" = "写真を撮るにはカメラへのアクセスが必要です。設定で有効にしてください。";
+"cropper.title" = "調整";
+"cropper.hint" = "ピンチでズーム、ドラッグで位置調整";
 
 // MARK: - Empty States
 "empty.noFilms.title" = "フィルムがありません";

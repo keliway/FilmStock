@@ -79,6 +79,14 @@
 "image.catalog" = "Bildekatalog";
 "image.defaultCatalog" = "Standard katalog";
 "image.myPhotos" = "Mine bilder";
+"image.chooseFromLibrary" = "Velg fra bibliotek";
+"image.addPhoto" = "Legg til bilde";
+"image.squareHint" = "Bilder vil bli beskåret til kvadratisk format";
+
+// MARK: - Camera
+"camera.permissionDenied" = "Kameratilgang er nødvendig for å ta bilder. Aktiver det i Innstillinger.";
+"cropper.title" = "Juster";
+"cropper.hint" = "Knip for å zoome, dra for å posisjonere";
 
 // MARK: - Empty States
 "empty.noFilms.title" = "Ingen filmer ennå";

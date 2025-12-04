@@ -330,20 +330,15 @@ struct EditFilmView: View {
                     .disabled(name.isEmpty || manufacturer.isEmpty)
                 }
             }
-            .fullScreenCover(isPresented: $showingImagePicker) {
-                ZStack {
-                    Color.black
-                        .ignoresSafeArea(.all)
-                    CustomCameraView(image: $rawSelectedImage, isPresented: $showingImagePicker)
-                        .ignoresSafeArea(.all)
-                }
+            .sheet(isPresented: $showingImagePicker) {
+                ImageSourcePicker(finalImage: $rawSelectedImage, isPresented: $showingImagePicker)
             }
             .sheet(isPresented: $showingImageCatalog) {
                 ImageCatalogView(selectedImage: $selectedImage, selectedImageFilename: $selectedCatalogFilename, selectedImageSource: $catalogSelectedSource)
             }
             .onChange(of: rawSelectedImage) { oldValue, newValue in
                 if let newValue = newValue {
-                    // Camera image is already cropped, use directly
+                    // Image from camera/library is already cropped, use directly
                     selectedImage = newValue
                     imageSource = .custom
                     selectedCatalogFilename = nil
