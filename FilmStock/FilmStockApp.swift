@@ -19,7 +19,7 @@ struct FilmStockApp: App {
                 .environmentObject(dataManager)
                 .preferredColorScheme(settingsManager.appearance.colorScheme)
         }
-        .modelContainer(for: [Manufacturer.self, Film.self, MyFilm.self, Camera.self, LoadedFilm.self])
+        .modelContainer(for: [Manufacturer.self, Film.self, MyFilm.self, Camera.self, LoadedFilm.self, FinishedFilm.self])
     }
 }
 

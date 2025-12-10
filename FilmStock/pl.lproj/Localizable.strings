@@ -19,9 +19,13 @@
 "action.unload" = "Wyjmij";
 "action.unloadOne" = "Wyjmij 1 arkusz";
 "action.unloadAll" = "Wyjmij wszystko";
+"action.finishRoll" = "Zakończ rolkę";
 "action.changeDate" = "Zmień datę";
 "action.close" = "Zamknij";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "Do wywołania";
+"finished.status.inDevelopment" = "W trakcie wywoływania";
+"finished.status.developed" = "Wywołany";
 "loaded.changeDate.title" = "Zmień datę załadowania";
 "action.addNew" = "Dodaj \"%@\"";
 
@@ -347,5 +351,10 @@
 "widget.config.position" = "Pozycja";
 "widget.config.position.top" = "Góra";
 "widget.config.position.bottom" = "Dół";
+"loaded.segment.loaded" = "Załadowane";
+"loaded.segment.finished" = "Zakończone rolki";
+"time.finishedAt" = "Zakończono %@";
+"empty.noFinishedFilms.title" = "Brak zakończonych rolek";
+"empty.noFinishedFilms.message" = "Wyjęte rolki pojawią się tutaj.";
 
 

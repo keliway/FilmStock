@@ -656,6 +656,14 @@ class FilmStockDataManager: ObservableObject {
         return (try? context.fetch(descriptor)) ?? []
     }
     
+    func getFinishedFilms() -> [FinishedFilm] {
+        guard let context = modelContext else { return [] }
+        let descriptor = FetchDescriptor<FinishedFilm>(
+            sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
+        )
+        return (try? context.fetch(descriptor)) ?? []
+    }
+    
     func loadFilm(filmStockId: String, format: FilmStock.FilmFormat, cameraName: String, quantity: Int = 1, shotAtISO: Int? = nil) -> Bool {
         guard let context = modelContext else { return false }
         
@@ -723,6 +731,7 @@ class FilmStockDataManager: ObservableObject {
         // If quantity is specified, unload only that amount
         if let quantityToUnload = quantity {
             quantityFinished = min(quantityToUnload, loadedFilm.quantity)
+            recordFinishedFilm(from: loadedFilm, quantity: quantityFinished)
             // Decrease the loaded quantity
             loadedFilm.quantity = max(0, loadedFilm.quantity - quantityToUnload)
             
@@ -732,6 +741,7 @@ class FilmStockDataManager: ObservableObject {
             }
         } else {
             quantityFinished = loadedFilm.quantity
+            recordFinishedFilm(from: loadedFilm, quantity: quantityFinished)
             // Don't restore quantity - unloading means the film was used
             // Just delete the loaded film entry
             context.delete(loadedFilm)
@@ -744,6 +754,35 @@ class FilmStockDataManager: ObservableObject {
         loadFilmStocks() // Refresh the list
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+    }
+    
+    private func recordFinishedFilm(from loadedFilm: LoadedFilm, quantity: Int) {
+        guard let context = modelContext, quantity > 0 else { return }
+        
+        let finished = FinishedFilm(
+            id: UUID().uuidString,
+            film: nil,
+            format: loadedFilm.format,
+            camera: nil,
+            myFilm: nil,
+            quantity: quantity,
+            loadedAt: loadedFilm.loadedAt,
+            finishedAt: Date(),
+            shotAtISO: loadedFilm.shotAtISO,
+            status: FinishedFilmStatus.toDevelop.rawValue
+        )
+        context.insert(finished)
+        finished.film = loadedFilm.film
+        finished.camera = loadedFilm.camera
+        finished.myFilm = loadedFilm.myFilm
+    }
+    
+    func updateFinishedFilmStatus(_ finishedFilm: FinishedFilm, status: FinishedFilmStatus) {
+        guard let context = modelContext else { return }
+        finishedFilm.status = status.rawValue
+        try? context.save()
+        loadFilmStocks()
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
     }
     
     private static let finishedFilmsKey = "stats_finishedFilmsCount"

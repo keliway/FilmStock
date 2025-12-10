@@ -19,9 +19,13 @@
 "action.unload" = "Unload";
 "action.unloadOne" = "Unload 1 Sheet";
 "action.unloadAll" = "Unload All";
+"action.finishRoll" = "Finish Roll";
 "action.changeDate" = "Change Date";
 "action.close" = "Close";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "To develop";
+"finished.status.inDevelopment" = "In development";
+"finished.status.developed" = "Developed";
 "loaded.changeDate.title" = "Change Loaded Date";
 "action.addNew" = "Add \"%@\"";
 
@@ -347,4 +351,9 @@
 "widget.config.position" = "Position";
 "widget.config.position.top" = "Top";
 "widget.config.position.bottom" = "Bottom";
+"loaded.segment.loaded" = "Loaded";
+"loaded.segment.finished" = "Finished Rolls";
+"time.finishedAt" = "Finished %@";
+"empty.noFinishedFilms.title" = "No Finished Rolls";
+"empty.noFinishedFilms.message" = "Rolls you unload will appear here.";
 

@@ -19,9 +19,13 @@
 "action.unload" = "Ta ut";
 "action.unloadOne" = "Ta ut 1 ark";
 "action.unloadAll" = "Ta ut alle";
+"action.finishRoll" = "Fullfør filmrull";
 "action.changeDate" = "Endre dato";
 "action.close" = "Lukk";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "Til fremkalling";
+"finished.status.inDevelopment" = "Under fremkalling";
+"finished.status.developed" = "Fremkalt";
 "loaded.changeDate.title" = "Endre lastingsdato";
 "action.addNew" = "Legg til \"%@\"";
 
@@ -347,5 +351,10 @@
 "widget.config.position" = "Posisjon";
 "widget.config.position.top" = "Topp";
 "widget.config.position.bottom" = "Bunn";
+"loaded.segment.loaded" = "Lastet";
+"loaded.segment.finished" = "Ferdige ruller";
+"time.finishedAt" = "Fullført %@";
+"empty.noFinishedFilms.title" = "Ingen ferdige ruller";
+"empty.noFinishedFilms.message" = "Ruller du har tatt ut vises her.";
 
 

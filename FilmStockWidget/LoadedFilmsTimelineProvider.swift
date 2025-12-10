@@ -78,7 +78,8 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
             Film.self,
             MyFilm.self,
             Camera.self,
-            LoadedFilm.self
+            LoadedFilm.self,
+            FinishedFilm.self
         ])
         
         // For widget extensions, we need to use App Groups to share the database

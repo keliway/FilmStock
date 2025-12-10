@@ -19,9 +19,13 @@
 "action.unload" = "Décharger";
 "action.unloadOne" = "Décharger 1 feuille";
 "action.unloadAll" = "Tout décharger";
+"action.finishRoll" = "Terminer la pellicule";
 "action.changeDate" = "Changer la date";
 "action.close" = "Fermer";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "À développer";
+"finished.status.inDevelopment" = "En développement";
+"finished.status.developed" = "Développée";
 "loaded.changeDate.title" = "Changer la date de chargement";
 "action.addNew" = "Ajouter \"%@\"";
 
@@ -347,5 +351,10 @@
 "widget.config.position" = "Position";
 "widget.config.position.top" = "Haut";
 "widget.config.position.bottom" = "Bas";
+"loaded.segment.loaded" = "Chargées";
+"loaded.segment.finished" = "Pellicules terminées";
+"time.finishedAt" = "Terminé %@";
+"empty.noFinishedFilms.title" = "Aucune pellicule terminée";
+"empty.noFinishedFilms.message" = "Les pellicules déchargées apparaîtront ici.";
 
 

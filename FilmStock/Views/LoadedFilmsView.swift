@@ -22,6 +22,8 @@ private func parseCustomImageName(_ imageName: String, defaultManufacturer: Stri
 struct LoadedFilmsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
     @State private var loadedFilms: [LoadedFilm] = []
+    @State private var finishedFilms: [FinishedFilm] = []
+    @State private var selectedTab = 0
     @State private var showingHelp = false
     @State private var showingManageCameras = false
     @State private var showingDatePicker = false
@@ -30,49 +32,75 @@ struct LoadedFilmsView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
-                if loadedFilms.isEmpty {
-                    ContentUnavailableView(
-                        "empty.noLoadedFilms.title",
-                        systemImage: "camera",
-                        description: Text("empty.noLoadedFilms.message")
-                    )
-                } else {
-                    List {
-                        ForEach(loadedFilms, id: \.id) { loadedFilm in
-                            LoadedFilmRow(loadedFilm: loadedFilm)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    // Change loaded date
-                                    Button {
-                                        filmToEditDate = loadedFilm
-                                        selectedDate = loadedFilm.loadedAt
-                                        showingDatePicker = true
-                                    } label: {
-                                        Label("action.changeDate", systemImage: "calendar")
-                                    }
-                                    .tint(.orange)
-                                    
-                                    // Unload one sheet (for sheet films only)
-                                    if isSheetFormat(loadedFilm.format) && loadedFilm.quantity > 1 {
-                                        Button {
-                                            unloadOneSheet(loadedFilm)
-                                        } label: {
-                                            Label("action.unloadOne", systemImage: "minus.circle")
+            VStack(spacing: 12) {
+                Picker("loaded.segment", selection: $selectedTab) {
+                    Text("loaded.segment.loaded").tag(0)
+                    Text("loaded.segment.finished").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding([.horizontal, .top])
+                
+                Group {
+                    if selectedTab == 0 {
+                        if loadedFilms.isEmpty {
+                            ContentUnavailableView(
+                                "empty.noLoadedFilms.title",
+                                systemImage: "camera",
+                                description: Text("empty.noLoadedFilms.message")
+                            )
+                        } else {
+                            List {
+                                ForEach(loadedFilms, id: \.id) { loadedFilm in
+                                    LoadedFilmRow(loadedFilm: loadedFilm)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            // Change loaded date
+                                            Button {
+                                                filmToEditDate = loadedFilm
+                                                selectedDate = loadedFilm.loadedAt
+                                                showingDatePicker = true
+                                            } label: {
+                                                Label("action.changeDate", systemImage: "calendar")
+                                            }
+                                            .tint(.orange)
+                                            
+                                            // Unload one sheet (for sheet films only)
+                                            if isSheetFormat(loadedFilm.format) && loadedFilm.quantity > 1 {
+                                                Button {
+                                                    unloadOneSheet(loadedFilm)
+                                                } label: {
+                                                    Label("action.unloadOne", systemImage: "minus.circle")
+                                                }
+                                                .tint(.orange)
+                                            }
+                                            
+                                            // Finish roll
+                                            Button {
+                                                unloadFilm(loadedFilm)
+                                            } label: {
+                                                Label("action.finishRoll", systemImage: "arrow.uturn.backward")
+                                            }
+                                            .tint(.green)
                                         }
-                                        .tint(.orange)
-                                    }
-                                    
-                                    // Unload all
-                                    Button {
-                                        unloadFilm(loadedFilm)
-                                    } label: {
-                                        Label("action.unloadAll", systemImage: "arrow.uturn.backward")
-                                    }
-                                    .tint(.green)
                                 }
+                            }
+                            .listStyle(.plain)
+                        }
+                    } else {
+                        if finishedFilms.isEmpty {
+                            ContentUnavailableView(
+                                "empty.noFinishedFilms.title",
+                                systemImage: "checkmark.seal",
+                                description: Text("empty.noFinishedFilms.message")
+                            )
+                        } else {
+                            List {
+                                ForEach(finishedFilms, id: \.id) { finishedFilm in
+                                    FinishedFilmRow(finishedFilm: finishedFilm)
+                                }
+                            }
+                            .listStyle(.plain)
                         }
                     }
-                    .listStyle(.plain)
                 }
             }
             .navigationTitle("tab.loadedFilms")
@@ -138,15 +166,21 @@ struct LoadedFilmsView: View {
             }
             .onAppear {
                 loadFilms()
+                loadFinishedFilms()
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
                 loadFilms()
+                loadFinishedFilms()
             }
         }
     }
     
     private func loadFilms() {
         loadedFilms = dataManager.getLoadedFilms()
+    }
+    
+    private func loadFinishedFilms() {
+        finishedFilms = dataManager.getFinishedFilms()
     }
     
     private func unloadFilm(_ loadedFilm: LoadedFilm) {
@@ -170,6 +204,20 @@ struct LoadedFilmsView: View {
             return false
         }
         return filmFormat == .fourByFive || filmFormat == .fiveBySeven || filmFormat == .eightByTen
+    }
+}
+
+enum FinishedFilmStatus: String {
+    case toDevelop
+    case inDevelopment
+    case developed
+    
+    var labelKey: String {
+        switch self {
+        case .toDevelop: return "finished.status.toDevelop"
+        case .inDevelopment: return "finished.status.inDevelopment"
+        case .developed: return "finished.status.developed"
+        }
     }
 }
 
@@ -372,6 +420,206 @@ struct LoadedFilmRow: View {
         }
         
         return false
+    }
+}
+
+struct FinishedFilmRow: View {
+    let finishedFilm: FinishedFilm
+    @State private var filmImage: UIImage?
+    @EnvironmentObject var dataManager: FilmStockDataManager
+    
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            HStack(spacing: 12) {
+                // Film image
+                if let image = filmImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 60, height: 60)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 60, height: 60)
+                        .overlay(
+                            Image(systemName: "camera")
+                                .foregroundColor(.gray)
+                        )
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    if let film = finishedFilm.film {
+                        Text("\(film.manufacturer?.name ?? "") \(film.name)")
+                            .font(.headline)
+                        
+                        HStack(spacing: 4) {
+                            if finishedFilm.shotAtISO != nil {
+                                Text("ISO \(finishedFilm.effectiveISO)")
+                                    .foregroundColor(.orange)
+                            } else {
+                                Text("ISO \(finishedFilm.effectiveISO)")
+                            }
+                            Text("•")
+                            Text(formatDisplayName)
+                            if isSheetFormat(finishedFilm.format) {
+                                Text("•")
+                                Text(finishedFilm.quantity == 1
+                                     ? String(format: NSLocalizedString("format.sheet.count", comment: ""), finishedFilm.quantity)
+                                     : String(format: NSLocalizedString("format.sheets.count", comment: ""), finishedFilm.quantity))
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    }
+                    
+                    HStack(spacing: 6) {
+                        if let camera = finishedFilm.camera {
+                            HStack(spacing: 4) {
+                                Image(systemName: "camera.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(camera.name)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        Text(String(format: NSLocalizedString("time.loadedAt", comment: ""), formatDate(finishedFilm.loadedAt)))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text(String(format: NSLocalizedString("time.finishedAt", comment: ""), formatDate(finishedFilm.finishedAt)))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+            }
+            .padding(.vertical, 4)
+            
+            statusChip
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            if status != .inDevelopment {
+                Button {
+                    updateStatus(.inDevelopment)
+                } label: {
+                    Label("finished.status.inDevelopment", systemImage: "clock.arrow.circlepath")
+                }
+                .tint(.yellow)
+            }
+            
+            if status != .developed {
+                Button {
+                    updateStatus(.developed)
+                } label: {
+                    Label("finished.status.developed", systemImage: "checkmark.circle.fill")
+                }
+                .tint(.green)
+            }
+            
+            if status != .toDevelop {
+                Button {
+                    updateStatus(.toDevelop)
+                } label: {
+                    Label("finished.status.toDevelop", systemImage: "arrow.uturn.backward.circle")
+                }
+                .tint(.gray)
+            }
+        }
+        .onAppear {
+            loadImage()
+        }
+    }
+    
+    private var status: FinishedFilmStatus {
+        FinishedFilmStatus(rawValue: finishedFilm.status ?? "") ?? .toDevelop
+    }
+    
+    private var statusChip: some View {
+        Text(LocalizedStringKey(status.labelKey))
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(statusColor)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(statusColor, lineWidth: 1)
+            )
+            .padding(.top, 4)
+            .padding(.trailing, 4)
+    }
+    
+    private var statusColor: Color {
+        switch status {
+        case .toDevelop: return .gray
+        case .inDevelopment: return .yellow
+        case .developed: return .green
+        }
+    }
+    
+    private func updateStatus(_ newStatus: FinishedFilmStatus) {
+        dataManager.updateFinishedFilmStatus(finishedFilm, status: newStatus)
+    }
+    
+    private var formatDisplayName: String {
+        if let customName = finishedFilm.myFilm?.customFormatName, !customName.isEmpty {
+            return customName
+        }
+        guard let format = FilmStock.FilmFormat(rawValue: finishedFilm.format) else {
+            return finishedFilm.format
+        }
+        return format.displayName
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+    
+    private func loadImage() {
+        guard let film = finishedFilm.film else { return }
+        
+        let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
+        let manufacturerName = film.manufacturer?.name ?? ""
+        
+        switch imageSource {
+        case .custom:
+            if let customImageName = film.imageName {
+                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: manufacturerName)
+                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
+                    filmImage = userImage
+                    return
+                }
+            }
+        case .catalog:
+            if let catalogImageName = film.imageName {
+                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
+                    filmImage = catalogImage
+                    return
+                }
+            }
+        case .autoDetected:
+            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: manufacturerName) {
+                filmImage = defaultImage
+                return
+            }
+        case .none:
+            filmImage = nil
+            return
+        }
+    }
+    
+    private func isSheetFormat(_ format: String) -> Bool {
+        guard let filmFormat = FilmStock.FilmFormat(rawValue: format) else {
+            return false
+        }
+        return filmFormat == .fourByFive || filmFormat == .fiveBySeven || filmFormat == .eightByTen
     }
 }
 

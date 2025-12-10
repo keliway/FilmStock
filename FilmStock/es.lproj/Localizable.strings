@@ -19,9 +19,13 @@
 "action.unload" = "Descargar";
 "action.unloadOne" = "Descargar 1 hoja";
 "action.unloadAll" = "Descargar todo";
+"action.finishRoll" = "Terminar rollo";
 "action.changeDate" = "Cambiar fecha";
 "action.close" = "Cerrar";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "Por revelar";
+"finished.status.inDevelopment" = "En revelado";
+"finished.status.developed" = "Revelado";
 "loaded.changeDate.title" = "Cambiar fecha de carga";
 "action.addNew" = "Añadir \"%@\"";
 
@@ -347,5 +351,10 @@
 "widget.config.position" = "Posición";
 "widget.config.position.top" = "Arriba";
 "widget.config.position.bottom" = "Abajo";
+"loaded.segment.loaded" = "Cargados";
+"loaded.segment.finished" = "Rollos terminados";
+"time.finishedAt" = "Finalizado %@";
+"empty.noFinishedFilms.title" = "Sin rollos terminados";
+"empty.noFinishedFilms.message" = "Los rollos descargados aparecerán aquí.";
 
 

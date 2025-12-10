@@ -68,8 +68,18 @@ struct BrowseView: View {
     ]
     
     var filteredFilms: [GroupedFilm] {
-        // Access filmStocks to ensure view updates when data changes
-        let _ = dataManager.filmStocks.count
+        // Access filmStocks and key fields to ensure view updates when data changes
+        let _ = dataManager.filmStocks.map {
+            (
+                $0.id,
+                $0.quantity,
+                $0.isFrozen,
+                $0.comments ?? "",
+                $0.expireDate?.joined(separator: ",") ?? "",
+                $0.imageName ?? "",
+                $0.imageSource
+            )
+        }
         var grouped = dataManager.groupedFilms()
         
         // Apply filters

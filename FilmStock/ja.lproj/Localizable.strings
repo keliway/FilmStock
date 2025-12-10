@@ -19,9 +19,13 @@
 "action.unload" = "取り出す";
 "action.unloadOne" = "1枚取り出す";
 "action.unloadAll" = "すべて取り出す";
+"action.finishRoll" = "ロールを完了";
 "action.changeDate" = "日付を変更";
 "action.close" = "閉じる";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "現像待ち";
+"finished.status.inDevelopment" = "現像中";
+"finished.status.developed" = "現像済み";
 "loaded.changeDate.title" = "装填日を変更";
 "action.addNew" = "\"%@\" を追加";
 
@@ -347,5 +351,10 @@
 "widget.config.position" = "位置";
 "widget.config.position.top" = "上";
 "widget.config.position.bottom" = "下";
+"loaded.segment.loaded" = "装填済み";
+"loaded.segment.finished" = "終了したロール";
+"time.finishedAt" = "完了 %@";
+"empty.noFinishedFilms.title" = "終了したロールはありません";
+"empty.noFinishedFilms.message" = "取り出したロールがここに表示されます。";
 
 

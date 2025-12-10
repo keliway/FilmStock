@@ -138,3 +138,40 @@ final class LoadedFilm {
     }
 }
 
+@Model
+final class FinishedFilm {
+    var id: String
+    var loadedAt: Date
+    var finishedAt: Date
+    var quantity: Int
+    var shotAtISO: Int?
+    var status: String? // toDevelop, inDevelopment, developed
+    @Relationship(deleteRule: .nullify)
+    var film: Film?
+    var format: String
+    @Relationship(deleteRule: .nullify)
+    var camera: Camera?
+    @Relationship(deleteRule: .nullify)
+    var myFilm: MyFilm?
+    
+    var effectiveISO: Int {
+        if let shotISO = shotAtISO {
+            return shotISO
+        }
+        return film?.filmSpeed ?? 0
+    }
+    
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil) {
+        self.id = id
+        self.film = film
+        self.format = format
+        self.camera = camera
+        self.myFilm = myFilm
+        self.quantity = quantity
+        self.loadedAt = loadedAt
+        self.finishedAt = finishedAt
+        self.shotAtISO = shotAtISO
+        self.status = status
+    }
+}
+

@@ -19,9 +19,13 @@
 "action.unload" = "Entnehmen";
 "action.unloadOne" = "1 Blatt entnehmen";
 "action.unloadAll" = "Alle entnehmen";
+"action.finishRoll" = "Film beenden";
 "action.changeDate" = "Datum ändern";
 "action.close" = "Schließen";
 "action.ok" = "OK";
+"finished.status.toDevelop" = "Zu entwickeln";
+"finished.status.inDevelopment" = "In Entwicklung";
+"finished.status.developed" = "Entwickelt";
 "loaded.changeDate.title" = "Ladedatum ändern";
 "action.addNew" = "\"%@\" hinzufügen";
 
@@ -347,4 +351,9 @@
 "widget.config.position" = "Position";
 "widget.config.position.top" = "Oben";
 "widget.config.position.bottom" = "Unten";
+"loaded.segment.loaded" = "Geladen";
+"loaded.segment.finished" = "Fertige Rollen";
+"time.finishedAt" = "Abgeschlossen %@";
+"empty.noFinishedFilms.title" = "Keine fertigen Rollen";
+"empty.noFinishedFilms.message" = "Entladene Rollen werden hier angezeigt.";
 
