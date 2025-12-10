@@ -14,6 +14,7 @@ import WidgetKit
 @MainActor
 class FilmStockDataManager: ObservableObject {
     @Published var filmStocks: [FilmStock] = []
+    @Published var filmStocksVersion: Int = 0
     
     private var modelContext: ModelContext?
     
@@ -68,6 +69,7 @@ class FilmStockDataManager: ObservableObject {
         let descriptor = FetchDescriptor<MyFilm>()
         guard let myFilms = try? context.fetch(descriptor) else {
             filmStocks = []
+            filmStocksVersion &+= 1
                 return
         }
         

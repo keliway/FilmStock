@@ -37,7 +37,7 @@ struct FilmDetailView: View {
             
             // Formats section with quantity controls
             Section("detail.formats") {
-                ForEach(displayGroupedFilm.formats) { format in
+                ForEach(sortedFormats) { format in
                     if let film = relatedFilms.first(where: { $0.id == format.filmId }) {
                         FormatRowWithStepper(format: format, film: film)
                             .environmentObject(dataManager)
@@ -47,7 +47,7 @@ struct FilmDetailView: View {
             
             // Other formats if exists (films not already shown in the main formats section)
             let shownFormatIds = Set(displayGroupedFilm.formats.map { $0.filmId })
-            let otherFormats = relatedFilms.filter { !shownFormatIds.contains($0.id) }
+            let otherFormats = relatedFilms.filter { !shownFormatIds.contains($0.id) && $0.quantity > 0 }
             if !otherFormats.isEmpty {
                 Section("detail.otherFormats") {
                     ForEach(otherFormats) { film in
@@ -125,6 +125,46 @@ struct FilmDetailView: View {
     
     private var hasAvailableFormats: Bool {
         displayGroupedFilm.formats.contains { $0.quantity > 0 }
+    }
+    
+    private var sortedFormats: [GroupedFilm.FormatInfo] {
+        let order: [FilmStock.FilmFormat] = [.thirtyFive, .oneTwenty, .oneTen, .oneTwentySeven, .twoTwenty, .fourByFive, .fiveBySeven, .eightByTen, .other]
+        
+        func formatIndex(_ format: FilmStock.FilmFormat) -> Int {
+            order.firstIndex(of: format) ?? order.count
+        }
+        
+        func earliestDate(from dates: [String]?) -> Date? {
+            guard let dates = dates else { return nil }
+            var earliest: Date?
+            for ds in dates {
+                if let d = FilmStock.parseExpireDate(ds) {
+                    if earliest == nil || d < earliest! {
+                        earliest = d
+                    }
+                }
+            }
+            return earliest
+        }
+        
+        return displayGroupedFilm.formats
+            .filter { $0.quantity > 0 }
+            .sorted { lhs, rhs in
+                let li = formatIndex(lhs.format)
+                let ri = formatIndex(rhs.format)
+                if li != ri { return li < ri }
+                
+                let ld = earliestDate(from: lhs.expireDate)
+                let rd = earliestDate(from: rhs.expireDate)
+                if let ld = ld, let rd = rd, ld != rd {
+                    return ld < rd
+                } else if ld != nil {
+                    return true
+                } else if rd != nil {
+                    return false
+                }
+                return lhs.format.rawValue < rhs.format.rawValue
+            }
     }
     
     private func loadRelatedFilms() {
