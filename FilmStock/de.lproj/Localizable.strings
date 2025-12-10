@@ -5,7 +5,7 @@
 
 // MARK: - Tabs & Navigation
 "tab.myFilms" = "Meine Filme";
-"tab.loadedFilms" = "Eingelegte Filme";
+"tab.loadedFilms" = "Geladene Filme";
 "tab.collection" = "Meine Sammlung";
 
 // MARK: - Common Actions
@@ -17,9 +17,9 @@
 "action.save" = "Speichern";
 "action.load" = "Einlegen";
 "action.unload" = "Entnehmen";
-"action.unloadOne" = "1 Blatt entnehmen";
+"action.unloadOne" = "1 Sheet entnehmen";
 "action.unloadAll" = "Alle entnehmen";
-"action.finishRoll" = "Film beenden";
+"action.finishRoll" = "Film entladen";
 "action.changeDate" = "Datum ändern";
 "action.close" = "Schließen";
 "action.ok" = "OK";
@@ -43,8 +43,8 @@
 "film.quantity" = "Anzahl";
 "film.expiryDate" = "Haltbarkeit";
 "film.comments" = "Kommentare";
-"film.isFrozen" = "Film ist eingefroren";
-"film.frozen" = "EINGEFROREN";
+"film.isFrozen" = "Film ist gefrohren";
+"film.frozen" = "GEFROHREN";
 "film.filmInformation" = "Film-Informationen";
 "film.filmReminder" = "Film-Erinnerung";
 "film.addExpiryDate" = "Haltbarkeitsdatum hinzufügen";
@@ -56,12 +56,12 @@
 "film.searchManufacturer" = "Hersteller suchen";
 "manufacturer.add" = "Hersteller hinzufügen";
 "manufacturer.name" = "Herstellername";
-"manufacturer.addMessage" = "Geben Sie den Namen des neuen Herstellers ein.";
+"manufacturer.addMessage" = "Geb den Namen des neuen Herstellers ein.";
 "manufacturer.duplicateError" = "Dieser Hersteller existiert bereits.";
 "manufacturer.duplicateTitle" = "Doppelter Hersteller";
 "manufacturer.duplicateMessage" = "Ein Hersteller mit diesem Namen existiert bereits in der Liste.";
 "manufacturer.deleteError" = "Hersteller kann nicht gelöscht werden";
-"manufacturer.deleteErrorMessage" = "Dieser Hersteller kann nicht gelöscht werden, da Sie Filme von diesem Hersteller in Ihrer Sammlung haben.";
+"manufacturer.deleteErrorMessage" = "Dieser Hersteller kann nicht gelöscht werden, da Filme von diesem Hersteller in der Sammlung sind.";
 
 // MARK: - Film Types
 "type.color" = "Farbe";
@@ -167,7 +167,7 @@
 "stats.summary" = "Zusammenfassung";
 "stats.totalRolls" = "Gesamte Rollen";
 "stats.totalSheets" = "Gesamte Blätter";
-"stats.uniqueFilms" = "Einzigartige Filme";
+"stats.uniqueFilms" = "Filme";
 "stats.finishedFilms" = "Fertige Rollen";
 "stats.expiredFilms" = "Abgelaufene Filme";
 "stats.frozenFilms" = "Eingefrorene Filme";
@@ -212,7 +212,7 @@
 "legal.privacyPolicy" = "Datenschutzerklärung";
 "legal.termsOfService" = "Nutzungsbedingungen";
 "legal.copyright" = "© %d Jonas Halbe. Alle Rechte vorbehalten.";
-"legal.lastUpdated" = "Letzte Aktualisierung: November 2024";
+"legal.lastUpdated" = "Letzte Aktualisierung: Dezember 2025";
 "legal.englishOnly" = "Dieses Dokument ist nur auf Englisch verfügbar.";
 
 // MARK: - Support / Buy Me a Coffee
@@ -282,7 +282,7 @@
 "camera.name" = "Kameraname";
 "camera.model" = "Modell";
 "camera.add" = "Kamera hinzufügen";
-"camera.addMessage" = "Geben Sie den Namen der neuen Kamera ein.";
+"camera.addMessage" = "Geb den Namen der neuen Kamera ein.";
 "camera.search" = "Kamera suchen";
 "camera.duplicateError" = "Diese Kamera existiert bereits.";
 "camera.duplicateTitle" = "Doppelte Kamera";
