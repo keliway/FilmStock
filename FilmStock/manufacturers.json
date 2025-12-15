@@ -990,6 +990,128 @@
             "proimage 100",
             "pro image100"
           ]
+        },
+        {
+          "filename": "ektapress1600",
+          "speed": 1600,
+          "type": "Color",
+          "aliases": [
+            "ektapress1600",
+            "ektapress 1600",
+            "ektapress gold 1600",
+            "ektapress multispeed",
+            "PPC",
+            "ektapress PPC"
+          ]
+        },
+        {
+          "filename": "ektapress100",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "ektapress100",
+            "ektapress 100",
+            "ektapress gold 100",
+            "PPA",
+            "ektapress PPA"
+          ]
+        },
+        {
+          "filename": "ektapress400",
+          "speed": 400,
+          "type": "Color",
+          "aliases": [
+            "ektapress400",
+            "ektapress 400",
+            "ektapress gold 400",
+            "PPB",
+            "ektapress PPB"
+          ]
+        },
+        {
+          "filename": "ektapresspj800",
+          "speed": 800,
+          "type": "Color",
+          "aliases": [
+            "ektapress800",
+            "ektapress 800",
+            "ektapress gold 800",
+            "ektapresspj800",
+            "ektapress PJ800",
+            "ektapress gold PJ800",
+            "PJ800"
+          ]
+        },
+        {
+          "filename": "ektapresspj400",
+          "speed": 400,
+          "type": "Color",
+          "aliases": [
+            "ektapresspj400",
+            "ektapress PJ400",
+            "ektapress gold PJ400",
+            "PJ400"
+          ]
+        },
+        {
+          "filename": "kodacolor100vr",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "kodacolor100",
+            "kodacolor100vr",
+            "kodacolor 100",
+            "kodacolor 100vr",
+            "100VR",
+            "kodacolor VR100",
+            "kodacolorVR100",
+            "VR100"
+          ]
+        },
+        {
+          "filename": "kodacolor200vr",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "kodacolor200",
+            "kodacolor200vr",
+            "kodacolor 200",
+            "kodacolor 200vr",
+            "200VR",
+            "kodacolor VR200",
+            "kodacolorVR200",
+            "VR200"
+          ]
+        },
+        {
+          "filename": "kodacolor400vr",
+          "speed": 400,
+          "type": "Color",
+          "aliases": [
+            "kodacolor400",
+            "kodacolor400vr",
+            "kodacolor 400",
+            "kodacolor 400vr",
+            "400VR",
+            "kodacolor VR400",
+            "kodacolorVR400",
+            "VR400"
+          ]
+        },
+        {
+          "filename": "kodacolor1000vr",
+          "speed": 1000,
+          "type": "Color",
+          "aliases": [
+            "kodacolor1000",
+            "kodacolor1000vr",
+            "kodacolor 1000",
+            "kodacolor 1000vr",
+            "1000VR",
+            "kodacolor VR1000",
+            "kodacolorVR1000",
+            "VR1000"
+          ]
         }
       ]
     },
@@ -999,7 +1121,83 @@
     },
     {
       "name": "Lomography",
-      "films": []
+      "films": [
+          {
+            "filename": "turquoise",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "turquoise",
+              "turquoise 100",
+              "lomo turquoise",
+              "lomography turquoise",
+              "lomo turquoise xr",
+              "lomochrome turquoise xr",
+              "lomochrome turquoise"
+            ]
+          },
+          {
+            "filename": "purple",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "purple",
+              "purple 100",
+              "lomo purple",
+              "lomography purple",
+              "lomo purple xr",
+              "lomochrome purple xr",
+              "lomochrome purple"
+            ]
+          },
+          {
+            "filename": "metropolis",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "purple",
+              "purple 100",
+              "lomo metropolis",
+              "lomography metropolis",
+              "lomo metropolis xr",
+              "lomochrome metropolis xr",
+              "lomochrome metropolis"
+            ]
+          },
+          {
+            "filename": "lomo100",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "lomo 100",
+              "lomo100",
+              "lomography100",
+              "lomography 100"
+            ]
+          },
+          {
+            "filename": "lomo200",
+            "speed": 200,
+            "type": "Color",
+            "aliases": [
+              "lomo 200",
+              "lomo200",
+              "lomography200",
+              "lomography 200"
+            ]
+          },
+          {
+            "filename": "lomo400",
+            "speed": 400,
+            "type": "Color",
+            "aliases": [
+              "lomo 400",
+              "lomo400",
+              "lomography400",
+              "lomography 400"
+            ]
+          }
+      ]
     },
     {
       "name": "Lucky",
@@ -1015,7 +1213,22 @@
     },
     {
       "name": "Orwo",
-      "films": []
+      "films": [
+          
+          {
+            "filename": "nc500",
+            "speed": 500,
+            "type": "Color",
+            "aliases": [
+              "wolfen 500",
+              "wolfen nc500",
+              "nc500",
+              "orwo 500",
+              "orwo nc500",
+              "color nc500"
+            ]
+          }
+      ]
     },
     {
       "name": "Harman",
