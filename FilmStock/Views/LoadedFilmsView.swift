@@ -475,12 +475,13 @@ struct FinishedFilmRow: View {
                     }
                     
                     HStack(spacing: 6) {
-                        if let camera = finishedFilm.camera {
+                        // Use stored camera name (never access camera relationship to avoid crashes)
+                        if let cameraName = finishedFilm.cameraName {
                             HStack(spacing: 4) {
                                 Image(systemName: "camera.fill")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                Text(camera.name)
+                                Text(cameraName)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }

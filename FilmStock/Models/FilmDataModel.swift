@@ -146,6 +146,7 @@ final class FinishedFilm {
     var quantity: Int
     var shotAtISO: Int?
     var status: String? // toDevelop, inDevelopment, developed
+    var cameraName: String? // Snapshot of camera name at time of finishing (preserved even if camera is deleted)
     @Relationship(deleteRule: .nullify)
     var film: Film?
     var format: String
@@ -161,7 +162,7 @@ final class FinishedFilm {
         return film?.filmSpeed ?? 0
     }
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil) {
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, cameraName: String? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -172,6 +173,7 @@ final class FinishedFilm {
         self.finishedAt = finishedAt
         self.shotAtISO = shotAtISO
         self.status = status
+        self.cameraName = cameraName
     }
 }
 

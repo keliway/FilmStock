@@ -31,6 +31,47 @@ class FilmStockDataManager: ObservableObject {
         
         // Load manufacturers from bundle
         await loadManufacturers(context: context)
+        
+        // Backfill camera names for existing finished films (runs once)
+        backfillFinishedFilmsCameraNames(context: context)
+    }
+    
+    private func backfillFinishedFilmsCameraNames(context: ModelContext) {
+        // Check if backfill already completed
+        let backfillKey = "finishedFilms_cameraName_backfilled_v2"
+        if UserDefaults.standard.bool(forKey: backfillKey) {
+            return
+        }
+        
+        // First, fetch all cameras to have their names available
+        let cameraDescriptor = FetchDescriptor<Camera>()
+        let availableCameras = (try? context.fetch(cameraDescriptor)) ?? []
+        let cameraMap = Dictionary(uniqueKeysWithValues: availableCameras.map { ($0.persistentModelID, $0.name) })
+        
+        // Now fetch finished films
+        let descriptor = FetchDescriptor<FinishedFilm>()
+        guard let finishedFilms = try? context.fetch(descriptor) else {
+            UserDefaults.standard.set(true, forKey: backfillKey)
+            return
+        }
+        
+        var backfilled = 0
+        for film in finishedFilms where film.cameraName == nil {
+            // Try to get camera using the map (safer than accessing relationship)
+            if let camera = film.camera,
+               let cameraName = cameraMap[camera.persistentModelID] {
+                film.cameraName = cameraName
+                backfilled += 1
+            }
+        }
+        
+        if backfilled > 0 {
+            try? context.save()
+            print("Backfilled \(backfilled) finished films with camera names")
+        }
+        
+        // Mark backfill as complete
+        UserDefaults.standard.set(true, forKey: backfillKey)
     }
     
     private func loadManufacturers(context: ModelContext) async {
@@ -761,6 +802,9 @@ class FilmStockDataManager: ObservableObject {
     private func recordFinishedFilm(from loadedFilm: LoadedFilm, quantity: Int) {
         guard let context = modelContext, quantity > 0 else { return }
         
+        // Capture camera name as a snapshot (preserves name even if camera is deleted later)
+        let cameraName = loadedFilm.camera?.name
+        
         let finished = FinishedFilm(
             id: UUID().uuidString,
             film: nil,
@@ -771,7 +815,8 @@ class FilmStockDataManager: ObservableObject {
             loadedAt: loadedFilm.loadedAt,
             finishedAt: Date(),
             shotAtISO: loadedFilm.shotAtISO,
-            status: FinishedFilmStatus.toDevelop.rawValue
+            status: FinishedFilmStatus.toDevelop.rawValue,
+            cameraName: cameraName
         )
         context.insert(finished)
         finished.film = loadedFilm.film
