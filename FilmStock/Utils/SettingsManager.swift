@@ -19,6 +19,18 @@ class SettingsManager: ObservableObject {
     private let customFormatsKey = "settings_customFormats"
     private let showExpiryDateInChipKey = "settings_showExpiryDateInChip"
     
+    // Filter preferences
+    private let filterManufacturersKey = "filter_manufacturers"
+    private let filterTypesKey = "filter_types"
+    private let filterSpeedRangesKey = "filter_speedRanges"
+    private let filterFormatsKey = "filter_formats"
+    private let filterShowExpiredOnlyKey = "filter_showExpiredOnly"
+    private let filterShowFrozenOnlyKey = "filter_showFrozenOnly"
+    
+    // Sort preferences
+    private let sortFieldKey = "sort_field"
+    private let sortAscendingKey = "sort_ascending"
+    
     @Published var hideEmptyByDefault: Bool {
         didSet {
             UserDefaults.standard.set(hideEmptyByDefault, forKey: hideEmptyKey)
@@ -52,6 +64,56 @@ class SettingsManager: ObservableObject {
     @Published var showExpiryDateInChip: Bool {
         didSet {
             UserDefaults.standard.set(showExpiryDateInChip, forKey: showExpiryDateInChipKey)
+        }
+    }
+    
+    // Filter preferences
+    @Published var filterManufacturers: Set<String> {
+        didSet {
+            UserDefaults.standard.set(Array(filterManufacturers), forKey: filterManufacturersKey)
+        }
+    }
+    
+    @Published var filterTypes: Set<String> {
+        didSet {
+            UserDefaults.standard.set(Array(filterTypes), forKey: filterTypesKey)
+        }
+    }
+    
+    @Published var filterSpeedRanges: Set<String> {
+        didSet {
+            UserDefaults.standard.set(Array(filterSpeedRanges), forKey: filterSpeedRangesKey)
+        }
+    }
+    
+    @Published var filterFormats: Set<String> {
+        didSet {
+            UserDefaults.standard.set(Array(filterFormats), forKey: filterFormatsKey)
+        }
+    }
+    
+    @Published var filterShowExpiredOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(filterShowExpiredOnly, forKey: filterShowExpiredOnlyKey)
+        }
+    }
+    
+    @Published var filterShowFrozenOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(filterShowFrozenOnly, forKey: filterShowFrozenOnlyKey)
+        }
+    }
+    
+    // Sort preferences
+    @Published var sortField: String {
+        didSet {
+            UserDefaults.standard.set(sortField, forKey: sortFieldKey)
+        }
+    }
+    
+    @Published var sortAscending: Bool {
+        didSet {
+            UserDefaults.standard.set(sortAscending, forKey: sortAscendingKey)
         }
     }
     
@@ -120,6 +182,18 @@ class SettingsManager: ObservableObject {
         
         // Load custom formats
         self.customFormats = UserDefaults.standard.array(forKey: customFormatsKey) as? [String] ?? []
+        
+        // Load filter preferences (default: empty/disabled)
+        self.filterManufacturers = Set(UserDefaults.standard.array(forKey: filterManufacturersKey) as? [String] ?? [])
+        self.filterTypes = Set(UserDefaults.standard.array(forKey: filterTypesKey) as? [String] ?? [])
+        self.filterSpeedRanges = Set(UserDefaults.standard.array(forKey: filterSpeedRangesKey) as? [String] ?? [])
+        self.filterFormats = Set(UserDefaults.standard.array(forKey: filterFormatsKey) as? [String] ?? [])
+        self.filterShowExpiredOnly = UserDefaults.standard.object(forKey: filterShowExpiredOnlyKey) as? Bool ?? false
+        self.filterShowFrozenOnly = UserDefaults.standard.object(forKey: filterShowFrozenOnlyKey) as? Bool ?? false
+        
+        // Load sort preferences (default: manufacturer, ascending)
+        self.sortField = UserDefaults.standard.string(forKey: sortFieldKey) ?? "manufacturer"
+        self.sortAscending = UserDefaults.standard.object(forKey: sortAscendingKey) as? Bool ?? true
     }
 }
 

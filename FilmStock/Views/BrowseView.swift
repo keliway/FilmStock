@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BrowseView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @StateObject private var settingsManager = SettingsManager.shared
     @State private var searchText = ""
     @State private var selectedManufacturers: Set<String> = []
     @State private var selectedTypes: Set<FilmStock.FilmType> = []
@@ -222,9 +223,8 @@ struct BrowseView: View {
         }
     }
     
-    var body: some View {
-        NavigationStack(path: $navigationPath) {
-            Group {
+    private var mainContent: some View {
+        Group {
                 if filteredFilms.isEmpty {
                     VStack(spacing: 16) {
                         Image(systemName: "film")
@@ -246,7 +246,9 @@ struct BrowseView: View {
                             EmptyView()
                         } header: {
                             HStack {
-                                Text(String(format: NSLocalizedString(filteredTotalRolls == 1 ? "film.rollCount" : "film.rollsCount", comment: ""), filteredTotalRolls))
+                                let localizationKey = filteredTotalRolls == 1 ? "film.rollCount" : "film.rollsCount"
+                                let localizedFormat = NSLocalizedString(localizationKey, comment: "")
+                                Text(String(format: localizedFormat, filteredTotalRolls))
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
@@ -355,6 +357,10 @@ struct BrowseView: View {
                     }
                 }
             }
+    }
+    
+    private var navigationContent: some View {
+        mainContent
             .navigationDestination(for: GroupedFilm.self) { film in
                 FilmDetailView(groupedFilm: film)
             }
@@ -392,58 +398,107 @@ struct BrowseView: View {
                     dataManager: dataManager
                 )
             }
-        .sheet(isPresented: $showingSettings) {
-            SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
+            .sheet(isPresented: $showingSettings) {
+                SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
+            }
+            .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
+                Button("action.ok", role: .cancel) { }
+            } message: {
+                Text(deleteErrorMessage)
+            }
+    }
+    
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
+            navigationContent
+                .onAppear(perform: handleOnAppear)
+                .onChange(of: selectedManufacturers) { _, newValue in
+                    settingsManager.filterManufacturers = newValue
+                }
+                .onChange(of: selectedTypes) { _, newValue in
+                    settingsManager.filterTypes = Set(newValue.map { $0.rawValue })
+                }
+                .onChange(of: selectedSpeedRanges) { _, newValue in
+                    settingsManager.filterSpeedRanges = newValue
+                }
+                .onChange(of: selectedFormats) { _, newValue in
+                    settingsManager.filterFormats = Set(newValue.map { $0.rawValue })
+                }
+                .onChange(of: showExpiredOnly) { _, newValue in
+                    settingsManager.filterShowExpiredOnly = newValue
+                }
+                .onChange(of: showFrozenOnly) { _, newValue in
+                    settingsManager.filterShowFrozenOnly = newValue
+                }
+                .onChange(of: sortField) { _, newValue in
+                    settingsManager.sortField = newValue.rawValue
+                }
+                .onChange(of: sortAscending) { _, newValue in
+                    settingsManager.sortAscending = newValue
+                }
+                .onPreferenceChange(TooltipPreferenceKey.self) { preferences in
+                    tooltipPreferences = preferences
+                }
+                .overlay { tooltipOverlay }
         }
-        .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
-            Button("action.ok", role: .cancel) { }
-        } message: {
-            Text(deleteErrorMessage)
+    }
+    
+    private func handleOnAppear() {
+        // Load saved filter preferences
+        selectedManufacturers = settingsManager.filterManufacturers
+        selectedTypes = Set(settingsManager.filterTypes.compactMap { FilmStock.FilmType(rawValue: $0) })
+        selectedSpeedRanges = settingsManager.filterSpeedRanges
+        selectedFormats = Set(settingsManager.filterFormats.compactMap { FilmStock.FilmFormat(rawValue: $0) })
+        showExpiredOnly = settingsManager.filterShowExpiredOnly
+        showFrozenOnly = settingsManager.filterShowFrozenOnly
+        
+        // Load saved sort preferences
+        if let savedSortField = SortField(rawValue: settingsManager.sortField) {
+            sortField = savedSortField
         }
-            .onAppear {
-                if OnboardingManager.shared.hasCompletedOnboarding {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
-                            showAddFilmTooltip = true
-                        }
-                    }
+        sortAscending = settingsManager.sortAscending
+        
+        if OnboardingManager.shared.hasCompletedOnboarding {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
+                    showAddFilmTooltip = true
                 }
             }
-            .onPreferenceChange(TooltipPreferenceKey.self) { preferences in
-                tooltipPreferences = preferences
-            }
-            .overlay {
-                // Global tooltip overlay
-                if let activeTooltip = tooltipPreferences.first(where: { $0.isVisible }) {
-                    GeometryReader { geometry in
-                        ZStack {
-                            // Background overlay
-                            Color.black.opacity(0.3)
-                                .ignoresSafeArea()
-                                .onTapGesture {
-                                    OnboardingManager.shared.markTooltipSeen(activeTooltip.id)
-                                    if activeTooltip.id == "addFilm" {
-                                        showAddFilmTooltip = false
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
-                                                showFilterTooltip = true
-                                            }
-                                        }
-                                    } else if activeTooltip.id == "filter" {
-                                        showFilterTooltip = false
-                                    }
-                                }
-                            
-                            // Tooltip positioned relative to button with bounds checking
-                            tooltipView(for: activeTooltip)
-                                .position(
-                                    x: tooltipPositionX(for: activeTooltip, in: geometry),
-                                    y: tooltipPositionY(for: activeTooltip, in: geometry)
-                                )
+        }
+    }
+    
+    @ViewBuilder
+    private var tooltipOverlay: some View {
+        if let activeTooltip = tooltipPreferences.first(where: { $0.isVisible }) {
+            GeometryReader { geometry in
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            handleTooltipTap(activeTooltip)
                         }
-                    }
+                    
+                    tooltipView(for: activeTooltip)
+                        .position(
+                            x: tooltipPositionX(for: activeTooltip, in: geometry),
+                            y: tooltipPositionY(for: activeTooltip, in: geometry)
+                        )
                 }
             }
+        }
+    }
+    
+    private func handleTooltipTap(_ tooltip: TooltipPreference) {
+        OnboardingManager.shared.markTooltipSeen(tooltip.id)
+        if tooltip.id == "addFilm" {
+            showAddFilmTooltip = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if !OnboardingManager.shared.hasSeenTooltip("filter") {
+                    showFilterTooltip = true
+                }
+            }
+        } else if tooltip.id == "filter" {
+            showFilterTooltip = false
         }
     }
     
