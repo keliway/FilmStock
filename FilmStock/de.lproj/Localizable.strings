@@ -43,8 +43,8 @@
 "film.quantity" = "Anzahl";
 "film.expiryDate" = "Haltbarkeit";
 "film.comments" = "Kommentare";
-"film.isFrozen" = "Film ist gefrohren";
-"film.frozen" = "GEFROHREN";
+"film.isFrozen" = "Film ist gefroren";
+"film.frozen" = "GEFROREN";
 "film.filmInformation" = "Film-Informationen";
 "film.filmReminder" = "Film-Erinnerung";
 "film.addExpiryDate" = "Haltbarkeitsdatum hinzufügen";
