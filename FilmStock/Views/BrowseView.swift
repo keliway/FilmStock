@@ -122,6 +122,13 @@ struct BrowseView: View {
             }
         }
         
+        // Apply show expired only
+        if showExpiredOnly {
+            grouped = grouped.filter { group in
+                isFilmExpired(group)
+            }
+        }
+        
         // Apply sorting
         grouped = grouped.sorted { film1, film2 in
             let result: Bool
@@ -178,6 +185,21 @@ struct BrowseView: View {
             }
         }
         return earliestDate
+    }
+    
+    private func isFilmExpired(_ film: GroupedFilm) -> Bool {
+        let today = Date()
+        for formatInfo in film.formats {
+            guard let expireDates = formatInfo.expireDate, !expireDates.isEmpty else { continue }
+            for dateString in expireDates where !dateString.isEmpty {
+                if let expiryDate = FilmStock.parseExpireDate(dateString) {
+                    if expiryDate < today {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
     
     var totalRolls: Int {
