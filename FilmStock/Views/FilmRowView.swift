@@ -22,11 +22,23 @@ private func parseCustomImageName(_ imageName: String, defaultManufacturer: Stri
 struct FilmRowView: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @State private var image: UIImage?
     @State private var showingEdit = false
     @State private var showingDeleteAlert = false
     @State private var showingDeleteError = false
     @State private var deleteErrorMessage = ""
+    
+    // Get all enabled formats from settings
+    private var displayFormats: [FilmStock.FilmFormat] {
+        var formats: [FilmStock.FilmFormat] = []
+        for format in FilmStock.FilmFormat.allCases {
+            if settingsManager.isFormatEnabled(format.displayName) {
+                formats.append(format)
+            }
+        }
+        return formats
+    }
     
     var body: some View {
             HStack(spacing: 12) {
@@ -54,12 +66,16 @@ struct FilmRowView: View {
                 
                 Spacer()
                 
-                // Format quantities
-            HStack(spacing: 12) {
-                    formatQty(groupedFilm.formats, format: .thirtyFive)
-                    formatQty(groupedFilm.formats, format: .oneTwenty)
-                    formatQty(groupedFilm.formats, format: .fourByFive)
+                // Format quantities (scrollable horizontally)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(displayFormats, id: \.self) { format in
+                            formatQty(groupedFilm.formats, format: format)
+                        }
+                    }
+                    .padding(.horizontal, 4)
                 }
+                .frame(width: 140)
             
             // Menu button for edit/delete
             Menu {
@@ -209,7 +225,19 @@ struct FilmRowView: View {
 struct FilmRowViewContent: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @State private var image: UIImage?
+    
+    // Get all enabled formats from settings
+    private var displayFormats: [FilmStock.FilmFormat] {
+        var formats: [FilmStock.FilmFormat] = []
+        for format in FilmStock.FilmFormat.allCases {
+            if settingsManager.isFormatEnabled(format.displayName) {
+                formats.append(format)
+            }
+        }
+        return formats
+    }
     
     var body: some View {
         HStack(spacing: 12) {
@@ -237,12 +265,16 @@ struct FilmRowViewContent: View {
             
             Spacer()
             
-            // Format quantities
-            HStack(spacing: 12) {
-                formatQty(groupedFilm.formats, format: .thirtyFive)
-                formatQty(groupedFilm.formats, format: .oneTwenty)
-                formatQty(groupedFilm.formats, format: .fourByFive)
+            // Format quantities (scrollable horizontally)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(displayFormats, id: \.self) { format in
+                        formatQty(groupedFilm.formats, format: format)
+                    }
+                }
+                .padding(.horizontal, 4)
             }
+            .frame(width: 140)
             
             // Chevron
             Image(systemName: "chevron.right")
