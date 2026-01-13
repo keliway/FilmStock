@@ -12,10 +12,12 @@
 "action.add" = "追加";
 "action.edit" = "編集";
 "action.delete" = "削除";
+"action.remove" = "削除";
 "action.done" = "完了";
 "action.cancel" = "キャンセル";
 "action.save" = "保存";
 "action.load" = "装填";
+"action.reload" = "再装填";
 "action.unload" = "取り出す";
 "action.unloadOne" = "1枚取り出す";
 "action.unloadAll" = "すべて取り出す";

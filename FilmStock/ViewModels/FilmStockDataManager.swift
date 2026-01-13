@@ -824,6 +824,58 @@ class FilmStockDataManager: ObservableObject {
         finished.myFilm = loadedFilm.myFilm
     }
     
+    func deleteLoadedFilm(_ loadedFilm: LoadedFilm) {
+        guard let context = modelContext else { return }
+        
+        // Restore the quantity to MyFilm (since the film wasn't used)
+        if let myFilm = loadedFilm.myFilm {
+            myFilm.quantity += loadedFilm.quantity
+        }
+        
+        // Delete the loaded film entry (do not create finished film or increment counter)
+        context.delete(loadedFilm)
+        
+        try? context.save()
+        loadFilmStocks() // Refresh the list
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+    }
+    
+    func reloadFinishedFilm(_ finishedFilm: FinishedFilm) {
+        guard let context = modelContext else { return }
+        
+        // Create a new LoadedFilm entry with the original data
+        let loadedFilm = LoadedFilm(
+            id: UUID().uuidString,
+            film: nil,
+            format: finishedFilm.format,
+            camera: nil,
+            myFilm: nil,
+            quantity: finishedFilm.quantity,
+            loadedAt: finishedFilm.loadedAt,
+            shotAtISO: finishedFilm.shotAtISO
+        )
+        
+        context.insert(loadedFilm)
+        loadedFilm.film = finishedFilm.film
+        loadedFilm.camera = finishedFilm.camera
+        loadedFilm.myFilm = finishedFilm.myFilm
+        
+        // Delete the finished film entry
+        context.delete(finishedFilm)
+        
+        // Decrement the finished films counter
+        let currentCount = getFinishedFilmsCount()
+        if currentCount >= finishedFilm.quantity {
+            UserDefaults.standard.set(currentCount - finishedFilm.quantity, forKey: Self.finishedFilmsKey)
+        }
+        
+        try? context.save()
+        loadFilmStocks() // Refresh the list
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+    }
+    
     func updateFinishedFilmStatus(_ finishedFilm: FinishedFilm, status: FinishedFilmStatus) {
         guard let context = modelContext else { return }
         finishedFilm.status = status.rawValue

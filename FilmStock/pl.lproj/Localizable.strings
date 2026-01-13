@@ -12,10 +12,12 @@
 "action.add" = "Dodaj";
 "action.edit" = "Edytuj";
 "action.delete" = "Usuń";
+"action.remove" = "Usuń";
 "action.done" = "Gotowe";
 "action.cancel" = "Anuluj";
 "action.save" = "Zapisz";
 "action.load" = "Załaduj";
+"action.reload" = "Załaduj ponownie";
 "action.unload" = "Wyjmij";
 "action.unloadOne" = "Wyjmij 1 arkusz";
 "action.unloadAll" = "Wyjmij wszystko";

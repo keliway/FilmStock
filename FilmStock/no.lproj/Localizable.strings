@@ -12,10 +12,12 @@
 "action.add" = "Legg til";
 "action.edit" = "Rediger";
 "action.delete" = "Slett";
+"action.remove" = "Fjern";
 "action.done" = "Ferdig";
 "action.cancel" = "Avbryt";
 "action.save" = "Lagre";
 "action.load" = "Legg inn";
+"action.reload" = "Legg inn igjen";
 "action.unload" = "Ta ut";
 "action.unloadOne" = "Ta ut 1 ark";
 "action.unloadAll" = "Ta ut alle";

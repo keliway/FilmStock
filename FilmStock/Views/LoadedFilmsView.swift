@@ -80,6 +80,13 @@ struct LoadedFilmsView: View {
                                                 Label("action.finishRoll", systemImage: "arrow.uturn.backward")
                                             }
                                             .tint(.green)
+                                            
+                                            // Remove roll (in case it was loaded accidentally)
+                                            Button(role: .destructive) {
+                                                removeLoadedFilm(loadedFilm)
+                                            } label: {
+                                                Label("action.remove", systemImage: "trash")
+                                            }
                                         }
                                 }
                             }
@@ -96,6 +103,15 @@ struct LoadedFilmsView: View {
                             List {
                                 ForEach(finishedFilms, id: \.id) { finishedFilm in
                                     FinishedFilmRow(finishedFilm: finishedFilm)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            // Re-load film (move back to loaded films)
+                                            Button {
+                                                reloadFinishedFilm(finishedFilm)
+                                            } label: {
+                                                Label("action.reload", systemImage: "arrow.uturn.backward.circle")
+                                            }
+                                            .tint(.blue)
+                                        }
                                 }
                             }
                             .listStyle(.plain)
@@ -183,6 +199,12 @@ struct LoadedFilmsView: View {
         finishedFilms = dataManager.getFinishedFilms()
     }
     
+    private func reloadFinishedFilm(_ finishedFilm: FinishedFilm) {
+        dataManager.reloadFinishedFilm(finishedFilm)
+        loadFilms()
+        loadFinishedFilms()
+    }
+    
     private func unloadFilm(_ loadedFilm: LoadedFilm) {
         dataManager.unloadFilm(loadedFilm)
         loadFilms()
@@ -190,6 +212,11 @@ struct LoadedFilmsView: View {
     
     private func unloadOneSheet(_ loadedFilm: LoadedFilm) {
         dataManager.unloadFilm(loadedFilm, quantity: 1)
+        loadFilms()
+    }
+    
+    private func removeLoadedFilm(_ loadedFilm: LoadedFilm) {
+        dataManager.deleteLoadedFilm(loadedFilm)
         loadFilms()
     }
     

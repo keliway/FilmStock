@@ -12,10 +12,12 @@
 "action.add" = "Ajouter";
 "action.edit" = "Modifier";
 "action.delete" = "Supprimer";
+"action.remove" = "Retirer";
 "action.done" = "Terminé";
 "action.cancel" = "Annuler";
 "action.save" = "Enregistrer";
 "action.load" = "Charger";
+"action.reload" = "Recharger";
 "action.unload" = "Décharger";
 "action.unloadOne" = "Décharger 1 feuille";
 "action.unloadAll" = "Tout décharger";

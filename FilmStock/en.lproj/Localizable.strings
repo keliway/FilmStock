@@ -12,10 +12,12 @@
 "action.add" = "Add";
 "action.edit" = "Edit";
 "action.delete" = "Delete";
+"action.remove" = "Remove";
 "action.done" = "Done";
 "action.cancel" = "Cancel";
 "action.save" = "Save";
 "action.load" = "Load";
+"action.reload" = "Re-load";
 "action.unload" = "Unload";
 "action.unloadOne" = "Unload 1 Sheet";
 "action.unloadAll" = "Unload All";
@@ -212,7 +214,7 @@
 "legal.privacyPolicy" = "Privacy Policy";
 "legal.termsOfService" = "Terms of Service";
 "legal.copyright" = "© %d Jonas Halbe. All rights reserved.";
-"legal.lastUpdated" = "Last updated: December 2025";
+"legal.lastUpdated" = "Last updated: January 2026";
 "legal.englishOnly" = "This document is provided in English only.";
 
 // MARK: - Support / Buy Me a Coffee
