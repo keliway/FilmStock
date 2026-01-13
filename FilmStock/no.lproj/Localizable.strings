@@ -115,14 +115,18 @@
 // Sorting
 "sort.title" = "Sorter";
 "sort.by" = "Sorter etter";
+"sort.field" = "Sorter etter";
 "sort.order" = "Rekkefølge";
 "sort.ascending" = "A → Å";
 "sort.descending" = "Å → A";
 "sort.manufacturer" = "Produsent";
 "sort.filmType" = "Filmtype";
+"sort.filmName" = "Filmnavn";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Utløpsdato";
+"sort.finishedDate" = "Ferdigstilt dato";
 "filter.manufacturer" = "Produsent";
+"filter.camera" = "Kamera";
 "filter.speed" = "Følsomhet";
 "filter.filmSpeed" = "Filmfølsomhet";
 "filter.options" = "Alternativer";

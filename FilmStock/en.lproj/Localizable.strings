@@ -115,14 +115,18 @@
 // Sorting
 "sort.title" = "Sort";
 "sort.by" = "Sort by";
+"sort.field" = "Sort by";
 "sort.order" = "Order";
 "sort.ascending" = "A → Z";
 "sort.descending" = "Z → A";
 "sort.manufacturer" = "Manufacturer";
 "sort.filmType" = "Film Type";
+"sort.filmName" = "Film Name";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Expiry Date";
+"sort.finishedDate" = "Finished Date";
 "filter.manufacturer" = "Manufacturer";
+"filter.camera" = "Camera";
 "filter.speed" = "Speed";
 "filter.filmSpeed" = "Film Speed";
 "filter.options" = "Options";

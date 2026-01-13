@@ -30,6 +30,121 @@ struct LoadedFilmsView: View {
     @State private var filmToEditDate: LoadedFilm?
     @State private var selectedDate = Date()
     
+    // Filters and sorting for finished films
+    @State private var showingFilters = false
+    @State private var searchText = ""
+    @State private var selectedTypes: Set<FilmStock.FilmType> = []
+    @State private var selectedStatuses: Set<FinishedFilmStatus> = []
+    @State private var selectedFormats: Set<FilmStock.FilmFormat> = []
+    @State private var selectedCameras: Set<String> = []
+    @State private var sortField: FinishedFilmSortField = .finishedDate
+    @State private var sortAscending: Bool = false
+    
+    enum FinishedFilmSortField: String, CaseIterable {
+        case manufacturer = "manufacturer"
+        case filmName = "filmName"
+        case finishedDate = "finishedDate"
+        case iso = "iso"
+        
+        var displayName: String {
+            switch self {
+            case .manufacturer: return NSLocalizedString("sort.manufacturer", comment: "")
+            case .filmName: return NSLocalizedString("sort.filmName", comment: "")
+            case .finishedDate: return NSLocalizedString("sort.finishedDate", comment: "")
+            case .iso: return NSLocalizedString("sort.iso", comment: "")
+            }
+        }
+    }
+    
+    var filteredAndSortedFinishedFilms: [FinishedFilm] {
+        var filtered = finishedFilms
+        
+        // Search filter (manufacturer + film name)
+        if !searchText.isEmpty {
+            filtered = filtered.filter { film in
+                let manufacturer = film.film?.manufacturer?.name ?? ""
+                let filmName = film.film?.name ?? ""
+                let searchLower = searchText.lowercased()
+                return manufacturer.lowercased().contains(searchLower) || filmName.lowercased().contains(searchLower)
+            }
+        }
+        
+        // Film type filter
+        if !selectedTypes.isEmpty {
+            filtered = filtered.filter { film in
+                guard let filmType = film.film?.type,
+                      let type = FilmStock.FilmType(rawValue: filmType) else { return false }
+                return selectedTypes.contains(type)
+            }
+        }
+        
+        // Status filter
+        if !selectedStatuses.isEmpty {
+            filtered = filtered.filter { film in
+                let status = FinishedFilmStatus(rawValue: film.status ?? "") ?? .toDevelop
+                return selectedStatuses.contains(status)
+            }
+        }
+        
+        // Format filter
+        if !selectedFormats.isEmpty {
+            filtered = filtered.filter { film in
+                guard let format = FilmStock.FilmFormat(rawValue: film.format) else { return false }
+                return selectedFormats.contains(format)
+            }
+        }
+        
+        // Camera filter
+        if !selectedCameras.isEmpty {
+            filtered = filtered.filter { film in
+                guard let cameraName = film.cameraName else { return false }
+                return selectedCameras.contains(cameraName)
+            }
+        }
+        
+        // Sorting
+        return filtered.sorted { film1, film2 in
+            let ascending = sortAscending
+            switch sortField {
+            case .manufacturer:
+                let m1 = film1.film?.manufacturer?.name ?? ""
+                let m2 = film2.film?.manufacturer?.name ?? ""
+                return ascending ? m1 < m2 : m1 > m2
+            case .filmName:
+                let n1 = film1.film?.name ?? ""
+                let n2 = film2.film?.name ?? ""
+                return ascending ? n1 < n2 : n1 > n2
+            case .finishedDate:
+                return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
+            case .iso:
+                return ascending ? film1.effectiveISO < film2.effectiveISO : film1.effectiveISO > film2.effectiveISO
+            }
+        }
+    }
+    
+    var availableTypes: [FilmStock.FilmType] {
+        let types = finishedFilms.compactMap { film -> FilmStock.FilmType? in
+            guard let filmType = film.film?.type else { return nil }
+            return FilmStock.FilmType(rawValue: filmType)
+        }
+        return Array(Set(types)).sorted { $0.displayName < $1.displayName }
+    }
+    
+    var availableFormats: [FilmStock.FilmFormat] {
+        let formats = finishedFilms.compactMap { FilmStock.FilmFormat(rawValue: $0.format) }
+        return Array(Set(formats)).sorted { $0.displayName < $1.displayName }
+    }
+    
+    var availableCameras: [String] {
+        let cameras = finishedFilms.compactMap { $0.cameraName }
+        return Array(Set(cameras)).sorted()
+    }
+    
+    var hasActiveFilters: Bool {
+        !searchText.isEmpty || !selectedTypes.isEmpty || !selectedStatuses.isEmpty || 
+        !selectedFormats.isEmpty || !selectedCameras.isEmpty
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 12) {
@@ -100,21 +215,53 @@ struct LoadedFilmsView: View {
                                 description: Text("empty.noFinishedFilms.message")
                             )
                         } else {
-                            List {
-                                ForEach(finishedFilms, id: \.id) { finishedFilm in
-                                    FinishedFilmRow(finishedFilm: finishedFilm)
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            // Re-load film (move back to loaded films)
-                                            Button {
-                                                reloadFinishedFilm(finishedFilm)
-                                            } label: {
-                                                Label("action.reload", systemImage: "arrow.uturn.backward.circle")
-                                            }
-                                            .tint(.blue)
+                            VStack(spacing: 0) {
+                                // Search bar and filter button
+                                HStack(spacing: 12) {
+                                    HStack {
+                                        Image(systemName: "magnifyingglass")
+                                            .foregroundColor(.secondary)
+                                        TextField("search.placeholder", text: $searchText)
+                                            .textFieldStyle(.plain)
+                                    }
+                                    .padding(8)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(10)
+                                    
+                                    Button {
+                                        showingFilters = true
+                                    } label: {
+                                        Image(systemName: hasActiveFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                                            .foregroundColor(hasActiveFilters ? .accentColor : .primary)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.bottom, 8)
+                                
+                                if filteredAndSortedFinishedFilms.isEmpty {
+                                    ContentUnavailableView(
+                                        "search.noResults",
+                                        systemImage: "magnifyingglass",
+                                        description: Text("search.noResults.description")
+                                    )
+                                } else {
+                                    List {
+                                        ForEach(filteredAndSortedFinishedFilms, id: \.id) { finishedFilm in
+                                            FinishedFilmRow(finishedFilm: finishedFilm)
+                                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                                    // Re-load film (move back to loaded films)
+                                                    Button {
+                                                        reloadFinishedFilm(finishedFilm)
+                                                    } label: {
+                                                        Label("action.reload", systemImage: "arrow.uturn.backward.circle")
+                                                    }
+                                                    .tint(.blue)
+                                                }
                                         }
+                                    }
+                                    .listStyle(.plain)
                                 }
                             }
-                            .listStyle(.plain)
                         }
                     }
                 }
@@ -180,6 +327,9 @@ struct LoadedFilmsView: View {
             } message: {
                 Text("help.loadedFilms.message")
             }
+            .sheet(isPresented: $showingFilters) {
+                finishedFilmsFilterSheet
+            }
             .onAppear {
                 loadFilms()
                 loadFinishedFilms()
@@ -187,6 +337,125 @@ struct LoadedFilmsView: View {
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
                 loadFilms()
                 loadFinishedFilms()
+            }
+        }
+    }
+    
+    var finishedFilmsFilterSheet: some View {
+        NavigationStack {
+            Form {
+                // Film Type Filter
+                if !availableTypes.isEmpty {
+                    Section("filter.type") {
+                        ForEach(availableTypes, id: \.self) { type in
+                            Toggle(type.displayName, isOn: Binding(
+                                get: { selectedTypes.contains(type) },
+                                set: { isOn in
+                                    if isOn {
+                                        selectedTypes.insert(type)
+                                    } else {
+                                        selectedTypes.remove(type)
+                                    }
+                                }
+                            ))
+                        }
+                    }
+                }
+                
+                // Status Filter
+                Section("finished.status") {
+                    ForEach([FinishedFilmStatus.toDevelop, .inDevelopment, .developed], id: \.self) { status in
+                        Toggle(LocalizedStringKey(status.labelKey), isOn: Binding(
+                            get: { selectedStatuses.contains(status) },
+                            set: { isOn in
+                                if isOn {
+                                    selectedStatuses.insert(status)
+                                } else {
+                                    selectedStatuses.remove(status)
+                                }
+                            }
+                        ))
+                    }
+                }
+                
+                // Format Filter
+                if !availableFormats.isEmpty {
+                    Section("filter.format") {
+                        ForEach(availableFormats, id: \.self) { format in
+                            Toggle(format.displayName, isOn: Binding(
+                                get: { selectedFormats.contains(format) },
+                                set: { isOn in
+                                    if isOn {
+                                        selectedFormats.insert(format)
+                                    } else {
+                                        selectedFormats.remove(format)
+                                    }
+                                }
+                            ))
+                        }
+                    }
+                }
+                
+                // Camera Filter
+                if !availableCameras.isEmpty {
+                    Section("filter.camera") {
+                        ForEach(availableCameras, id: \.self) { camera in
+                            Toggle(camera, isOn: Binding(
+                                get: { selectedCameras.contains(camera) },
+                                set: { isOn in
+                                    if isOn {
+                                        selectedCameras.insert(camera)
+                                    } else {
+                                        selectedCameras.remove(camera)
+                                    }
+                                }
+                            ))
+                        }
+                    }
+                }
+                
+                // Sort Section
+                Section("sort.title") {
+                    HStack {
+                        Picker("sort.field", selection: $sortField) {
+                            ForEach(FinishedFilmSortField.allCases, id: \.self) { field in
+                                Text(field.displayName).tag(field)
+                            }
+                        }
+                        .labelsHidden()
+                        
+                        Spacer()
+                        
+                        Picker("sort.order", selection: $sortAscending) {
+                            Image(systemName: "arrow.up").tag(true)
+                            Image(systemName: "arrow.down").tag(false)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 100)
+                    }
+                }
+                
+                // Clear Filters
+                if hasActiveFilters {
+                    Section {
+                        Button("filter.clearAll") {
+                            searchText = ""
+                            selectedTypes = []
+                            selectedStatuses = []
+                            selectedFormats = []
+                            selectedCameras = []
+                        }
+                    }
+                }
+            }
+            .navigationTitle("filter.title")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("action.done") {
+                        showingFilters = false
+                    }
+                }
             }
         }
     }

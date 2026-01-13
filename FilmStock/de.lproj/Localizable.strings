@@ -112,18 +112,22 @@
 "filter.type" = "Typ";
 "filter.format" = "Format";
 "filter.manufacturer" = "Hersteller";
+"filter.camera" = "Kamera";
 "filter.speed" = "Empfindlichkeit";
 
 // Sorting
 "sort.title" = "Sortieren";
 "sort.by" = "Sortieren nach";
+"sort.field" = "Sortieren nach";
 "sort.order" = "Reihenfolge";
 "sort.ascending" = "A → Z";
 "sort.descending" = "Z → A";
 "sort.manufacturer" = "Hersteller";
 "sort.filmType" = "Filmtyp";
+"sort.filmName" = "Filmname";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Ablaufdatum";
+"sort.finishedDate" = "Entladedatum";
 "filter.filmSpeed" = "Empfindlichkeit";
 "filter.options" = "Optionen";
 "filter.showExpiredOnly" = "Nur abgelaufene anzeigen";

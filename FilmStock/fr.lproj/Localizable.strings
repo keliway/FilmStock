@@ -115,14 +115,18 @@
 // Sorting
 "sort.title" = "Trier";
 "sort.by" = "Trier par";
+"sort.field" = "Trier par";
 "sort.order" = "Ordre";
 "sort.ascending" = "A → Z";
 "sort.descending" = "Z → A";
 "sort.manufacturer" = "Fabricant";
 "sort.filmType" = "Type de film";
+"sort.filmName" = "Nom du film";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Date d'expiration";
+"sort.finishedDate" = "Date de fin";
 "filter.manufacturer" = "Fabricant";
+"filter.camera" = "Appareil photo";
 "filter.speed" = "Sensibilité";
 "filter.filmSpeed" = "Sensibilité";
 "filter.options" = "Options";
