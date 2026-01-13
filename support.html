@@ -197,20 +197,32 @@
     <div class="container">
         <div class="content-section">
             <h2>About FilmStock</h2>
-            <p>FilmStock is an analog film collection manager designed for film photography enthusiasts. Keep track of your film stock, manage which films are loaded in your cameras, and never lose track of what you're shooting.</p>
+            <p>FilmStock is a comprehensive analog film collection manager designed for film photography enthusiasts. Keep track of your film stock, manage which films are loaded in your cameras, track development status, and never lose track of what you're shooting.</p>
             
             <div class="feature-list">
                 <div class="feature-item">
-                    <strong>📦 Collection Management</strong> - Organize your film stock by manufacturer, format, speed, and type
+                    <strong>📦 Collection Management</strong> - Organize your film stock by manufacturer, format, speed, and type with custom notes and comments
                 </div>
                 <div class="feature-item">
-                    <strong>📸 Loaded Films Tracking</strong> - Remember which film is loaded in which camera
+                    <strong>📸 Camera Integration</strong> - Take photos of your film boxes or select from your library, with automatic square cropping
                 </div>
                 <div class="feature-item">
-                    <strong>🏠 Home Screen Widget</strong> - Quick glance at your currently loaded films
+                    <strong>🎞️ Loaded Films Tracking</strong> - Remember which film is loaded in which camera, with custom ISO settings and loading dates
                 </div>
                 <div class="feature-item">
-                    <strong>⏰ Expiry Date Tracking</strong> - Track expiration dates for your film stock
+                    <strong>✅ Finished Rolls Management</strong> - Track completed rolls with development status (To develop, In development, Developed)
+                </div>
+                <div class="feature-item">
+                    <strong>🔍 Advanced Filtering</strong> - Filter and sort by manufacturer, type, format, camera, ISO, status, and more
+                </div>
+                <div class="feature-item">
+                    <strong>🏠 Home Screen Widget</strong> - Quick glance at your currently loaded films with ISO information
+                </div>
+                <div class="feature-item">
+                    <strong>⏰ Expiry Date Tracking</strong> - Track expiration dates and freeze status for your film stock
+                </div>
+                <div class="feature-item">
+                    <strong>📊 Statistics</strong> - View detailed statistics about your collection and shooting history
                 </div>
                 <div class="feature-item">
                     <strong>🌍 Multilingual</strong> - Supports English, German, French, Spanish, Japanese, Norwegian, and Polish
@@ -223,21 +235,47 @@
             
             <h3>Adding Your First Film</h3>
             <ol>
-                <li>Tap the <strong>+</strong> button in the Collection tab</li>
+                <li>Tap the <strong>+</strong> button in the My Films tab</li>
                 <li>Select a manufacturer (e.g., Kodak, Ilford, Fuji)</li>
                 <li>Enter the film name (e.g., Portra 400, HP5 Plus)</li>
                 <li>The app automatically detects film metadata and loads catalog images</li>
-                <li>Optionally add expiry date, quantity, and notes</li>
+                <li>Optionally add expiry date, quantity, format, and comments</li>
                 <li>Tap <strong>Save</strong></li>
+            </ol>
+            
+            <h3>Taking Custom Film Photos</h3>
+            <ol>
+                <li>When adding or editing a film, tap the camera icon</li>
+                <li>Choose <strong>Take Picture</strong> or <strong>Choose from Library</strong></li>
+                <li>Frame your film box photo</li>
+                <li>The app automatically crops to a square format</li>
+                <li>Adjust the crop if needed</li>
+                <li>Tap <strong>Done</strong> to save</li>
             </ol>
             
             <h3>Loading a Film in Your Camera</h3>
             <ol>
                 <li>Open any film from your collection</li>
                 <li>Tap <strong>Load Film</strong></li>
-                <li>Enter your camera name (e.g., Leica M6, Canon AE-1)</li>
+                <li>Select a camera or add a new one</li>
+                <li>Optionally adjust the ISO (defaults to film's native speed)</li>
                 <li>View loaded films in the <strong>Loaded Films</strong> tab</li>
-                <li>Tap <strong>Unload Film</strong> when you're done shooting</li>
+                <li>Tap <strong>Finish Roll</strong> when you're done shooting</li>
+            </ol>
+            
+            <h3>Managing Finished Rolls</h3>
+            <ol>
+                <li>Go to <strong>Loaded Films</strong> tab</li>
+                <li>Switch to <strong>Finished Rolls</strong> segment</li>
+                <li>Swipe on a roll to update development status:
+                    <ul>
+                        <li><strong>To develop</strong> - Waiting to be developed</li>
+                        <li><strong>In development</strong> - Currently at the lab</li>
+                        <li><strong>Developed</strong> - Completed</li>
+                    </ul>
+                </li>
+                <li>Swipe to <strong>Re-load</strong> if you need to move it back to loaded films</li>
+                <li>Use filters to sort by status, camera, format, or date</li>
             </ol>
             
             <h3>Using the Widget</h3>
@@ -248,6 +286,15 @@
                 <li>Choose widget size (small, medium, or large)</li>
                 <li>Add to home screen</li>
                 <li>Tap arrows on the widget to cycle through loaded films</li>
+                <li>Widget displays ISO speed (in orange if different from native)</li>
+            </ol>
+            
+            <h3>Managing Cameras</h3>
+            <ol>
+                <li>Go to <strong>Loaded Films</strong> tab</li>
+                <li>Tap the camera icon in the top left</li>
+                <li>Add, edit, or delete cameras</li>
+                <li>Camera names persist even if the camera is deleted from finished rolls</li>
             </ol>
         </div>
 
@@ -260,13 +307,33 @@
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">Q: How do I add custom film images?</div>
-                <div class="faq-answer">A: When adding or editing a film, tap the camera icon to take a photo of your film box or select one from your photo library. The app includes catalog images for many popular films that load automatically.</div>
+                <div class="faq-question">Q: What does shooting at a different ISO mean?</div>
+                <div class="faq-answer">A: When loading a film, you can change the ISO to indicate you're rating it differently (e.g., pushing or pulling). The app shows this ISO in orange to remind you it's different from the film's native speed. This is useful when you need to adjust for lighting conditions or creative effect.</div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">Q: Can I track multiple rolls of the same film?</div>
-                <div class="faq-answer">A: Yes! Use the quantity field when adding a film. You can also add notes to differentiate between batches or storage locations.</div>
+                <div class="faq-question">Q: How do I customize which formats appear in table view?</div>
+                <div class="faq-answer">A: Go to Settings → My Films → Enabled Formats. The table view will show all your enabled formats with horizontal scrolling. You can also add custom formats here.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q: What happens if I delete a camera that has finished rolls?</div>
+                <div class="faq-answer">A: The app stores a snapshot of the camera name when you finish a roll, so your finished rolls will still show which camera was used even if you later delete that camera.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q: Can I track sheet film quantities?</div>
+                <div class="faq-answer">A: Yes! For large format sheet films (4×5, 5×7, 8×10), you can load individual sheets and unload them one at a time using the swipe actions in Loaded Films.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q: How do I add custom film images?</div>
+                <div class="faq-answer">A: When adding or editing a film, tap the camera icon. You can take a new photo or choose from your library. The app automatically crops images to square format and stores them locally.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q: Can I track multiple rolls of the same film with different expiry dates?</div>
+                <div class="faq-answer">A: Yes! When viewing a film's details, you'll see all formats grouped by expiry date. Each combination of format and expiry date is tracked separately.</div>
             </div>
             
             <div class="faq-item">
@@ -276,10 +343,11 @@
             
             <div class="faq-item">
                 <div class="faq-question">Q: How do I enter expiry dates?</div>
-                <div class="faq-answer">A: You can enter expiry dates in two formats:
+                <div class="faq-answer">A: You can enter expiry dates in three formats:
                     <ul>
                         <li><strong>Year only:</strong> Type 4 digits (e.g., 2025)</li>
                         <li><strong>Month and year:</strong> Type 6 digits (e.g., 112025 becomes 11/2025)</li>
+                        <li><strong>Full date:</strong> Type 8 digits (e.g., 11152025 becomes 11/15/2025)</li>
                     </ul>
                     The app automatically formats and validates your input.
                 </div>
@@ -291,8 +359,13 @@
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">Q: How do I search or filter my collection?</div>
-                <div class="faq-answer">A: Use the search bar at the top of the Collection tab. You can filter by manufacturer, film type (B&W/Color/Slide), format (35mm/120), and more using the filter buttons.</div>
+                <div class="faq-question">Q: How do I use filters and sorting?</div>
+                <div class="faq-answer">A: Tap the filter icon to access filtering options. You can filter by manufacturer, type, format, speed ranges, cameras, and development status. The app remembers your filter and sort preferences between sessions.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Q: What's the difference between "Remove" and "Finish Roll"?</div>
+                <div class="faq-answer">A: <strong>Finish Roll</strong> marks the film as completed and moves it to Finished Rolls, decreasing your inventory. <strong>Remove</strong> is for accidental loads - it removes the loaded film entry and restores the quantity to your collection without recording it as finished.</div>
             </div>
             
             <div class="faq-item">
@@ -302,7 +375,7 @@
             
             <div class="faq-item">
                 <div class="faq-question">Q: Is my data backed up?</div>
-                <div class="faq-answer">A: Your FilmStock data is included in your iPhone's iCloud backup (if enabled). If you restore your iPhone from an iCloud backup, your film collection will be restored.</div>
+                <div class="faq-answer">A: Your FilmStock data is included in your iPhone's iCloud backup (if enabled). If you restore your iPhone from an iCloud backup, your film collection, photos, cameras, and all settings will be restored.</div>
             </div>
         </div>
 
@@ -314,6 +387,7 @@
                 <li>Remove the widget and add it again</li>
                 <li>Make sure you have films loaded in cameras (not just in collection)</li>
                 <li>Restart your iPhone</li>
+                <li>Check that the app has background refresh enabled in Settings</li>
             </ul>
             
             <h3>Camera permission denied</h3>
@@ -322,10 +396,24 @@
                 <li>Enable camera access for <strong>FilmStock</strong></li>
             </ul>
             
+            <h3>Photo library permission denied</h3>
+            <ul>
+                <li>Go to <strong>Settings</strong> → <strong>Privacy & Security</strong> → <strong>Photos</strong></li>
+                <li>Enable photo library access for <strong>FilmStock</strong></li>
+            </ul>
+            
+            <h3>Cropped image doesn't match what I selected</h3>
+            <ul>
+                <li>The app automatically crops to square format for consistency</li>
+                <li>Use pinch-to-zoom and drag to adjust the crop area before tapping Done</li>
+                <li>Make sure you're viewing the entire square overlay when taking camera photos</li>
+            </ul>
+            
             <h3>App crashes or freezes</h3>
             <ul>
                 <li>Make sure you're running the latest version from the App Store</li>
                 <li>Restart your iPhone</li>
+                <li>Check available storage space on your device</li>
                 <li>If the issue persists, contact support (see below)</li>
             </ul>
             
@@ -334,6 +422,14 @@
                 <li>The app includes catalog images for popular films</li>
                 <li>For custom or rare films, you'll need to add your own photo</li>
                 <li>Make sure you've granted photo library access if selecting existing photos</li>
+                <li>Custom images are stored locally in the app's documents folder</li>
+            </ul>
+            
+            <h3>Filters or settings not persisting</h3>
+            <ul>
+                <li>Filter and sort preferences are now saved automatically</li>
+                <li>If they reset, try force-quitting the app and relaunching</li>
+                <li>Make sure you have the latest app version</li>
             </ul>
         </div>
 
@@ -349,9 +445,10 @@
             <p style="margin-top: 20px;">When contacting support, please include:</p>
             <ul>
                 <li>Your iOS version (Settings → General → About)</li>
-                <li>FilmStock app version (About tab in the app)</li>
+                <li>FilmStock app version (Settings tab in the app)</li>
                 <li>A detailed description of the issue</li>
                 <li>Screenshots if applicable</li>
+                <li>Steps to reproduce the problem</li>
             </ul>
             
             <p style="margin-top: 20px;">I typically respond within 24 hours on weekdays. Thank you for your patience!</p>
@@ -359,7 +456,7 @@
 
         <div class="content-section">
             <h2>Privacy & Legal</h2>
-            <p>FilmStock respects your privacy. All data is stored locally on your device. We do not collect, transmit, or store any personal information.</p>
+            <p>FilmStock respects your privacy. All data is stored locally on your device. We do not collect, transmit, or store any personal information. Custom photos you take or select are stored only on your device and never uploaded.</p>
             
             <p style="margin-top: 20px;">
                 <a href="privacy-policy.html" class="button">Privacy Policy</a>
@@ -368,11 +465,10 @@
         </div>
 
         <footer>
-            <p>© 2024 Jonas Halbe. All rights reserved.</p>
+            <p>© 2026 Jonas Halbe. All rights reserved.</p>
             <p>FilmStock is not affiliated with any film manufacturer.</p>
             <p>All film brand names and trademarks are property of their respective owners.</p>
         </footer>
     </div>
 </body>
 </html>
-

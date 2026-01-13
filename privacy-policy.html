@@ -53,7 +53,7 @@
 <body>
     <h1>Privacy Policy</h1>
     <div class="meta">
-        <strong>Last updated:</strong> November 2024<br>
+        <strong>Last updated:</strong> January 2026<br>
         <strong>App:</strong> FilmStock
     </div>
 
@@ -71,17 +71,37 @@
         <h2>Information Stored Locally</h2>
         <p>The following information is stored locally on your device only:</p>
         <ul>
-            <li>Film stock inventory and details</li>
-            <li>Custom photos of film boxes you take with the camera</li>
-            <li>App settings and preferences</li>
-            <li>Films loaded in your cameras</li>
+            <li>Film stock inventory and details (manufacturer, type, format, speed, expiry dates, custom notes, comments)</li>
+            <li>Custom photos of film boxes taken with the camera or selected from your photo library</li>
+            <li>App settings and preferences (language, filters, sorting preferences, enabled formats)</li>
+            <li>Films loaded in your cameras with loading dates and custom ISO settings</li>
+            <li>Camera information (camera names and associated films)</li>
+            <li>Finished film records (completion dates and development status)</li>
+            <li>Widget configuration data</li>
         </ul>
         <p>This data is never transmitted to our servers or any third parties.</p>
     </div>
 
     <div class="section">
-        <h2>Camera Access</h2>
-        <p>FilmStock requests camera access only to allow you to take photos of your film boxes for visual reference. These photos are stored locally on your device and are never uploaded or shared.</p>
+        <h2>Camera and Photo Library Access</h2>
+        <p>FilmStock requests the following permissions:</p>
+        <ul>
+            <li><strong>Camera Access:</strong> To take photos of your film boxes for visual reference. These photos are processed locally, cropped to square format if needed, and stored only on your device.</li>
+            <li><strong>Photo Library Access:</strong> To select existing photos from your device to use as film images. Selected photos are copied into the app's local storage and never uploaded or shared.</li>
+        </ul>
+        <p>You can revoke these permissions at any time through iOS Settings. The app will continue to function without these permissions, but you won't be able to add custom images.</p>
+    </div>
+
+    <div class="section">
+        <h2>Data Processing</h2>
+        <p>All data processing occurs locally on your device:</p>
+        <ul>
+            <li>Image cropping and resizing for film photos</li>
+            <li>Filtering and sorting of your film collection</li>
+            <li>Widget data updates for the home screen</li>
+            <li>Statistics calculations</li>
+        </ul>
+        <p>No data is sent to external servers for processing.</p>
     </div>
 
     <div class="section">
@@ -95,6 +115,9 @@
         <ul>
             <li>StoreKit for in-app purchases</li>
             <li>WidgetKit for home screen widgets</li>
+            <li>SwiftData for local data persistence</li>
+            <li>AVFoundation for camera functionality</li>
+            <li>PhotosUI for photo library access</li>
         </ul>
         <p>These services are governed by Apple's Privacy Policy. We do not integrate any third-party analytics, advertising, or tracking services.</p>
     </div>
@@ -110,8 +133,13 @@
     </div>
 
     <div class="section">
-        <h2>Data Deletion</h2>
-        <p>You can delete all app data at any time by deleting the FilmStock app from your device. This will permanently remove all locally stored information.</p>
+        <h2>Data Retention and Deletion</h2>
+        <p>You have complete control over your data:</p>
+        <ul>
+            <li>Delete individual films, cameras, or records at any time through the app</li>
+            <li>Delete all app data by deleting the FilmStock app from your device</li>
+            <li>Your data is included in iOS backups (if enabled) and can be restored when restoring your device</li>
+        </ul>
     </div>
 
     <div class="section">
@@ -121,13 +149,12 @@
 
     <div class="section">
         <h2>Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:hello@halbe.no">hello@halbe.no</a></p>
+        <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:jonas.halbe@cognitedata.com">jonas.halbe@cognitedata.com</a></p>
     </div>
 
     <footer>
-        <p>&copy; 2024 Jonas Halbe. All rights reserved.</p>
-        <p><a href="terms.html">Terms of Service</a></p>
+        <p>&copy; 2026 Jonas Halbe. All rights reserved.</p>
+        <p><a href="terms-of-service.html">Terms of Service</a> | <a href="support.html">Support</a></p>
     </footer>
 </body>
 </html>
-
