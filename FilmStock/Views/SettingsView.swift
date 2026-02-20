@@ -12,6 +12,7 @@ struct SettingsView: View {
     @ObservedObject var settingsManager = SettingsManager.shared
     @Binding var hideEmpty: Bool
     @Binding var viewMode: BrowseView.ViewMode
+    @State private var showingWhatsNew = false
     
     var body: some View {
         NavigationStack {
@@ -87,6 +88,19 @@ struct SettingsView: View {
                             .foregroundColor(.secondary)
                     }
                     
+                    // What's New
+                    Button {
+                        showingWhatsNew = true
+                    } label: {
+                        HStack {
+                            Text("settings.whatsNew")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text(whatsNewVersion)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
                     // About
                     NavigationLink {
                         AboutView()
@@ -138,6 +152,11 @@ struct SettingsView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingWhatsNew) {
+            WhatsNewView(isPresented: $showingWhatsNew)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .preferredColorScheme(settingsManager.appearance.colorScheme)
     }
