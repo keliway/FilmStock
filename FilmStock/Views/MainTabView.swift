@@ -14,7 +14,9 @@ struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var selectedTab: Int = 0
     @State private var showingWelcome = false
-    
+    @State private var showingWhatsNew = false
+    @AppStorage("seenWhatsNewVersion") private var seenWhatsNewVersion: String = ""
+
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationStack {
@@ -42,14 +44,24 @@ struct MainTabView: View {
         .task {
             dataManager.setModelContext(modelContext)
             await dataManager.migrateIfNeeded()
-            
-            // Show welcome screen on first launch
+
+            // Show welcome screen on very first launch
             if !OnboardingManager.shared.hasCompletedOnboarding {
                 showingWelcome = true
+            } else if seenWhatsNewVersion != whatsNewVersion {
+                // Show what's new sheet after an update (existing users only)
+                showingWhatsNew = true
             }
         }
         .fullScreenCover(isPresented: $showingWelcome) {
             WelcomeView(isPresented: $showingWelcome)
+        }
+        .sheet(isPresented: $showingWhatsNew, onDismiss: {
+            seenWhatsNewVersion = whatsNewVersion
+        }) {
+            WhatsNewView(isPresented: $showingWhatsNew)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
         }
         .onOpenURL { url in
             // Handle deep link from widget
