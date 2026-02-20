@@ -89,16 +89,8 @@ struct SettingsView: View {
                     }
                     
                     // What's New
-                    Button {
+                    Button("settings.whatsNew") {
                         showingWhatsNew = true
-                    } label: {
-                        HStack {
-                            Text("settings.whatsNew")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text(whatsNewVersion)
-                                .foregroundColor(.secondary)
-                        }
                     }
 
                     // About

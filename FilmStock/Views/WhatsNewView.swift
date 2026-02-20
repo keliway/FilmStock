@@ -28,31 +28,23 @@ struct WhatsNewView: View {
             title: "Roll-by-Roll Tracking",
             description: "Each roll is now its own record with an individual expiry date, frozen status, exposure count, and notes — no more shared batches. All your previously added film got migrated to the new system."
         ),
-       
         WhatsNewFeature(
             icon: "plus.circle",
             iconColor: .green,
             title: "Flexible Roll Adding",
             description: "When adding a film you can create multiple roll batches at once — mix 35mm, 120, and sheet film in a single save."
         ),
-        
-        WhatsNewFeature(
-            icon: "info.circle",
-            iconColor: .blue,
-            title: "Roll Detail Sheets",
-            description: "Tap any loaded or finished roll to see a full detail sheet: load date, days on camera, shot ISO, exposures, frozen status, and more."
-        ),
-        WhatsNewFeature(
-            icon: "magnifyingglass",
-            iconColor: .pink,
-            title: "Image Catalog Search",
-            description: "The film image picker now has a live search that matches manufacturer names, film names, and all known aliases from the catalog."
-        ),
         WhatsNewFeature(
             icon: "calendar.badge.exclamationmark",
             iconColor: .red,
             title: "Multiple Expiry Dates",
             description: "In case you have used multiple expiry dates for the same film, make sure to assign the right expiry date to the right roll."
+        ),
+        WhatsNewFeature(
+            icon: "info.circle",
+            iconColor: .blue,
+            title: "And much more!",
+            description: "Check the full release notes in the App Store for all the details."
         )
     ]
 
@@ -133,6 +125,7 @@ private struct FeatureRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(feature.iconColor)
             }
+            .padding(.top, 14)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(feature.title)
