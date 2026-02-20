@@ -463,6 +463,16 @@ class ImageStorage {
     /// Get all default images grouped by manufacturer
     /// Images are now in format: manufacturer_filmname.png in a single folder
     /// - Returns: Dictionary mapping manufacturer names to arrays of (imageName, image) tuples
+    /// Returns raw manufacturer + film data from manufacturers.json for search/metadata use.
+    func loadManufacturersData() -> [ManufacturerInfo] {
+        guard let url = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let wrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: data) else {
+            return []
+        }
+        return wrapper.manufacturers
+    }
+
     func getAllDefaultImages() -> [String: [(imageName: String, image: UIImage)]] {
         var imagesByManufacturer: [String: [(imageName: String, image: UIImage)]] = [:]
         

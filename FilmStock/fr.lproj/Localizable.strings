@@ -395,3 +395,5 @@
 "empty.noFinishedFilms.message" = "Les pellicules déchargées apparaîtront ici.";
 
 
+
+"image.search.prompt" = "Rechercher des films…";

@@ -395,3 +395,5 @@
 "empty.noFinishedFilms.message" = "取り出したロールがここに表示されます。";
 
 
+
+"image.search.prompt" = "フィルムを検索…";

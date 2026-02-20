@@ -394,3 +394,5 @@
 "empty.noFinishedFilms.title" = "Keine fertigen Rollen";
 "empty.noFinishedFilms.message" = "Entladene Rollen werden hier angezeigt.";
 
+
+"image.search.prompt" = "Filme suchen…";

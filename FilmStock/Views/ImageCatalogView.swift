@@ -10,18 +10,21 @@ import SwiftUI
 struct ImageCatalogView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var selectedImage: UIImage?
-    @Binding var selectedImageFilename: String? // e.g., "ilford_hp5"
-    @Binding var selectedImageSource: ImageSource? // Track if it's catalog or custom
+    @Binding var selectedImageFilename: String?
+    @Binding var selectedImageSource: ImageSource?
     @State private var imagesByManufacturer: [String: [(imageName: String, image: UIImage)]] = [:]
     @State private var customPhotos: [(filename: String, manufacturer: String, image: UIImage)] = []
     @State private var catalogMode: CatalogMode = .defaultCatalog
-    
+    @State private var searchText: String = ""
+    // manufacturer name (lowercased) → [filmName (lowercased): [alias (lowercased)]]
+    @State private var aliasMap: [String: [String: [String]]] = [:]
+
     enum CatalogMode: String, CaseIterable, Identifiable {
         case defaultCatalog
         case myPhotos
-        
+
         var id: String { rawValue }
-        
+
         var localizedName: String {
             switch self {
             case .defaultCatalog: return NSLocalizedString("image.defaultCatalog", comment: "")
@@ -29,26 +32,55 @@ struct ImageCatalogView: View {
             }
         }
     }
-    
+
     var sortedManufacturers: [String] {
-        imagesByManufacturer.keys.sorted()
+        filteredImagesByManufacturer.keys.sorted()
     }
-    
+
+    // Filtered catalog: when search is active, keep only matching images per manufacturer.
+    var filteredImagesByManufacturer: [String: [(imageName: String, image: UIImage)]] {
+        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !q.isEmpty else { return imagesByManufacturer }
+
+        var result: [String: [(imageName: String, image: UIImage)]] = [:]
+        for (manufacturer, images) in imagesByManufacturer {
+            let mfrLower = manufacturer.lowercased()
+            let filmAliases = aliasMap[mfrLower] ?? [:]
+
+            let matching = images.filter { item in
+                let nameLower = item.imageName.lowercased()
+                // Match manufacturer name
+                if mfrLower.contains(q) { return true }
+                // Match image filename
+                if nameLower.contains(q) { return true }
+                // Match any alias from the JSON
+                let aliases = filmAliases[nameLower] ?? []
+                return aliases.contains { $0.contains(q) }
+            }
+            if !matching.isEmpty {
+                result[manufacturer] = matching
+            }
+        }
+        return result
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Segmented control
-                Picker("Catalog Mode", selection: $catalogMode) {
-                    ForEach(CatalogMode.allCases) { mode in
-                        Text(mode.localizedName).tag(mode)
+                // Segmented control — hidden while searching
+                if searchText.isEmpty {
+                    Picker("Catalog Mode", selection: $catalogMode) {
+                        ForEach(CatalogMode.allCases) { mode in
+                            Text(mode.localizedName).tag(mode)
+                        }
                     }
+                    .pickerStyle(.segmented)
+                    .padding()
                 }
-                .pickerStyle(.segmented)
-                .padding()
-                
+
                 // Content
                 Group {
-                    if catalogMode == .defaultCatalog {
+                    if !searchText.isEmpty || catalogMode == .defaultCatalog {
                         defaultCatalogView
                     } else {
                         myPhotosView
@@ -57,16 +89,16 @@ struct ImageCatalogView: View {
             }
             .navigationTitle("image.catalog")
             .navigationBarTitleDisplayMode(.large)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(LocalizedStringKey("image.search.prompt")))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("action.done") {
-                        dismiss()
-                    }
+                    Button("action.done") { dismiss() }
                 }
             }
             .onAppear {
                 loadImages()
                 loadCustomPhotos()
+                loadAliasMap()
             }
         }
     }
@@ -79,11 +111,13 @@ struct ImageCatalogView: View {
                 systemImage: "photo.on.rectangle",
                 description: Text("empty.noCatalogImages.message")
             )
+        } else if !searchText.isEmpty && filteredImagesByManufacturer.isEmpty {
+            ContentUnavailableView.search(text: searchText)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 24) {
                     ForEach(sortedManufacturers, id: \.self) { manufacturer in
-                        if let images = imagesByManufacturer[manufacturer] {
+                        if let images = filteredImagesByManufacturer[manufacturer] {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text(manufacturer)
                                     .font(.headline)
@@ -169,9 +203,24 @@ struct ImageCatalogView: View {
     private func loadImages() {
         imagesByManufacturer = ImageStorage.shared.getAllDefaultImages()
     }
-    
+
     private func loadCustomPhotos() {
         customPhotos = ImageStorage.shared.getAllCustomPhotos()
+    }
+
+    /// Build a fast lookup: manufacturerLower → filmnameLower → [aliasLower]
+    private func loadAliasMap() {
+        var map: [String: [String: [String]]] = [:]
+        for mfr in ImageStorage.shared.loadManufacturersData() {
+            let mfrKey = mfr.name.lowercased()
+            var filmMap: [String: [String]] = [:]
+            for film in mfr.films {
+                let nameKey = film.filename.lowercased()
+                filmMap[nameKey] = film.aliases.map { $0.lowercased() }
+            }
+            map[mfrKey] = filmMap
+        }
+        aliasMap = map
     }
 }
 

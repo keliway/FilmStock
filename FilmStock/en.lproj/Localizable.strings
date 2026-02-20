@@ -394,3 +394,5 @@
 "empty.noFinishedFilms.title" = "No Finished Rolls";
 "empty.noFinishedFilms.message" = "Rolls you unload will appear here.";
 
+
+"image.search.prompt" = "Search films…";

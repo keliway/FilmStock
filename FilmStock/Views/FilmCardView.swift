@@ -140,22 +140,47 @@ struct FilmCardView: View {
             // Status chips in top right
             if showAnyChip {
                 VStack(spacing: 4) {
-                    // Expiry chip: shows "EXPIRED" or date depending on setting
                     if showExpiryChip {
-                        Text(expiryChipText)
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundColor(expiryChipColor)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
-                            .frame(minWidth: 62)
-                            .fixedSize()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(expiryChipColor, lineWidth: 1)
-                            )
+                        if settingsManager.showExpiryDateInChip {
+                            let chips = allExpiryChips
+                            let maxVisible = 3
+                            let visible = Array(chips.prefix(maxVisible))
+                            let overflow = chips.count - maxVisible
+
+                            ForEach(visible, id: \.text) { chip in
+                                expiryChipView(chip)
+                            }
+                            if overflow > 0 {
+                                Text("+\(overflow)")
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 3)
+                                    .frame(minWidth: 62)
+                                    .fixedSize()
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .stroke(Color.secondary, lineWidth: 1)
+                                    )
+                            }
+                        } else {
+                            // Setting off — show plain EXPIRED chip
+                            Text("EXPIRED")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 3)
+                                .frame(minWidth: 62)
+                                .fixedSize()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(Color.red, lineWidth: 1)
+                                )
+                        }
                     }
-                    
+
                     // Blue "FROZEN" chip
                     if isFrozen {
                         Text("FROZEN")
@@ -271,95 +296,91 @@ struct FilmCardView: View {
         return false
     }
     
-    // Returns the text to display in the expiry chip
-    private var expiryChipText: String {
-        // If setting is disabled, show "EXPIRED"
-        guard settingsManager.showExpiryDateInChip else {
-            return "EXPIRED"
-        }
-        
-        // Find the date closest to current date to display
-        if let expiryDateString = closestExpiryDateString {
-            return expiryDateString
-        }
-        
-        return "EXPIRED"
+    @ViewBuilder
+    private func expiryChipView(_ chip: (text: String, isExpired: Bool)) -> some View {
+        Text(chip.text)
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(chip.isExpired ? .red : .primary)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .frame(minWidth: 62)
+            .fixedSize()
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(chip.isExpired ? Color.red : Color.primary, lineWidth: 1)
+            )
     }
-    
-    // Returns the color for the expiry chip (red if expired, black if not)
-    private var expiryChipColor: Color {
-        if settingsManager.showExpiryDateInChip {
-            return isExpired ? .red : .primary
-        }
-        return .red
-    }
-    
-    // Returns the formatted expiry date string closest to current date (e.g., "03/95" or "2001")
-    private var closestExpiryDateString: String? {
+
+    // All unique expiry dates as formatted chip entries, sorted chronologically.
+    private var allExpiryChips: [(text: String, isExpired: Bool)] {
         let today = Date()
         let calendar = Calendar.current
-        var closestDate: (date: Date, original: String, distance: TimeInterval)? = nil
-        
+
+        // Collect unique raw date strings across all formats
+        var seen = Set<String>()
+        var entries: [(sortDate: Date, text: String, isExpired: Bool)] = []
+
         for formatInfo in groupedFilm.formats {
-            guard let expireDates = formatInfo.expireDate, !expireDates.isEmpty else {
-                continue
-            }
-            
-            for dateString in expireDates {
-                guard !dateString.isEmpty else { continue }
-                
-                if let expireDate = FilmStock.parseExpireDate(dateString) {
-                    var compareDate = expireDate
-                    
-                    // For YYYY format, use end of year
-                    if dateString.count == 4 {
-                        let year = calendar.component(.year, from: expireDate)
-                        if let endOfYear = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
-                            compareDate = endOfYear
-                        }
-                    } else if dateString.split(separator: "/").count == 2 {
-                        // For MM/YYYY format, use end of month
-                        let components = calendar.dateComponents([.year, .month], from: expireDate)
-                        if let year = components.year,
-                           let month = components.month,
-                           let daysInMonth = calendar.range(of: .day, in: .month, for: expireDate)?.count,
-                           let endOfMonth = calendar.date(from: DateComponents(year: year, month: month, day: daysInMonth)) {
-                            compareDate = endOfMonth
-                        }
+            guard let expireDates = formatInfo.expireDate else { continue }
+            for raw in expireDates where !raw.isEmpty {
+                let normalised = FilmStock.formatExpireDate(raw) // normalise MMYYYY → MM/YYYY etc.
+                guard !seen.contains(normalised) else { continue }
+                seen.insert(normalised)
+
+                guard let parsed = FilmStock.parseExpireDate(raw) else { continue }
+
+                // Compute end-of-period date for expiry check
+                var endDate = parsed
+                let isMonthYear = raw.split(separator: "/").count == 2
+                    || (raw.count == 6 && raw.allSatisfy(\.isNumber))
+                if raw.count == 4 {
+                    let year = calendar.component(.year, from: parsed)
+                    if let eoy = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
+                        endDate = eoy
                     }
-                    
-                    // Calculate absolute distance from today
-                    let distance = abs(compareDate.timeIntervalSince(today))
-                    
-                    // Keep track of the closest date to today
-                    if closestDate == nil || distance < closestDate!.distance {
-                        closestDate = (expireDate, dateString, distance)
+                } else if isMonthYear {
+                    let comps = calendar.dateComponents([.year, .month], from: parsed)
+                    if let y = comps.year, let m = comps.month,
+                       let dim = calendar.range(of: .day, in: .month, for: parsed)?.count,
+                       let eom = calendar.date(from: DateComponents(year: y, month: m, day: dim)) {
+                        endDate = eom
                     }
                 }
+
+                let expired = (calendar.date(bySettingHour: 0, minute: 0, second: 0, of: today) ?? today)
+                    > (calendar.date(bySettingHour: 0, minute: 0, second: 0, of: endDate) ?? endDate)
+
+                entries.append((sortDate: endDate, text: formatExpiryDateForChip(raw), isExpired: expired))
             }
         }
-        
-        // Format the closest date
-        if let (_, originalString, _) = closestDate {
-            return formatExpiryDateForChip(originalString)
-        }
-        
-        return nil
+
+        return entries
+            .sorted { $0.sortDate < $1.sortDate }
+            .map { (text: $0.text, isExpired: $0.isExpired) }
     }
     
     // Formats expiry date for chip display: "03/95" for MM/YYYY, "2001" for YYYY
     private func formatExpiryDateForChip(_ dateString: String) -> String {
-        let parts = dateString.split(separator: "/")
-        
+        // Normalise MMYYYY (6 raw digits, migrated data) → MM/YYYY before formatting
+        let normalised: String
+        if dateString.count == 6 && dateString.allSatisfy(\.isNumber) {
+            normalised = "\(dateString.prefix(2))/\(dateString.suffix(4))"
+        } else {
+            normalised = dateString
+        }
+
+        let parts = normalised.split(separator: "/")
+
         if parts.count == 2 {
             // MM/YYYY format - convert to MM/YY
             let month = String(parts[0])
             let year = String(parts[1])
             let shortYear = year.count == 4 ? String(year.suffix(2)) : year
             return "\(month)/\(shortYear)"
-        } else if dateString.count == 4 {
+        } else if normalised.count == 4 {
             // YYYY format - keep as is
-            return dateString
+            return normalised
         }
         
         // For other formats, return as-is
@@ -380,15 +401,17 @@ struct FilmCardView: View {
             for dateString in expireDates {
                 if let expireDate = FilmStock.parseExpireDate(dateString) {
                     var compareDate = expireDate
-                    
+                    let isMonthYear = dateString.split(separator: "/").count == 2
+                        || (dateString.count == 6 && dateString.allSatisfy(\.isNumber))
+
                     // For YYYY format, compare to end of year (Dec 31)
                     if dateString.count == 4 {
                         let year = calendar.component(.year, from: expireDate)
                         if let endOfYear = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
                             compareDate = endOfYear
                         }
-                    } else if dateString.split(separator: "/").count == 2 {
-                        // For MM/YYYY format, compare to end of month
+                    } else if isMonthYear {
+                        // For MM/YYYY or MMYYYY format, compare to end of month
                         let components = calendar.dateComponents([.year, .month], from: expireDate)
                         if let year = components.year,
                            let month = components.month,
