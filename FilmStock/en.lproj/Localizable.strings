@@ -45,8 +45,10 @@
 "film.quantity" = "Quantity";
 "film.expiryDate" = "Expiry Date";
 "film.comments" = "Comments";
+"film.comments.placeholder" = "Add a note about this roll…";
 "film.isFrozen" = "Film is frozen";
 "film.frozen" = "FROZEN";
+"film.expired" = "EXPIRED";
 "film.filmInformation" = "Film Information";
 "film.filmReminder" = "Film reminder";
 "film.addExpiryDate" = "Add Expiry Date";
@@ -261,6 +263,33 @@
 "error.invalidDate" = "Invalid date format";
 "error.invalidDateFormat" = "Date must be YYYY or MM/YYYY";
 
+// MARK: - Exposures
+"film.exposures" = "Exposures";
+"add.rolls" = "Add Rolls";
+"loaded.detail.title" = "Roll Details";
+"loaded.detail.rollSection" = "In Camera";
+"loaded.detail.filmSection" = "Film Properties";
+"loaded.detail.loadedDate" = "Loaded";
+"loaded.detail.daysOnCamera" = "On Camera";
+"loaded.detail.today" = "Today";
+"loaded.detail.day" = "%d day";
+"loaded.detail.days" = "%d days";
+"loaded.detail.frozen" = "Frozen";
+"finished.detail.title" = "Finished Roll";
+"finished.detail.finishedDate" = "Finished";
+"finished.detail.daysOnRoll" = "Days on Roll";
+"add.rolls.section" = "Rolls";
+"add.rolls.hint" = "Add at least one roll to save this film.";
+"film.exposures.unspecified" = "Unspecified";
+"film.exposures.custom" = "Custom";
+"film.exposures.customCount" = "Number of exposures";
+"edit.rolls.title" = "Edit %@ Rolls";
+"film.noExpiry" = "No expiry date";
+"load.selectRoll" = "Select Roll";
+"search.noResults" = "No Results";
+"search.noResults.description" = "Try adjusting your search or filters.";
+"finished.status" = "Status";
+
 // MARK: - Load Film
 "load.title" = "Load Film";
 "load.selectCamera" = "Select Camera";
@@ -305,6 +334,8 @@
 // MARK: - Film Detail
 "detail.information" = "Film Information";
 "detail.formats" = "Formats";
+"detail.sheets" = "Sheets";
+"detail.other" = "Other";
 "detail.otherFormats" = "Other Formats";
 "detail.noFormats" = "No formats available";
 "detail.loadedAt" = "Loaded";

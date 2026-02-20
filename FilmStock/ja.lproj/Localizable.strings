@@ -45,8 +45,10 @@
 "film.quantity" = "数量";
 "film.expiryDate" = "有効期限";
 "film.comments" = "コメント";
+"film.comments.placeholder" = "Add a note about this roll…";
 "film.isFrozen" = "フィルムは冷凍されています";
 "film.frozen" = "冷凍";
+"film.expired" = "期限切れ";
 "film.filmInformation" = "フィルム情報";
 "film.filmReminder" = "フィルムリマインダー";
 "film.addExpiryDate" = "有効期限を追加";
@@ -261,6 +263,33 @@
 "error.invalidDate" = "無効な日付形式です";
 "error.invalidDateFormat" = "日付はYYYYまたはMM/YYYY形式で入力してください";
 
+// MARK: - Exposures
+"film.exposures" = "Exposures";
+"add.rolls" = "ロールを追加";
+"loaded.detail.title" = "Roll Details";
+"loaded.detail.rollSection" = "In Camera";
+"loaded.detail.filmSection" = "Film Properties";
+"loaded.detail.loadedDate" = "Loaded";
+"loaded.detail.daysOnCamera" = "On Camera";
+"loaded.detail.today" = "Today";
+"loaded.detail.day" = "%d day";
+"loaded.detail.days" = "%d days";
+"loaded.detail.frozen" = "Frozen";
+"finished.detail.title" = "Finished Roll";
+"finished.detail.finishedDate" = "Finished";
+"finished.detail.daysOnRoll" = "Days on Roll";
+"add.rolls.section" = "ロール";
+"add.rolls.hint" = "フィルムを保存するには、少なくとも1本のロールを追加してください。";
+"film.exposures.unspecified" = "Unspecified";
+"film.exposures.custom" = "Custom";
+"film.exposures.customCount" = "Number of exposures";
+"edit.rolls.title" = "%@ロールを編集";
+"film.noExpiry" = "No expiry date";
+"load.selectRoll" = "Select Roll";
+"search.noResults" = "No Results";
+"search.noResults.description" = "Try adjusting your search or filters.";
+"finished.status" = "Status";
+
 // MARK: - Load Film
 "load.title" = "フィルムを装填";
 "load.selectCamera" = "カメラを選択";
@@ -305,6 +334,8 @@
 // MARK: - Film Detail
 "detail.information" = "フィルム情報";
 "detail.formats" = "フォーマット";
+"detail.sheets" = "シートフィルム";
+"detail.other" = "その他";
 "detail.otherFormats" = "その他のフォーマット";
 "detail.noFormats" = "利用可能なフォーマットがありません";
 "detail.loadedAt" = "装填済み";

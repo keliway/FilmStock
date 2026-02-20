@@ -45,8 +45,10 @@
 "film.quantity" = "Anzahl";
 "film.expiryDate" = "Haltbarkeit";
 "film.comments" = "Kommentare";
+"film.comments.placeholder" = "Notiz zu dieser Rolle hinzufügen…";
 "film.isFrozen" = "Film ist gefroren";
 "film.frozen" = "GEFROREN";
+"film.expired" = "ABGELAUFEN";
 "film.filmInformation" = "Film-Informationen";
 "film.filmReminder" = "Film-Erinnerung";
 "film.addExpiryDate" = "Haltbarkeitsdatum hinzufügen";
@@ -261,6 +263,33 @@
 "error.invalidDate" = "Ungültiges Datumsformat";
 "error.invalidDateFormat" = "Datum muss JJJJ oder MM/JJJJ sein";
 
+// MARK: - Exposures
+"film.exposures" = "Aufnahmen";
+"add.rolls" = "Rollen hinzufügen";
+"loaded.detail.title" = "Rollendaten";
+"loaded.detail.rollSection" = "In der Kamera";
+"loaded.detail.filmSection" = "Filmeigenschaften";
+"loaded.detail.loadedDate" = "Eingelegt";
+"loaded.detail.daysOnCamera" = "In der Kamera";
+"loaded.detail.today" = "Heute";
+"loaded.detail.day" = "%d Tag";
+"loaded.detail.days" = "%d Tage";
+"loaded.detail.frozen" = "Eingefroren";
+"finished.detail.title" = "Fertige Rolle";
+"finished.detail.finishedDate" = "Fertiggestellt";
+"finished.detail.daysOnRoll" = "Tage auf der Rolle";
+"add.rolls.section" = "Rollen";
+"add.rolls.hint" = "Füge mindestens eine Rolle hinzu, um diesen Film zu speichern.";
+"film.exposures.unspecified" = "Nicht angegeben";
+"film.exposures.custom" = "Benutzerdefiniert";
+"film.exposures.customCount" = "Anzahl der Aufnahmen";
+"edit.rolls.title" = "%@ Rollen bearbeiten";
+"film.noExpiry" = "Kein Ablaufdatum";
+"load.selectRoll" = "Rolle auswählen";
+"search.noResults" = "Keine Ergebnisse";
+"search.noResults.description" = "Versuche deine Suche oder Filter anzupassen.";
+"finished.status" = "Status";
+
 // MARK: - Load Film
 "load.title" = "Film einlegen";
 "load.selectCamera" = "Kamera auswählen";
@@ -305,6 +334,8 @@
 // MARK: - Film Detail
 "detail.information" = "Film-Informationen";
 "detail.formats" = "Formate";
+"detail.sheets" = "Planfilme";
+"detail.other" = "Sonstige";
 "detail.otherFormats" = "Andere Formate";
 "detail.noFormats" = "Keine Formate verfügbar";
 "detail.loadedAt" = "Eingelegt";

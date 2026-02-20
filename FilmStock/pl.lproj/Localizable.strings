@@ -45,8 +45,10 @@
 "film.quantity" = "Ilość";
 "film.expiryDate" = "Data ważności";
 "film.comments" = "Komentarze";
+"film.comments.placeholder" = "Add a note about this roll…";
 "film.isFrozen" = "Film jest zamrożony";
 "film.frozen" = "ZAMROŻONY";
+"film.expired" = "PRZETERMINOWANY";
 "film.filmInformation" = "Informacje o filmie";
 "film.filmReminder" = "Przypomnienie o filmie";
 "film.addExpiryDate" = "Dodaj datę ważności";
@@ -261,6 +263,33 @@
 "error.invalidDate" = "Nieprawidłowy format daty";
 "error.invalidDateFormat" = "Data musi być w formacie RRRR lub MM/RRRR";
 
+// MARK: - Exposures
+"film.exposures" = "Exposures";
+"add.rolls" = "Dodaj rolki";
+"loaded.detail.title" = "Roll Details";
+"loaded.detail.rollSection" = "In Camera";
+"loaded.detail.filmSection" = "Film Properties";
+"loaded.detail.loadedDate" = "Loaded";
+"loaded.detail.daysOnCamera" = "On Camera";
+"loaded.detail.today" = "Today";
+"loaded.detail.day" = "%d day";
+"loaded.detail.days" = "%d days";
+"loaded.detail.frozen" = "Frozen";
+"finished.detail.title" = "Finished Roll";
+"finished.detail.finishedDate" = "Finished";
+"finished.detail.daysOnRoll" = "Days on Roll";
+"add.rolls.section" = "Rolki";
+"add.rolls.hint" = "Dodaj przynajmniej jedną rolkę, aby zapisać ten film.";
+"film.exposures.unspecified" = "Unspecified";
+"film.exposures.custom" = "Custom";
+"film.exposures.customCount" = "Number of exposures";
+"edit.rolls.title" = "Edytuj rolki %@";
+"film.noExpiry" = "No expiry date";
+"load.selectRoll" = "Select Roll";
+"search.noResults" = "No Results";
+"search.noResults.description" = "Try adjusting your search or filters.";
+"finished.status" = "Status";
+
 // MARK: - Load Film
 "load.title" = "Załaduj film";
 "load.selectCamera" = "Wybierz aparat";
@@ -305,6 +334,8 @@
 // MARK: - Film Detail
 "detail.information" = "Informacje o filmie";
 "detail.formats" = "Formaty";
+"detail.sheets" = "Filmy Planszowe";
+"detail.other" = "Inne";
 "detail.otherFormats" = "Inne formaty";
 "detail.noFormats" = "Brak dostępnych formatów";
 "detail.loadedAt" = "Załadowany";

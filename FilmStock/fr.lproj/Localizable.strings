@@ -45,8 +45,10 @@
 "film.quantity" = "Quantité";
 "film.expiryDate" = "Date d'expiration";
 "film.comments" = "Commentaires";
+"film.comments.placeholder" = "Add a note about this roll…";
 "film.isFrozen" = "Le film est congelé";
 "film.frozen" = "CONGELÉ";
+"film.expired" = "EXPIRÉ";
 "film.filmInformation" = "Informations sur le film";
 "film.filmReminder" = "Rappel de film";
 "film.addExpiryDate" = "Ajouter une date d'expiration";
@@ -261,6 +263,33 @@
 "error.invalidDate" = "Format de date invalide";
 "error.invalidDateFormat" = "La date doit être AAAA ou MM/AAAA";
 
+// MARK: - Exposures
+"film.exposures" = "Exposures";
+"add.rolls" = "Ajouter des rouleaux";
+"loaded.detail.title" = "Roll Details";
+"loaded.detail.rollSection" = "In Camera";
+"loaded.detail.filmSection" = "Film Properties";
+"loaded.detail.loadedDate" = "Loaded";
+"loaded.detail.daysOnCamera" = "On Camera";
+"loaded.detail.today" = "Today";
+"loaded.detail.day" = "%d day";
+"loaded.detail.days" = "%d days";
+"loaded.detail.frozen" = "Frozen";
+"finished.detail.title" = "Finished Roll";
+"finished.detail.finishedDate" = "Finished";
+"finished.detail.daysOnRoll" = "Days on Roll";
+"add.rolls.section" = "Rouleaux";
+"add.rolls.hint" = "Ajoutez au moins un rouleau pour enregistrer ce film.";
+"film.exposures.unspecified" = "Unspecified";
+"film.exposures.custom" = "Custom";
+"film.exposures.customCount" = "Number of exposures";
+"edit.rolls.title" = "Modifier les rouleaux %@";
+"film.noExpiry" = "No expiry date";
+"load.selectRoll" = "Select Roll";
+"search.noResults" = "No Results";
+"search.noResults.description" = "Try adjusting your search or filters.";
+"finished.status" = "Status";
+
 // MARK: - Load Film
 "load.title" = "Charger le film";
 "load.selectCamera" = "Sélectionner l'appareil";
@@ -305,6 +334,8 @@
 // MARK: - Film Detail
 "detail.information" = "Informations sur le film";
 "detail.formats" = "Formats";
+"detail.sheets" = "Films en Feuilles";
+"detail.other" = "Autres";
 "detail.otherFormats" = "Autres formats";
 "detail.noFormats" = "Aucun format disponible";
 "detail.loadedAt" = "Chargé";

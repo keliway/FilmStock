@@ -17,7 +17,19 @@ extension FilmStock {
             components.day = 31
             return Calendar.current.date(from: components)
         }
-        
+
+        // Handle MMYYYY (6 digits, no slash — from migrated data)
+        if dateString.count == 6, dateString.allSatisfy(\.isNumber),
+           let month = Int(dateString.prefix(2)),
+           let year  = Int(dateString.suffix(4)),
+           (1...12).contains(month) {
+            var components = DateComponents()
+            components.year  = year
+            components.month = month
+            components.day   = 1
+            return Calendar.current.date(from: components)
+        }
+
         // Handle MM/YYYY
         let parts = dateString.split(separator: "/")
         if parts.count == 2,
@@ -47,24 +59,31 @@ extension FilmStock {
     
     static func formatExpireDate(_ dateString: String) -> String {
         if dateString.isEmpty { return "Unknown" }
-        
-        // If already in MM/YYYY format, return as is
+
+        // Already in MM/YYYY format
         if dateString.contains("/") && dateString.count <= 7 {
             return dateString
         }
-        
-        // If YYYY format, return as is
+
+        // YYYY-only — keep as is
         if dateString.count == 4 {
             return dateString
         }
-        
-        // Try to parse and format
+
+        // 6-digit MMYYYY (migrated data) — reformat with slash
+        if dateString.count == 6, dateString.allSatisfy(\.isNumber) {
+            let mm   = String(dateString.prefix(2))
+            let yyyy = String(dateString.suffix(4))
+            return "\(mm)/\(yyyy)"
+        }
+
+        // Fallback: parse and reformat
         if let date = parseExpireDate(dateString) {
             let formatter = DateFormatter()
             formatter.dateFormat = "MM/yyyy"
             return formatter.string(from: date)
         }
-        
+
         return dateString
     }
 }

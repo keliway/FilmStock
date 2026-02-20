@@ -14,6 +14,7 @@ struct LoadFilmView: View {
     var onLoadComplete: (() -> Void)?
     
     @State private var selectedFormat: FilmStock.FilmFormat?
+    @State private var selectedRollId: String? // For roll formats: the specific MyFilm.id to load
     @State private var selectedCamera: String = ""
     @State private var errorMessage: String?
     @State private var sheetQuantity: Int = 1
@@ -36,6 +37,7 @@ struct LoadFilmView: View {
         NavigationStack {
             Form {
                 formatSelectionSection
+                rollPickerSection
                 cameraSelectionSection
                 isoSelectionSection
                 quantitySelectionSection
@@ -53,25 +55,30 @@ struct LoadFilmView: View {
                     Button("action.load") {
                         loadFilm()
                     }
-                    .disabled(selectedFormat == nil || selectedCamera.isEmpty)
+                    .disabled(selectedFormat == nil || selectedCamera.isEmpty || (selectedFormat?.isRollFormat == true && selectedRollId == nil))
                 }
             }
         }
         .onAppear {
             if availableFormats.count == 1 {
                 selectedFormat = availableFormats.first
+
+                // Auto-select roll if only one group (or one roll total) available
+                if let fmt = selectedFormat, fmt.isRollFormat,
+                   let info = groupedFilm.formats.first(where: { $0.format == fmt }) {
+                    let groups = rollGroupsForFormat(info)
+                    if groups.count == 1 {
+                        selectedRollId = groups.first?.rollIds.first
+                    }
+                }
             }
             
-            // Auto-select camera if only one is available
             let cameras = availableCameras
             if cameras.count == 1, selectedCamera.isEmpty {
                 selectedCamera = cameras.first?.name ?? ""
             }
             
-            // Reset sheet quantity when format changes
             sheetQuantity = 1
-            
-            // Initialize ISO with film's native ISO
             shotAtISO = groupedFilm.filmSpeed
         }
         .onChange(of: selectedFormat) { oldValue, newValue in
@@ -98,7 +105,6 @@ struct LoadFilmView: View {
         let quantity = formatInfo?.quantity ?? 0
         let quantityUnit = format.quantityUnit
         let isSelected = selectedFormat == format
-        // Use custom format name if available
         let displayName = formatInfo?.formatDisplayName ?? format.displayName
         
         return HStack {
@@ -114,6 +120,133 @@ struct LoadFilmView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             selectedFormat = format
+            // For roll formats with only one group, auto-select it
+            if format.isRollFormat, let info = formatInfo {
+                let groups = rollGroupsForFormat(info)
+                if groups.count == 1 {
+                    selectedRollId = groups.first?.rollIds.first
+                } else {
+                    selectedRollId = nil
+                }
+            }
+        }
+    }
+    
+    private var rollPickerSection: some View {
+        Group {
+            if let format = selectedFormat, format.isRollFormat,
+               let formatInfo = groupedFilm.formats.first(where: { $0.format == format }) {
+                let groups = rollGroupsForFormat(formatInfo)
+                if groups.count > 1 {
+                    Section("load.selectRoll") {
+                        ForEach(groups) { group in
+                            rollGroupPickerRow(group)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func rollGroupPickerRow(_ group: RollGroupItem) -> some View {
+        let isSelected = group.rollIds.contains(selectedRollId ?? "")
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(
+                        group.count == 1
+                            ? String(format: NSLocalizedString("film.rollCount", comment: ""), group.count)
+                            : String(format: NSLocalizedString("film.rollsCount", comment: ""), group.count)
+                    )
+                    .font(.body)
+
+                    if let expiry = group.expireDate, !expiry.isEmpty {
+                        Text("(\(FilmStock.formatExpireDate(expiry)))")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("film.noExpiry")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
+                    if let exp = group.exposures, exp > 0 {
+                        Text("· \(exp)exp")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                if group.isFrozen || group.isExpired {
+                    HStack(spacing: 5) {
+                        if group.isFrozen {
+                            rollChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                        }
+                        if group.isExpired {
+                            rollChip(NSLocalizedString("film.expired", comment: ""), color: .red)
+                        }
+                    }
+                }
+            }
+
+            Spacer()
+
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .foregroundColor(.accentColor)
+                    .fontWeight(.semibold)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectedRollId = group.rollIds.first
+        }
+    }
+
+    @ViewBuilder
+    private func rollChip(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(color)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .overlay(RoundedRectangle(cornerRadius: 3).stroke(color, lineWidth: 1))
+    }
+
+    private func rollsForFormat(_ formatInfo: GroupedFilm.FormatInfo) -> [FilmStock] {
+        dataManager.filmStocks.filter { stock in
+            formatInfo.rollIds.contains(stock.id) && stock.quantity > 0
+        }
+    }
+
+    private func rollGroupsForFormat(_ formatInfo: GroupedFilm.FormatInfo) -> [RollGroupItem] {
+        let rolls = rollsForFormat(formatInfo)
+        var buckets: [String: RollGroupItem] = [:]
+        for roll in rolls {
+            let expiry = roll.expireDate?.first
+            let key = "\(expiry ?? "")|\(roll.isFrozen)|\(roll.exposures ?? -99)"
+            if var existing = buckets[key] {
+                existing.rollIds.append(roll.id)
+                buckets[key] = existing
+            } else {
+                buckets[key] = RollGroupItem(
+                    format: roll.format,
+                    customFormatName: roll.customFormatName,
+                    expireDate: expiry,
+                    isFrozen: roll.isFrozen,
+                    exposures: roll.exposures,
+                    comments: roll.comments,
+                    rollIds: [roll.id]
+                )
+            }
+        }
+        return buckets.values.sorted { lhs, rhs in
+            if let ld = lhs.expireDate, let rd = rhs.expireDate { return ld < rd }
+            if lhs.expireDate != nil { return true }
+            if rhs.expireDate != nil { return false }
+            return !lhs.isFrozen && rhs.isFrozen
         }
     }
     
@@ -204,20 +337,31 @@ struct LoadFilmView: View {
             return
         }
         
-        // Find the format info for the selected format
         guard let formatInfo = groupedFilm.formats.first(where: { $0.format == format }),
               formatInfo.quantity > 0 else {
             errorMessage = NSLocalizedString("load.error.noRolls", comment: "")
             return
         }
         
-        // Determine quantity to load (1 for rolls, sheetQuantity for sheets)
-        let quantityToLoad = isSheetFormat(format) ? sheetQuantity : 1
+        // For roll formats: use the specific selected roll ID
+        // For sheet formats: use the formatInfo.filmId and sheet quantity
+        let filmStockId: String
+        let quantityToLoad: Int
         
-        // Load the film - use the filmId from formatInfo which is the MyFilm.id
-        // Pass ISO only if different from native
+        if format.isRollFormat {
+            guard let rollId = selectedRollId else {
+                errorMessage = NSLocalizedString("load.error.noRolls", comment: "")
+                return
+            }
+            filmStockId = rollId
+            quantityToLoad = 1
+        } else {
+            filmStockId = formatInfo.filmId
+            quantityToLoad = isSheetFormat(format) ? sheetQuantity : 1
+        }
+        
         let isoToPass = shotAtISO != groupedFilm.filmSpeed ? shotAtISO : nil
-        if dataManager.loadFilm(filmStockId: formatInfo.filmId, format: format, cameraName: selectedCamera, quantity: quantityToLoad, shotAtISO: isoToPass) {
+        if dataManager.loadFilm(filmStockId: filmStockId, format: format, cameraName: selectedCamera, quantity: quantityToLoad, shotAtISO: isoToPass) {
             dismiss()
             onLoadComplete?()
         } else {

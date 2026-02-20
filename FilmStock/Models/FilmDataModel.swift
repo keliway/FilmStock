@@ -61,12 +61,13 @@ final class MyFilm {
     var expireDate: String? // Store as comma-separated string for SwiftData compatibility
     var comments: String?
     var isFrozen: Bool? // Optional for backward compatibility - nil means false
+    var exposures: Int? // Number of exposures on a roll (24, 36, or custom); nil = unspecified
     var createdAt: String?
     var updatedAt: String?
     @Relationship(deleteRule: .nullify)
     var film: Film?
     
-    init(id: String, format: String, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
+    init(id: String, format: String, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, exposures: Int? = nil, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
         self.id = id
         self.format = format
         self.customFormatName = customFormatName
@@ -75,6 +76,7 @@ final class MyFilm {
         self.expireDate = expireDate?.joined(separator: ",")
         self.comments = comments
         self.isFrozen = isFrozen
+        self.exposures = exposures
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.film = film

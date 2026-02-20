@@ -29,6 +29,8 @@ struct LoadedFilmsView: View {
     @State private var showingDatePicker = false
     @State private var filmToEditDate: LoadedFilm?
     @State private var selectedDate = Date()
+    @State private var selectedLoadedFilm: LoadedFilm?
+    @State private var selectedFinishedFilm: FinishedFilm?
     
     // Filters and sorting for finished films
     @State private var showingFilters = false
@@ -167,6 +169,8 @@ struct LoadedFilmsView: View {
                             List {
                                 ForEach(loadedFilms, id: \.id) { loadedFilm in
                                     LoadedFilmRow(loadedFilm: loadedFilm)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture { selectedLoadedFilm = loadedFilm }
                                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                             // Change loaded date
                                             Button {
@@ -248,6 +252,8 @@ struct LoadedFilmsView: View {
                                     List {
                                         ForEach(filteredAndSortedFinishedFilms, id: \.id) { finishedFilm in
                                             FinishedFilmRow(finishedFilm: finishedFilm)
+                                                .contentShape(Rectangle())
+                                                .onTapGesture { selectedFinishedFilm = finishedFilm }
                                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                                     // Re-load film (move back to loaded films)
                                                     Button {
@@ -329,6 +335,12 @@ struct LoadedFilmsView: View {
             }
             .sheet(isPresented: $showingFilters) {
                 finishedFilmsFilterSheet
+            }
+            .sheet(item: $selectedLoadedFilm) { film in
+                LoadedFilmDetailSheet(loadedFilm: film)
+            }
+            .sheet(item: $selectedFinishedFilm) { film in
+                FinishedFilmDetailSheet(finishedFilm: film)
             }
             .onAppear {
                 loadFilms()
@@ -500,6 +512,179 @@ struct LoadedFilmsView: View {
             return false
         }
         return filmFormat == .fourByFive || filmFormat == .fiveBySeven || filmFormat == .eightByTen
+    }
+}
+
+// MARK: - Loaded Film Detail Sheet
+
+struct LoadedFilmDetailSheet: View {
+    let loadedFilm: LoadedFilm
+    @Environment(\.dismiss) var dismiss
+    @State private var filmImage: UIImage?
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // Header: image + film name
+                if let film = loadedFilm.film {
+                    Section {
+                        HStack(spacing: 16) {
+                            if let image = filmImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 72, height: 72)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            } else {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(.systemGray5))
+                                    .frame(width: 72, height: 72)
+                                    .overlay(
+                                        Image(systemName: "camera.fill")
+                                            .font(.title2)
+                                            .foregroundColor(.secondary)
+                                    )
+                            }
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(film.manufacturer?.name ?? "") \(film.name)")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                HStack(spacing: 6) {
+                                    Text(FilmStock.FilmType(rawValue: film.type)?.displayName ?? film.type)
+                                    Text("·")
+                                    Text(formatDisplayName)
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+
+                // Roll info
+                Section("loaded.detail.rollSection") {
+                    if let camera = loadedFilm.camera {
+                        detailRow(label: "camera.name", value: camera.name)
+                    }
+                    detailRow(label: "loaded.detail.loadedDate", value: exactDate(loadedFilm.loadedAt))
+                    detailRow(label: "loaded.detail.daysOnCamera", value: daysOnCamera)
+                }
+
+                // Film properties
+                Section("loaded.detail.filmSection") {
+                    if let film = loadedFilm.film {
+                        if let shotISO = loadedFilm.shotAtISO, shotISO != film.filmSpeed {
+                            HStack {
+                                Text(LocalizedStringKey("load.shotAtISO"))
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("ISO \(shotISO)")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.orange)
+                                Text("(ISO \(film.filmSpeed))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        } else {
+                            detailRow(label: "film.speed", value: "ISO \(film.filmSpeed)")
+                        }
+                    }
+                    if let exposures = loadedFilm.myFilm?.exposures, exposures > 0 {
+                        detailRow(label: "film.exposures", value: "\(exposures)")
+                    }
+                    if let expireDates = loadedFilm.myFilm?.expireDateArray, !expireDates.isEmpty {
+                        detailRow(
+                            label: "film.expiryDate",
+                            value: expireDates.map { FilmStock.formatExpireDate($0) }.joined(separator: ", ")
+                        )
+                    }
+                    if loadedFilm.myFilm?.isFrozen == true {
+                        frozenChip
+                    }
+                }
+
+                // Comments
+                if let comments = loadedFilm.myFilm?.comments, !comments.isEmpty {
+                    Section("film.comments") {
+                        Text(comments).foregroundColor(.primary)
+                    }
+                }
+            }
+            .navigationTitle("loaded.detail.title")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("action.done") { dismiss() }
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+        .onAppear { loadImage() }
+    }
+
+    @ViewBuilder
+    private func detailRow(label: String, value: String) -> some View {
+        HStack {
+            Text(LocalizedStringKey(label)).foregroundColor(.secondary)
+            Spacer()
+            Text(value).fontWeight(.medium)
+        }
+    }
+
+    private var frozenChip: some View {
+        Text(LocalizedStringKey("film.frozen"))
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.blue, lineWidth: 1))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var formatDisplayName: String {
+        if let customName = loadedFilm.myFilm?.customFormatName, !customName.isEmpty { return customName }
+        return FilmStock.FilmFormat(rawValue: loadedFilm.format)?.displayName ?? loadedFilm.format
+    }
+
+    private var daysOnCamera: String {
+        let days = Calendar.current.dateComponents([.day], from: loadedFilm.loadedAt, to: Date()).day ?? 0
+        switch days {
+        case 0:  return NSLocalizedString("loaded.detail.today", comment: "")
+        case 1:  return String(format: NSLocalizedString("loaded.detail.day", comment: ""), days)
+        default: return String(format: NSLocalizedString("loaded.detail.days", comment: ""), days)
+        }
+    }
+
+    private func exactDate(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .short
+        return f.string(from: date)
+    }
+
+    private func loadImage() {
+        guard let film = loadedFilm.film else { return }
+        let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
+        let mfr = film.manufacturer?.name ?? ""
+        switch src {
+        case .custom:
+            if let name = film.imageName {
+                let (m, filename) = parseCustomImageName(name, defaultManufacturer: mfr)
+                filmImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: m)
+            }
+        case .catalog:
+            if let name = film.imageName {
+                filmImage = ImageStorage.shared.loadCatalogImage(filename: name)
+            }
+        case .autoDetected:
+            filmImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: mfr)
+        case .none:
+            filmImage = nil
+        }
     }
 }
 
@@ -920,3 +1105,194 @@ struct FinishedFilmRow: View {
     }
 }
 
+
+// MARK: - Finished Film Detail Sheet
+
+struct FinishedFilmDetailSheet: View {
+    let finishedFilm: FinishedFilm
+    @Environment(\.dismiss) var dismiss
+    @State private var filmImage: UIImage?
+
+    private var status: FinishedFilmStatus {
+        FinishedFilmStatus(rawValue: finishedFilm.status ?? "") ?? .toDevelop
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // Header: image + film name
+                if let film = finishedFilm.film {
+                    Section {
+                        HStack(spacing: 16) {
+                            if let image = filmImage {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 72, height: 72)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            } else {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(.systemGray5))
+                                    .frame(width: 72, height: 72)
+                                    .overlay(
+                                        Image(systemName: "camera.fill")
+                                            .font(.title2)
+                                            .foregroundColor(.secondary)
+                                    )
+                            }
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(film.manufacturer?.name ?? "") \(film.name)")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                HStack(spacing: 6) {
+                                    Text(FilmStock.FilmType(rawValue: film.type)?.displayName ?? film.type)
+                                    Text("·")
+                                    Text(formatDisplayName)
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                Text(LocalizedStringKey(status.labelKey))
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(statusColor)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(statusColor, lineWidth: 1))
+                                    .padding(.top, 2)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+
+                // Timeline
+                Section("loaded.detail.rollSection") {
+                    if let cameraName = finishedFilm.cameraName {
+                        detailRow(label: "camera.name", value: cameraName)
+                    }
+                    detailRow(label: "loaded.detail.loadedDate", value: exactDate(finishedFilm.loadedAt))
+                    detailRow(label: "finished.detail.finishedDate", value: exactDate(finishedFilm.finishedAt))
+                    detailRow(label: "finished.detail.daysOnRoll", value: daysOnRoll)
+                }
+
+                // Film properties
+                Section("loaded.detail.filmSection") {
+                    if let film = finishedFilm.film {
+                        if let shotISO = finishedFilm.shotAtISO, shotISO != film.filmSpeed {
+                            HStack {
+                                Text(LocalizedStringKey("load.shotAtISO"))
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("ISO \(shotISO)")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.orange)
+                                Text("(ISO \(film.filmSpeed))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        } else {
+                            detailRow(label: "film.speed", value: "ISO \(film.filmSpeed)")
+                        }
+                    }
+                    if let exposures = finishedFilm.myFilm?.exposures, exposures > 0 {
+                        detailRow(label: "film.exposures", value: "\(exposures)")
+                    }
+                    if let expireDates = finishedFilm.myFilm?.expireDateArray, !expireDates.isEmpty {
+                        detailRow(
+                            label: "film.expiryDate",
+                            value: expireDates.map { FilmStock.formatExpireDate($0) }.joined(separator: ", ")
+                        )
+                    }
+                    if finishedFilm.myFilm?.isFrozen == true {
+                        frozenChip
+                    }
+                }
+
+                if let comments = finishedFilm.myFilm?.comments, !comments.isEmpty {
+                    Section("film.comments") {
+                        Text(comments).foregroundColor(.primary)
+                    }
+                }
+            }
+            .navigationTitle("finished.detail.title")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("action.done") { dismiss() }
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+        .onAppear { loadImage() }
+    }
+
+    @ViewBuilder
+    private func detailRow(label: String, value: String) -> some View {
+        HStack {
+            Text(LocalizedStringKey(label)).foregroundColor(.secondary)
+            Spacer()
+            Text(value).fontWeight(.medium)
+        }
+    }
+
+    private var frozenChip: some View {
+        Text(LocalizedStringKey("film.frozen"))
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.blue, lineWidth: 1))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var formatDisplayName: String {
+        if let customName = finishedFilm.myFilm?.customFormatName, !customName.isEmpty { return customName }
+        return FilmStock.FilmFormat(rawValue: finishedFilm.format)?.displayName ?? finishedFilm.format
+    }
+
+    private var daysOnRoll: String {
+        let days = Calendar.current.dateComponents([.day], from: finishedFilm.loadedAt, to: finishedFilm.finishedAt).day ?? 0
+        switch days {
+        case 0:  return NSLocalizedString("loaded.detail.today", comment: "")
+        case 1:  return String(format: NSLocalizedString("loaded.detail.day", comment: ""), days)
+        default: return String(format: NSLocalizedString("loaded.detail.days", comment: ""), days)
+        }
+    }
+
+    private var statusColor: Color {
+        switch status {
+        case .toDevelop:     return .gray
+        case .inDevelopment: return .yellow
+        case .developed:     return .green
+        }
+    }
+
+    private func exactDate(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .short
+        return f.string(from: date)
+    }
+
+    private func loadImage() {
+        guard let film = finishedFilm.film else { return }
+        let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
+        let mfr = film.manufacturer?.name ?? ""
+        switch src {
+        case .custom:
+            if let name = film.imageName {
+                let (m, filename) = parseCustomImageName(name, defaultManufacturer: mfr)
+                filmImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: m)
+            }
+        case .catalog:
+            if let name = film.imageName { filmImage = ImageStorage.shared.loadCatalogImage(filename: name) }
+        case .autoDetected:
+            filmImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: mfr)
+        case .none:
+            filmImage = nil
+        }
+    }
+}
