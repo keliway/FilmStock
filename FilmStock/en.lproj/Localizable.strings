@@ -398,3 +398,31 @@
 "image.search.prompt" = "Search films…";
 
 "settings.whatsNew" = "What's New";
+
+"settings.export" = "Export or Import Inventory";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "Structured data, ideal for developers or other apps";
+"export.format.csv.description" = "Spreadsheet-compatible, opens in Numbers or Excel";
+"export.includes" = "Includes";
+"export.includes.inventory" = "Film inventory";
+"export.includes.loaded" = "Loaded rolls";
+"export.includes.finished" = "Finished rolls";
+"export.action" = "Export & Share";
+
+"export.tab.export" = "Export";
+"export.tab.import" = "Import";
+"import.supported.formats" = "Supported Formats";
+"import.supports.json" = "JSON (FilmStock export)";
+"import.supports.csv" = "CSV (FilmStock export)";
+"import.footer" = "Select a file exported from FilmStock to import its film inventory.";
+"import.scope.header" = "What Gets Imported";
+"import.scope.inventory" = "Film inventory only";
+"import.scope.footer" = "Loaded rolls, finished rolls, and cameras are not imported. Existing films are not duplicated — rolls are added to them.";
+"import.action" = "Choose File";
+"import.preview.title" = "Review Import";
+"import.preview.summary" = "Summary";
+"import.preview.count" = "Films to import";
+"import.preview.warnings" = "Warnings";
+"import.preview.films" = "Films";
+"import.preview.confirm" = "Import";

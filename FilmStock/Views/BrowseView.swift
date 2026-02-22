@@ -400,6 +400,7 @@ struct BrowseView: View {
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
+                    .environmentObject(dataManager)
             }
             .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
                 Button("action.ok", role: .cancel) { }

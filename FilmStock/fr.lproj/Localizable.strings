@@ -45,7 +45,7 @@
 "film.quantity" = "Quantité";
 "film.expiryDate" = "Date d'expiration";
 "film.comments" = "Commentaires";
-"film.comments.placeholder" = "Add a note about this roll…";
+"film.comments.placeholder" = "Ajouter une note sur cette pellicule…";
 "film.isFrozen" = "Le film est congelé";
 "film.frozen" = "CONGELÉ";
 "film.expired" = "EXPIRÉ";
@@ -264,30 +264,30 @@
 "error.invalidDateFormat" = "La date doit être AAAA ou MM/AAAA";
 
 // MARK: - Exposures
-"film.exposures" = "Exposures";
+"film.exposures" = "Poses";
 "add.rolls" = "Ajouter des rouleaux";
-"loaded.detail.title" = "Roll Details";
-"loaded.detail.rollSection" = "In Camera";
-"loaded.detail.filmSection" = "Film Properties";
-"loaded.detail.loadedDate" = "Loaded";
-"loaded.detail.daysOnCamera" = "On Camera";
-"loaded.detail.today" = "Today";
-"loaded.detail.day" = "%d day";
-"loaded.detail.days" = "%d days";
-"loaded.detail.frozen" = "Frozen";
-"finished.detail.title" = "Finished Roll";
-"finished.detail.finishedDate" = "Finished";
-"finished.detail.daysOnRoll" = "Days on Roll";
+"loaded.detail.title" = "Détails de la pellicule";
+"loaded.detail.rollSection" = "Dans l'appareil";
+"loaded.detail.filmSection" = "Propriétés du film";
+"loaded.detail.loadedDate" = "Chargé le";
+"loaded.detail.daysOnCamera" = "Dans l'appareil";
+"loaded.detail.today" = "Aujourd'hui";
+"loaded.detail.day" = "%d jour";
+"loaded.detail.days" = "%d jours";
+"loaded.detail.frozen" = "Congelé";
+"finished.detail.title" = "Pellicule terminée";
+"finished.detail.finishedDate" = "Terminé le";
+"finished.detail.daysOnRoll" = "Jours sur la pellicule";
 "add.rolls.section" = "Rouleaux";
 "add.rolls.hint" = "Ajoutez au moins un rouleau pour enregistrer ce film.";
-"film.exposures.unspecified" = "Unspecified";
-"film.exposures.custom" = "Custom";
-"film.exposures.customCount" = "Number of exposures";
+"film.exposures.unspecified" = "Non spécifié";
+"film.exposures.custom" = "Personnalisé";
+"film.exposures.customCount" = "Nombre de poses";
 "edit.rolls.title" = "Modifier les rouleaux %@";
-"film.noExpiry" = "No expiry date";
-"load.selectRoll" = "Select Roll";
-"search.noResults" = "No Results";
-"search.noResults.description" = "Try adjusting your search or filters.";
+"film.noExpiry" = "Sans date d'expiration";
+"load.selectRoll" = "Sélectionner une pellicule";
+"search.noResults" = "Aucun résultat";
+"search.noResults.description" = "Essayez d'ajuster votre recherche ou vos filtres.";
 "finished.status" = "Status";
 
 // MARK: - Load Film
@@ -399,3 +399,31 @@
 "image.search.prompt" = "Rechercher des films…";
 
 "settings.whatsNew" = "Nouveautés";
+
+"settings.export" = "Exporter ou importer l'inventaire";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "Données structurées, idéales pour les développeurs";
+"export.format.csv.description" = "Compatible tableur, s'ouvre dans Numbers ou Excel";
+"export.includes" = "Contenu";
+"export.includes.inventory" = "Inventaire";
+"export.includes.loaded" = "Pellicules en cours";
+"export.includes.finished" = "Pellicules terminées";
+"export.action" = "Exporter et partager";
+
+"export.tab.export" = "Export";
+"export.tab.import" = "Import";
+"import.supported.formats" = "Formats pris en charge";
+"import.supports.json" = "JSON (export FilmStock)";
+"import.supports.csv" = "CSV (export FilmStock)";
+"import.footer" = "Sélectionnez un fichier exporté depuis FilmStock pour importer votre inventaire.";
+"import.scope.header" = "Ce qui est importé";
+"import.scope.inventory" = "Inventaire uniquement";
+"import.scope.footer" = "Les pellicules chargées, terminées et les appareils ne sont pas importés. Les films existants ne sont pas dupliqués.";
+"import.action" = "Choisir un fichier";
+"import.preview.title" = "Vérifier l'import";
+"import.preview.summary" = "Résumé";
+"import.preview.count" = "Pellicules à importer";
+"import.preview.warnings" = "Avertissements";
+"import.preview.films" = "Films";
+"import.preview.confirm" = "Import";

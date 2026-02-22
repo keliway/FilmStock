@@ -132,7 +132,6 @@ struct FilmStock: Identifiable, Codable, Hashable {
         var defaultExposures: Int? {
             switch self {
             case .thirtyFive: return 36
-            case .oneTwenty: return 12
             default: return nil
             }
         }
@@ -141,7 +140,6 @@ struct FilmStock: Identifiable, Codable, Hashable {
         var exposureOptions: [Int] {
             switch self {
             case .thirtyFive: return [12, 24, 36]
-            case .oneTwenty:  return [8, 12, 16]
             default:          return []
             }
         }

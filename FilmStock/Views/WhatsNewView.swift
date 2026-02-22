@@ -38,7 +38,7 @@ struct WhatsNewView: View {
             icon: "calendar.badge.exclamationmark",
             iconColor: .red,
             title: "Multiple Expiry Dates",
-            description: "In case you have used multiple expiry dates for the same film, make sure to assign the right expiry date to the right roll."
+            description: "In case you have used multiple expiry dates for the same film, make sure to assign the right expiry date to the right roll now."
         ),
         WhatsNewFeature(
             icon: "info.circle",

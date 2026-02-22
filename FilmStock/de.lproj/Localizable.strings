@@ -398,3 +398,31 @@
 "image.search.prompt" = "Filme suchen…";
 
 "settings.whatsNew" = "Was ist neu";
+
+"settings.export" = "Bestand exportieren oder importieren";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "Strukturierte Daten, ideal für Entwickler oder andere Apps";
+"export.format.csv.description" = "Tabellenkompatibel, öffnet sich in Numbers oder Excel";
+"export.includes" = "Enthält";
+"export.includes.inventory" = "Filmbestand";
+"export.includes.loaded" = "Eingelegte Rollen";
+"export.includes.finished" = "Abgeschlossene Rollen";
+"export.action" = "Exportieren & Teilen";
+
+"export.tab.export" = "Exportieren";
+"export.tab.import" = "Importieren";
+"import.supported.formats" = "Unterstützte Formate";
+"import.supports.json" = "JSON (FilmStock Export)";
+"import.supports.csv" = "CSV (FilmStock Export)";
+"import.footer" = "Wähle eine aus FilmStock exportierte Datei, um den Filmbestand zu importieren.";
+"import.scope.header" = "Was importiert wird";
+"import.scope.inventory" = "Nur Filmbestand";
+"import.scope.footer" = "Eingelegte Rollen, abgeschlossene Rollen und Kameras werden nicht importiert. Vorhandene Filme werden nicht dupliziert.";
+"import.action" = "Datei auswählen";
+"import.preview.title" = "Import prüfen";
+"import.preview.summary" = "Zusammenfassung";
+"import.preview.count" = "Filme zum Importieren";
+"import.preview.warnings" = "Warnungen";
+"import.preview.films" = "Filme";
+"import.preview.confirm" = "Importieren";

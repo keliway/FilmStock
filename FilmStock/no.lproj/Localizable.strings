@@ -45,7 +45,7 @@
 "film.quantity" = "Antall";
 "film.expiryDate" = "Utløpsdato";
 "film.comments" = "Kommentarer";
-"film.comments.placeholder" = "Add a note about this roll…";
+"film.comments.placeholder" = "Legg til en merknad om denne rullen…";
 "film.isFrozen" = "Filmen er frossen";
 "film.frozen" = "FROSSEN";
 "film.expired" = "UTGÅTT";
@@ -264,30 +264,30 @@
 "error.invalidDateFormat" = "Dato må være ÅÅÅÅ eller MM/ÅÅÅÅ";
 
 // MARK: - Exposures
-"film.exposures" = "Exposures";
+"film.exposures" = "Eksponeringer";
 "add.rolls" = "Legg til ruller";
-"loaded.detail.title" = "Roll Details";
-"loaded.detail.rollSection" = "In Camera";
-"loaded.detail.filmSection" = "Film Properties";
-"loaded.detail.loadedDate" = "Loaded";
-"loaded.detail.daysOnCamera" = "On Camera";
-"loaded.detail.today" = "Today";
-"loaded.detail.day" = "%d day";
-"loaded.detail.days" = "%d days";
-"loaded.detail.frozen" = "Frozen";
-"finished.detail.title" = "Finished Roll";
-"finished.detail.finishedDate" = "Finished";
-"finished.detail.daysOnRoll" = "Days on Roll";
+"loaded.detail.title" = "Rulledetaljer";
+"loaded.detail.rollSection" = "I kameraet";
+"loaded.detail.filmSection" = "Filmegenskaper";
+"loaded.detail.loadedDate" = "Lastet inn";
+"loaded.detail.daysOnCamera" = "I kameraet";
+"loaded.detail.today" = "I dag";
+"loaded.detail.day" = "%d dag";
+"loaded.detail.days" = "%d dager";
+"loaded.detail.frozen" = "Fryst";
+"finished.detail.title" = "Ferdig rulle";
+"finished.detail.finishedDate" = "Ferdig";
+"finished.detail.daysOnRoll" = "Dager på rulle";
 "add.rolls.section" = "Ruller";
 "add.rolls.hint" = "Legg til minst én rulle for å lagre denne filmen.";
-"film.exposures.unspecified" = "Unspecified";
-"film.exposures.custom" = "Custom";
-"film.exposures.customCount" = "Number of exposures";
+"film.exposures.unspecified" = "Ikke spesifisert";
+"film.exposures.custom" = "Tilpasset";
+"film.exposures.customCount" = "Antall eksponeringer";
 "edit.rolls.title" = "Rediger %@-ruller";
-"film.noExpiry" = "No expiry date";
-"load.selectRoll" = "Select Roll";
-"search.noResults" = "No Results";
-"search.noResults.description" = "Try adjusting your search or filters.";
+"film.noExpiry" = "Ingen utløpsdato";
+"load.selectRoll" = "Velg rulle";
+"search.noResults" = "Ingen resultater";
+"search.noResults.description" = "Prøv å justere søket eller filtrene dine.";
 "finished.status" = "Status";
 
 // MARK: - Load Film
@@ -399,3 +399,31 @@
 "image.search.prompt" = "Søk etter filmer…";
 
 "settings.whatsNew" = "Hva er nytt";
+
+"settings.export" = "Eksporter eller importer beholdning";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "Strukturerte data, ideelt for utviklere";
+"export.format.csv.description" = "Regnearkkompatibel, åpner i Numbers eller Excel";
+"export.includes" = "Inkluderer";
+"export.includes.inventory" = "Filmbeholdning";
+"export.includes.loaded" = "Ladede ruller";
+"export.includes.finished" = "Ferdig fremkalt";
+"export.action" = "Eksporter og del";
+
+"export.tab.export" = "Export";
+"export.tab.import" = "Import";
+"import.supported.formats" = "Støttede formater";
+"import.supports.json" = "JSON (FilmStock-eksport)";
+"import.supports.csv" = "CSV (FilmStock-eksport)";
+"import.footer" = "Velg en fil eksportert fra FilmStock for å importere filmbeholdningen din.";
+"import.scope.header" = "Hva som importeres";
+"import.scope.inventory" = "Kun filmbeholdning";
+"import.scope.footer" = "Ladede ruller, ferdige ruller og kameraer importeres ikke. Eksisterende filmer dupliseres ikke.";
+"import.action" = "Velg fil";
+"import.preview.title" = "Gjennomgå import";
+"import.preview.summary" = "Sammendrag";
+"import.preview.count" = "Filmer å importere";
+"import.preview.warnings" = "Advarsler";
+"import.preview.films" = "Films";
+"import.preview.confirm" = "Import";

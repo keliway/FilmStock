@@ -45,7 +45,7 @@
 "film.quantity" = "Ilość";
 "film.expiryDate" = "Data ważności";
 "film.comments" = "Komentarze";
-"film.comments.placeholder" = "Add a note about this roll…";
+"film.comments.placeholder" = "Dodaj notatkę o tej rolce…";
 "film.isFrozen" = "Film jest zamrożony";
 "film.frozen" = "ZAMROŻONY";
 "film.expired" = "PRZETERMINOWANY";
@@ -264,30 +264,30 @@
 "error.invalidDateFormat" = "Data musi być w formacie RRRR lub MM/RRRR";
 
 // MARK: - Exposures
-"film.exposures" = "Exposures";
+"film.exposures" = "Klatki";
 "add.rolls" = "Dodaj rolki";
-"loaded.detail.title" = "Roll Details";
-"loaded.detail.rollSection" = "In Camera";
-"loaded.detail.filmSection" = "Film Properties";
-"loaded.detail.loadedDate" = "Loaded";
-"loaded.detail.daysOnCamera" = "On Camera";
-"loaded.detail.today" = "Today";
-"loaded.detail.day" = "%d day";
-"loaded.detail.days" = "%d days";
-"loaded.detail.frozen" = "Frozen";
-"finished.detail.title" = "Finished Roll";
-"finished.detail.finishedDate" = "Finished";
-"finished.detail.daysOnRoll" = "Days on Roll";
+"loaded.detail.title" = "Szczegóły rolki";
+"loaded.detail.rollSection" = "W aparacie";
+"loaded.detail.filmSection" = "Właściwości filmu";
+"loaded.detail.loadedDate" = "Załadowano";
+"loaded.detail.daysOnCamera" = "W aparacie";
+"loaded.detail.today" = "Dzisiaj";
+"loaded.detail.day" = "%d dzień";
+"loaded.detail.days" = "%d dni";
+"loaded.detail.frozen" = "Zamrożona";
+"finished.detail.title" = "Zakończona rolka";
+"finished.detail.finishedDate" = "Zakończono";
+"finished.detail.daysOnRoll" = "Dni na rolce";
 "add.rolls.section" = "Rolki";
 "add.rolls.hint" = "Dodaj przynajmniej jedną rolkę, aby zapisać ten film.";
-"film.exposures.unspecified" = "Unspecified";
-"film.exposures.custom" = "Custom";
-"film.exposures.customCount" = "Number of exposures";
+"film.exposures.unspecified" = "Nieokreślona";
+"film.exposures.custom" = "Własna";
+"film.exposures.customCount" = "Liczba klatek";
 "edit.rolls.title" = "Edytuj rolki %@";
-"film.noExpiry" = "No expiry date";
-"load.selectRoll" = "Select Roll";
-"search.noResults" = "No Results";
-"search.noResults.description" = "Try adjusting your search or filters.";
+"film.noExpiry" = "Bez daty ważności";
+"load.selectRoll" = "Wybierz rolkę";
+"search.noResults" = "Brak wyników";
+"search.noResults.description" = "Spróbuj dostosować wyszukiwanie lub filtry.";
 "finished.status" = "Status";
 
 // MARK: - Load Film
@@ -399,3 +399,31 @@
 "image.search.prompt" = "Szukaj filmów…";
 
 "settings.whatsNew" = "Co nowego";
+
+"settings.export" = "Eksportuj lub importuj magazyn";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "Dane strukturalne, idealne dla deweloperów";
+"export.format.csv.description" = "Kompatybilny z arkuszami, otwiera się w Numbers lub Excel";
+"export.includes" = "Zawiera";
+"export.includes.inventory" = "Magazyn filmów";
+"export.includes.loaded" = "Załadowane rolki";
+"export.includes.finished" = "Zakończone rolki";
+"export.action" = "Eksportuj i udostępnij";
+
+"export.tab.export" = "Export";
+"export.tab.import" = "Import";
+"import.supported.formats" = "Obsługiwane formaty";
+"import.supports.json" = "JSON (eksport FilmStock)";
+"import.supports.csv" = "CSV (eksport FilmStock)";
+"import.footer" = "Wybierz plik wyeksportowany z FilmStock, aby zaimportować magazyn filmów.";
+"import.scope.header" = "Co zostanie zaimportowane";
+"import.scope.inventory" = "Tylko magazyn filmów";
+"import.scope.footer" = "Załadowane, zakończone rolki i aparaty nie są importowane. Istniejące filmy nie są duplikowane.";
+"import.action" = "Wybierz plik";
+"import.preview.title" = "Przegląd importu";
+"import.preview.summary" = "Podsumowanie";
+"import.preview.count" = "Filmy do importu";
+"import.preview.warnings" = "Ostrzeżenia";
+"import.preview.films" = "Films";
+"import.preview.confirm" = "Import";

@@ -45,7 +45,7 @@
 "film.quantity" = "数量";
 "film.expiryDate" = "有効期限";
 "film.comments" = "コメント";
-"film.comments.placeholder" = "Add a note about this roll…";
+"film.comments.placeholder" = "このロールにメモを追加…";
 "film.isFrozen" = "フィルムは冷凍されています";
 "film.frozen" = "冷凍";
 "film.expired" = "期限切れ";
@@ -264,30 +264,30 @@
 "error.invalidDateFormat" = "日付はYYYYまたはMM/YYYY形式で入力してください";
 
 // MARK: - Exposures
-"film.exposures" = "Exposures";
+"film.exposures" = "コマ数";
 "add.rolls" = "ロールを追加";
-"loaded.detail.title" = "Roll Details";
-"loaded.detail.rollSection" = "In Camera";
-"loaded.detail.filmSection" = "Film Properties";
-"loaded.detail.loadedDate" = "Loaded";
-"loaded.detail.daysOnCamera" = "On Camera";
-"loaded.detail.today" = "Today";
-"loaded.detail.day" = "%d day";
-"loaded.detail.days" = "%d days";
-"loaded.detail.frozen" = "Frozen";
-"finished.detail.title" = "Finished Roll";
-"finished.detail.finishedDate" = "Finished";
-"finished.detail.daysOnRoll" = "Days on Roll";
+"loaded.detail.title" = "ロール詳細";
+"loaded.detail.rollSection" = "カメラ内";
+"loaded.detail.filmSection" = "フィルム情報";
+"loaded.detail.loadedDate" = "装填日";
+"loaded.detail.daysOnCamera" = "カメラ装填日数";
+"loaded.detail.today" = "今日";
+"loaded.detail.day" = "%d日";
+"loaded.detail.days" = "%d日";
+"loaded.detail.frozen" = "冷凍保存";
+"finished.detail.title" = "使用済みロール";
+"finished.detail.finishedDate" = "撮り終え日";
+"finished.detail.daysOnRoll" = "撮影日数";
 "add.rolls.section" = "ロール";
 "add.rolls.hint" = "フィルムを保存するには、少なくとも1本のロールを追加してください。";
-"film.exposures.unspecified" = "Unspecified";
-"film.exposures.custom" = "Custom";
-"film.exposures.customCount" = "Number of exposures";
+"film.exposures.unspecified" = "未指定";
+"film.exposures.custom" = "カスタム";
+"film.exposures.customCount" = "コマ数を入力";
 "edit.rolls.title" = "%@ロールを編集";
-"film.noExpiry" = "No expiry date";
-"load.selectRoll" = "Select Roll";
-"search.noResults" = "No Results";
-"search.noResults.description" = "Try adjusting your search or filters.";
+"film.noExpiry" = "有効期限なし";
+"load.selectRoll" = "ロールを選択";
+"search.noResults" = "結果なし";
+"search.noResults.description" = "検索条件やフィルターを変更してみてください。";
 "finished.status" = "Status";
 
 // MARK: - Load Film
@@ -399,3 +399,31 @@
 "image.search.prompt" = "フィルムを検索…";
 
 "settings.whatsNew" = "新機能";
+
+"settings.export" = "在庫のエクスポートまたはインポート";
+"export.title" = "Export";
+"export.format" = "Format";
+"export.format.json.description" = "構造化データ、開発者や他のアプリに最適";
+"export.format.csv.description" = "スプレッドシート対応、NumbersやExcelで開けます";
+"export.includes" = "含まれる内容";
+"export.includes.inventory" = "フィルム在庫";
+"export.includes.loaded" = "装填中フィルム";
+"export.includes.finished" = "使用済みフィルム";
+"export.action" = "エクスポートして共有";
+
+"export.tab.export" = "Export";
+"export.tab.import" = "Import";
+"import.supported.formats" = "対応フォーマット";
+"import.supports.json" = "JSON（FilmStockエクスポート）";
+"import.supports.csv" = "CSV（FilmStockエクスポート）";
+"import.footer" = "FilmStockからエクスポートしたファイルを選択して、フィルム在庫をインポートします。";
+"import.scope.header" = "インポートされる内容";
+"import.scope.inventory" = "フィルム在庫のみ";
+"import.scope.footer" = "装填中フィルム、使用済みフィルム、カメラはインポートされません。既存のフィルムは重複しません。";
+"import.action" = "ファイルを選択";
+"import.preview.title" = "インポートの確認";
+"import.preview.summary" = "概要";
+"import.preview.count" = "インポートするフィルム数";
+"import.preview.warnings" = "警告";
+"import.preview.films" = "Films";
+"import.preview.confirm" = "Import";

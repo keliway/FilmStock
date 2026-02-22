@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var dataManager: FilmStockDataManager
     @ObservedObject var settingsManager = SettingsManager.shared
     @Binding var hideEmpty: Bool
     @Binding var viewMode: BrowseView.ViewMode
@@ -88,9 +89,12 @@ struct SettingsView: View {
                             .foregroundColor(.secondary)
                     }
                     
-                    // What's New
-                    Button("settings.whatsNew") {
-                        showingWhatsNew = true
+                    // Export / Import
+                    NavigationLink {
+                        ExportView()
+                            .environmentObject(dataManager)
+                    } label: {
+                        Text("settings.export")
                     }
 
                     // About
@@ -98,6 +102,11 @@ struct SettingsView: View {
                         AboutView()
                     } label: {
                         Text("settings.about")
+                    }
+
+                    // What's New
+                    Button("settings.whatsNew") {
+                        showingWhatsNew = true
                     }
                 } header: {
                     Text("settings.general")
