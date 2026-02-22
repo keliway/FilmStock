@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "Legg inn film";
 "load.selectCamera" = "Velg kamera";
+"load.suggestedCameras" = "Foreslått";
+"load.otherCameras" = "Andre";
 "load.selectFormat" = "Velg format";
 "load.searchCamera" = "Søk eller legg til kamera";
 "load.error.noRolls" = "Ingen ruller tilgjengelig for dette formatet";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "Kan ikke slette kamera";
 "camera.deleteErrorMessage" = "Dette kameraet kan ikke slettes fordi det har filmer lastet i seg.";
 "camera.addFirst" = "Legg til ditt første kamera";
+"camera.format" = "Format";
+"camera.format.none" = "Ingen";
+"camera.edit" = "Rediger kamera";
 "cameras.manage" = "Administrer kameraer";
 "cameras.empty" = "Ingen kameraer ennå";
 "cameras.swipeToDelete" = "Sveip til venstre for å slette";

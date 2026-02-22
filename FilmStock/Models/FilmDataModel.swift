@@ -96,12 +96,23 @@ final class MyFilm {
 
 @Model
 final class Camera {
-    var name: String
+    var name: String = ""
+    /// FilmFormat rawValue; empty string = "None" (not set). "Other" uses customFormatName.
+    var format: String = ""
+    var customFormatName: String? = nil
     @Relationship(deleteRule: .nullify)
     var loadedFilms: [LoadedFilm]?
-    
-    init(name: String) {
+
+    var formatDisplayName: String {
+        if format.isEmpty { return "" }
+        if format == "Other", let name = customFormatName, !name.isEmpty { return name }
+        return FilmStock.FilmFormat(rawValue: format)?.displayName ?? format
+    }
+
+    init(name: String, format: String = "", customFormatName: String? = nil) {
         self.name = name
+        self.format = format
+        self.customFormatName = customFormatName
         self.loadedFilms = []
     }
 }

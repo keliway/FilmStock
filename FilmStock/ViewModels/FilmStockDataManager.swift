@@ -959,9 +959,9 @@ class FilmStockDataManager: ObservableObject {
         return (try? context.fetch(descriptor)) ?? []
     }
     
-    func addCamera(name: String) -> Camera {
+    func addCamera(name: String, format: String = "", customFormatName: String? = nil) -> Camera {
         guard let context = modelContext else {
-            return Camera(name: name)
+            return Camera(name: name, format: format, customFormatName: customFormatName)
         }
         
         // Check if camera already exists
@@ -973,10 +973,31 @@ class FilmStockDataManager: ObservableObject {
             return existing
         }
         
-        let camera = Camera(name: name)
+        let camera = Camera(name: name, format: format, customFormatName: customFormatName)
         context.insert(camera)
         try? context.save()
+        loadFilmStocks()
         return camera
+    }
+
+    func updateCamera(_ camera: Camera, name: String, format: String, customFormatName: String?) {
+        camera.name = name
+        camera.format = format
+        camera.customFormatName = customFormatName
+        try? modelContext?.save()
+        loadFilmStocks()
+    }
+
+    /// Returns all unique custom format names used in inventory (format == "Other").
+    func getCustomFormatNames() -> [String] {
+        guard let context = modelContext else { return [] }
+        let desc = FetchDescriptor<MyFilm>()
+        let myFilms = (try? context.fetch(desc)) ?? []
+        let names = myFilms
+            .filter { $0.format == FilmStock.FilmFormat.other.rawValue }
+            .compactMap { $0.customFormatName }
+            .filter { !$0.isEmpty }
+        return Array(Set(names)).sorted()
     }
     
     func deleteCamera(_ camera: Camera) -> Bool {

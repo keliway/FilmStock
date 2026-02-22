@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "Film einlegen";
 "load.selectCamera" = "Kamera auswählen";
+"load.suggestedCameras" = "Empfohlen";
+"load.otherCameras" = "Weitere";
 "load.selectFormat" = "Format auswählen";
 "load.searchCamera" = "Kamera suchen oder hinzufügen";
 "load.error.noRolls" = "Keine Rollen für dieses Format verfügbar";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "Kamera kann nicht gelöscht werden";
 "camera.deleteErrorMessage" = "Diese Kamera kann nicht gelöscht werden, da sie aktuell Filme geladen hat.";
 "camera.addFirst" = "Erste Kamera hinzufügen";
+"camera.format" = "Format";
+"camera.format.none" = "Kein Format";
+"camera.edit" = "Kamera bearbeiten";
 "cameras.manage" = "Kameras verwalten";
 "cameras.empty" = "Noch keine Kameras";
 "cameras.swipeToDelete" = "Nach links wischen um zu löschen";

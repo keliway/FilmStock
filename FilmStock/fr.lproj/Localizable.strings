@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "Charger le film";
 "load.selectCamera" = "Sélectionner l'appareil";
+"load.suggestedCameras" = "Suggérés";
+"load.otherCameras" = "Autres";
 "load.selectFormat" = "Sélectionner le format";
 "load.searchCamera" = "Rechercher ou ajouter un appareil";
 "load.error.noRolls" = "Aucun rouleau disponible pour ce format";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "Impossible de supprimer l'appareil photo";
 "camera.deleteErrorMessage" = "Cet appareil photo ne peut pas être supprimé car il contient actuellement des films chargés.";
 "camera.addFirst" = "Ajouter votre premier appareil";
+"camera.format" = "Format";
+"camera.format.none" = "Aucun";
+"camera.edit" = "Modifier l'appareil";
 "cameras.manage" = "Gérer les appareils";
 "cameras.empty" = "Aucun appareil photo";
 "cameras.swipeToDelete" = "Glissez vers la gauche pour supprimer";

@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "フィルムを装填";
 "load.selectCamera" = "カメラを選択";
+"load.suggestedCameras" = "おすすめ";
+"load.otherCameras" = "その他";
 "load.selectFormat" = "フォーマットを選択";
 "load.searchCamera" = "カメラを検索または追加";
 "load.error.noRolls" = "このフォーマットで利用可能なロールがありません";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "カメラを削除できません";
 "camera.deleteErrorMessage" = "このカメラにフィルムが装填されているため、削除できません。";
 "camera.addFirst" = "最初のカメラを追加";
+"camera.format" = "フォーマット";
+"camera.format.none" = "なし";
+"camera.edit" = "カメラを編集";
 "cameras.manage" = "カメラを管理";
 "cameras.empty" = "カメラがありません";
 "cameras.swipeToDelete" = "左にスワイプして削除";

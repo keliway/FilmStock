@@ -72,18 +72,14 @@ struct LoadFilmView: View {
                     }
                 }
             }
-            
-            let cameras = availableCameras
-            if cameras.count == 1, selectedCamera.isEmpty {
-                selectedCamera = cameras.first?.name ?? ""
-            }
-            
+
+            autoSelectCamera(for: selectedFormat)
             sheetQuantity = 1
             shotAtISO = groupedFilm.filmSpeed
         }
-        .onChange(of: selectedFormat) { oldValue, newValue in
-            // Reset sheet quantity when format changes
+        .onChange(of: selectedFormat) { _, newValue in
             sheetQuantity = 1
+            autoSelectCamera(for: newValue)
         }
     }
     
@@ -253,7 +249,7 @@ struct LoadFilmView: View {
     private var cameraSelectionSection: some View {
         Section("load.selectCamera") {
             NavigationLink {
-                CameraPickerView(selectedCamera: $selectedCamera)
+                CameraPickerView(selectedCamera: $selectedCamera, filmFormat: selectedFormat)
                     .environmentObject(dataManager)
             } label: {
                 HStack {
@@ -331,6 +327,28 @@ struct LoadFilmView: View {
     }
                 
     
+    /// Picks a camera automatically when there is an unambiguous best match for the film format.
+    /// Only sets selectedCamera if it is currently empty or if exactly one camera matches the new format.
+    private func autoSelectCamera(for format: FilmStock.FilmFormat?) {
+        let cameras = availableCameras
+        guard !cameras.isEmpty else { return }
+
+        if let format {
+            let matching = cameras.filter { $0.format == format.rawValue }
+            if matching.count == 1 {
+                selectedCamera = matching[0].name
+                return
+            }
+            // Multiple matches: don't auto-select, let the user choose (they'll be grouped on top)
+            if matching.count > 1 { return }
+        }
+
+        // No format set or no camera has a matching format: fall back to single-camera auto-select
+        if cameras.count == 1 {
+            selectedCamera = cameras[0].name
+        }
+    }
+
     private func loadFilm() {
         guard let format = selectedFormat,
               !selectedCamera.isEmpty else {
@@ -373,47 +391,51 @@ struct LoadFilmView: View {
 
 struct CameraPickerView: View {
     @Binding var selectedCamera: String
+    var filmFormat: FilmStock.FilmFormat? = nil
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     @State private var searchText: String = ""
     @State private var showingAddCamera = false
-    @State private var newCameraNameInput = ""
     @State private var showDeleteError = false
-    @State private var showDuplicateError = false
     @State private var showingCameraInfo = false
-    
+
     var allCameras: [Camera] {
         dataManager.getAllCameras()
     }
-    
-    var filteredCameras: [Camera] {
-        if searchText.isEmpty {
-            return allCameras
-        }
-        return allCameras.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-    }
-    
-    var isDuplicate: Bool {
-        let trimmedName = newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        return allCameras.contains(where: { $0.name.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame })
-    }
-    
-    var hasNoCameras: Bool {
-        allCameras.isEmpty
-    }
-    
+
+    var hasNoCameras: Bool { allCameras.isEmpty }
+
     var searchTextTrimmed: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
+
     var canAddFromSearch: Bool {
-        !searchTextTrimmed.isEmpty && 
-        !allCameras.contains(where: { $0.name.localizedCaseInsensitiveCompare(searchTextTrimmed) == .orderedSame })
+        !searchTextTrimmed.isEmpty &&
+        !allCameras.contains(where: {
+            $0.name.localizedCaseInsensitiveCompare(searchTextTrimmed) == .orderedSame
+        })
     }
-    
+
+    /// Cameras whose stored format matches the film being loaded.
+    private var matchingCameras: [Camera] {
+        guard let filmFormat else { return [] }
+        return allCameras.filter { $0.format == filmFormat.rawValue }
+    }
+
+    /// All remaining cameras (no format set, or a different format).
+    private var otherCameras: [Camera] {
+        let matchingNames = Set(matchingCameras.map { $0.name })
+        return allCameras.filter { !matchingNames.contains($0.name) }
+    }
+
+    private var filteredCameras: [Camera] {
+        guard !searchText.isEmpty else { return [] }
+        return allCameras.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
+
     var body: some View {
         List {
-            // Show empty state with add button if no cameras
+            // Empty state
             if hasNoCameras && searchText.isEmpty {
                 Section {
                     VStack(spacing: 12) {
@@ -422,20 +444,22 @@ struct CameraPickerView: View {
                             .foregroundColor(.secondary)
                         Text("cameras.empty")
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                         Button {
-                            newCameraNameInput = ""
                             showingAddCamera = true
                         } label: {
                             Label("camera.addFirst", systemImage: "plus.circle.fill")
                         }
                         .buttonStyle(.borderedProminent)
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 }
             }
-            
-            // Show "Add camera" option when search doesn't match any existing camera
+
+            // Quick-add from search text (format can be set later in Manage Cameras)
             if canAddFromSearch {
                 Section {
                     Button {
@@ -443,34 +467,37 @@ struct CameraPickerView: View {
                         selectedCamera = newCamera.name
                         dismiss()
                     } label: {
-                        Label(String(format: NSLocalizedString("action.addNew", comment: ""), searchTextTrimmed), systemImage: "plus.circle")
+                        Label(
+                            String(format: NSLocalizedString("action.addNew", comment: ""), searchTextTrimmed),
+                            systemImage: "plus.circle"
+                        )
                     }
                 }
             }
-            
-            ForEach(filteredCameras, id: \.name) { camera in
-                Button {
-                    selectedCamera = camera.name
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text(camera.name)
-                        Spacer()
-                        if selectedCamera == camera.name {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
+
+            if !searchText.isEmpty {
+                // Search results: flat list
+                ForEach(filteredCameras, id: \.name) { camera in
+                    cameraRow(camera)
+                }
+            } else if !matchingCameras.isEmpty {
+                // Grouped: matching format cameras on top
+                Section(header: Text("load.suggestedCameras")) {
+                    ForEach(matchingCameras, id: \.name) { camera in
+                        cameraRow(camera)
+                    }
+                }
+                if !otherCameras.isEmpty {
+                    Section(header: Text("load.otherCameras")) {
+                        ForEach(otherCameras, id: \.name) { camera in
+                            cameraRow(camera)
                         }
                     }
                 }
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button(role: .destructive) {
-                        let success = dataManager.deleteCamera(camera)
-                        if !success {
-                            showDeleteError = true
-                        }
-                    } label: {
-                        Label("action.delete", systemImage: "trash")
-                    }
+            } else {
+                // No format context or no matches: flat list
+                ForEach(allCameras, id: \.name) { camera in
+                    cameraRow(camera)
                 }
             }
         }
@@ -479,62 +506,67 @@ struct CameraPickerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                // Show info button if cameras exist, add button only if no cameras
-                if hasNoCameras {
-                    Button {
-                        newCameraNameInput = ""
-                        showingAddCamera = true
-                    } label: {
-                        Image(systemName: "plus")
+                if !hasNoCameras {
+                    Button { showingCameraInfo = true } label: {
+                        Image(systemName: "questionmark.circle")
                     }
                 } else {
-                    Button {
-                        showingCameraInfo = true
-                    } label: {
-                        Image(systemName: "questionmark.circle")
+                    Button { showingAddCamera = true } label: {
+                        Image(systemName: "plus")
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingAddCamera) {
+            AddCameraSheet { newCamera in
+                selectedCamera = newCamera.name
+                dismiss()
+            }
+            .environmentObject(dataManager)
         }
         .alert("cameras.info.title", isPresented: $showingCameraInfo) {
             Button("action.ok", role: .cancel) { }
         } message: {
             Text("cameras.info.message")
         }
-        .alert("camera.add", isPresented: $showingAddCamera) {
-            TextField("camera.name", text: $newCameraNameInput)
-                .autocorrectionDisabled()
-            Button("action.cancel", role: .cancel) {
-                newCameraNameInput = ""
-            }
-            Button("action.add") {
-                let trimmedName = newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmedName.isEmpty && !isDuplicate {
-                    let newCamera = dataManager.addCamera(name: trimmedName)
-                    selectedCamera = newCamera.name
-                    dismiss()
-                } else if isDuplicate {
-                    showDuplicateError = true
-                }
-                newCameraNameInput = ""
-            }
-            .disabled(newCameraNameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isDuplicate)
-        } message: {
-            if isDuplicate {
-                Text("camera.duplicateError")
-            } else {
-                Text("camera.addMessage")
-            }
-        }
-        .alert("camera.duplicateTitle", isPresented: $showDuplicateError) {
-            Button("action.ok", role: .cancel) { }
-        } message: {
-            Text("camera.duplicateMessage")
-        }
         .alert("camera.deleteError", isPresented: $showDeleteError) {
             Button("action.ok", role: .cancel) { }
         } message: {
             Text("camera.deleteErrorMessage")
+        }
+    }
+
+    @ViewBuilder
+    private func cameraRow(_ camera: Camera) -> some View {
+        Button {
+            selectedCamera = camera.name
+            dismiss()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(camera.name)
+                        .foregroundColor(.primary)
+                    if !camera.formatDisplayName.isEmpty {
+                        Text(camera.formatDisplayName)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                Spacer()
+                if selectedCamera == camera.name {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.accentColor)
+                }
+            }
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button(role: .destructive) {
+                if !dataManager.deleteCamera(camera) {
+                    showDeleteError = true
+                }
+            } label: {
+                Label("action.delete", systemImage: "trash")
+            }
         }
     }
 }

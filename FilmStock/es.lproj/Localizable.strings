@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "Cargar película";
 "load.selectCamera" = "Seleccionar cámara";
+"load.suggestedCameras" = "Sugeridas";
+"load.otherCameras" = "Otras";
 "load.selectFormat" = "Seleccionar formato";
 "load.searchCamera" = "Buscar o añadir cámara";
 "load.error.noRolls" = "No hay rollos disponibles para este formato";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "No se puede eliminar la cámara";
 "camera.deleteErrorMessage" = "Esta cámara no se puede eliminar porque actualmente tiene películas cargadas.";
 "camera.addFirst" = "Añadir tu primera cámara";
+"camera.format" = "Formato";
+"camera.format.none" = "Ninguno";
+"camera.edit" = "Editar cámara";
 "cameras.manage" = "Gestionar cámaras";
 "cameras.empty" = "Sin cámaras todavía";
 "cameras.swipeToDelete" = "Desliza a la izquierda para eliminar";

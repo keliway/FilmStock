@@ -293,6 +293,8 @@
 // MARK: - Load Film
 "load.title" = "Załaduj film";
 "load.selectCamera" = "Wybierz aparat";
+"load.suggestedCameras" = "Sugerowane";
+"load.otherCameras" = "Inne";
 "load.selectFormat" = "Wybierz format";
 "load.searchCamera" = "Szukaj lub dodaj aparat";
 "load.error.noRolls" = "Brak dostępnych rolek dla tego formatu";
@@ -325,6 +327,9 @@
 "camera.deleteError" = "Nie można usunąć aparatu";
 "camera.deleteErrorMessage" = "Ten aparat nie może zostać usunięty, ponieważ ma aktualnie załadowane filmy.";
 "camera.addFirst" = "Dodaj swój pierwszy aparat";
+"camera.format" = "Format";
+"camera.format.none" = "Brak";
+"camera.edit" = "Edytuj aparat";
 "cameras.manage" = "Zarządzaj aparatami";
 "cameras.empty" = "Brak aparatów";
 "cameras.swipeToDelete" = "Przesuń w lewo, aby usunąć";
