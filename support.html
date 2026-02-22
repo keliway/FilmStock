@@ -10,20 +10,20 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
             background: #f5f5f7;
         }
-        
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 50px;
@@ -32,36 +32,24 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
-        .app-icon {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-        }
-        
+
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             color: #1d1d1f;
         }
-        
+
         .tagline {
             font-size: 1.2em;
             color: #666;
             margin-bottom: 20px;
         }
-        
+
         .version {
             color: #999;
             font-size: 0.9em;
         }
-        
+
         .content-section {
             background: white;
             padding: 30px;
@@ -69,7 +57,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         h2 {
             color: #FF6B35;
             margin-bottom: 20px;
@@ -77,70 +65,70 @@
             border-bottom: 2px solid #FF6B35;
             padding-bottom: 10px;
         }
-        
+
         h3 {
             color: #1d1d1f;
             margin-top: 25px;
             margin-bottom: 15px;
             font-size: 1.3em;
         }
-        
+
         p {
             margin-bottom: 15px;
             color: #555;
         }
-        
+
         ul, ol {
             margin-left: 20px;
             margin-bottom: 15px;
         }
-        
+
         li {
             margin-bottom: 10px;
             color: #555;
         }
-        
+
         .contact-info {
             background: #f9f9f9;
             padding: 20px;
             border-radius: 8px;
             border-left: 4px solid #FF6B35;
         }
-        
+
         .contact-info strong {
             color: #FF6B35;
         }
-        
+
         a {
             color: #FF6B35;
             text-decoration: none;
         }
-        
+
         a:hover {
             text-decoration: underline;
         }
-        
+
         .faq-item {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .faq-item:last-child {
             border-bottom: none;
         }
-        
+
         .faq-question {
             font-weight: 600;
             color: #1d1d1f;
             margin-bottom: 10px;
             font-size: 1.1em;
         }
-        
+
         .faq-answer {
             color: #555;
         }
-        
+
         .button {
             display: inline-block;
             padding: 12px 30px;
@@ -151,12 +139,12 @@
             font-weight: 600;
             transition: background 0.3s;
         }
-        
+
         .button:hover {
             background: #FF8C42;
             text-decoration: none;
         }
-        
+
         footer {
             text-align: center;
             margin-top: 50px;
@@ -164,29 +152,42 @@
             color: #999;
             font-size: 0.9em;
         }
-        
+
         .feature-list {
             display: grid;
             gap: 15px;
             margin: 20px 0;
         }
-        
+
         .feature-item {
             padding: 15px;
             background: #f9f9f9;
             border-radius: 8px;
             border-left: 3px solid #FF6B35;
         }
-        
+
+        .notice {
+            padding: 15px 20px;
+            background: #fff8f0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .notice strong {
+            color: #FF6B35;
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2em;
             }
-            
+
             .container {
                 padding: 20px 15px;
             }
-            
+
             .content-section {
                 padding: 20px;
             }
@@ -195,269 +196,343 @@
 </head>
 <body>
     <div class="container">
+        <header>
+            <h1>FilmStock</h1>
+            <p class="tagline">Your analog film collection manager</p>
+            <p class="version">Version 2.0 &mdash; Updated February 2026</p>
+        </header>
+
         <div class="content-section">
-            <h2>About FilmStock</h2>
-            <p>FilmStock is a comprehensive analog film collection manager designed for film photography enthusiasts. Keep track of your film stock, manage which films are loaded in your cameras, track development status, and never lose track of what you're shooting.</p>
-            
+            <h2>What's New in Version 2.0</h2>
+            <p>Version 2.0 is a major update that changes how FilmStock tracks your film stock. <strong>Rolls are now individual entities</strong> &mdash; each roll you own can have its own expiry date, frozen status, exposure count, and notes. Your existing data has been automatically migrated to this new model.</p>
+
+            <div class="notice">
+                <strong>Migration note:</strong> If you previously had a film with multiple expiry dates (e.g., you entered several dates for the same format), the app created individual rolls for each date. In some edge cases, expiry dates from migrated data may appear as a 6-digit string (e.g., <code>022007</code> instead of <code>02/2007</code>). The app handles these correctly, but you can clean them up manually &mdash; see <a href="#fix-expiry">Fixing migrated expiry dates</a> below.
+            </div>
+
             <div class="feature-list">
                 <div class="feature-item">
-                    <strong>📦 Collection Management</strong> - Organize your film stock by manufacturer, format, speed, and type with custom notes and comments
+                    <strong>Roll-by-Roll Tracking</strong> &mdash; Each roll is a distinct item. Group them by format, expiry date, and frozen status.
                 </div>
                 <div class="feature-item">
-                    <strong>📸 Camera Integration</strong> - Take photos of your film boxes or select from your library, with automatic square cropping
+                    <strong>Redesigned Film Detail</strong> &mdash; Rolls are displayed grouped by format and expiry date. Edit each group individually.
                 </div>
                 <div class="feature-item">
-                    <strong>🎞️ Loaded Films Tracking</strong> - Remember which film is loaded in which camera, with custom ISO settings and loading dates
+                    <strong>Export &amp; Import (Beta)</strong> &mdash; Export your film inventory as JSON or CSV. Import inventory from a file.
                 </div>
                 <div class="feature-item">
-                    <strong>✅ Finished Rolls Management</strong> - Track completed rolls with development status (To develop, In development, Developed)
+                    <strong>Notes Per Roll Group</strong> &mdash; Add free-text notes to each roll group (e.g., "from Japan batch").
                 </div>
                 <div class="feature-item">
-                    <strong>🔍 Advanced Filtering</strong> - Filter and sort by manufacturer, type, format, camera, ISO, status, and more
+                    <strong>Camera Format</strong> &mdash; Assign a film format to each camera. The app auto-selects the best-matching camera when you load a film.
                 </div>
                 <div class="feature-item">
-                    <strong>🏠 Home Screen Widget</strong> - Quick glance at your currently loaded films with ISO information
+                    <strong>Multiple Expiry Chips</strong> &mdash; If a film has rolls with different expiry dates, all dates appear as chips in the list view.
                 </div>
                 <div class="feature-item">
-                    <strong>⏰ Expiry Date Tracking</strong> - Track expiration dates and freeze status for your film stock
-                </div>
-                <div class="feature-item">
-                    <strong>📊 Statistics</strong> - View detailed statistics about your collection and shooting history
-                </div>
-                <div class="feature-item">
-                    <strong>🌍 Multilingual</strong> - Supports English, German, French, Spanish, Japanese, Norwegian, and Polish
+                    <strong>Image Catalog Search</strong> &mdash; Search for film card images by name or manufacturer when choosing from the catalog.
                 </div>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Getting Started</h2>
-            
+
             <h3>Adding Your First Film</h3>
             <ol>
-                <li>Tap the <strong>+</strong> button in the My Films tab</li>
-                <li>Select a manufacturer (e.g., Kodak, Ilford, Fuji)</li>
-                <li>Enter the film name (e.g., Portra 400, HP5 Plus)</li>
-                <li>The app automatically detects film metadata and loads catalog images</li>
-                <li>Optionally add expiry date, quantity, format, and comments</li>
-                <li>Tap <strong>Save</strong></li>
-            </ol>
-            
-            <h3>Taking Custom Film Photos</h3>
-            <ol>
-                <li>When adding or editing a film, tap the camera icon</li>
-                <li>Choose <strong>Take Picture</strong> or <strong>Choose from Library</strong></li>
-                <li>Frame your film box photo</li>
-                <li>The app automatically crops to a square format</li>
-                <li>Adjust the crop if needed</li>
-                <li>Tap <strong>Done</strong> to save</li>
-            </ol>
-            
-            <h3>Loading a Film in Your Camera</h3>
-            <ol>
-                <li>Open any film from your collection</li>
-                <li>Tap <strong>Load Film</strong></li>
-                <li>Select a camera or add a new one</li>
-                <li>Optionally adjust the ISO (defaults to film's native speed)</li>
-                <li>View loaded films in the <strong>Loaded Films</strong> tab</li>
-                <li>Tap <strong>Finish Roll</strong> when you're done shooting</li>
-            </ol>
-            
-            <h3>Managing Finished Rolls</h3>
-            <ol>
-                <li>Go to <strong>Loaded Films</strong> tab</li>
-                <li>Switch to <strong>Finished Rolls</strong> segment</li>
-                <li>Swipe on a roll to update development status:
+                <li>Tap the <strong>+</strong> button in the My Films tab.</li>
+                <li>Fill in the <strong>Film Information</strong> section: manufacturer, name, type, and ISO speed.</li>
+                <li>Optionally add a film card image (tap the camera icon or browse the catalog).</li>
+                <li>In the <strong>Rolls</strong> section, tap <strong>Add Roll Batch</strong> to specify what you have:
                     <ul>
-                        <li><strong>To develop</strong> - Waiting to be developed</li>
-                        <li><strong>In development</strong> - Currently at the lab</li>
-                        <li><strong>Developed</strong> - Completed</li>
+                        <li>Choose a format (35mm, 120, etc.)</li>
+                        <li>Set the quantity</li>
+                        <li>Optionally set expiry date, frozen status, number of exposures, and notes</li>
                     </ul>
                 </li>
-                <li>Swipe to <strong>Re-load</strong> if you need to move it back to loaded films</li>
-                <li>Use filters to sort by status, camera, format, or date</li>
+                <li>Add more roll batches if you have the same film in different formats or with different expiry dates.</li>
+                <li>Tap <strong>Save</strong>.</li>
             </ol>
-            
-            <h3>Using the Widget</h3>
+
+            <h3>Adding More Rolls to an Existing Film</h3>
             <ol>
-                <li>Long press on your home screen</li>
-                <li>Tap the <strong>+</strong> button in the top corner</li>
-                <li>Search for <strong>FilmStock</strong></li>
-                <li>Choose widget size (small, medium, or large)</li>
-                <li>Add to home screen</li>
-                <li>Tap arrows on the widget to cycle through loaded films</li>
-                <li>Widget displays ISO speed (in orange if different from native)</li>
+                <li>Open the film from your collection.</li>
+                <li>Scroll past the roll groups and tap <strong>Add Rolls</strong>.</li>
+                <li>Configure the new roll batch (format, quantity, expiry, frozen, exposures, notes).</li>
+                <li>Tap <strong>Add</strong>.</li>
             </ol>
-            
+
+            <h3>Editing a Roll Group</h3>
+            <p>Each roll group (e.g., "3x 35mm &middot; 12/2026 &middot; frozen") has its own edit button on the right.</p>
+            <ol>
+                <li>Open a film's detail view.</li>
+                <li>Tap the <strong>pencil icon</strong> on the roll group you want to change.</li>
+                <li>Adjust the quantity, expiry date, frozen status, exposures, or notes.</li>
+                <li>Tap <strong>Save</strong>.</li>
+            </ol>
+            <p>To remove rolls entirely, set the quantity to 0 and save, or reduce the quantity as you use them up.</p>
+
+            <h3 id="fix-expiry">Fixing Migrated Expiry Dates</h3>
+            <p>If you upgraded from an older version and had films with multiple expiry dates, those rolls were automatically migrated. In some cases the expiry date might appear in a compact 6-digit format (e.g., <code>022007</code>). The app understands this format, but if you'd like it to look cleaner:</p>
+            <ol>
+                <li>Open the film in the detail view.</li>
+                <li>Tap the pencil icon on the affected roll group.</li>
+                <li>Clear the expiry date field and re-enter it in the standard format: <code>MM/YYYY</code> (e.g., <code>02/2007</code>).</li>
+                <li>Tap <strong>Save</strong>.</li>
+            </ol>
+
+            <h3>Taking Custom Film Photos</h3>
+            <ol>
+                <li>When adding or editing a film, tap the camera icon.</li>
+                <li>Choose <strong>Take Picture</strong> or <strong>Choose from Library</strong>.</li>
+                <li>Frame your film box.</li>
+                <li>The app automatically crops to a square format &mdash; adjust the crop if needed.</li>
+                <li>Tap <strong>Done</strong> to save.</li>
+            </ol>
+            <p>You can also browse the built-in image catalog using <strong>Choose from Catalog</strong> and search by manufacturer or film name.</p>
+
+            <h3>Loading a Film in Your Camera</h3>
+            <ol>
+                <li>Open a film from your collection and tap <strong>Load Film</strong>.</li>
+                <li>Select the format you want to load (if the film has multiple formats).</li>
+                <li>For roll formats, choose which specific roll to load &mdash; rolls are grouped by expiry date, frozen status, and exposures.</li>
+                <li>Select a camera. If you've assigned a format to your cameras, the best-matching camera is highlighted (or auto-selected if there's only one match).</li>
+                <li>Optionally adjust the shot ISO (shown in orange if different from the film's native speed).</li>
+                <li>Tap <strong>Load</strong>.</li>
+            </ol>
+
             <h3>Managing Cameras</h3>
             <ol>
-                <li>Go to <strong>Loaded Films</strong> tab</li>
-                <li>Tap the camera icon in the top left</li>
-                <li>Add, edit, or delete cameras</li>
-                <li>Camera names persist even if the camera is deleted from finished rolls</li>
+                <li>Go to the <strong>Loaded Films</strong> tab.</li>
+                <li>Tap the camera icon in the top left to open <strong>Manage Cameras</strong>.</li>
+                <li>Tap <strong>+</strong> to add a new camera &mdash; you can set a name and assign a film format.</li>
+                <li>Tap an existing camera to edit its name or format.</li>
+                <li>Assigning a format helps the app auto-select and group cameras when loading film.</li>
+            </ol>
+
+            <h3>Managing Finished Rolls</h3>
+            <ol>
+                <li>Go to the <strong>Loaded Films</strong> tab and switch to the <strong>Finished Rolls</strong> segment.</li>
+                <li>Swipe on a roll to update development status:
+                    <ul>
+                        <li><strong>To develop</strong> &mdash; Waiting to be developed</li>
+                        <li><strong>In development</strong> &mdash; Currently at the lab</li>
+                        <li><strong>Developed</strong> &mdash; Completed</li>
+                    </ul>
+                </li>
+                <li>Tap a finished roll to see full details: which roll was used, loading date, camera, frozen status, shot ISO, and notes.</li>
+                <li>Swipe to <strong>Re-load</strong> if you need to move it back to loaded films.</li>
+            </ol>
+
+            <h3>Exporting Your Inventory</h3>
+            <ol>
+                <li>Go to <strong>Settings</strong> and tap <strong>Export or Import Inventory</strong>.</li>
+                <li>Choose <strong>Export</strong> and select a format &mdash; <strong>JSON</strong> (detailed, machine-readable) or <strong>CSV</strong> (spreadsheet-friendly).</li>
+                <li>Tap <strong>Export</strong> &mdash; a share sheet will appear so you can save to Files, send via email, etc.</li>
+            </ol>
+            <p><strong>Note:</strong> The export includes your film inventory only (not loaded films, cameras, or finished rolls). Film card pictures are not embedded in the file.</p>
+
+            <h3>Importing Inventory</h3>
+            <ol>
+                <li>Go to <strong>Settings</strong> &rarr; <strong>Export or Import Inventory</strong>.</li>
+                <li>Switch to the <strong>Import</strong> tab and tap <strong>Choose File</strong>.</li>
+                <li>Select a previously exported JSON or CSV file.</li>
+                <li>Review the import preview &mdash; it shows which films will be added.</li>
+                <li>Tap <strong>Import</strong> to confirm.</li>
+            </ol>
+            <p>After import, the app will attempt to automatically match film card images from the built-in catalog based on film name and manufacturer. If the manufacturer name in the import file doesn't match exactly (e.g., "Fuji" vs. "Fujifilm"), you can fix it by editing the film after import.</p>
+
+            <h3>Using the Widget</h3>
+            <ol>
+                <li>Long press on your home screen and tap <strong>+</strong>.</li>
+                <li>Search for <strong>FilmStock</strong> and choose a widget size.</li>
+                <li>Tap arrows on the widget to cycle through currently loaded films.</li>
+                <li>The widget shows ISO in orange if you're shooting at a non-native ISO.</li>
             </ol>
         </div>
 
         <div class="content-section">
+            <h2>Entering Expiry Dates</h2>
+            <p>When adding or editing rolls, you can enter expiry dates in several formats. The app auto-formats your input as you type:</p>
+            <ul>
+                <li><strong>Year only:</strong> 4 digits &mdash; e.g., <code>2025</code></li>
+                <li><strong>Month and year:</strong> 6 digits &mdash; e.g., <code>112025</code> becomes <code>11/2025</code></li>
+                <li><strong>Full date:</strong> 8 digits &mdash; e.g., <code>11152025</code> becomes <code>11/15/2025</code></li>
+            </ul>
+            <p>Expired rolls are highlighted in red in the film detail view and in the list view chips. You can enable expiry date chips in <strong>Settings &rarr; My Films &rarr; Show Expiry Date in Chip</strong>. If a film has multiple expiry dates across its rolls, up to three chips are shown, with a +N overflow badge for the rest.</p>
+        </div>
+
+        <div class="content-section">
             <h2>Frequently Asked Questions</h2>
-            
+
             <div class="faq-item">
                 <div class="faq-question">Q: Does FilmStock require an account or internet connection?</div>
-                <div class="faq-answer">A: No! FilmStock works completely offline. All your data is stored locally on your device. No account, no login, no cloud sync.</div>
+                <div class="faq-answer">A: No. FilmStock works completely offline. All your data is stored locally on your device. No account, no login, no cloud sync required.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: What does shooting at a different ISO mean?</div>
-                <div class="faq-answer">A: When loading a film, you can change the ISO to indicate you're rating it differently (e.g., pushing or pulling). The app shows this ISO in orange to remind you it's different from the film's native speed. This is useful when you need to adjust for lighting conditions or creative effect.</div>
+                <div class="faq-question">Q: What changed in version 2.0 &mdash; will I lose my data?</div>
+                <div class="faq-answer">A: Your data is fully preserved. Version 2.0 introduces a <strong>roll-centric model</strong>: each roll in your inventory is now a distinct item with its own expiry date, frozen status, and notes. When you update, the app automatically migrates your existing films into this new structure. If you previously had a film with multiple expiry dates, individual rolls are created for each date.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: How do I customize which formats appear in table view?</div>
-                <div class="faq-answer">A: Go to Settings → My Films → Enabled Formats. The table view will show all your enabled formats with horizontal scrolling. You can also add custom formats here.</div>
+                <div class="faq-question">Q: Some of my expiry dates look like "022007" instead of "02/2007". How do I fix this?</div>
+                <div class="faq-answer">A: This can happen with rolls that were migrated from an older data format. The app handles these dates correctly, but if you'd like the display to look cleaner, open the film detail, tap the pencil icon on the affected roll group, clear the expiry date, and re-enter it as <code>MM/YYYY</code> (e.g., <code>02/2007</code>). Tap Save.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: What happens if I delete a camera that has finished rolls?</div>
-                <div class="faq-answer">A: The app stores a snapshot of the camera name when you finish a roll, so your finished rolls will still show which camera was used even if you later delete that camera.</div>
+                <div class="faq-question">Q: How do I track multiple rolls of the same film with different expiry dates?</div>
+                <div class="faq-answer">A: Add each batch of rolls separately. When adding a film, tap <strong>Add Roll Batch</strong> for each group (e.g., 3x 35mm expiring 12/2026 and 2x 35mm expiring 06/2024). In the film detail view, each group appears as its own row, grouped by format. You can edit any group independently.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: Can I track sheet film quantities?</div>
-                <div class="faq-answer">A: Yes! For large format sheet films (4×5, 5×7, 8×10), you can load individual sheets and unload them one at a time using the swipe actions in Loaded Films.</div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q: How do I add custom film images?</div>
-                <div class="faq-answer">A: When adding or editing a film, tap the camera icon. You can take a new photo or choose from your library. The app automatically crops images to square format and stores them locally.</div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q: Can I track multiple rolls of the same film with different expiry dates?</div>
-                <div class="faq-answer">A: Yes! When viewing a film's details, you'll see all formats grouped by expiry date. Each combination of format and expiry date is tracked separately.</div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q: What does "Buy Me a Coffee" do?</div>
-                <div class="faq-answer">A: It's an optional one-time tip/donation to support continued development. All features remain free regardless of whether you purchase it. It's simply a way to say thank you!</div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q: How do I enter expiry dates?</div>
-                <div class="faq-answer">A: You can enter expiry dates in three formats:
+                <div class="faq-question">Q: What does the camera format setting do?</div>
+                <div class="faq-answer">A: You can assign a film format (e.g., 35mm, 120) to each camera. When you load a film, the app uses this to:
                     <ul>
-                        <li><strong>Year only:</strong> Type 4 digits (e.g., 2025)</li>
-                        <li><strong>Month and year:</strong> Type 6 digits (e.g., 112025 becomes 11/2025)</li>
-                        <li><strong>Full date:</strong> Type 8 digits (e.g., 11152025 becomes 11/15/2025)</li>
+                        <li>Auto-select the camera if there's exactly one camera matching the film's format</li>
+                        <li>Show matching cameras in a "Suggested" section at the top of the camera list when there are multiple options</li>
                     </ul>
-                    The app automatically formats and validates your input.
+                    Set a camera's format in <strong>Loaded Films &rarr; camera icon &rarr; tap the camera</strong>.
                 </div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: Why doesn't my widget show film images?</div>
-                <div class="faq-answer">A: Make sure you have at least one film loaded in a camera. The widget only displays films that are currently loaded, not your entire collection. If images still don't appear, try removing and re-adding the widget.</div>
+                <div class="faq-question">Q: Can I import my collection from another app or spreadsheet?</div>
+                <div class="faq-answer">A: Yes &mdash; via the CSV import feature (Settings &rarr; Export or Import Inventory). The CSV format is documented within the export file itself. Prepare a file with columns for name, manufacturer, type, ISO, format, quantity, expiry date, frozen status, and optional notes. After import, film card images can be matched from the built-in catalog or added manually.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: How do I use filters and sorting?</div>
-                <div class="faq-answer">A: Tap the filter icon to access filtering options. You can filter by manufacturer, type, format, speed ranges, cameras, and development status. The app remembers your filter and sort preferences between sessions.</div>
+                <div class="faq-question">Q: The manufacturer I imported doesn't match the catalog &mdash; how do I fix it?</div>
+                <div class="faq-answer">A: Open the film, tap the <strong>&middot;&middot;&middot;</strong> menu and choose <strong>Edit Film</strong>. Tap the manufacturer row to open the picker and select the correct manufacturer. Tap the back button and then Save. The app will re-run auto-image detection with the corrected name.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: What's the difference between "Remove" and "Finish Roll"?</div>
-                <div class="faq-answer">A: <strong>Finish Roll</strong> marks the film as completed and moves it to Finished Rolls, decreasing your inventory. <strong>Remove</strong> is for accidental loads - it removes the loaded film entry and restores the quantity to your collection without recording it as finished.</div>
+                <div class="faq-question">Q: What does shooting at a different ISO mean?</div>
+                <div class="faq-answer">A: When loading a film, you can change the ISO to indicate you're rating it differently (e.g., pushing or pulling). The app shows this ISO in orange to remind you it's different from the film's native speed.</div>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question">Q: Will FilmStock support iPad?</div>
-                <div class="faq-answer">A: Currently FilmStock is optimized for iPhone, but it will run on iPad in compatibility mode. Native iPad support may come in a future update based on user feedback.</div>
+                <div class="faq-question">Q: Can I track sheet film quantities?</div>
+                <div class="faq-answer">A: Yes. Large format sheet films (4x5, 5x7, 8x10) appear in a dedicated <strong>Sheets</strong> section in the film detail view, separate from roll formats. You can load individual sheets and track quantities just like rolls. Other custom formats appear in an <strong>Other</strong> section.</div>
             </div>
-            
+
+            <div class="faq-item">
+                <div class="faq-question">Q: What is the "frozen" status?</div>
+                <div class="faq-answer">A: Marking a roll as frozen indicates you're storing it in a freezer to preserve it. This is tracked per roll group and shown as a chip in the film detail view and in loaded and finished roll details.</div>
+            </div>
+
             <div class="faq-item">
                 <div class="faq-question">Q: Is my data backed up?</div>
-                <div class="faq-answer">A: Your FilmStock data is included in your iPhone's iCloud backup (if enabled). If you restore your iPhone from an iCloud backup, your film collection, photos, cameras, and all settings will be restored.</div>
+                <div class="faq-answer">A: Your FilmStock data is included in your iPhone's iCloud backup (if backup is enabled in Settings). If you restore your iPhone from a backup, your collection, cameras, and settings will be restored. You can also export your inventory manually as a JSON or CSV file for an extra copy.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: What does "Buy Me a Coffee" do?</div>
+                <div class="faq-answer">A: It's an optional one-time tip to support continued development. All features remain free regardless. Thank you!</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: What happens if I delete a camera that has finished rolls?</div>
+                <div class="faq-answer">A: The app stores a snapshot of the camera name when you finish a roll. Your finished rolls will still show which camera was used even after you delete it.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: What's the difference between "Remove" and "Finish Roll"?</div>
+                <div class="faq-answer">A: <strong>Finish Roll</strong> marks the film as shot and moves it to Finished Rolls, reducing your inventory count. <strong>Remove</strong> is for accidental loads &mdash; it removes the entry and returns the roll to your inventory without recording it as finished.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: Why doesn't my widget show film images?</div>
+                <div class="faq-answer">A: Make sure you have at least one film loaded in a camera. The widget only displays currently loaded films. If images still don't appear, remove and re-add the widget, or restart your iPhone.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: How do I customize which formats appear in the table view?</div>
+                <div class="faq-answer">A: Go to <strong>Settings &rarr; My Films &rarr; Enabled Formats</strong>. You can also add custom format names here.</div>
             </div>
         </div>
 
         <div class="content-section">
             <h2>Troubleshooting</h2>
-            
+
+            <h3>Migrated expiry dates showing as 6-digit numbers</h3>
+            <ul>
+                <li>This is a cosmetic issue from the v2.0 data migration. Dates like <code>022007</code> mean February 2007 &mdash; the app sorts and highlights them correctly.</li>
+                <li>To fix the display: open the film detail &rarr; tap the pencil on the roll group &rarr; clear the expiry field and re-enter as <code>MM/YYYY</code> &rarr; Save.</li>
+            </ul>
+
+            <h3>Imported film doesn't get the right image automatically</h3>
+            <ul>
+                <li>Auto-image detection matches based on film name and manufacturer. If the manufacturer name in your import file differs from the built-in catalog (e.g., "Fuji" vs. "Fujifilm"), the match won't be found.</li>
+                <li>Fix it by editing the film (<strong>&middot;&middot;&middot;</strong> &rarr; Edit Film &rarr; change manufacturer) and saving.</li>
+                <li>Alternatively, add the image manually via the camera icon in Edit Film.</li>
+            </ul>
+
+            <h3>Film card image missing after import</h3>
+            <ul>
+                <li>Custom film card photos are not embedded in export files.</li>
+                <li>After importing, add your custom photos manually by tapping <strong>Edit Film</strong> and selecting the image.</li>
+                <li>Built-in catalog images will be detected automatically based on name and manufacturer.</li>
+            </ul>
+
+            <h3>Camera not auto-selected when loading film</h3>
+            <ul>
+                <li>Auto-selection only works when exactly one camera has a format matching the film being loaded.</li>
+                <li>If you have multiple cameras with the same format, you'll need to select manually &mdash; matching cameras appear at the top under "Suggested".</li>
+                <li>Assign formats to your cameras via <strong>Loaded Films &rarr; camera icon &rarr; tap camera</strong>.</li>
+            </ul>
+
+            <h3>Roll group not appearing in film detail</h3>
+            <ul>
+                <li>Roll groups with a quantity of 0 are hidden &mdash; they've been used up.</li>
+                <li>If you accidentally reduced a quantity to 0, tap <strong>Add Rolls</strong> at the bottom of the detail view to add it back.</li>
+            </ul>
+
             <h3>Widget not updating</h3>
             <ul>
-                <li>Remove the widget and add it again</li>
-                <li>Make sure you have films loaded in cameras (not just in collection)</li>
-                <li>Restart your iPhone</li>
-                <li>Check that the app has background refresh enabled in Settings</li>
+                <li>Remove the widget and add it again.</li>
+                <li>Make sure you have films loaded in cameras.</li>
+                <li>Restart your iPhone.</li>
+                <li>Check that background app refresh is enabled in Settings for FilmStock.</li>
             </ul>
-            
-            <h3>Camera permission denied</h3>
+
+            <h3>Camera or photo library permission denied</h3>
             <ul>
-                <li>Go to <strong>Settings</strong> → <strong>Privacy & Security</strong> → <strong>Camera</strong></li>
-                <li>Enable camera access for <strong>FilmStock</strong></li>
+                <li>Go to <strong>Settings &rarr; Privacy &amp; Security &rarr; Camera</strong> (or <strong>Photos</strong>) and enable access for FilmStock.</li>
             </ul>
-            
-            <h3>Photo library permission denied</h3>
-            <ul>
-                <li>Go to <strong>Settings</strong> → <strong>Privacy & Security</strong> → <strong>Photos</strong></li>
-                <li>Enable photo library access for <strong>FilmStock</strong></li>
-            </ul>
-            
-            <h3>Cropped image doesn't match what I selected</h3>
-            <ul>
-                <li>The app automatically crops to square format for consistency</li>
-                <li>Use pinch-to-zoom and drag to adjust the crop area before tapping Done</li>
-                <li>Make sure you're viewing the entire square overlay when taking camera photos</li>
-            </ul>
-            
+
             <h3>App crashes or freezes</h3>
             <ul>
-                <li>Make sure you're running the latest version from the App Store</li>
-                <li>Restart your iPhone</li>
-                <li>Check available storage space on your device</li>
-                <li>If the issue persists, contact support (see below)</li>
-            </ul>
-            
-            <h3>Film images not appearing</h3>
-            <ul>
-                <li>The app includes catalog images for popular films</li>
-                <li>For custom or rare films, you'll need to add your own photo</li>
-                <li>Make sure you've granted photo library access if selecting existing photos</li>
-                <li>Custom images are stored locally in the app's documents folder</li>
-            </ul>
-            
-            <h3>Filters or settings not persisting</h3>
-            <ul>
-                <li>Filter and sort preferences are now saved automatically</li>
-                <li>If they reset, try force-quitting the app and relaunching</li>
-                <li>Make sure you have the latest app version</li>
+                <li>Make sure you're running the latest version from the App Store.</li>
+                <li>Restart your iPhone.</li>
+                <li>Check available storage on your device.</li>
+                <li>If the issue persists, contact support with your iOS version and app version.</li>
             </ul>
         </div>
 
         <div class="content-section">
             <h2>Contact Support</h2>
-            
+
             <div class="contact-info">
-                <p><strong>Email:</strong> <a href="mailto:jonas.halbe@cognitedata.com">jonas.halbe@cognitedata.com</a></p>
-                <p><strong>Response Time:</strong> Within 24-48 hours</p>
+                <p><strong>Email:</strong> <a href="mailto:filmstock@halbe.app">filmstock@halbe.app</a></p>
+                <p><strong>Response Time:</strong> Within 24&ndash;48 hours on weekdays</p>
                 <p><strong>Languages:</strong> English, German, Norwegian</p>
             </div>
-            
+
             <p style="margin-top: 20px;">When contacting support, please include:</p>
             <ul>
-                <li>Your iOS version (Settings → General → About)</li>
-                <li>FilmStock app version (Settings tab in the app)</li>
-                <li>A detailed description of the issue</li>
+                <li>Your iOS version (<strong>Settings &rarr; General &rarr; About</strong>)</li>
+                <li>FilmStock app version (visible in the <strong>Settings</strong> tab in the app)</li>
+                <li>A clear description of the issue</li>
                 <li>Screenshots if applicable</li>
                 <li>Steps to reproduce the problem</li>
             </ul>
-            
-            <p style="margin-top: 20px;">I typically respond within 24 hours on weekdays. Thank you for your patience!</p>
         </div>
 
         <div class="content-section">
-            <h2>Privacy & Legal</h2>
-            <p>FilmStock respects your privacy. All data is stored locally on your device. We do not collect, transmit, or store any personal information. Custom photos you take or select are stored only on your device and never uploaded.</p>
-            
+            <h2>Privacy &amp; Legal</h2>
+            <p>FilmStock respects your privacy. All data is stored locally on your device and never transmitted to our servers or any third parties. Custom photos are stored only in the app's local storage and never uploaded.</p>
+
             <p style="margin-top: 20px;">
                 <a href="privacy-policy.html" class="button">Privacy Policy</a>
                 <a href="terms-of-service.html" class="button" style="margin-left: 10px;">Terms of Service</a>
@@ -465,7 +540,7 @@
         </div>
 
         <footer>
-            <p>© 2026 Jonas Halbe. All rights reserved.</p>
+            <p>&copy; 2026 Jonas Halbe. All rights reserved.</p>
             <p>FilmStock is not affiliated with any film manufacturer.</p>
             <p>All film brand names and trademarks are property of their respective owners.</p>
         </footer>

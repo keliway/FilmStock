@@ -33,7 +33,7 @@ struct WhatsNewView: View {
             icon: "arrow.up.arrow.down",
             iconColor: .green,
             title: "Export & Import",
-            description: "Head to Settings to export your film inventory as JSON or CSV, or import it back. Film card pictures need to be re-added manually after import.",
+            description: "Head to Settings to export your film inventory as JSON or CSV, or import it back.",
             showBeta: true
         ),
         WhatsNewFeature(
