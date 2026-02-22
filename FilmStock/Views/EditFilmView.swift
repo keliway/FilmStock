@@ -42,6 +42,7 @@ struct EditFilmView: View {
     @State private var catalogSelectedSource: ImageSource?
 
     @State private var nameError: String?
+    @State private var hasLoaded = false
 
     var body: some View {
         NavigationStack {
@@ -242,7 +243,11 @@ struct EditFilmView: View {
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
                 }
             }
-            .onAppear { loadInitialValues() }
+            .onAppear {
+                guard !hasLoaded else { return }
+                hasLoaded = true
+                loadInitialValues()
+            }
         }
     }
 

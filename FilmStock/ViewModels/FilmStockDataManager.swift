@@ -15,6 +15,8 @@ import WidgetKit
 class FilmStockDataManager: ObservableObject {
     @Published var filmStocks: [FilmStock] = []
     @Published var filmStocksVersion: Int = 0
+    /// Pre-computed grouped film list, refreshed once per save — avoids per-render DB fetches.
+    @Published var cachedGroupedFilms: [GroupedFilm] = []
     
     private var modelContext: ModelContext?
     
@@ -179,11 +181,12 @@ class FilmStockDataManager: ObservableObject {
     func loadFilmStocks() {
         guard let context = modelContext else { return }
         
-        let descriptor = FetchDescriptor<MyFilm>()
+        var descriptor = FetchDescriptor<MyFilm>()
+        descriptor.relationshipKeyPathsForPrefetching = [\MyFilm.film]
         guard let myFilms = try? context.fetch(descriptor) else {
             filmStocks = []
             filmStocksVersion &+= 1
-                return
+            return
         }
         
         // Convert MyFilm to FilmStock for compatibility
@@ -210,6 +213,11 @@ class FilmStockDataManager: ObservableObject {
                 updatedAt: myFilm.updatedAt
             )
         }
+        
+        // Rebuild the grouped view once — callers use cachedGroupedFilms instead of
+        // calling groupedFilms() on every render.
+        cachedGroupedFilms = groupedFilms()
+        filmStocksVersion &+= 1
     }
     
     func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) -> Bool {
@@ -668,7 +676,8 @@ class FilmStockDataManager: ObservableObject {
     func groupedFilms() -> [GroupedFilm] {
         guard let context = modelContext else { return [] }
         
-        let descriptor = FetchDescriptor<Film>()
+        var descriptor = FetchDescriptor<Film>()
+        descriptor.relationshipKeyPathsForPrefetching = [\Film.manufacturer, \Film.myFilms]
         guard let films = try? context.fetch(descriptor) else { return [] }
         
         let today = Date()

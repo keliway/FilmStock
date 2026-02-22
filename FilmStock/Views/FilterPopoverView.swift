@@ -30,7 +30,7 @@ struct FilterPopoverView: View {
     
     // Get all films that match current filters (excluding the filter category being evaluated)
     private func getAvailableFilms(excludingCategory: FilterCategory) -> [GroupedFilm] {
-        let allFilms = dataManager.groupedFilms()
+        let allFilms = dataManager.cachedGroupedFilms
         
         var filtered = allFilms
         

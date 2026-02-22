@@ -69,9 +69,7 @@ struct BrowseView: View {
     ]
     
     var filteredFilms: [GroupedFilm] {
-        // Access filmStocks and key fields to ensure view updates when data changes
-        let _ = dataManager.filmStocksVersion
-        var grouped = dataManager.groupedFilms()
+        var grouped = dataManager.cachedGroupedFilms
         
         // Apply filters
         if !selectedManufacturers.isEmpty {

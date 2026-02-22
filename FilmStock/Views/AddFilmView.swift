@@ -782,6 +782,16 @@ struct ManufacturerPickerView: View {
                         Image(systemName: "plus")
                     }
                 }
+            } else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "checkmark")
+                            .fontWeight(.semibold)
+                    }
+                    .disabled(selectedManufacturer.isEmpty)
+                }
             }
         }
         .alert("manufacturer.add", isPresented: $showingAddManufacturer) {

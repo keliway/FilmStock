@@ -50,7 +50,7 @@ struct FilmDetailView: View {
     @State private var navImage: UIImage? = nil
 
     private var currentGroupedFilm: GroupedFilm? {
-        dataManager.groupedFilms().first { $0.id == groupedFilm.id }
+        dataManager.cachedGroupedFilms.first { $0.id == groupedFilm.id }
     }
 
     private var displayGroupedFilm: GroupedFilm {
