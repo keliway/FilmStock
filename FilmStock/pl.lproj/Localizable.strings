@@ -427,3 +427,5 @@
 "import.preview.warnings" = "Ostrzeżenia";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
+
+"export.beta.notice" = "Ta funkcja jest w wersji beta. Przy imporcie używaj wyeksportowanego pliku jako wzorca. Zdjęcia kart filmowych nie są importowane automatycznie i muszą zostać dodane ręcznie.";

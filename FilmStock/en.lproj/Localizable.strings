@@ -426,3 +426,5 @@
 "import.preview.warnings" = "Warnings";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
+
+"export.beta.notice" = "This feature is in beta. Use the exported file as a reference when importing data. Note that film card pictures are not automatically imported and will need to be added manually afterwards.";

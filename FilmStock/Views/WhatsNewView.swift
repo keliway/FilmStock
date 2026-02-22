@@ -16,6 +16,7 @@ struct WhatsNewFeature: Identifiable {
     let iconColor: Color
     let title: String
     let description: String
+    var showBeta: Bool = false
 }
 
 struct WhatsNewView: View {
@@ -29,10 +30,11 @@ struct WhatsNewView: View {
             description: "Each roll is now its own record with an individual expiry date, frozen status, exposure count, and notes — no more shared batches. All your previously added film got migrated to the new system."
         ),
         WhatsNewFeature(
-            icon: "plus.circle",
+            icon: "arrow.up.arrow.down",
             iconColor: .green,
-            title: "Flexible Roll Adding",
-            description: "When adding a film you can create multiple roll batches at once — mix 35mm, 120, and sheet film in a single save."
+            title: "Export & Import",
+            description: "Head to Settings to export your film inventory as JSON or CSV, or import it back. Film card pictures need to be re-added manually after import.",
+            showBeta: true
         ),
         WhatsNewFeature(
             icon: "calendar.badge.exclamationmark",
@@ -128,9 +130,20 @@ private struct FeatureRow: View {
             .padding(.top, 14)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(feature.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                HStack(spacing: 6) {
+                    Text(feature.title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    if feature.showBeta {
+                        Text("BETA")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
+                    }
+                }
                 Text(feature.description)
                     .font(.subheadline)
                     .foregroundColor(.secondary)

@@ -427,3 +427,5 @@
 "import.preview.warnings" = "Advarsler";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
+
+"export.beta.notice" = "Denne funksjonen er i beta. Bruk den eksporterte filen som referanse ved import. Filmkortbilder importeres ikke automatisk og må legges til manuelt etterpå.";

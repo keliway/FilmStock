@@ -427,3 +427,5 @@
 "import.preview.warnings" = "Advertencias";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
+
+"export.beta.notice" = "Esta función está en versión beta. Usa el archivo exportado como referencia al importar datos. Las imágenes de las fichas de película no se importan automáticamente y deberán añadirse manualmente.";

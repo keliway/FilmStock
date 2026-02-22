@@ -426,3 +426,5 @@
 "import.preview.warnings" = "Warnungen";
 "import.preview.films" = "Filme";
 "import.preview.confirm" = "Importieren";
+
+"export.beta.notice" = "Diese Funktion ist noch in der Beta-Phase. Verwende die exportierte Datei als Vorlage beim Importieren. Film-Bilder werden nicht automatisch importiert und müssen danach manuell hinzugefügt werden.";

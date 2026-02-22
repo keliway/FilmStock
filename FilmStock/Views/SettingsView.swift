@@ -94,7 +94,17 @@ struct SettingsView: View {
                         ExportView()
                             .environmentObject(dataManager)
                     } label: {
-                        Text("settings.export")
+                        HStack {
+                            Text("settings.export")
+                            Spacer()
+                            Text("BETA")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
+                        }
                     }
 
                     // About

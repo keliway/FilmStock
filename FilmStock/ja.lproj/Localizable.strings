@@ -427,3 +427,5 @@
 "import.preview.warnings" = "警告";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
+
+"export.beta.notice" = "この機能はベータ版です。インポート時はエクスポートしたファイルを参考にしてください。フィルムカードの画像は自動的にインポートされないため、後から手動で追加する必要があります。";

@@ -55,6 +55,15 @@ struct ExportView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Beta notice
+            Text(LocalizedStringKey("export.beta.notice"))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
+
             Picker("", selection: $activeTab) {
                 ForEach(Tab.allCases) { tab in
                     Text(LocalizedStringKey(tab.rawValue)).tag(tab)
