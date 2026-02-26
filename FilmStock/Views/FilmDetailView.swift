@@ -236,8 +236,8 @@ struct FilmDetailView: View {
                             .foregroundColor(.secondary)
                     }
 
-                    if let exp = group.exposures, exp > 0 {
-                        Text("· \(exp)exp")
+                    if let exp = group.exposures, exp > 0 || exp == kBulkRollExposures {
+                        Text("· \(exposureDisplayLabel(exp))exp")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -468,7 +468,7 @@ struct RollGroupEditSheet: View {
                         Picker("film.exposures", selection: $exposures) {
                             Text(LocalizedStringKey("film.exposures.unspecified")).tag(nil as Int?)
                             ForEach(group.format.exposureOptions, id: \.self) { opt in
-                                Text("\(opt)").tag(opt as Int?)
+                                Text(exposureDisplayLabel(opt)).tag(opt as Int?)
                             }
                             Text(LocalizedStringKey("film.exposures.custom")).tag(-1 as Int?)
                         }
@@ -543,6 +543,7 @@ struct RollGroupEditSheet: View {
     private func save() {
         let cleanDate: String? = expireDate.isEmpty ? nil : expireDate.filter { $0.isNumber }
         let resolvedExposures: Int? = {
+            if exposures == kBulkRollExposures { return kBulkRollExposures }
             if exposures == -1, let n = Int(customExposures), n > 0 { return n }
             if let e = exposures, e > 0 { return e }
             return nil

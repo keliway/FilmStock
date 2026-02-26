@@ -281,6 +281,7 @@
 "add.rolls.section" = "Ruller";
 "add.rolls.hint" = "Legg til minst én rulle for å lagre denne filmen.";
 "film.exposures.unspecified" = "Ikke spesifisert";
+"film.exposures.bulk" = "100ft bulk";
 "film.exposures.custom" = "Tilpasset";
 "film.exposures.customCount" = "Antall eksponeringer";
 "edit.rolls.title" = "Rediger %@-ruller";

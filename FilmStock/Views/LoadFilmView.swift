@@ -167,8 +167,8 @@ struct LoadFilmView: View {
                             .foregroundColor(.secondary)
                     }
 
-                    if let exp = group.exposures, exp > 0 {
-                        Text("· \(exp)exp")
+                    if let exp = group.exposures, exp > 0 || exp == kBulkRollExposures {
+                        Text("· \(exposureDisplayLabel(exp))exp")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

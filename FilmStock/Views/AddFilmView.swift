@@ -42,6 +42,7 @@ struct RollBatch: Identifiable {
     }
 
     var resolvedExposures: Int? {
+        if exposures == kBulkRollExposures { return kBulkRollExposures }
         if exposures == -1, let n = Int(customExposures), n > 0 { return n }
         if let e = exposures, e > 0 { return e }
         return nil
@@ -621,7 +622,7 @@ struct RollBatchSheet: View {
                         Picker("film.exposures", selection: $exposures) {
                             Text(LocalizedStringKey("film.exposures.unspecified")).tag(nil as Int?)
                             ForEach(format.exposureOptions, id: \.self) { opt in
-                                Text("\(opt)").tag(opt as Int?)
+                                Text(exposureDisplayLabel(opt)).tag(opt as Int?)
                             }
                             Text(LocalizedStringKey("film.exposures.custom")).tag(-1 as Int?)
                         }

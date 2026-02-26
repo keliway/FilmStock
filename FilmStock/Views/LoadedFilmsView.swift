@@ -590,8 +590,8 @@ struct LoadedFilmDetailSheet: View {
                             detailRow(label: "film.speed", value: "ISO \(film.filmSpeed)")
                         }
                     }
-                    if let exposures = loadedFilm.myFilm?.exposures, exposures > 0 {
-                        detailRow(label: "film.exposures", value: "\(exposures)")
+                    if let exposures = loadedFilm.myFilm?.exposures, exposures > 0 || exposures == kBulkRollExposures {
+                        detailRow(label: "film.exposures", value: exposureDisplayLabel(exposures))
                     }
                     if let expireDates = loadedFilm.myFilm?.expireDateArray, !expireDates.isEmpty {
                         detailRow(
@@ -1194,8 +1194,8 @@ struct FinishedFilmDetailSheet: View {
                             detailRow(label: "film.speed", value: "ISO \(film.filmSpeed)")
                         }
                     }
-                    if let exposures = finishedFilm.myFilm?.exposures, exposures > 0 {
-                        detailRow(label: "film.exposures", value: "\(exposures)")
+                    if let exposures = finishedFilm.myFilm?.exposures, exposures > 0 || exposures == kBulkRollExposures {
+                        detailRow(label: "film.exposures", value: exposureDisplayLabel(exposures))
                     }
                     if let expireDates = finishedFilm.myFilm?.expireDateArray, !expireDates.isEmpty {
                         detailRow(

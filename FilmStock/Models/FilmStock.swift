@@ -137,13 +137,25 @@ struct FilmStock: Identifiable, Codable, Hashable {
         }
 
         /// Picker options for exposure counts. Empty means show nothing.
+        /// -2 is a sentinel for "100ft bulk roll".
         var exposureOptions: [Int] {
             switch self {
-            case .thirtyFive: return [12, 24, 36]
+            case .thirtyFive: return [12, 24, 36, -2]
             default:          return []
             }
         }
     }
+}
+
+/// Sentinel stored in the DB for a 100ft bulk roll. Negative so it never
+/// conflicts with a real exposure count.
+let kBulkRollExposures = -2
+
+/// Returns a display string for an exposure count value.
+/// Handles the bulk-roll sentinel and the custom sentinel (-1).
+func exposureDisplayLabel(_ exp: Int) -> String {
+    if exp == kBulkRollExposures { return NSLocalizedString("film.exposures.bulk", comment: "") }
+    return "\(exp)"
 }
 
 // Grouped film for display (multiple formats of same film)

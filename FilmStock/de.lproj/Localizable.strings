@@ -281,6 +281,7 @@
 "add.rolls.section" = "Rollen";
 "add.rolls.hint" = "Füge mindestens eine Rolle hinzu, um diesen Film zu speichern.";
 "film.exposures.unspecified" = "Nicht angegeben";
+"film.exposures.bulk" = "100ft bulk";
 "film.exposures.custom" = "Benutzerdefiniert";
 "film.exposures.customCount" = "Anzahl der Aufnahmen";
 "edit.rolls.title" = "%@ Rollen bearbeiten";

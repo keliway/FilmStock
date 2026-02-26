@@ -281,6 +281,7 @@
 "add.rolls.section" = "Rouleaux";
 "add.rolls.hint" = "Ajoutez au moins un rouleau pour enregistrer ce film.";
 "film.exposures.unspecified" = "Non spécifié";
+"film.exposures.bulk" = "100ft bulk";
 "film.exposures.custom" = "Personnalisé";
 "film.exposures.customCount" = "Nombre de poses";
 "edit.rolls.title" = "Modifier les rouleaux %@";
