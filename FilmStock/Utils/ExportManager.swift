@@ -66,7 +66,7 @@ class ExportManager {
         // on relationship faults that fire lazily.
         let inventory: [ExportFilm] = myFilms.compactMap { mf in
             // Guard against invalidated objects
-            guard mf.quantity >= 0 else { return nil }
+            guard mf.quantity > 0 else { return nil }
             let filmName  = mf.film?.name ?? ""
             let mfrName   = mf.film?.manufacturer?.name ?? ""
             let filmType  = mf.film?.type ?? ""
