@@ -161,14 +161,50 @@ struct FilterPopoverView: View {
                         )
                     )
                     
-                    // Toggles
+                    // Status filter chips + toggle
                     VStack(alignment: .leading, spacing: 12) {
                         Text("filter.options")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        
-                        Toggle("filter.showExpiredOnly", isOn: $showExpiredOnly)
-                        Toggle("filter.showFrozenOnly", isOn: $showFrozenOnly)
+
+                        HStack(spacing: 8) {
+                            Button {
+                                showExpiredOnly.toggle()
+                            } label: {
+                                Text(LocalizedStringKey("film.expired"))
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(showExpiredOnly ? .white : .red)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(showExpiredOnly ? Color.red : Color.clear)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(Color.red, lineWidth: 1)
+                                    )
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                showFrozenOnly.toggle()
+                            } label: {
+                                Text(LocalizedStringKey("film.frozen"))
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(showFrozenOnly ? .white : .blue)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(showFrozenOnly ? Color.blue : Color.clear)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(Color.blue, lineWidth: 1)
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+
                         Toggle("filter.hideEmpty", isOn: $hideEmpty)
                     }
                     
