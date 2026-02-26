@@ -82,7 +82,7 @@
 "format.sheets.count" = "%d Blatt";
 
 // MARK: - Image Selection
-"image.takePhoto" = "Foto aufnehmen";
+"image.takePhoto" = "Foto hinzufügen";
 "image.openCatalog" = "Katalog öffnen";
 "image.catalog" = "Bildkatalog";
 "image.defaultCatalog" = "Standardkatalog";

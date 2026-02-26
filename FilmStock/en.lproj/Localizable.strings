@@ -82,7 +82,7 @@
 "format.sheets.count" = "%d sheets";
 
 // MARK: - Image Selection
-"image.takePhoto" = "Take Photo";
+"image.takePhoto" = "Add Image";
 "image.openCatalog" = "Open Catalog";
 "image.catalog" = "Image Catalog";
 "image.defaultCatalog" = "Default Catalog";
