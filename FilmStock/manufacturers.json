@@ -37,7 +37,41 @@
     },
     {
       "name": "Arista",
-      "films": []
+      "films": [
+          {
+            "filename": "edu100",
+            "speed": 100,
+            "type": "BW",
+            "aliases": [
+              "edu 100",
+              "edu 100 ultra",
+              "ultra 100",
+              "100"
+            ]
+          },
+          {
+            "filename": "edu200",
+            "speed": 200,
+            "type": "BW",
+            "aliases": [
+              "edu 200",
+              "edu 200 ultra",
+              "ultra 200",
+              "200"
+            ]
+          },
+          {
+            "filename": "edu400",
+            "speed": 400,
+            "type": "BW",
+            "aliases": [
+              "edu 400",
+              "edu 400 ultra",
+              "ultra 400",
+              "400"
+            ]
+          },
+      ]
     },
     {
       "name": "Astrum",
@@ -99,7 +133,20 @@
     },
     {
       "name": "Ferrania",
-      "films": []
+      "films": [
+          {
+            "filename": "orto50",
+            "speed": 50,
+            "type": "BW",
+            "aliases": [
+              "orto 50",
+              "ortho 50",
+              "orto50",
+              "ortho 50",
+              "50"
+            ]
+          }
+      ]
     },
     {
       "name": "FlicFilm",
@@ -1201,7 +1248,17 @@
     },
     {
       "name": "Lucky",
-      "films": []
+      "films": [
+          {
+            "filename": "200",
+            "speed": 200,
+            "type": "Color",
+            "aliases": [
+              "lucky 200",
+              "200"
+            ]
+          }
+      ]
     },
     {
       "name": "Maco",
@@ -1233,6 +1290,33 @@
     {
       "name": "Harman",
       "films": []
+    },
+    {
+      "name": "Reflx",
+      "films": [
+          {
+              "filename": "640T",
+              "speed": 640,
+              "type": "Color",
+              "aliases": [
+                  "640t",
+                  "640",
+                  "640t ahu",
+                  "640 ahu"
+              ]
+          },
+          {
+              "filename": "320D",
+              "speed": 320,
+              "type": "Color",
+              "aliases": [
+                  "320d",
+                  "320",
+                  "320d ahu",
+                  "320 ahu"
+              ]
+          },
+      ]
     },
     {
       "name": "Rollei",
