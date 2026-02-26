@@ -20,13 +20,6 @@ struct FilterPopoverView: View {
     @ObservedObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     
-    private let speedRanges = [
-        ("<100", 0, 99),
-        ("100", 100, 199),
-        ("200", 200, 300),
-        ("400", 301, 400),
-        ("400+", 401, Int.max)
-    ]
     
     // Get all films that match current filters (excluding the filter category being evaluated)
     private func getAvailableFilms(excludingCategory: FilterCategory) -> [GroupedFilm] {
@@ -52,12 +45,7 @@ struct FilterPopoverView: View {
         
         if excludingCategory != .speed && !selectedSpeedRanges.isEmpty {
             filtered = filtered.filter { group in
-                selectedSpeedRanges.contains { rangeKey in
-                    if let range = speedRanges.first(where: { $0.0 == rangeKey }) {
-                        return group.filmSpeed >= range.1 && group.filmSpeed <= range.2
-                    }
-                    return false
-                }
+                selectedSpeedRanges.contains("\(group.filmSpeed)")
             }
         }
         
@@ -83,13 +71,8 @@ struct FilterPopoverView: View {
     
     private var availableSpeedRanges: [String] {
         let films = getAvailableFilms(excludingCategory: .speed)
-        let availableSpeeds = Set(films.map { $0.filmSpeed })
-        
-        return speedRanges.filter { range in
-            availableSpeeds.contains { speed in
-                speed >= range.1 && speed <= range.2
-            }
-        }.map { $0.0 }
+        let speeds = Set(films.map { $0.filmSpeed })
+        return speeds.sorted().map { "\($0)" }
     }
     
     private var availableFormats: [FilmStock.FilmFormat] {

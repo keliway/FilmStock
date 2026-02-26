@@ -54,19 +54,6 @@ struct BrowseView: View {
         }
     }
     
-    private struct SpeedRange {
-        let name: String
-        let min: Int
-        let max: Int
-    }
-    
-    private let speedRanges: [SpeedRange] = [
-        SpeedRange(name: "<100", min: 0, max: 99),
-        SpeedRange(name: "100", min: 100, max: 199),
-        SpeedRange(name: "200", min: 200, max: 300),
-        SpeedRange(name: "400", min: 301, max: 400),
-        SpeedRange(name: "400+", min: 401, max: Int.max)
-    ]
     
     var filteredFilms: [GroupedFilm] {
         var grouped = dataManager.cachedGroupedFilms
@@ -82,12 +69,7 @@ struct BrowseView: View {
         
         if !selectedSpeedRanges.isEmpty {
             grouped = grouped.filter { group in
-                selectedSpeedRanges.contains { rangeKey in
-                    if let range = speedRanges.first(where: { $0.name == rangeKey }) {
-                        return group.filmSpeed >= range.min && group.filmSpeed <= range.max
-                    }
-                    return false
-                }
+                selectedSpeedRanges.contains("\(group.filmSpeed)")
             }
         }
         
