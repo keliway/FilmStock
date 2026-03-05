@@ -277,6 +277,7 @@
 "loaded.detail.frozen" = "Frozen";
 "finished.detail.title" = "Finished Roll";
 "finished.detail.finishedDate" = "Finished";
+"finished.detail.developedDate" = "Developed";
 "finished.detail.daysOnRoll" = "Days on Roll";
 "add.rolls.section" = "Rolls";
 "add.rolls.hint" = "Add at least one roll to save this film.";

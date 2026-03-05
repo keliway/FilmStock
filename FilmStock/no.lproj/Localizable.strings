@@ -277,6 +277,7 @@
 "loaded.detail.frozen" = "Fryst";
 "finished.detail.title" = "Ferdig rulle";
 "finished.detail.finishedDate" = "Ferdig";
+"finished.detail.developedDate" = "Fremkalt";
 "finished.detail.daysOnRoll" = "Dager på rulle";
 "add.rolls.section" = "Ruller";
 "add.rolls.hint" = "Legg til minst én rulle for å lagre denne filmen.";

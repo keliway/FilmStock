@@ -1172,6 +1172,9 @@ struct FinishedFilmDetailSheet: View {
                     }
                     detailRow(label: "loaded.detail.loadedDate", value: exactDate(finishedFilm.loadedAt))
                     detailRow(label: "finished.detail.finishedDate", value: exactDate(finishedFilm.finishedAt))
+                    if let developedAt = finishedFilm.developedAt {
+                        detailRow(label: "finished.detail.developedDate", value: exactDate(developedAt))
+                    }
                     detailRow(label: "finished.detail.daysOnRoll", value: daysOnRoll)
                 }
 
@@ -1254,9 +1257,8 @@ struct FinishedFilmDetailSheet: View {
     }
 
     private var daysOnRoll: String {
-        let days = Calendar.current.dateComponents([.day], from: finishedFilm.loadedAt, to: finishedFilm.finishedAt).day ?? 0
+        let days = max(1, Calendar.current.dateComponents([.day], from: finishedFilm.loadedAt, to: finishedFilm.finishedAt).day ?? 1)
         switch days {
-        case 0:  return NSLocalizedString("loaded.detail.today", comment: "")
         case 1:  return String(format: NSLocalizedString("loaded.detail.day", comment: ""), days)
         default: return String(format: NSLocalizedString("loaded.detail.days", comment: ""), days)
         }

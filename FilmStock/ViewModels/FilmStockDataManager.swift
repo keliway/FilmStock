@@ -1214,6 +1214,13 @@ class FilmStockDataManager: ObservableObject {
     func updateFinishedFilmStatus(_ finishedFilm: FinishedFilm, status: FinishedFilmStatus) {
         guard let context = modelContext else { return }
         finishedFilm.status = status.rawValue
+        if status == .developed {
+            if finishedFilm.developedAt == nil {
+                finishedFilm.developedAt = Date()
+            }
+        } else {
+            finishedFilm.developedAt = nil
+        }
         try? context.save()
         loadFilmStocks()
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)

@@ -159,6 +159,7 @@ final class FinishedFilm {
     var quantity: Int
     var shotAtISO: Int?
     var status: String? // toDevelop, inDevelopment, developed
+    var developedAt: Date? // Set when status changes to "developed"
     var cameraName: String? // Snapshot of camera name at time of finishing (preserved even if camera is deleted)
     @Relationship(deleteRule: .nullify)
     var film: Film?

@@ -277,6 +277,7 @@
 "loaded.detail.frozen" = "冷凍保存";
 "finished.detail.title" = "使用済みロール";
 "finished.detail.finishedDate" = "撮り終え日";
+"finished.detail.developedDate" = "現像日";
 "finished.detail.daysOnRoll" = "撮影日数";
 "add.rolls.section" = "ロール";
 "add.rolls.hint" = "フィルムを保存するには、少なくとも1本のロールを追加してください。";

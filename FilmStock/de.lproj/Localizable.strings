@@ -277,6 +277,7 @@
 "loaded.detail.frozen" = "Eingefroren";
 "finished.detail.title" = "Fertige Rolle";
 "finished.detail.finishedDate" = "Fertiggestellt";
+"finished.detail.developedDate" = "Entwickelt";
 "finished.detail.daysOnRoll" = "Tage auf der Rolle";
 "add.rolls.section" = "Rollen";
 "add.rolls.hint" = "Füge mindestens eine Rolle hinzu, um diesen Film zu speichern.";

@@ -277,6 +277,7 @@
 "loaded.detail.frozen" = "Congelado";
 "finished.detail.title" = "Carrete terminado";
 "finished.detail.finishedDate" = "Terminado";
+"finished.detail.developedDate" = "Revelado";
 "finished.detail.daysOnRoll" = "Días en carrete";
 "add.rolls.section" = "Rollos";
 "add.rolls.hint" = "Añade al menos un rollo para guardar esta película.";
