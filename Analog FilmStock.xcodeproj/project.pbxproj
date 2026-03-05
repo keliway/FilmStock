@@ -70,6 +70,7 @@
 				images/cinestill_50d.png,
 				images/cinestill_400d.png,
 				images/cinestill_800t.png,
+				images/cinestill_xx.png,
 				images/foma_fomapan100.png,
 				images/foma_fomapan200.png,
 				images/foma_fomapan400.png,
@@ -121,6 +122,8 @@
 				images/kodak_Ektachrome400.png,
 				images/kodak_Ektar100.png,
 				images/kodak_Gold.png,
+				images/kodak_kodacolor100.png,
+				images/kodak_kodacolor200.png,
 				images/kodak_PlusX.png,
 				images/kodak_Portra100T.png,
 				images/kodak_Portra160.png,
@@ -500,7 +503,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = K29M267J26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -540,7 +543,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = K29M267J26;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -577,7 +580,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = K29M267J26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;
@@ -609,7 +612,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = K29M267J26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;

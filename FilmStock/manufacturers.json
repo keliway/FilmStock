@@ -120,6 +120,17 @@
             "800t tungsten",
             "cinestill 800t"
           ]
+        },
+        {
+          "filename": "xx",
+          "speed": 200,
+          "type": "BW",
+          "aliases": [
+            "xx",
+            "bw xx t",
+            "double xx",
+            "double bw xx"
+          ]
         }
       ]
     },
@@ -592,6 +603,24 @@
     {
       "name": "Kodak",
       "films": [
+          {
+            "filename": "kodacolor100",
+            "speed": 100,
+            "type": "Color",
+            "aliases": [
+              "kodacolor 100",
+              "kodacolor100"
+            ]
+          },
+          {
+            "filename": "kodacolor200",
+            "speed": 200,
+            "type": "Color",
+            "aliases": [
+              "kodacolor 200",
+              "kodacolor200"
+            ]
+          },
         {
           "filename": "Portra160NC",
           "speed": 160,
