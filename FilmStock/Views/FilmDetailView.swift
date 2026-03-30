@@ -18,7 +18,8 @@ struct RollGroupItem: Identifiable, Hashable {
 
     var count: Int { rollIds.count }
 
-    var id: String { "\(format.rawValue)|\(expireDate ?? "")|\(isFrozen)" }
+    /// Includes exposures so distinct groups (e.g. 36 vs 12 exp) do not collapse into one row.
+    var id: String { "\(format.rawValue)|\(expireDate ?? "")|\(isFrozen)|\(exposures ?? -99)|\(customFormatName ?? "")" }
 
     var isExpired: Bool {
         guard let ds = expireDate, let date = FilmStock.parseExpireDate(ds) else { return false }
@@ -329,11 +330,13 @@ struct FilmDetailView: View {
     private var rollGroupsByFormat: [(format: FilmStock.FilmFormat, displayName: String, groups: [RollGroupItem])] {
         let rollFilms = relatedFilms.filter { $0.format.isRollFormat && $0.quantity > 0 }
 
-        // Build buckets keyed by (format, expireDate, isFrozen)
+        // Build buckets keyed by format, expiry, frozen, exposures (matches LoadFilmView.rollGroupsForFormat)
         var buckets: [String: RollGroupItem] = [:]
         for film in rollFilms {
             let expiry = film.expireDate?.first
-            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)"
+            let expKey = film.exposures ?? -99
+            let otherKey = film.customFormatName ?? ""
+            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(expKey)|\(otherKey)"
             if var existing = buckets[key] {
                 existing.rollIds.append(film.id)
                 buckets[key] = existing
@@ -366,7 +369,10 @@ struct FilmDetailView: View {
                 } else if lhs.expireDate != nil { return true }
                 else if rhs.expireDate != nil { return false }
                 if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
-                return false
+                let le = lhs.exposures ?? Int.max
+                let re = rhs.exposures ?? Int.max
+                if le != re { return le < re }
+                return lhs.id < rhs.id
             }
             let displayName = groups.compactMap { $0.customFormatName }.first ?? format.displayName
             return (format, displayName, sorted)
