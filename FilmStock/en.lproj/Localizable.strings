@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d days";
 "loaded.detail.frozen" = "Frozen";
 "finished.detail.title" = "Finished Roll";
+"finished.film.unavailable" = "Film unavailable";
 "finished.detail.finishedDate" = "Finished";
 "finished.detail.developedDate" = "Developed";
 "finished.detail.daysOnRoll" = "Days on Roll";

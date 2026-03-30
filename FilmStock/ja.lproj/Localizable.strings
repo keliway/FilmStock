@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d日";
 "loaded.detail.frozen" = "冷凍保存";
 "finished.detail.title" = "使用済みロール";
+"finished.film.unavailable" = "フィルム情報を表示できません";
 "finished.detail.finishedDate" = "撮り終え日";
 "finished.detail.developedDate" = "現像日";
 "finished.detail.daysOnRoll" = "撮影日数";

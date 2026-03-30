@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d dager";
 "loaded.detail.frozen" = "Fryst";
 "finished.detail.title" = "Ferdig rulle";
+"finished.film.unavailable" = "Film utilgjengelig";
 "finished.detail.finishedDate" = "Ferdig";
 "finished.detail.developedDate" = "Fremkalt";
 "finished.detail.daysOnRoll" = "Dager på rulle";

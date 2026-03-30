@@ -39,6 +39,9 @@ class FilmStockDataManager: ObservableObject {
         
         // Migrate to roll-centric model: split multi-quantity roll MyFilm entries into individual ones
         migrateToRollCentric(context: context)
+        
+        // Repair finished-roll records after v2 migration (nil film link, duplicate/empty string ids)
+        repairFinishedFilmsIntegrity(context: context)
     }
     
     private static let rollFormats: Set<String> = ["35", "120", "110", "127", "220"]
@@ -108,6 +111,43 @@ class FilmStockDataManager: ObservableObject {
         }
         
         UserDefaults.standard.set(true, forKey: migrationKey)
+    }
+    
+    /// Ensures finished rolls remain valid after the roll-centric migration: restores `film` from linked
+    /// `myFilm` when needed, and guarantees unique non-empty `id` for SwiftUI lists (`ForEach` crashes on duplicate `id`).
+    private func repairFinishedFilmsIntegrity(context: ModelContext) {
+        let key = "migration_finishedFilmsIntegrity_v1"
+        if UserDefaults.standard.bool(forKey: key) {
+            return
+        }
+        
+        let descriptor = FetchDescriptor<FinishedFilm>()
+        guard let all = try? context.fetch(descriptor) else {
+            UserDefaults.standard.set(true, forKey: key)
+            return
+        }
+        
+        var seenIds = Set<String>()
+        var changed = false
+        
+        for finished in all {
+            if finished.film == nil, let myFilm = finished.myFilm, let linkedFilm = myFilm.film {
+                finished.film = linkedFilm
+                changed = true
+            }
+            
+            if finished.id.isEmpty || seenIds.contains(finished.id) {
+                finished.id = UUID().uuidString
+                changed = true
+            }
+            seenIds.insert(finished.id)
+        }
+        
+        if changed {
+            try? context.save()
+        }
+        
+        UserDefaults.standard.set(true, forKey: key)
     }
     
     private func backfillFinishedFilmsCameraNames(context: ModelContext) {
@@ -1033,9 +1073,10 @@ class FilmStockDataManager: ObservableObject {
     
     func getFinishedFilms() -> [FinishedFilm] {
         guard let context = modelContext else { return [] }
-        let descriptor = FetchDescriptor<FinishedFilm>(
+        var descriptor = FetchDescriptor<FinishedFilm>(
             sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
         )
+        descriptor.relationshipKeyPathsForPrefetching = [\FinishedFilm.film, \FinishedFilm.myFilm]
         return (try? context.fetch(descriptor)) ?? []
     }
     

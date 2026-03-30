@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d días";
 "loaded.detail.frozen" = "Congelado";
 "finished.detail.title" = "Carrete terminado";
+"finished.film.unavailable" = "Película no disponible";
 "finished.detail.finishedDate" = "Terminado";
 "finished.detail.developedDate" = "Revelado";
 "finished.detail.daysOnRoll" = "Días en carrete";

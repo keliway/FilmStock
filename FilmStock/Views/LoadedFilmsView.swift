@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // Helper function to parse custom image name
 // Returns (manufacturer, filename) tuple
@@ -250,7 +251,7 @@ struct LoadedFilmsView: View {
                                     )
                                 } else {
                                     List {
-                                        ForEach(filteredAndSortedFinishedFilms, id: \.id) { finishedFilm in
+                                        ForEach(filteredAndSortedFinishedFilms, id: \.persistentModelID) { finishedFilm in
                                             FinishedFilmRow(finishedFilm: finishedFilm)
                                                 .contentShape(Rectangle())
                                                 .onTapGesture { selectedFinishedFilm = finishedFilm }
@@ -953,6 +954,13 @@ struct FinishedFilmRow: View {
                         }
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    } else {
+                        Text(NSLocalizedString("finished.film.unavailable", comment: "Finished roll with missing film catalog link"))
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(formatDisplayName)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
                     
                     HStack(spacing: 6) {
@@ -1151,6 +1159,37 @@ struct FinishedFilmDetailSheet: View {
                                 }
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                Text(LocalizedStringKey(status.labelKey))
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(statusColor)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(statusColor, lineWidth: 1))
+                                    .padding(.top, 2)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                } else {
+                    Section {
+                        HStack(spacing: 16) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(.systemGray5))
+                                .frame(width: 72, height: 72)
+                                .overlay(
+                                    Image(systemName: "camera.fill")
+                                        .font(.title2)
+                                        .foregroundColor(.secondary)
+                                )
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(NSLocalizedString("finished.film.unavailable", comment: "Finished roll with missing film catalog link"))
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                Text(formatDisplayName)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                                 Text(LocalizedStringKey(status.labelKey))
                                     .font(.caption2)
                                     .fontWeight(.bold)

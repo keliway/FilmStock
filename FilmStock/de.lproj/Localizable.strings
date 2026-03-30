@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d Tage";
 "loaded.detail.frozen" = "Eingefroren";
 "finished.detail.title" = "Fertige Rolle";
+"finished.film.unavailable" = "Film nicht verfügbar";
 "finished.detail.finishedDate" = "Fertiggestellt";
 "finished.detail.developedDate" = "Entwickelt";
 "finished.detail.daysOnRoll" = "Tage auf der Rolle";

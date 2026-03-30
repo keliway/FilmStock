@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d dni";
 "loaded.detail.frozen" = "Zamrożona";
 "finished.detail.title" = "Zakończona rolka";
+"finished.film.unavailable" = "Film niedostępny";
 "finished.detail.finishedDate" = "Zakończono";
 "finished.detail.developedDate" = "Wywołano";
 "finished.detail.daysOnRoll" = "Dni na rolce";

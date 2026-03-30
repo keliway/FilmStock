@@ -276,6 +276,7 @@
 "loaded.detail.days" = "%d jours";
 "loaded.detail.frozen" = "Congelé";
 "finished.detail.title" = "Pellicule terminée";
+"finished.film.unavailable" = "Film indisponible";
 "finished.detail.finishedDate" = "Terminé le";
 "finished.detail.developedDate" = "Développé le";
 "finished.detail.daysOnRoll" = "Jours sur la pellicule";
