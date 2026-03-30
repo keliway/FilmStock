@@ -282,6 +282,8 @@
 "finished.detail.finishedDate" = "Ferdig";
 "finished.detail.developedDate" = "Fremkalt";
 "finished.detail.daysOnRoll" = "Dager på rulle";
+"finished.editFinishedDate.title" = "Endre ferdigdato";
+"finished.editFinishedDate.a11y" = "Rediger ferdigdato";
 "add.rolls.section" = "Ruller";
 "add.rolls.hint" = "Legg til minst én rulle for å lagre denne filmen.";
 "film.exposures.unspecified" = "Ikke spesifisert";

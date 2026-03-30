@@ -282,6 +282,8 @@
 "finished.detail.finishedDate" = "Terminado";
 "finished.detail.developedDate" = "Revelado";
 "finished.detail.daysOnRoll" = "Días en carrete";
+"finished.editFinishedDate.title" = "Cambiar fecha de finalización";
+"finished.editFinishedDate.a11y" = "Editar fecha de finalización";
 "add.rolls.section" = "Rollos";
 "add.rolls.hint" = "Añade al menos un rollo para guardar esta película.";
 "film.exposures.unspecified" = "Sin especificar";

@@ -282,6 +282,8 @@
 "finished.detail.finishedDate" = "Zakończono";
 "finished.detail.developedDate" = "Wywołano";
 "finished.detail.daysOnRoll" = "Dni na rolce";
+"finished.editFinishedDate.title" = "Zmień datę zakończenia";
+"finished.editFinishedDate.a11y" = "Edytuj datę zakończenia";
 "add.rolls.section" = "Rolki";
 "add.rolls.hint" = "Dodaj przynajmniej jedną rolkę, aby zapisać ten film.";
 "film.exposures.unspecified" = "Nieokreślona";

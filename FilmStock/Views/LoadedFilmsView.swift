@@ -342,6 +342,7 @@ struct LoadedFilmsView: View {
             }
             .sheet(item: $selectedFinishedFilm) { film in
                 FinishedFilmDetailSheet(finishedFilm: film)
+                    .environmentObject(dataManager)
             }
             .onAppear {
                 loadFilms()
@@ -1118,8 +1119,11 @@ struct FinishedFilmRow: View {
 
 struct FinishedFilmDetailSheet: View {
     let finishedFilm: FinishedFilm
+    @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     @State private var filmImage: UIImage?
+    @State private var showFinishDateEditor = false
+    @State private var draftFinishedAt = Date()
 
     private var status: FinishedFilmStatus {
         FinishedFilmStatus(rawValue: finishedFilm.status ?? "") ?? .toDevelop
@@ -1210,7 +1214,7 @@ struct FinishedFilmDetailSheet: View {
                         detailRow(label: "camera.name", value: cameraName)
                     }
                     detailRow(label: "loaded.detail.loadedDate", value: exactDate(finishedFilm.loadedAt))
-                    detailRow(label: "finished.detail.finishedDate", value: exactDate(finishedFilm.finishedAt))
+                    finishedDateRow
                     if let developedAt = finishedFilm.developedAt {
                         detailRow(label: "finished.detail.developedDate", value: exactDate(developedAt))
                     }
@@ -1268,6 +1272,58 @@ struct FinishedFilmDetailSheet: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .onAppear { loadImage() }
+        .sheet(isPresented: $showFinishDateEditor) {
+            NavigationStack {
+                Form {
+                    DatePicker(
+                        "finished.detail.finishedDate",
+                        selection: $draftFinishedAt,
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                }
+                .navigationTitle("finished.editFinishedDate.title")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("action.cancel") {
+                            showFinishDateEditor = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("action.save") {
+                            dataManager.updateFinishedFilmFinishedAt(finishedFilm, finishedAt: draftFinishedAt)
+                            showFinishDateEditor = false
+                        }
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+            .onAppear {
+                draftFinishedAt = finishedFilm.finishedAt
+            }
+        }
+    }
+
+    private var finishedDateRow: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(LocalizedStringKey("finished.detail.finishedDate"))
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(exactDate(finishedFilm.finishedAt))
+                .fontWeight(.medium)
+                .multilineTextAlignment(.trailing)
+            Button {
+                draftFinishedAt = finishedFilm.finishedAt
+                showFinishDateEditor = true
+            } label: {
+                Image(systemName: "pencil.circle")
+                    .font(.body)
+                    .foregroundColor(.accentColor)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel(Text(LocalizedStringKey("finished.editFinishedDate.a11y")))
+        }
     }
 
     @ViewBuilder

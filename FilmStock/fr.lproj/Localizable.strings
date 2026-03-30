@@ -282,6 +282,8 @@
 "finished.detail.finishedDate" = "Terminé le";
 "finished.detail.developedDate" = "Développé le";
 "finished.detail.daysOnRoll" = "Jours sur la pellicule";
+"finished.editFinishedDate.title" = "Modifier la date de fin";
+"finished.editFinishedDate.a11y" = "Modifier la date de fin de pellicule";
 "add.rolls.section" = "Rouleaux";
 "add.rolls.hint" = "Ajoutez au moins un rouleau pour enregistrer ce film.";
 "film.exposures.unspecified" = "Non spécifié";

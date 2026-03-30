@@ -1298,6 +1298,14 @@ class FilmStockDataManager: ObservableObject {
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
     }
     
+    func updateFinishedFilmFinishedAt(_ finishedFilm: FinishedFilm, finishedAt: Date) {
+        guard let context = modelContext else { return }
+        finishedFilm.finishedAt = finishedAt
+        try? context.save()
+        loadFilmStocks()
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+    }
+    
     private static let finishedFilmsKey = "stats_finishedFilmsCount"
     
     func getFinishedFilmsCount() -> Int {

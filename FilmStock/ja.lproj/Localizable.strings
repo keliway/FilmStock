@@ -282,6 +282,8 @@
 "finished.detail.finishedDate" = "撮り終え日";
 "finished.detail.developedDate" = "現像日";
 "finished.detail.daysOnRoll" = "撮影日数";
+"finished.editFinishedDate.title" = "終了日時を変更";
+"finished.editFinishedDate.a11y" = "終了日時を編集";
 "add.rolls.section" = "ロール";
 "add.rolls.hint" = "フィルムを保存するには、少なくとも1本のロールを追加してください。";
 "film.exposures.unspecified" = "未指定";
