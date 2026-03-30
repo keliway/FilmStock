@@ -48,6 +48,7 @@ struct FilmDetailView: View {
     @State private var shouldDismissAfterLoad = false
     @State private var groupToEdit: RollGroupItem?
     @State private var showingAddRollsSheet = false
+    @State private var sheetLineToEdit: FilmStock?
     @State private var navImage: UIImage? = nil
 
     private var currentGroupedFilm: GroupedFilm? {
@@ -86,37 +87,27 @@ struct FilmDetailView: View {
                 }
             }
 
-            // 4x5 / 5x7 / 8x10 sheet formats
+            // 4x5 / 5x7 / 8x10 sheet formats (per-line expiry, frozen, edit like rolls)
             let largeFormats = largeFormatFilms
             if !largeFormats.isEmpty {
                 Section("detail.sheets") {
                     ForEach(largeFormats) { film in
-                        HStack {
-                            Text(film.formatDisplayName)
-                            Spacer()
-                            QuantityControlView(film: film)
-                                .environmentObject(dataManager)
-                        }
+                        nonRollInventoryRow(film)
                     }
                 }
             }
 
-            // Other / custom formats
+            // Other / custom non-roll formats
             let otherFormats = otherFormatFilms
             if !otherFormats.isEmpty {
                 Section("detail.other") {
                     ForEach(otherFormats) { film in
-                        HStack {
-                            Text(film.formatDisplayName)
-                            Spacer()
-                            QuantityControlView(film: film)
-                                .environmentObject(dataManager)
-                        }
+                        nonRollInventoryRow(film)
                     }
                 }
             }
 
-            // Comments
+            // Comments (roll / sheet lines that still use a single shared comments section on the film)
             if let comment = relatedFilms.compactMap({ $0.comments }).first(where: { !$0.isEmpty }) {
                 Section("film.comments") {
                     Text(comment).foregroundColor(.primary)
@@ -192,6 +183,10 @@ struct FilmDetailView: View {
             RollGroupEditSheet(group: group)
                 .environmentObject(dataManager)
         }
+        .sheet(item: $sheetLineToEdit) { line in
+            SheetGroupEditSheet(film: line)
+                .environmentObject(dataManager)
+        }
         .sheet(isPresented: $showingAddRollsSheet) {
             RollBatchSheet { batch in
                 let dateDigits = batch.expireDate.filter { $0.isNumber }
@@ -218,6 +213,51 @@ struct FilmDetailView: View {
     }
 
     // MARK: - Row Builder
+
+    @ViewBuilder
+    private func nonRollInventoryRow(_ film: FilmStock) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(film.formatDisplayName)
+                        .font(.body)
+                    if let dates = film.expireDate, !dates.isEmpty {
+                        Text(dates.map { FilmStock.formatExpireDate($0) }.joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("film.noExpiry")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    if film.isFrozen {
+                        tagChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                    }
+                    if let c = film.comments, !c.isEmpty {
+                        Text(c)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(3)
+                    }
+                }
+                Spacer()
+                Button {
+                    sheetLineToEdit = film
+                } label: {
+                    Image(systemName: "pencil.circle")
+                        .foregroundColor(.accentColor)
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+            }
+            HStack {
+                Spacer(minLength: 0)
+                QuantityControlView(film: film)
+                    .environmentObject(dataManager)
+            }
+        }
+        .padding(.vertical, 2)
+    }
 
     @ViewBuilder
     private func rollGroupRow(_ group: RollGroupItem) -> some View {
@@ -603,6 +643,174 @@ struct RollGroupEditSheet: View {
     }
 }
 
+// MARK: - Sheet / other non-roll inventory edit
+
+private struct MutableExpiryRow: Identifiable {
+    let id: UUID
+    var text: String
+    init(id: UUID = UUID(), text: String) {
+        self.id = id
+        self.text = text
+    }
+}
+
+/// Edit quantity, frozen, multiple expiry rows, and comments for one `MyFilm` line (sheets & other non-roll).
+struct SheetGroupEditSheet: View {
+    let film: FilmStock
+    @EnvironmentObject var dataManager: FilmStockDataManager
+    @Environment(\.dismiss) var dismiss
+
+    @State private var quantity: Int
+    @State private var isFrozen: Bool
+    @State private var comments: String
+    @State private var expiryRows: [MutableExpiryRow]
+    @State private var rowErrors: [UUID: String] = [:]
+
+    init(film: FilmStock) {
+        self.film = film
+        _quantity = State(initialValue: film.quantity)
+        _isFrozen = State(initialValue: film.isFrozen)
+        _comments = State(initialValue: film.comments ?? "")
+        let initialDates = film.expireDate ?? []
+        if initialDates.isEmpty {
+            _expiryRows = State(initialValue: [MutableExpiryRow(text: "")])
+        } else {
+            _expiryRows = State(initialValue: initialDates.map { MutableExpiryRow(text: FilmStock.formatExpireDate($0)) })
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Stepper(quantityLabel, value: $quantity, in: 0...999)
+                }
+
+                Section("film.expiryDate") {
+                    ForEach($expiryRows) { $row in
+                        VStack(alignment: .leading, spacing: 4) {
+                            TextField("film.expiryDateFormat", text: $row.text)
+                                .keyboardType(.numberPad)
+                                .onChange(of: row.text) { _, newValue in
+                                    let digits = newValue.filter { $0.isNumber }
+                                    let limited = String(digits.prefix(6))
+                                    if limited.count == 6 {
+                                        row.text = "\(limited.prefix(2))/\(limited.suffix(4))"
+                                    } else {
+                                        row.text = limited
+                                    }
+                                    rowErrors[row.id] = nil
+                                }
+                            if let err = rowErrors[row.id] {
+                                Text(err).font(.caption).foregroundColor(.red)
+                            }
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            if expiryRows.count > 1 {
+                                Button(role: .destructive) {
+                                    expiryRows.removeAll { $0.id == row.id }
+                                    rowErrors[row.id] = nil
+                                } label: {
+                                    Label("action.delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                    }
+                    Button {
+                        expiryRows.append(MutableExpiryRow(text: ""))
+                    } label: {
+                        Label("film.expiryDate.addRow", systemImage: "plus.circle")
+                    }
+                }
+
+                Section {
+                    Toggle("film.isFrozen", isOn: $isFrozen)
+                }
+
+                Section("film.comments") {
+                    TextField("film.comments.placeholder", text: $comments, axis: .vertical)
+                        .lineLimit(3...6)
+                }
+            }
+            .navigationTitle("edit.inventoryLine.title")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("action.cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("action.save") {
+                        if validateExpiryRows() { save() }
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    private var quantityLabel: String {
+        let unit = film.format.quantityUnit
+        if unit == "Sheets" {
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
+        }
+        return quantity == 1
+            ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
+            : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
+    }
+
+    private func validateExpiryRows() -> Bool {
+        rowErrors = [:]
+        var ok = true
+        for row in expiryRows {
+            let digits = row.text.filter { $0.isNumber }
+            guard !digits.isEmpty else { continue }
+            if digits.count == 4 {
+                guard let year = Int(digits), year >= 1950, year <= 2100 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
+                    ok = false
+                    continue
+                }
+            } else if digits.count == 6 {
+                let month = Int(String(digits.prefix(2))) ?? 0
+                let year = Int(String(digits.suffix(4))) ?? 0
+                guard month >= 1, month <= 12 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidMonth", comment: "")
+                    ok = false
+                    continue
+                }
+                guard year >= 1950, year <= 2100 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
+                    ok = false
+                    continue
+                }
+            } else {
+                rowErrors[row.id] = NSLocalizedString("error.invalidDateFormat", comment: "")
+                ok = false
+            }
+        }
+        return ok
+    }
+
+    private func save() {
+        let rawDates = expiryRows
+            .map { $0.text.filter { $0.isNumber } }
+            .filter { !$0.isEmpty }
+
+        if quantity == 0 {
+            dataManager.deleteRollsById([film.id])
+        } else {
+            var updated = film
+            updated.quantity = quantity
+            updated.expireDate = rawDates.isEmpty ? nil : rawDates
+            updated.isFrozen = isFrozen
+            let trimmed = comments.trimmingCharacters(in: .whitespacesAndNewlines)
+            updated.comments = trimmed.isEmpty ? nil : trimmed
+            dataManager.updateFilmStock(updated)
+        }
+        dismiss()
+    }
+}
+
 // MARK: - Supporting Views
 
 struct InfoRow: View {
@@ -637,10 +845,16 @@ struct QuantityControlView: View {
             Stepper(value: $quantity, in: 0...999) {
                 Text(quantityText)
             }
+            .onAppear { quantity = film.quantity }
+            .onChange(of: film.quantity) { _, newVal in quantity = newVal }
             .onChange(of: quantity) { _, newValue in
-                var updated = film
-                updated.quantity = newValue
-                dataManager.updateFilmStock(updated)
+                if newValue == 0 {
+                    dataManager.deleteRollsById([film.id])
+                } else {
+                    var updated = film
+                    updated.quantity = newValue
+                    dataManager.updateFilmStock(updated)
+                }
             }
         }
     }

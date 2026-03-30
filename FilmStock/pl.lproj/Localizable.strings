@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Zamrożona";
 "finished.detail.title" = "Zakończona rolka";
 "finished.film.unavailable" = "Film niedostępny";
+"film.expiryDate.addRow" = "Dodaj datę ważności";
+"edit.inventoryLine.title" = "Edytuj zapas";
 "finished.detail.finishedDate" = "Zakończono";
 "finished.detail.developedDate" = "Wywołano";
 "finished.detail.daysOnRoll" = "Dni na rolce";

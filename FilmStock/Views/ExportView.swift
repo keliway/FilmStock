@@ -278,7 +278,7 @@ struct ImportPreviewSheet: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("\(row.manufacturer) \(row.name)")
                                 .fontWeight(.medium)
-                            Text("\(row.quantity)× \(row.format.displayName) · ISO \(row.filmSpeed) · \(row.type.displayName)")
+                            Text("\(row.quantity)× \(row.formatDisplayName) · ISO \(row.filmSpeed) · \(row.type.displayName)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

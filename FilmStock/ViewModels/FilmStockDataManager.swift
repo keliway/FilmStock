@@ -244,6 +244,7 @@ class FilmStockDataManager: ObservableObject {
                 type: type,
                 filmSpeed: film.filmSpeed,
                 format: format,
+                customFormatName: myFilm.customFormatName,
                 quantity: myFilm.quantity,
                 expireDate: myFilm.expireDateArray,
                 comments: myFilm.comments,
@@ -258,6 +259,37 @@ class FilmStockDataManager: ObservableObject {
         // calling groupedFilms() on every render.
         cachedGroupedFilms = groupedFilms()
         filmStocksVersion &+= 1
+    }
+    
+    /// Non-roll inventory lines merge only when frozen, format, custom format label, and normalized expiry set match.
+    private func matchingSheetMyFilm(for filmStock: FilmStock, in existingFilm: Film) -> MyFilm? {
+        guard let myFilms = existingFilm.myFilms else { return nil }
+        let key = Self.sheetInventoryMergeKey(
+            format: filmStock.format.rawValue,
+            customFormatName: filmStock.customFormatName,
+            isFrozen: filmStock.isFrozen,
+            expireDates: filmStock.expireDate
+        )
+        return myFilms.first { Self.sheetInventoryMergeKey(for: $0) == key }
+    }
+    
+    private static func sheetInventoryMergeKey(for myFilm: MyFilm) -> String {
+        sheetInventoryMergeKey(
+            format: myFilm.format,
+            customFormatName: myFilm.customFormatName,
+            isFrozen: myFilm.isFrozen ?? false,
+            expireDates: myFilm.expireDateArray
+        )
+    }
+    
+    private static func sheetInventoryMergeKey(format: String, customFormatName: String?, isFrozen: Bool, expireDates: [String]?) -> String {
+        let normalized = (expireDates ?? [])
+            .filter { !$0.isEmpty }
+            .map { $0.filter(\.isNumber) }
+            .sorted()
+            .joined(separator: ",")
+        let custom = customFormatName ?? ""
+        return "\(format)\u{1F}\(custom)\u{1F}\(isFrozen)\u{1F}\(normalized)"
     }
     
     func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) -> Bool {
@@ -284,9 +316,8 @@ class FilmStockDataManager: ObservableObject {
                 if isRoll {
                     // Roll format: create N individual MyFilm entries (one per roll)
                     createIndividualRolls(filmStock: filmStock, film: existingFilm, context: context)
-                } else if let myFilms = existingFilm.myFilms,
-                          let existingMyFilm = myFilms.first(where: { $0.format == filmStock.format.rawValue }) {
-                    // Sheet/other format: merge into existing entry
+                } else if let existingMyFilm = matchingSheetMyFilm(for: filmStock, in: existingFilm) {
+                    // Sheet / other non-roll: merge only when format, custom name, frozen, and expiry set match
                     existingMyFilm.quantity += filmStock.quantity
                     existingMyFilm.customFormatName = filmStock.customFormatName
                     

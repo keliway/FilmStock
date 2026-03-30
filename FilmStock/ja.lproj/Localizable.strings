@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "冷凍保存";
 "finished.detail.title" = "使用済みロール";
 "finished.film.unavailable" = "フィルム情報を表示できません";
+"film.expiryDate.addRow" = "期限日を追加";
+"edit.inventoryLine.title" = "在庫を編集";
 "finished.detail.finishedDate" = "撮り終え日";
 "finished.detail.developedDate" = "現像日";
 "finished.detail.daysOnRoll" = "撮影日数";

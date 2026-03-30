@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Fryst";
 "finished.detail.title" = "Ferdig rulle";
 "finished.film.unavailable" = "Film utilgjengelig";
+"film.expiryDate.addRow" = "Legg til utløpsdato";
+"edit.inventoryLine.title" = "Rediger lager";
 "finished.detail.finishedDate" = "Ferdig";
 "finished.detail.developedDate" = "Fremkalt";
 "finished.detail.daysOnRoll" = "Dager på rulle";

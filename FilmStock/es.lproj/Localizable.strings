@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Congelado";
 "finished.detail.title" = "Carrete terminado";
 "finished.film.unavailable" = "Película no disponible";
+"film.expiryDate.addRow" = "Añadir fecha de caducidad";
+"edit.inventoryLine.title" = "Editar existencias";
 "finished.detail.finishedDate" = "Terminado";
 "finished.detail.developedDate" = "Revelado";
 "finished.detail.daysOnRoll" = "Días en carrete";

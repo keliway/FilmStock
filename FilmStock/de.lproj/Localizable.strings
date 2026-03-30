@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Eingefroren";
 "finished.detail.title" = "Fertige Rolle";
 "finished.film.unavailable" = "Film nicht verfügbar";
+"film.expiryDate.addRow" = "Ablaufdatum hinzufügen";
+"edit.inventoryLine.title" = "Bestand bearbeiten";
 "finished.detail.finishedDate" = "Fertiggestellt";
 "finished.detail.developedDate" = "Entwickelt";
 "finished.detail.daysOnRoll" = "Tage auf der Rolle";

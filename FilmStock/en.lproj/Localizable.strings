@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Frozen";
 "finished.detail.title" = "Finished Roll";
 "finished.film.unavailable" = "Film unavailable";
+"film.expiryDate.addRow" = "Add expiry date";
+"edit.inventoryLine.title" = "Edit stock";
 "finished.detail.finishedDate" = "Finished";
 "finished.detail.developedDate" = "Developed";
 "finished.detail.daysOnRoll" = "Days on Roll";

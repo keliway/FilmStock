@@ -609,11 +609,9 @@ struct RollBatchSheet: View {
                     }
                 }
 
-                // Frozen (roll formats only)
-                if format.isRollFormat {
-                    Section {
-                        Toggle("film.isFrozen", isOn: $isFrozen)
-                    }
+                // Frozen: rolls and sheet / other formats (stored per inventory line)
+                Section {
+                    Toggle("film.isFrozen", isOn: $isFrozen)
                 }
 
                 // Exposures (roll formats only, options vary by format)

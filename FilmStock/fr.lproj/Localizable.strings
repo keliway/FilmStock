@@ -277,6 +277,8 @@
 "loaded.detail.frozen" = "Congelé";
 "finished.detail.title" = "Pellicule terminée";
 "finished.film.unavailable" = "Film indisponible";
+"film.expiryDate.addRow" = "Ajouter une date d’expiration";
+"edit.inventoryLine.title" = "Modifier le stock";
 "finished.detail.finishedDate" = "Terminé le";
 "finished.detail.developedDate" = "Développé le";
 "finished.detail.daysOnRoll" = "Jours sur la pellicule";
