@@ -199,10 +199,41 @@
         <header>
             <h1>FilmStock</h1>
             <p class="tagline">Your analog film collection manager</p>
-            <p class="version">Version 2.0 &mdash; Updated February 2026</p>
+            <p class="version">Version 2.1 &mdash; Updated March 2026</p>
         </header>
 
         <div class="content-section">
+            <h2>Version History</h2>
+            <ul>
+                <li><a href="#whats-new-2-1"><strong>Version 2.1</strong></a> &mdash; March 2026 (quality-of-life updates, sheet workflow improvements, migration stability fixes)</li>
+                <li><a href="#whats-new-2-0"><strong>Version 2.0</strong></a> &mdash; February 2026 (roll-centric model and major redesign)</li>
+            </ul>
+        </div>
+
+        <div class="content-section" id="whats-new-2-1">
+            <h2>What's New in Version 2.1</h2>
+            <p>Version 2.1 focuses on quality-of-life improvements to roll and sheet workflows, plus fixes for migration edge cases.</p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>Edit Finished Date</strong> &mdash; In finished roll details, you can now tap the pencil icon next to <strong>Finished</strong> to change the completed date and time.
+                </div>
+                <div class="feature-item">
+                    <strong>Sheet Film Improvements</strong> &mdash; Sheet and other non-roll formats now support frozen status and editable expiry dates directly in film detail.
+                </div>
+                <div class="feature-item">
+                    <strong>Better Inventory Line Handling</strong> &mdash; Non-roll inventory lines now stay separate when their frozen status or expiry dates differ.
+                </div>
+                <div class="feature-item">
+                    <strong>Custom Format Display Fix</strong> &mdash; Custom format names are shown by their actual names in list/table views instead of only "Other".
+                </div>
+                <div class="feature-item">
+                    <strong>Finished Rolls Stability</strong> &mdash; Added additional integrity repair for legacy finished-roll records after migration.
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="whats-new-2-0">
             <h2>What's New in Version 2.0</h2>
             <p>Version 2.0 is a major update that changes how FilmStock tracks your film stock. <strong>Rolls are now individual entities</strong> &mdash; each roll you own can have its own expiry date, frozen status, exposure count, and notes. Your existing data has been automatically migrated to this new model.</p>
 
@@ -321,6 +352,7 @@
                     </ul>
                 </li>
                 <li>Tap a finished roll to see full details: which roll was used, loading date, camera, frozen status, shot ISO, and notes.</li>
+                <li>To change when a roll was finished, open its detail view and tap the <strong>pencil icon</strong> next to the <strong>Finished</strong> row.</li>
                 <li>Swipe to <strong>Re-load</strong> if you need to move it back to loaded films.</li>
             </ol>
 
@@ -353,11 +385,10 @@
 
         <div class="content-section">
             <h2>Entering Expiry Dates</h2>
-            <p>When adding or editing rolls, you can enter expiry dates in several formats. The app auto-formats your input as you type:</p>
+            <p>When adding or editing rolls and sheet inventory lines, you can enter expiry dates in these formats. The app auto-formats your input as you type:</p>
             <ul>
                 <li><strong>Year only:</strong> 4 digits &mdash; e.g., <code>2025</code></li>
                 <li><strong>Month and year:</strong> 6 digits &mdash; e.g., <code>112025</code> becomes <code>11/2025</code></li>
-                <li><strong>Full date:</strong> 8 digits &mdash; e.g., <code>11152025</code> becomes <code>11/15/2025</code></li>
             </ul>
             <p>Expired rolls are highlighted in red in the film detail view and in the list view chips. You can enable expiry date chips in <strong>Settings &rarr; My Films &rarr; Show Expiry Date in Chip</strong>. If a film has multiple expiry dates across its rolls, up to three chips are shown, with a +N overflow badge for the rest.</p>
         </div>
@@ -413,12 +444,17 @@
 
             <div class="faq-item">
                 <div class="faq-question">Q: Can I track sheet film quantities?</div>
-                <div class="faq-answer">A: Yes. Large format sheet films (4x5, 5x7, 8x10) appear in a dedicated <strong>Sheets</strong> section in the film detail view, separate from roll formats. You can load individual sheets and track quantities just like rolls. Other custom formats appear in an <strong>Other</strong> section.</div>
+                <div class="faq-answer">A: Yes. Large format sheet films (4x5, 5x7, 8x10) appear in a dedicated <strong>Sheets</strong> section in the film detail view, separate from roll formats. You can load individual sheets and track quantities just like rolls. Sheet and other non-roll lines can also be marked frozen and have editable expiry dates via their edit button.</div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question">Q: What is the "frozen" status?</div>
-                <div class="faq-answer">A: Marking a roll as frozen indicates you're storing it in a freezer to preserve it. This is tracked per roll group and shown as a chip in the film detail view and in loaded and finished roll details.</div>
+                <div class="faq-answer">A: Marking film as frozen indicates you're storing it in a freezer to preserve it. This can be tracked for roll groups and for sheet/other non-roll inventory lines, and is shown as a chip in film detail and in loaded/finished roll details.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: Why does my custom format show as "Other"?</div>
+                <div class="faq-answer">A: Custom formats are shown by their names when that format is enabled in <strong>Settings &rarr; My Films &rarr; Enabled Formats</strong>. If disabled, the inventory still exists but may appear under <strong>Other</strong> in condensed views.</div>
             </div>
 
             <div class="faq-item">
@@ -531,7 +567,7 @@
 
         <div class="content-section">
             <h2>Privacy &amp; Legal</h2>
-            <p>FilmStock respects your privacy. All data is stored locally on your device and never transmitted to our servers or any third parties. Custom photos are stored only in the app's local storage and never uploaded.</p>
+            <p>FilmStock respects your privacy. All data is stored locally on your device and never transmitted to any servers or third parties. Custom photos are stored only in the app's local storage and never uploaded.</p>
 
             <p style="margin-top: 20px;">
                 <a href="privacy-policy.html" class="button">Privacy Policy</a>
