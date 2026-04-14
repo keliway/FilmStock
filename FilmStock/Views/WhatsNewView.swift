@@ -8,7 +8,7 @@
 import SwiftUI
 
 // Bump this string whenever you want to show the sheet again on next launch.
-let whatsNewVersion = "2.0"
+let whatsNewVersion = "2.2"
 
 struct WhatsNewFeature: Identifiable {
     let id = UUID()
@@ -24,29 +24,16 @@ struct WhatsNewView: View {
 
     private let features: [WhatsNewFeature] = [
         WhatsNewFeature(
-            icon: "film.stack",
+            icon: "rectangle.3.group",
             iconColor: .accentColor,
-            title: "Roll-by-Roll Tracking",
-            description: "Each roll is now its own record with an individual expiry date, frozen status, exposure count, and notes — no more shared batches. All your previously added film got migrated to the new system."
+            title: "Group My Films",
+            description: "Tap the filter button on My Films, then choose Group by manufacturer or ISO. Your films organize into sections with clear headers; the app remembers your choice."
         ),
         WhatsNewFeature(
-            icon: "arrow.up.arrow.down",
-            iconColor: .green,
-            title: "Export & Import",
-            description: "Head to Settings to export your film inventory as JSON or CSV, or import it back.",
-            showBeta: true
-        ),
-        WhatsNewFeature(
-            icon: "calendar.badge.exclamationmark",
-            iconColor: .red,
-            title: "Multiple Expiry Dates",
-            description: "In case you have used multiple expiry dates for the same film, make sure to assign the right expiry date to the right roll now."
-        ),
-        WhatsNewFeature(
-            icon: "info.circle",
-            iconColor: .blue,
-            title: "And much more!",
-            description: "Check the full release notes in the App Store for all the details."
+            icon: "photo.on.rectangle.angled",
+            iconColor: .orange,
+            title: "Updated Kodak catalog art",
+            description: "Built-in film cards now follow Kodak’s Ektacolor (color negative) and Ektapan (black & white) branding, with refreshed box art. Older Kodak names still match when you browse the catalog or rely on auto-detection."
         )
     ]
 
