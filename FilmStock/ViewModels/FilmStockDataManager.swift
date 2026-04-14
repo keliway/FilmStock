@@ -42,6 +42,9 @@ class FilmStockDataManager: ObservableObject {
         
         // Repair finished-roll records after v2 migration (nil film link, duplicate/empty string ids)
         repairFinishedFilmsIntegrity(context: context)
+        
+        // Refresh loaded/finished UI after migrations (child views may have loaded before this completed).
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
     }
     
     private static let rollFormats: Set<String> = ["35", "120", "110", "127", "220"]
@@ -53,8 +56,11 @@ class FilmStockDataManager: ObservableObject {
         }
         
         let descriptor = FetchDescriptor<MyFilm>()
-        guard let allMyFilms = try? context.fetch(descriptor) else {
-            UserDefaults.standard.set(true, forKey: migrationKey)
+        let allMyFilms: [MyFilm]
+        do {
+            allMyFilms = try context.fetch(descriptor)
+        } catch {
+            print("migrateToRollCentric: fetch failed, will retry on a future launch: \(error)")
             return
         }
         
@@ -105,9 +111,14 @@ class FilmStockDataManager: ObservableObject {
         }
         
         if created > 0 {
-            try? context.save()
-            loadFilmStocks()
-            print("Roll-centric migration: split into \(created) additional individual rolls")
+            do {
+                try context.save()
+                loadFilmStocks()
+                print("Roll-centric migration: split into \(created) additional individual rolls")
+            } catch {
+                print("migrateToRollCentric: save failed, will retry on a future launch: \(error)")
+                return
+            }
         }
         
         UserDefaults.standard.set(true, forKey: migrationKey)
@@ -116,14 +127,18 @@ class FilmStockDataManager: ObservableObject {
     /// Ensures finished rolls remain valid after the roll-centric migration: restores `film` from linked
     /// `myFilm` when needed, and guarantees unique non-empty `id` for SwiftUI lists (`ForEach` crashes on duplicate `id`).
     private func repairFinishedFilmsIntegrity(context: ModelContext) {
-        let key = "migration_finishedFilmsIntegrity_v1"
+        // v2: v1 could be marked "done" after a failed fetch (never actually repaired). Re-run once for everyone.
+        let key = "migration_finishedFilmsIntegrity_v2"
         if UserDefaults.standard.bool(forKey: key) {
             return
         }
         
         let descriptor = FetchDescriptor<FinishedFilm>()
-        guard let all = try? context.fetch(descriptor) else {
-            UserDefaults.standard.set(true, forKey: key)
+        let all: [FinishedFilm]
+        do {
+            all = try context.fetch(descriptor)
+        } catch {
+            print("repairFinishedFilmsIntegrity: fetch failed, will retry on a future launch: \(error)")
             return
         }
         
@@ -144,7 +159,13 @@ class FilmStockDataManager: ObservableObject {
         }
         
         if changed {
-            try? context.save()
+            do {
+                try context.save()
+                loadFilmStocks()
+            } catch {
+                print("repairFinishedFilmsIntegrity: save failed, will retry on a future launch: \(error)")
+                return
+            }
         }
         
         UserDefaults.standard.set(true, forKey: key)
@@ -164,8 +185,11 @@ class FilmStockDataManager: ObservableObject {
         
         // Now fetch finished films
         let descriptor = FetchDescriptor<FinishedFilm>()
-        guard let finishedFilms = try? context.fetch(descriptor) else {
-            UserDefaults.standard.set(true, forKey: backfillKey)
+        let finishedFilms: [FinishedFilm]
+        do {
+            finishedFilms = try context.fetch(descriptor)
+        } catch {
+            print("backfillFinishedFilmsCameraNames: fetch failed, will retry on a future launch: \(error)")
             return
         }
         
@@ -180,8 +204,13 @@ class FilmStockDataManager: ObservableObject {
         }
         
         if backfilled > 0 {
-            try? context.save()
-            print("Backfilled \(backfilled) finished films with camera names")
+            do {
+                try context.save()
+                print("Backfilled \(backfilled) finished films with camera names")
+            } catch {
+                print("backfillFinishedFilmsCameraNames: save failed, will retry on a future launch: \(error)")
+                return
+            }
         }
         
         // Mark backfill as complete
@@ -1108,7 +1137,20 @@ class FilmStockDataManager: ObservableObject {
             sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
         )
         descriptor.relationshipKeyPathsForPrefetching = [\FinishedFilm.film, \FinishedFilm.myFilm]
-        return (try? context.fetch(descriptor)) ?? []
+        do {
+            return try context.fetch(descriptor)
+        } catch {
+            print("getFinishedFilms: primary fetch failed (\(error)); retrying without prefetch.")
+            let fallback = FetchDescriptor<FinishedFilm>(
+                sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
+            )
+            do {
+                return try context.fetch(fallback)
+            } catch {
+                print("getFinishedFilms: fallback fetch failed: \(error)")
+                return []
+            }
+        }
     }
     
     func loadFilm(filmStockId: String, format: FilmStock.FilmFormat, cameraName: String, quantity: Int = 1, shotAtISO: Int? = nil) -> Bool {
