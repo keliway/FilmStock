@@ -604,6 +604,81 @@
       "name": "Kodak",
       "films": [
           {
+            "filename": "ektapan100",
+            "speed": 100,
+            "type": "BW",
+            "aliases": [
+              "ektapan 100",
+              "ektapan100",
+              "pan 100"
+            ]
+          },
+          {
+            "filename": "ektapan400",
+            "speed": 400,
+            "type": "BW",
+            "aliases": [
+              "ektapan 400",
+              "ektapan400",
+              "pan 400"
+            ]
+          },
+          {
+            "filename": "ektapan3200",
+            "speed": 3200,
+            "type": "BW",
+            "aliases": [
+              "ektapan 3200",
+              "ektapan p3200",
+              "ektapanp3200",
+              "ektapan3200",
+              "p3200",
+              "pan 3200"
+            ]
+          },
+          {
+            "filename": "ektacolor160",
+            "speed": 160,
+            "type": "Color",
+            "aliases": [
+              "ektacolor 160",
+              "ektacolor160",
+              "ekta 160",
+              "ekta160",
+              "pro 160",
+              "ektacolor pro160"
+              
+            ]
+          },
+          {
+            "filename": "ektacolor400",
+            "speed": 400,
+            "type": "Color",
+            "aliases": [
+              "ektacolor 400",
+              "ektacolor400",
+              "ekta 400",
+              "ekta400",
+              "pro 400",
+              "ektacolor pro400"
+              
+            ]
+          },
+          {
+            "filename": "ektacolor800",
+            "speed": 800,
+            "type": "Color",
+            "aliases": [
+              "ektacolor 800",
+              "ektacolor800",
+              "ekta 800",
+              "ekta800",
+              "pro 800",
+              "ektacolor pro800"
+              
+            ]
+          },
+          {
             "filename": "kodacolor100",
             "speed": 100,
             "type": "Color",
