@@ -30,6 +30,7 @@ class SettingsManager: ObservableObject {
     // Sort preferences
     private let sortFieldKey = "sort_field"
     private let sortAscendingKey = "sort_ascending"
+    private let groupByKey = "browse_group_by"
     
     @Published var hideEmptyByDefault: Bool {
         didSet {
@@ -117,6 +118,13 @@ class SettingsManager: ObservableObject {
         }
     }
     
+    /// My Films list grouping: `none`, `manufacturer`, or `iso` (matches `BrowseView.GroupBy.rawValue`).
+    @Published var browseGroupBy: String {
+        didSet {
+            UserDefaults.standard.set(browseGroupBy, forKey: groupByKey)
+        }
+    }
+    
     // All available formats (built-in + custom)
     var allAvailableFormats: [String] {
         let builtIn = FilmStock.FilmFormat.allCases.map { $0.displayName }
@@ -194,6 +202,7 @@ class SettingsManager: ObservableObject {
         // Load sort preferences (default: manufacturer, ascending)
         self.sortField = UserDefaults.standard.string(forKey: sortFieldKey) ?? "manufacturer"
         self.sortAscending = UserDefaults.standard.object(forKey: sortAscendingKey) as? Bool ?? true
+        self.browseGroupBy = UserDefaults.standard.string(forKey: groupByKey) ?? "none"
     }
 }
 

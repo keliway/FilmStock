@@ -33,9 +33,32 @@ struct BrowseView: View {
     @State private var deleteErrorMessage = ""
     @State private var sortField: SortField = .manufacturer
     @State private var sortAscending: Bool = true
+    @State private var groupBy: GroupBy = .none
     
     enum ViewMode {
         case cards, list
+    }
+    
+    enum GroupBy: String, CaseIterable, Identifiable {
+        case none = "none"
+        case manufacturer = "manufacturer"
+        case iso = "iso"
+        
+        var id: String { rawValue }
+        
+        var displayName: String {
+            switch self {
+            case .none: return NSLocalizedString("group.none", comment: "")
+            case .manufacturer: return NSLocalizedString("sort.manufacturer", comment: "")
+            case .iso: return NSLocalizedString("sort.iso", comment: "")
+            }
+        }
+    }
+    
+    private struct BrowseFilmSection: Identifiable {
+        let id: String
+        let headerTitle: String?
+        let films: [GroupedFilm]
     }
     
     enum SortField: String, CaseIterable {
@@ -153,6 +176,56 @@ struct BrowseView: View {
         return grouped
     }
     
+    /// Sections for the My Films list when grouping is enabled; a single section with no header when `groupBy == .none`.
+    private var browseFilmSections: [BrowseFilmSection] {
+        let films = filteredFilms
+        switch groupBy {
+        case .none:
+            return [BrowseFilmSection(id: "all", headerTitle: nil, films: films)]
+        case .manufacturer:
+            var buckets: [String: [GroupedFilm]] = [:]
+            var keyOrder: [String] = []
+            for film in films {
+                if buckets[film.manufacturer] == nil {
+                    keyOrder.append(film.manufacturer)
+                    buckets[film.manufacturer] = []
+                }
+                buckets[film.manufacturer]?.append(film)
+            }
+            let sortedKeys = keyOrder.sorted {
+                $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+            }
+            return sortedKeys.compactMap { key in
+                guard let groupFilms = buckets[key], !groupFilms.isEmpty else { return nil }
+                return BrowseFilmSection(
+                    id: "m:\(key)",
+                    headerTitle: key,
+                    films: groupFilms
+                )
+            }
+        case .iso:
+            var buckets: [Int: [GroupedFilm]] = [:]
+            var speedOrder: [Int] = []
+            for film in films {
+                if buckets[film.filmSpeed] == nil {
+                    speedOrder.append(film.filmSpeed)
+                    buckets[film.filmSpeed] = []
+                }
+                buckets[film.filmSpeed]?.append(film)
+            }
+            let sortedSpeeds = speedOrder.sorted()
+            return sortedSpeeds.compactMap { speed in
+                guard let groupFilms = buckets[speed], !groupFilms.isEmpty else { return nil }
+                let title = String(format: NSLocalizedString("browse.groupHeaderISO", comment: ""), speed)
+                return BrowseFilmSection(
+                    id: "iso:\(speed)",
+                    headerTitle: title,
+                    films: groupFilms
+                )
+            }
+        }
+    }
+    
     private func getEarliestExpiryDate(for film: GroupedFilm) -> Date? {
         var earliestDate: Date? = nil
         for formatInfo in film.formats {
@@ -246,11 +319,23 @@ struct BrowseView: View {
                             .textCase(nil)
                         }
                         
-                                ForEach(filteredFilms) { group in
-                            if viewMode == .cards {
-                                cardView(for: group)
-                        } else {
-                                listView(for: group)
+                        ForEach(browseFilmSections) { section in
+                            if let header = section.headerTitle {
+                                Section {
+                                    filmRows(for: section.films)
+                                } header: {
+                                    Text(header)
+                                        .font(.subheadline.weight(.medium))
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.top, 4)
+                                        .padding(.bottom, 2)
+                                        .textCase(nil)
+                                }
+                            } else {
+                                Section {
+                                    filmRows(for: section.films)
+                                }
                             }
                         }
                     }
@@ -375,6 +460,7 @@ struct BrowseView: View {
                     hideEmpty: $hideEmpty,
                     sortField: $sortField,
                     sortAscending: $sortAscending,
+                    groupBy: $groupBy,
                     dataManager: dataManager
                 )
             }
@@ -417,6 +503,9 @@ struct BrowseView: View {
                 .onChange(of: sortAscending) { _, newValue in
                     settingsManager.sortAscending = newValue
                 }
+                .onChange(of: groupBy) { _, newValue in
+                    settingsManager.browseGroupBy = newValue.rawValue
+                }
                 .onPreferenceChange(TooltipPreferenceKey.self) { preferences in
                     tooltipPreferences = preferences
                 }
@@ -438,6 +527,10 @@ struct BrowseView: View {
             sortField = savedSortField
         }
         sortAscending = settingsManager.sortAscending
+        
+        if let savedGroupBy = GroupBy(rawValue: settingsManager.browseGroupBy) {
+            groupBy = savedGroupBy
+        }
         
         if OnboardingManager.shared.hasCompletedOnboarding {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -599,6 +692,17 @@ struct BrowseView: View {
         if showExpiredOnly { count += 1 }
         if !hideEmpty { count += 1 }
         return count
+    }
+    
+    @ViewBuilder
+    private func filmRows(for films: [GroupedFilm]) -> some View {
+        ForEach(films) { group in
+            if viewMode == .cards {
+                cardView(for: group)
+            } else {
+                listView(for: group)
+            }
+        }
     }
     
     @ViewBuilder

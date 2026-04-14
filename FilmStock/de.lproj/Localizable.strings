@@ -129,6 +129,11 @@
 "sort.filmName" = "Filmname";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Ablaufdatum";
+
+// My Films grouping
+"group.title" = "Gruppieren nach";
+"group.none" = "Keine";
+"browse.groupHeaderISO" = "ISO %d";
 "sort.finishedDate" = "Entladedatum";
 "filter.filmSpeed" = "Empfindlichkeit";
 "filter.options" = "Optionen";

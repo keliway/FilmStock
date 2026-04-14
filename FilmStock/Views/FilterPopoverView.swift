@@ -17,6 +17,7 @@ struct FilterPopoverView: View {
     @Binding var hideEmpty: Bool
     @Binding var sortField: BrowseView.SortField
     @Binding var sortAscending: Bool
+    @Binding var groupBy: BrowseView.GroupBy
     @ObservedObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     
@@ -214,6 +215,19 @@ struct FilterPopoverView: View {
                             .pickerStyle(.segmented)
                             .frame(width: 100)
                         }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("group.title")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Picker("group.title", selection: $groupBy) {
+                            ForEach(BrowseView.GroupBy.allCases) { mode in
+                                Text(mode.displayName).tag(mode)
+                            }
+                        }
+                        .labelsHidden()
                     }
                 }
                 .padding()

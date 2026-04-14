@@ -129,6 +129,11 @@
 "sort.filmName" = "フィルム名";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "有効期限";
+
+// My Films grouping
+"group.title" = "グループ";
+"group.none" = "なし";
+"browse.groupHeaderISO" = "ISO %d";
 "sort.finishedDate" = "完了日";
 "filter.filmSpeed" = "感度";
 "filter.options" = "オプション";

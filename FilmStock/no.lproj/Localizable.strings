@@ -126,6 +126,11 @@
 "sort.filmName" = "Filmnavn";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Utløpsdato";
+
+// My Films grouping
+"group.title" = "Grupper etter";
+"group.none" = "Ingen";
+"browse.groupHeaderISO" = "ISO %d";
 "sort.finishedDate" = "Ferdigstilt dato";
 "filter.manufacturer" = "Produsent";
 "filter.camera" = "Kamera";

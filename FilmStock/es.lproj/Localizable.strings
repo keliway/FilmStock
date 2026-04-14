@@ -126,6 +126,11 @@
 "sort.filmName" = "Nombre de película";
 "sort.iso" = "ISO";
 "sort.expiryDate" = "Fecha de caducidad";
+
+// My Films grouping
+"group.title" = "Agrupar por";
+"group.none" = "Ninguno";
+"browse.groupHeaderISO" = "ISO %d";
 "sort.finishedDate" = "Fecha de finalización";
 "filter.manufacturer" = "Fabricante";
 "filter.camera" = "Cámara";
