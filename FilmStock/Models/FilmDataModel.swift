@@ -130,6 +130,7 @@ final class LoadedFilm {
     var camera: Camera?
     @Relationship(deleteRule: .nullify)
     var myFilm: MyFilm? // Reference to the MyFilm entry that was loaded
+    var cameraName: String? // Snapshot of camera name at load time (preserved even if camera is deleted)
     
     // Computed property to get the effective ISO (shot ISO or film's native ISO)
     var effectiveISO: Int {
@@ -139,7 +140,7 @@ final class LoadedFilm {
         return film?.filmSpeed ?? 0
     }
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil) {
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil, cameraName: String? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -148,6 +149,7 @@ final class LoadedFilm {
         self.quantity = quantity
         self.loadedAt = loadedAt
         self.shotAtISO = shotAtISO
+        self.cameraName = cameraName
     }
 }
 

@@ -32,8 +32,8 @@ struct WhatsNewView: View {
         WhatsNewFeature(
             icon: "photo.on.rectangle.angled",
             iconColor: .orange,
-            title: "Updated Kodak catalog art",
-            description: "Built-in film cards now follow Kodak’s Ektacolor (color negative) and Ektapan (black & white) branding, with refreshed box art. Older Kodak names still match when you browse the catalog or rely on auto-detection."
+            title: "New Kodak Ektacolor and Ektapan cards",
+            description: "The recently launched Ektacolor and Ektapan rebranding is now available as film card reminders . Older Kodak names still match when you browse the catalog or rely on auto-detection."
         )
     ]
 

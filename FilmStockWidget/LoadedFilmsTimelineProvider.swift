@@ -165,7 +165,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                     manufacturer: manufacturerName,
                     format: loadedFilm.format,
                     customFormatName: loadedFilm.myFilm?.customFormatName,
-                    camera: loadedFilm.camera?.name ?? "",
+                    camera: loadedFilm.cameraName ?? "",
                     imageData: imageData,
                     loadedAt: loadedFilm.loadedAt,
                     effectiveISO: effectiveISO

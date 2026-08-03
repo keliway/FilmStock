@@ -17,6 +17,7 @@ class FilmStockDataManager: ObservableObject {
     @Published var filmStocksVersion: Int = 0
     /// Pre-computed grouped film list, refreshed once per save — avoids per-render DB fetches.
     @Published var cachedGroupedFilms: [GroupedFilm] = []
+    @Published var isMigrationComplete = false
     
     private var modelContext: ModelContext?
     
@@ -42,6 +43,11 @@ class FilmStockDataManager: ObservableObject {
         
         // Repair finished-roll records after v2 migration (nil film link, duplicate/empty string ids)
         repairFinishedFilmsIntegrity(context: context)
+        
+        // Repair loaded + finished records for pre-v2 legacy data (film links, ids, camera snapshots, stale refs)
+        repairLoadedAndFinishedIntegrity(context: context)
+        
+        isMigrationComplete = true
         
         // Refresh loaded/finished UI after migrations (child views may have loaded before this completed).
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
@@ -164,6 +170,121 @@ class FilmStockDataManager: ObservableObject {
                 loadFilmStocks()
             } catch {
                 print("repairFinishedFilmsIntegrity: save failed, will retry on a future launch: \(error)")
+                return
+            }
+        }
+        
+        UserDefaults.standard.set(true, forKey: key)
+    }
+    
+    /// Repairs loaded and finished roll records for pre-v2 legacy data: restores film links, fixes duplicate ids,
+    /// backfills camera name snapshots, and clears stale myFilm/camera relationships.
+    private func repairLoadedAndFinishedIntegrity(context: ModelContext) {
+        let key = "migration_loadedFinishedIntegrity_v3"
+        if UserDefaults.standard.bool(forKey: key) {
+            return
+        }
+        
+        let myFilmDescriptor = FetchDescriptor<MyFilm>()
+        let allMyFilms: [MyFilm]
+        do {
+            allMyFilms = try context.fetch(myFilmDescriptor)
+        } catch {
+            print("repairLoadedAndFinishedIntegrity: MyFilm fetch failed, will retry on a future launch: \(error)")
+            return
+        }
+        let validMyFilmIds = Set(allMyFilms.map(\.id))
+        
+        let cameraDescriptor = FetchDescriptor<Camera>()
+        let availableCameras = (try? context.fetch(cameraDescriptor)) ?? []
+        let cameraMap = Dictionary(uniqueKeysWithValues: availableCameras.map { ($0.persistentModelID, $0.name) })
+        let validCameraIDs = Set(availableCameras.map(\.persistentModelID))
+        
+        let finishedDescriptor = FetchDescriptor<FinishedFilm>()
+        let loadedDescriptor = FetchDescriptor<LoadedFilm>()
+        let allFinished: [FinishedFilm]
+        let allLoaded: [LoadedFilm]
+        do {
+            allFinished = try context.fetch(finishedDescriptor)
+            allLoaded = try context.fetch(loadedDescriptor)
+        } catch {
+            print("repairLoadedAndFinishedIntegrity: fetch failed, will retry on a future launch: \(error)")
+            return
+        }
+        
+        var changed = false
+        var seenFinishedIds = Set<String>()
+        var seenLoadedIds = Set<String>()
+        
+        for finished in allFinished {
+            if finished.film == nil, let myFilm = finished.myFilm, let linkedFilm = myFilm.film {
+                finished.film = linkedFilm
+                changed = true
+            }
+            
+            if let myFilm = finished.myFilm, !validMyFilmIds.contains(myFilm.id) {
+                finished.myFilm = nil
+                changed = true
+            }
+            
+            if let camera = finished.camera, !validCameraIDs.contains(camera.persistentModelID) {
+                finished.camera = nil
+                changed = true
+            }
+            
+            if finished.cameraName == nil {
+                if let camera = finished.camera,
+                   let name = cameraMap[camera.persistentModelID] {
+                    finished.cameraName = name
+                    changed = true
+                }
+            }
+            
+            if finished.id.isEmpty || seenFinishedIds.contains(finished.id) {
+                finished.id = UUID().uuidString
+                changed = true
+            }
+            seenFinishedIds.insert(finished.id)
+        }
+        
+        for loaded in allLoaded {
+            if loaded.film == nil, let myFilm = loaded.myFilm, let linkedFilm = myFilm.film {
+                loaded.film = linkedFilm
+                changed = true
+            }
+            
+            if let myFilm = loaded.myFilm, !validMyFilmIds.contains(myFilm.id) {
+                loaded.myFilm = nil
+                changed = true
+            }
+            
+            if let camera = loaded.camera, !validCameraIDs.contains(camera.persistentModelID) {
+                loaded.camera = nil
+                changed = true
+            }
+            
+            if loaded.cameraName == nil {
+                if let camera = loaded.camera,
+                   let name = cameraMap[camera.persistentModelID] {
+                    loaded.cameraName = name
+                    changed = true
+                }
+            }
+            
+            if loaded.id.isEmpty || seenLoadedIds.contains(loaded.id) {
+                loaded.id = UUID().uuidString
+                changed = true
+            }
+            seenLoadedIds.insert(loaded.id)
+        }
+        
+        if changed {
+            do {
+                try context.save()
+                loadFilmStocks()
+                print("repairLoadedAndFinishedIntegrity: repaired legacy loaded/finished roll records")
+            } catch {
+                print("repairLoadedAndFinishedIntegrity: save failed, will retry on a future launch: \(error)")
                 return
             }
         }
@@ -1125,10 +1246,24 @@ class FilmStockDataManager: ObservableObject {
     
     func getLoadedFilms() -> [LoadedFilm] {
         guard let context = modelContext else { return [] }
-        let descriptor = FetchDescriptor<LoadedFilm>(
+        var descriptor = FetchDescriptor<LoadedFilm>(
             sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
         )
-        return (try? context.fetch(descriptor)) ?? []
+        descriptor.relationshipKeyPathsForPrefetching = [\LoadedFilm.film, \LoadedFilm.myFilm]
+        do {
+            return try context.fetch(descriptor)
+        } catch {
+            print("getLoadedFilms: primary fetch failed (\(error)); retrying without prefetch.")
+            let fallback = FetchDescriptor<LoadedFilm>(
+                sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
+            )
+            do {
+                return try context.fetch(fallback)
+            } catch {
+                print("getLoadedFilms: fallback fetch failed: \(error)")
+                return []
+            }
+        }
     }
     
     func getFinishedFilms() -> [FinishedFilm] {
@@ -1189,7 +1324,8 @@ class FilmStockDataManager: ObservableObject {
             camera: nil,
             myFilm: nil,
             quantity: quantity,
-            shotAtISO: isoToStore
+            shotAtISO: isoToStore,
+            cameraName: cameraName
         )
         context.insert(loadedFilm)
         loadedFilm.film = film
@@ -1302,12 +1438,12 @@ class FilmStockDataManager: ObservableObject {
             myFilm: nil,
             quantity: finishedFilm.quantity,
             loadedAt: finishedFilm.loadedAt,
-            shotAtISO: finishedFilm.shotAtISO
+            shotAtISO: finishedFilm.shotAtISO,
+            cameraName: finishedFilm.cameraName
         )
         
         context.insert(loadedFilm)
         loadedFilm.film = finishedFilm.film
-        loadedFilm.camera = finishedFilm.camera
         loadedFilm.myFilm = finishedFilm.myFilm
         
         // Delete the finished film entry

@@ -168,7 +168,7 @@ struct LoadedFilmsView: View {
                             )
                         } else {
                             List {
-                                ForEach(loadedFilms, id: \.id) { loadedFilm in
+                                ForEach(loadedFilms, id: \.persistentModelID) { loadedFilm in
                                     LoadedFilmRow(loadedFilm: loadedFilm)
                                         .contentShape(Rectangle())
                                         .onTapGesture { selectedLoadedFilm = loadedFilm }
@@ -345,12 +345,22 @@ struct LoadedFilmsView: View {
                     .environmentObject(dataManager)
             }
             .onAppear {
-                loadFilms()
-                loadFinishedFilms()
+                if dataManager.isMigrationComplete {
+                    loadFilms()
+                    loadFinishedFilms()
+                }
+            }
+            .onChange(of: dataManager.isMigrationComplete) { _, isComplete in
+                if isComplete {
+                    loadFilms()
+                    loadFinishedFilms()
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
-                loadFilms()
-                loadFinishedFilms()
+                if dataManager.isMigrationComplete {
+                    loadFilms()
+                    loadFinishedFilms()
+                }
             }
         }
     }
@@ -562,12 +572,35 @@ struct LoadedFilmDetailSheet: View {
                         }
                         .padding(.vertical, 4)
                     }
+                } else {
+                    Section {
+                        HStack(spacing: 16) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(.systemGray5))
+                                .frame(width: 72, height: 72)
+                                .overlay(
+                                    Image(systemName: "camera.fill")
+                                        .font(.title2)
+                                        .foregroundColor(.secondary)
+                                )
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(NSLocalizedString("finished.film.unavailable", comment: "Loaded roll with missing film catalog link"))
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                Text(formatDisplayName)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
 
                 // Roll info
                 Section("loaded.detail.rollSection") {
-                    if let camera = loadedFilm.camera {
-                        detailRow(label: "camera.name", value: camera.name)
+                    if let cameraName = loadedFilm.cameraName {
+                        detailRow(label: "camera.name", value: cameraName)
                     }
                     detailRow(label: "loaded.detail.loadedDate", value: exactDate(loadedFilm.loadedAt))
                     detailRow(label: "loaded.detail.daysOnCamera", value: daysOnCamera)
@@ -753,14 +786,21 @@ struct LoadedFilmRow: View {
                         }
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    } else {
+                        Text(NSLocalizedString("finished.film.unavailable", comment: "Loaded roll with missing film catalog link"))
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(formatDisplayName)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
                     
-                    if let camera = loadedFilm.camera {
+                    if let cameraName = loadedFilm.cameraName {
                         HStack(spacing: 4) {
                             Image(systemName: "camera.fill")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text(camera.name)
+                            Text(cameraName)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
