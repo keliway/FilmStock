@@ -130,7 +130,7 @@ final class LoadedFilm {
     var camera: Camera?
     @Relationship(deleteRule: .nullify)
     var myFilm: MyFilm? // Reference to the MyFilm entry that was loaded
-    var cameraName: String? // Snapshot of camera name at load time (preserved even if camera is deleted)
+    var cameraName: String? = nil // Snapshot of camera name at load time (preserved even if camera is deleted)
     
     // Computed property to get the effective ISO (shot ISO or film's native ISO)
     var effectiveISO: Int {

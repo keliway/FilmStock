@@ -23,11 +23,19 @@ class FilmStockDataManager: ObservableObject {
     
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
-        loadFilmStocks()
     }
     
     func migrateIfNeeded() async {
-        guard let context = modelContext else { return }
+        guard let context = modelContext else {
+            isMigrationComplete = true
+            return
+        }
+        
+        defer {
+            loadFilmStocks()
+            isMigrationComplete = true
+            NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+        }
         
         // Copy default images to App Group container for widget access (runs once)
         ImageStorage.shared.copyDefaultImagesToAppGroup()
@@ -44,13 +52,8 @@ class FilmStockDataManager: ObservableObject {
         // Repair finished-roll records after v2 migration (nil film link, duplicate/empty string ids)
         repairFinishedFilmsIntegrity(context: context)
         
-        // Repair loaded + finished records for pre-v2 legacy data (film links, ids, camera snapshots, stale refs)
+        // Repair loaded + finished records for pre-v2 legacy data (ids, camera snapshots, stale refs)
         repairLoadedAndFinishedIntegrity(context: context)
-        
-        isMigrationComplete = true
-        
-        // Refresh loaded/finished UI after migrations (child views may have loaded before this completed).
-        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
     }
     
     private static let rollFormats: Set<String> = ["35", "120", "110", "127", "220"]
@@ -177,28 +180,14 @@ class FilmStockDataManager: ObservableObject {
         UserDefaults.standard.set(true, forKey: key)
     }
     
-    /// Repairs loaded and finished roll records for pre-v2 legacy data: restores film links, fixes duplicate ids,
-    /// backfills camera name snapshots, and clears stale myFilm/camera relationships.
+    /// Repairs loaded and finished roll records for pre-v2 legacy data.
+    /// Phase 1 (safe): fix duplicate/empty ids — must not touch relationships.
+    /// Phase 2 (best-effort): restore links and camera name snapshots when relationships are readable.
     private func repairLoadedAndFinishedIntegrity(context: ModelContext) {
-        let key = "migration_loadedFinishedIntegrity_v3"
+        let key = "migration_loadedFinishedIntegrity_v4"
         if UserDefaults.standard.bool(forKey: key) {
             return
         }
-        
-        let myFilmDescriptor = FetchDescriptor<MyFilm>()
-        let allMyFilms: [MyFilm]
-        do {
-            allMyFilms = try context.fetch(myFilmDescriptor)
-        } catch {
-            print("repairLoadedAndFinishedIntegrity: MyFilm fetch failed, will retry on a future launch: \(error)")
-            return
-        }
-        let validMyFilmIds = Set(allMyFilms.map(\.id))
-        
-        let cameraDescriptor = FetchDescriptor<Camera>()
-        let availableCameras = (try? context.fetch(cameraDescriptor)) ?? []
-        let cameraMap = Dictionary(uniqueKeysWithValues: availableCameras.map { ($0.persistentModelID, $0.name) })
-        let validCameraIDs = Set(availableCameras.map(\.persistentModelID))
         
         let finishedDescriptor = FetchDescriptor<FinishedFilm>()
         let loadedDescriptor = FetchDescriptor<LoadedFilm>()
@@ -217,29 +206,6 @@ class FilmStockDataManager: ObservableObject {
         var seenLoadedIds = Set<String>()
         
         for finished in allFinished {
-            if finished.film == nil, let myFilm = finished.myFilm, let linkedFilm = myFilm.film {
-                finished.film = linkedFilm
-                changed = true
-            }
-            
-            if let myFilm = finished.myFilm, !validMyFilmIds.contains(myFilm.id) {
-                finished.myFilm = nil
-                changed = true
-            }
-            
-            if let camera = finished.camera, !validCameraIDs.contains(camera.persistentModelID) {
-                finished.camera = nil
-                changed = true
-            }
-            
-            if finished.cameraName == nil {
-                if let camera = finished.camera,
-                   let name = cameraMap[camera.persistentModelID] {
-                    finished.cameraName = name
-                    changed = true
-                }
-            }
-            
             if finished.id.isEmpty || seenFinishedIds.contains(finished.id) {
                 finished.id = UUID().uuidString
                 changed = true
@@ -248,29 +214,6 @@ class FilmStockDataManager: ObservableObject {
         }
         
         for loaded in allLoaded {
-            if loaded.film == nil, let myFilm = loaded.myFilm, let linkedFilm = myFilm.film {
-                loaded.film = linkedFilm
-                changed = true
-            }
-            
-            if let myFilm = loaded.myFilm, !validMyFilmIds.contains(myFilm.id) {
-                loaded.myFilm = nil
-                changed = true
-            }
-            
-            if let camera = loaded.camera, !validCameraIDs.contains(camera.persistentModelID) {
-                loaded.camera = nil
-                changed = true
-            }
-            
-            if loaded.cameraName == nil {
-                if let camera = loaded.camera,
-                   let name = cameraMap[camera.persistentModelID] {
-                    loaded.cameraName = name
-                    changed = true
-                }
-            }
-            
             if loaded.id.isEmpty || seenLoadedIds.contains(loaded.id) {
                 loaded.id = UUID().uuidString
                 changed = true
@@ -281,15 +224,98 @@ class FilmStockDataManager: ObservableObject {
         if changed {
             do {
                 try context.save()
-                loadFilmStocks()
-                print("repairLoadedAndFinishedIntegrity: repaired legacy loaded/finished roll records")
             } catch {
-                print("repairLoadedAndFinishedIntegrity: save failed, will retry on a future launch: \(error)")
+                print("repairLoadedAndFinishedIntegrity: id repair save failed, will retry on a future launch: \(error)")
                 return
             }
         }
         
+        // Mark phase 1 complete so a crash in phase 2 cannot trap users in a launch loop.
         UserDefaults.standard.set(true, forKey: key)
+        
+        repairLoadedAndFinishedRelationships(context: context, finished: allFinished, loaded: allLoaded)
+    }
+    
+    /// Best-effort relationship repair after id fixes. Failures here must never block app launch.
+    private func repairLoadedAndFinishedRelationships(
+        context: ModelContext,
+        finished: [FinishedFilm],
+        loaded: [LoadedFilm]
+    ) {
+        let myFilmDescriptor = FetchDescriptor<MyFilm>()
+        let allMyFilms: [MyFilm]
+        do {
+            allMyFilms = try context.fetch(myFilmDescriptor)
+        } catch {
+            print("repairLoadedAndFinishedRelationships: MyFilm fetch failed: \(error)")
+            return
+        }
+        let validMyFilmIds = Set(allMyFilms.map(\.id))
+        let myFilmByPID = Dictionary(uniqueKeysWithValues: allMyFilms.map { ($0.persistentModelID, $0) })
+        
+        let availableCameras = (try? context.fetch(FetchDescriptor<Camera>())) ?? []
+        let cameraMap = Dictionary(uniqueKeysWithValues: availableCameras.map { ($0.persistentModelID, $0.name) })
+        let validCameraPIDs = Set(availableCameras.map(\.persistentModelID))
+        
+        var changed = false
+        
+        for finished in finished {
+            if finished.film == nil, let myFilm = finished.myFilm, myFilmByPID[myFilm.persistentModelID] != nil {
+                if let linkedFilm = myFilm.film {
+                    finished.film = linkedFilm
+                    changed = true
+                }
+            }
+            
+            if let myFilm = finished.myFilm, !validMyFilmIds.contains(myFilm.id) {
+                finished.myFilm = nil
+                changed = true
+            }
+            
+            if finished.cameraName == nil, let camera = finished.camera,
+               let name = cameraMap[camera.persistentModelID] {
+                finished.cameraName = name
+                changed = true
+            } else if let camera = finished.camera,
+                      !validCameraPIDs.contains(camera.persistentModelID) {
+                finished.camera = nil
+                changed = true
+            }
+        }
+        
+        for loaded in loaded {
+            if loaded.film == nil, let myFilm = loaded.myFilm, myFilmByPID[myFilm.persistentModelID] != nil {
+                if let linkedFilm = myFilm.film {
+                    loaded.film = linkedFilm
+                    changed = true
+                }
+            }
+            
+            if let myFilm = loaded.myFilm, !validMyFilmIds.contains(myFilm.id) {
+                loaded.myFilm = nil
+                changed = true
+            }
+            
+            if loaded.cameraName == nil, let camera = loaded.camera,
+               let name = cameraMap[camera.persistentModelID] {
+                loaded.cameraName = name
+                changed = true
+            } else if let camera = loaded.camera,
+                      !validCameraPIDs.contains(camera.persistentModelID) {
+                loaded.camera = nil
+                changed = true
+            }
+        }
+        
+        if changed {
+            do {
+                try context.save()
+                loadFilmStocks()
+                print("repairLoadedAndFinishedRelationships: repaired legacy relationship fields")
+            } catch {
+                print("repairLoadedAndFinishedRelationships: save failed: \(error)")
+            }
+        }
     }
     
     private func backfillFinishedFilmsCameraNames(context: ModelContext) {
@@ -1229,7 +1255,10 @@ class FilmStockDataManager: ObservableObject {
         let allLoadedFilms = (try? context.fetch(descriptor)) ?? []
         
         let filmsUsingCamera = allLoadedFilms.filter { loadedFilm in
-            loadedFilm.camera?.name == camera.name
+            if let cameraName = loadedFilm.cameraName {
+                return cameraName == camera.name
+            }
+            return loadedFilm.camera?.name == camera.name
         }
         
         if !filmsUsingCamera.isEmpty {

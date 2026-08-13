@@ -42,6 +42,17 @@ struct LoadedFilmsView: View {
     @State private var selectedCameras: Set<String> = []
     @State private var sortField: FinishedFilmSortField = .finishedDate
     @State private var sortAscending: Bool = false
+    @State private var pendingFilmsRefresh = false
+    
+    /// Snapshot filter options when the sheet opens so section counts stay stable while the sheet is visible.
+    @State private var filterSheetTypes: [FilmStock.FilmType] = []
+    @State private var filterSheetFormats: [FilmStock.FilmFormat] = []
+    @State private var filterSheetCameras: [String] = []
+    
+    private var isSheetBlockingRefresh: Bool {
+        showingManageCameras || showingFilters || showingDatePicker || showingHelp
+            || selectedLoadedFilm != nil || selectedFinishedFilm != nil
+    }
     
     enum FinishedFilmSortField: String, CaseIterable {
         case manufacturer = "manufacturer"
@@ -357,21 +368,43 @@ struct LoadedFilmsView: View {
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
-                if dataManager.isMigrationComplete {
-                    loadFilms()
-                    loadFinishedFilms()
+                refreshFilmsIfAllowed()
+            }
+            .onChange(of: showingManageCameras) { _, _ in refreshFilmsIfAllowed() }
+            .onChange(of: showingFilters) { _, isShowing in
+                if isShowing {
+                    filterSheetTypes = availableTypes
+                    filterSheetFormats = availableFormats
+                    filterSheetCameras = availableCameras
+                } else {
+                    refreshFilmsIfAllowed()
                 }
             }
+            .onChange(of: showingDatePicker) { _, _ in refreshFilmsIfAllowed() }
+            .onChange(of: showingHelp) { _, _ in refreshFilmsIfAllowed() }
+            .onChange(of: selectedLoadedFilm) { _, _ in refreshFilmsIfAllowed() }
+            .onChange(of: selectedFinishedFilm) { _, _ in refreshFilmsIfAllowed() }
         }
+    }
+    
+    private func refreshFilmsIfAllowed() {
+        guard dataManager.isMigrationComplete else { return }
+        if isSheetBlockingRefresh {
+            pendingFilmsRefresh = true
+            return
+        }
+        pendingFilmsRefresh = false
+        loadFilms()
+        loadFinishedFilms()
     }
     
     var finishedFilmsFilterSheet: some View {
         NavigationStack {
             Form {
                 // Film Type Filter
-                if !availableTypes.isEmpty {
+                if !filterSheetTypes.isEmpty {
                     Section("filter.type") {
-                        ForEach(availableTypes, id: \.self) { type in
+                        ForEach(filterSheetTypes, id: \.self) { type in
                             Toggle(type.displayName, isOn: Binding(
                                 get: { selectedTypes.contains(type) },
                                 set: { isOn in
@@ -403,9 +436,9 @@ struct LoadedFilmsView: View {
                 }
                 
                 // Format Filter
-                if !availableFormats.isEmpty {
+                if !filterSheetFormats.isEmpty {
                     Section("filter.format") {
-                        ForEach(availableFormats, id: \.self) { format in
+                        ForEach(filterSheetFormats, id: \.self) { format in
                             Toggle(format.displayName, isOn: Binding(
                                 get: { selectedFormats.contains(format) },
                                 set: { isOn in
@@ -421,9 +454,9 @@ struct LoadedFilmsView: View {
                 }
                 
                 // Camera Filter
-                if !availableCameras.isEmpty {
+                if !filterSheetCameras.isEmpty {
                     Section("filter.camera") {
-                        ForEach(availableCameras, id: \.self) { camera in
+                        ForEach(filterSheetCameras, id: \.self) { camera in
                             Toggle(camera, isOn: Binding(
                                 get: { selectedCameras.contains(camera) },
                                 set: { isOn in

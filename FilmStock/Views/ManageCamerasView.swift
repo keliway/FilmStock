@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // MARK: - Manage Cameras
 
@@ -24,38 +25,41 @@ struct ManageCamerasView: View {
     var body: some View {
         NavigationStack {
             List {
-                if allCameras.isEmpty {
-                    Section {
-                        Text("cameras.empty")
-                            .foregroundColor(.secondary)
+                // Keep a stable List/section structure while rows are deleted — swapping to an
+                // "empty" section during swipe-delete crashes UICollectionView batch updates.
+                Section {
+                    ForEach(allCameras, id: \.persistentModelID) { camera in
+                        NavigationLink {
+                            EditCameraView(camera: camera)
+                                .environmentObject(dataManager)
+                        } label: {
+                            CameraRowLabel(camera: camera)
+                        }
                     }
-                } else {
-                    Section {
-                        ForEach(allCameras, id: \.name) { camera in
-                            NavigationLink {
-                                EditCameraView(camera: camera)
-                                    .environmentObject(dataManager)
-                            } label: {
-                                CameraRowLabel(camera: camera)
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            let camera = allCameras[index]
+                            if !dataManager.deleteCamera(camera) {
+                                showDeleteError = true
+                                deleteErrorMessage = String(
+                                    format: NSLocalizedString("camera.deleteErrorMessage", comment: ""),
+                                    camera.name
+                                )
                             }
                         }
-                        .onDelete { indexSet in
-                            for index in indexSet {
-                                let camera = allCameras[index]
-                                if !dataManager.deleteCamera(camera) {
-                                    showDeleteError = true
-                                    deleteErrorMessage = String(
-                                        format: NSLocalizedString("camera.deleteErrorMessage", comment: ""),
-                                        camera.name
-                                    )
-                                }
-                            }
-                        }
-                    } footer: {
+                    }
+                } footer: {
+                    if !allCameras.isEmpty {
                         Text("cameras.swipeToDelete")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                }
+            }
+            .overlay {
+                if allCameras.isEmpty {
+                    Text("cameras.empty")
+                        .foregroundColor(.secondary)
                 }
             }
             .navigationTitle("cameras.manage")
