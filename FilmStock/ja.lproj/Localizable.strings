@@ -50,6 +50,14 @@
 "film.frozen" = "冷凍";
 "film.expired" = "期限切れ";
 "film.filmInformation" = "フィルム情報";
+"dx.scan.button" = "フィルム缶をスキャン";
+"dx.scan.hint" = "フィルム缶の側面にあるバーコードをスキャンしてください。";
+"dx.scan.instruction" = "フィルム缶の側面にあるバーコードをスキャン";
+"dx.scan.notFound.title" = "フィルムを認識できません";
+"dx.scan.notFound.message" = "このフィルムを識別できませんでした。詳細は手動で入力できます。";
+"dx.scan.unavailable.title" = "スキャナーを使用できません";
+"dx.scan.unavailable.message" = "このデバイスではバーコードのスキャンは利用できません。";
+"dx.scan.pickFilm" = "フィルムを選択";
 "film.filmReminder" = "フィルムリマインダー";
 "film.addExpiryDate" = "有効期限を追加";
 "film.rollsCount" = "%d本";
@@ -215,6 +223,7 @@
 "about.tagline" = "あなた専用のフィルムコレクション管理アプリ";
 "about.description" = "FilmStockは、フィルムコレクションの追跡、カメラに装填されたフィルムの管理、カメラに入っているものと冷蔵庫に入っているものを見失わないようにするのに役立ちます。フィードバックや忘れられたメーカーがあれば教えてください！";
 "about.developedBy" = "開発者";
+"about.dxCredit" = "DXコードは The Big Film Database（dxdatabase）より。CC BY-SA 4.0 ライセンス。";
 "about.contactUs" = "お問い合わせ";
 "about.emailError.title" = "メールが利用できません";
 "about.emailError.message" = "hello@halbe.no までご連絡ください";

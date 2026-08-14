@@ -100,6 +100,29 @@ class ImageStorage {
         let speed: Int?
         let type: String?
         let aliases: [String]
+        let dx: [String]
+
+        enum CodingKeys: String, CodingKey {
+            case filename, speed, type, aliases, dx
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            filename = try container.decode(String.self, forKey: .filename)
+            speed = try container.decodeIfPresent(Int.self, forKey: .speed)
+            type = try container.decodeIfPresent(String.self, forKey: .type)
+            aliases = try container.decodeIfPresent([String].self, forKey: .aliases) ?? []
+            dx = try container.decodeIfPresent([String].self, forKey: .dx) ?? []
+        }
+    }
+
+    struct DXFilmMatch: Identifiable, Hashable {
+        var id: String { "\(manufacturer)|\(filename)" }
+        let manufacturer: String
+        let filename: String
+        let displayName: String
+        let speed: Int?
+        let type: String?
     }
     
     struct ManufacturerInfo: Codable {
@@ -398,6 +421,145 @@ class ImageStorage {
         
         // No match found
         return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
+    }
+
+    /// Films in manufacturers.json whose stored DX codes match a scanned canister barcode.
+    func filmsMatching(dxCode: String) -> [DXFilmMatch] {
+        let manufacturers = loadManufacturersData()
+        let candidates = dxLookupCandidates(from: dxCode)
+        guard !candidates.isEmpty else { return [] }
+
+        var exact: [DXFilmMatch] = []
+        var extract: [DXFilmMatch] = []
+        var seenExact = Set<String>()
+        var seenExtract = Set<String>()
+
+        let candidateSet = Set(candidates)
+        let extractSet = Set(candidates.compactMap { dxExtract(from: $0) })
+
+        for manufacturer in manufacturers {
+            for film in manufacturer.films {
+                let stored = film.dx
+                    .map { $0.filter(\.isNumber) }
+                    .filter { !$0.isEmpty && Set($0) != ["0"] }
+                guard !stored.isEmpty else { continue }
+
+                let match = DXFilmMatch(
+                    manufacturer: manufacturer.name,
+                    filename: film.filename,
+                    displayName: displayName(for: film),
+                    speed: film.speed,
+                    type: film.type
+                )
+
+                if stored.contains(where: { candidateSet.contains($0) }) {
+                    if seenExact.insert(match.id).inserted {
+                        exact.append(match)
+                    }
+                    continue
+                }
+
+                let storedExtracts = Set(stored.compactMap { dxExtract(from: $0) })
+                if !storedExtracts.isDisjoint(with: extractSet) {
+                    if seenExtract.insert(match.id).inserted {
+                        extract.append(match)
+                    }
+                }
+            }
+        }
+
+        return exact.isEmpty ? extract : exact
+    }
+
+    /// Frame count from the last digit of a 6-digit DX cartridge barcode (ANSI/NAPM IT1.14).
+    /// Corrects Interleaved 2 of 5 reverse reads. Digit 0 is treated as unspecified (default 36),
+    /// not 72 — consumer cans almost never have 72 exposures, and databases often store 0 as a placeholder.
+    func exposures(fromScannedDXCode scanned: String) -> Int {
+        let typical = Set([12, 20, 24, 36])
+        let orientations = dxSixDigitOrientations(from: scanned)
+        let decoded = orientations.compactMap { dxExposuresDigit(from: $0) }
+        if let match = decoded.first(where: { typical.contains($0) }) {
+            return match
+        }
+        if let match = decoded.first(where: { $0 != 72 }) {
+            return match
+        }
+        return 36
+    }
+
+    private func dxSixDigitOrientations(from scanned: String) -> [String] {
+        let digits = scanned.filter(\.isNumber)
+        guard !digits.isEmpty else { return [] }
+        let six: String
+        if digits.count == 6 {
+            six = digits
+        } else if digits.count < 6 {
+            six = String(repeating: "0", count: 6 - digits.count) + digits
+        } else {
+            six = String(digits.suffix(6))
+        }
+        return [six, String(six.reversed())]
+    }
+
+    private func dxExposuresDigit(from sixDigit: String) -> Int? {
+        guard let last = sixDigit.last, let digit = Int(String(last)) else { return nil }
+        switch digit {
+        case 1: return 12
+        case 2: return 20
+        case 3: return 24
+        case 4: return 36
+        case 5: return 48
+        case 6: return 60
+        case 0: return 72
+        default: return nil
+        }
+    }
+
+    /// Digits from a scan, 6-digit padded form, and Interleaved 2 of 5 reverse.
+    private func dxLookupCandidates(from scanned: String) -> [String] {
+        let digits = scanned.filter(\.isNumber)
+        guard !digits.isEmpty else { return [] }
+
+        var values: [String] = [digits]
+        if digits.count < 6 {
+            values.append(String(repeating: "0", count: 6 - digits.count) + digits)
+        }
+        if digits.count == 6 {
+            values.append(String(digits.reversed()))
+        }
+        if digits.count > 6 {
+            let prefix = String(digits.prefix(6))
+            let suffix = String(digits.suffix(6))
+            values.append(prefix)
+            values.append(suffix)
+            values.append(String(prefix.reversed()))
+            values.append(String(suffix.reversed()))
+        }
+        var seen = Set<String>()
+        return values.filter { seen.insert($0).inserted }
+    }
+
+    /// Middle four digits of a 6-digit DX full code, or the value itself if already 4 digits.
+    private func dxExtract(from code: String) -> String? {
+        let digits = code.filter(\.isNumber)
+        if digits.count == 4 { return digits }
+        guard digits.count == 6 else { return nil }
+        let start = digits.index(digits.startIndex, offsetBy: 1)
+        let end = digits.index(start, offsetBy: 4)
+        return String(digits[start..<end])
+    }
+
+    private func displayName(for film: FilmInfo) -> String {
+        let generic = Set(["100", "200", "400", "800", "50", "25", "80", "160", "125"])
+        if let spaced = film.aliases.first(where: { alias in
+            alias.contains(" ") && !generic.contains(alias.lowercased())
+        }) {
+            return spaced.split(separator: " ").map { part in
+                guard let first = part.first else { return String(part) }
+                return String(first).uppercased() + part.dropFirst()
+            }.joined(separator: " ")
+        }
+        return film.aliases.first ?? film.filename
     }
     
     /// Get all custom images grouped by manufacturer

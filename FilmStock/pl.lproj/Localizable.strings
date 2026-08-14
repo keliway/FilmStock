@@ -50,6 +50,14 @@
 "film.frozen" = "ZAMROŻONY";
 "film.expired" = "PRZETERMINOWANY";
 "film.filmInformation" = "Informacje o filmie";
+"dx.scan.button" = "Skanuj kasetę filmu";
+"dx.scan.hint" = "Zeskanuj kod kreskowy z boku kasety filmu.";
+"dx.scan.instruction" = "Zeskanuj kod kreskowy z boku kasety filmu";
+"dx.scan.notFound.title" = "Nie rozpoznano filmu";
+"dx.scan.notFound.message" = "Nie udało się zidentyfikować tego filmu. Możesz uzupełnić dane ręcznie.";
+"dx.scan.unavailable.title" = "Skaner niedostępny";
+"dx.scan.unavailable.message" = "Skanowanie kodów kreskowych nie jest dostępne na tym urządzeniu.";
+"dx.scan.pickFilm" = "Wybierz film";
 "film.filmReminder" = "Przypomnienie o filmie";
 "film.addExpiryDate" = "Dodaj datę ważności";
 "film.rollsCount" = "%d rolek";
@@ -215,6 +223,7 @@
 "about.tagline" = "Twój osobisty menedżer kolekcji filmów";
 "about.description" = "FilmStock pomaga śledzić twoją kolekcję filmów, zarządzać załadowanymi filmami w aparatach i nigdy nie tracić z oczu tego, co jest w twoim aparacie i co jest w lodówce. Uwagi lub zapomniani producenci? Daj mi znać!";
 "about.developedBy" = "Opracowane przez";
+"about.dxCredit" = "Kody DX pochodzą z The Big Film Database (dxdatabase), licencja CC BY-SA 4.0.";
 "about.contactUs" = "Skontaktuj się ze mną";
 "about.emailError.title" = "E-mail niedostępny";
 "about.emailError.message" = "Skontaktuj się ze mną pod adresem hello@halbe.no";

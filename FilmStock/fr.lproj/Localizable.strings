@@ -50,6 +50,14 @@
 "film.frozen" = "CONGELÉ";
 "film.expired" = "EXPIRÉ";
 "film.filmInformation" = "Informations sur le film";
+"dx.scan.button" = "Scanner la cartouche";
+"dx.scan.hint" = "Scannez le code-barres sur le côté de la cartouche.";
+"dx.scan.instruction" = "Scannez le code-barres sur le côté de la cartouche";
+"dx.scan.notFound.title" = "Film non reconnu";
+"dx.scan.notFound.message" = "Impossible d'identifier ce film. Vous pouvez remplir les informations manuellement.";
+"dx.scan.unavailable.title" = "Scanner indisponible";
+"dx.scan.unavailable.message" = "La lecture de codes-barres n'est pas disponible sur cet appareil.";
+"dx.scan.pickFilm" = "Choisir un film";
 "film.filmReminder" = "Rappel de film";
 "film.addExpiryDate" = "Ajouter une date d'expiration";
 "film.rollsCount" = "%d rouleaux";
@@ -215,6 +223,7 @@
 "about.tagline" = "Votre gestionnaire personnel de collection de films";
 "about.description" = "FilmStock vous aide à garder une trace de votre collection de films, à gérer les films chargés dans vos appareils et à ne jamais perdre la trace de ce qui est dans votre appareil et ce qui est dans votre réfrigérateur. Des commentaires ou des fabricants oubliés ? Faites-le moi savoir !";
 "about.developedBy" = "Développé par";
+"about.dxCredit" = "Codes DX issus de The Big Film Database (dxdatabase), sous licence CC BY-SA 4.0.";
 "about.contactUs" = "Contactez-moi";
 "about.emailError.title" = "E-mail non disponible";
 "about.emailError.message" = "Veuillez me contacter à hello@halbe.no";

@@ -50,6 +50,14 @@
 "film.frozen" = "FROZEN";
 "film.expired" = "EXPIRED";
 "film.filmInformation" = "Film Information";
+"dx.scan.button" = "Scan film canister";
+"dx.scan.hint" = "Scan the barcode on the side of the film canister.";
+"dx.scan.instruction" = "Scan the barcode on the side of the film canister";
+"dx.scan.notFound.title" = "Film not recognized";
+"dx.scan.notFound.message" = "Couldn't identify this film. You can fill in the details manually.";
+"dx.scan.unavailable.title" = "Scanner unavailable";
+"dx.scan.unavailable.message" = "Barcode scanning isn't available on this device.";
+"dx.scan.pickFilm" = "Select Film";
 "film.filmReminder" = "Film reminder";
 "film.addExpiryDate" = "Add Expiry Date";
 "film.rollsCount" = "%d rolls";
@@ -215,6 +223,7 @@
 "about.tagline" = "Your Personal Film Collection Manager";
 "about.description" = "FilmStock helps you keep track of your film collection, manage loaded films in your cameras, and never lose track of whats in your camera and whats in your fridge. Any feedback or manufacturers I forgot? Please let me know!";
 "about.developedBy" = "Developed by";
+"about.dxCredit" = "DX codes from The Big Film Database (dxdatabase), licensed under CC BY-SA 4.0.";
 "about.contactUs" = "Contact me";
 "about.emailError.title" = "Email Not Available";
 "about.emailError.message" = "Please contact me at hello@halbe.no";

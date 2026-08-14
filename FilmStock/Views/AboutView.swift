@@ -55,6 +55,12 @@ struct AboutView: View {
                     Text("Jonas Halbe")
                         .font(.body)
                         .fontWeight(.medium)
+                    Text("about.dxCredit")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 8)
                 }
                 
                 // Contact Button

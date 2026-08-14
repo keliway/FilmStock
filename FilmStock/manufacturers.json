@@ -16,6 +16,10 @@
             "apx 400",
             "400",
             "agfa apx 400"
+          ],
+          "dx": [
+            "000190",
+            "017712"
           ]
         },
         {
@@ -27,6 +31,10 @@
             "apx 100",
             "100",
             "agfa apx 100"
+          ],
+          "dx": [
+            "000234",
+            "017711"
           ]
         }
       ]
@@ -38,39 +46,46 @@
     {
       "name": "Arista",
       "films": [
-          {
-            "filename": "edu100",
-            "speed": 100,
-            "type": "BW",
-            "aliases": [
-              "edu 100",
-              "edu 100 ultra",
-              "ultra 100",
-              "100"
-            ]
-          },
-          {
-            "filename": "edu200",
-            "speed": 200,
-            "type": "BW",
-            "aliases": [
-              "edu 200",
-              "edu 200 ultra",
-              "ultra 200",
-              "200"
-            ]
-          },
-          {
-            "filename": "edu400",
-            "speed": 400,
-            "type": "BW",
-            "aliases": [
-              "edu 400",
-              "edu 400 ultra",
-              "ultra 400",
-              "400"
-            ]
-          },
+        {
+          "filename": "edu100",
+          "speed": 100,
+          "type": "BW",
+          "aliases": [
+            "edu 100",
+            "edu 100 ultra",
+            "ultra 100",
+            "100"
+          ],
+          "dx": [
+            "013954"
+          ]
+        },
+        {
+          "filename": "edu200",
+          "speed": 200,
+          "type": "BW",
+          "aliases": [
+            "edu 200",
+            "edu 200 ultra",
+            "ultra 200",
+            "200"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "edu400",
+          "speed": 400,
+          "type": "BW",
+          "aliases": [
+            "edu 400",
+            "edu 400 ultra",
+            "ultra 400",
+            "400"
+          ],
+          "dx": [
+            "013994"
+          ]
+        }
       ]
     },
     {
@@ -97,6 +112,9 @@
             "50 d",
             "50d daylight",
             "cinestill 50d"
+          ],
+          "dx": [
+            "753914"
           ]
         },
         {
@@ -108,7 +126,8 @@
             "400 d",
             "400d daylight",
             "cinestill 400d"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "800t",
@@ -119,6 +138,9 @@
             "800 t",
             "800t tungsten",
             "cinestill 800t"
+          ],
+          "dx": [
+            "753914"
           ]
         },
         {
@@ -130,7 +152,8 @@
             "bw xx t",
             "double xx",
             "double bw xx"
-          ]
+          ],
+          "dx": []
         }
       ]
     },
@@ -145,18 +168,19 @@
     {
       "name": "Ferrania",
       "films": [
-          {
-            "filename": "orto50",
-            "speed": 50,
-            "type": "BW",
-            "aliases": [
-              "orto 50",
-              "ortho 50",
-              "orto50",
-              "ortho 50",
-              "50"
-            ]
-          }
+        {
+          "filename": "orto50",
+          "speed": 50,
+          "type": "BW",
+          "aliases": [
+            "orto 50",
+            "ortho 50",
+            "orto50",
+            "ortho 50",
+            "50"
+          ],
+          "dx": []
+        }
       ]
     },
     {
@@ -176,6 +200,9 @@
             "fomapan 400",
             "400",
             "foma pan 400"
+          ],
+          "dx": [
+            "013994"
           ]
         },
         {
@@ -188,6 +215,9 @@
             "fomapan 200",
             "200",
             "foma pan 200"
+          ],
+          "dx": [
+            "013984"
           ]
         },
         {
@@ -201,7 +231,8 @@
             "foma pan r",
             "r",
             "reversal"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "fomapan100",
@@ -214,6 +245,9 @@
             "100",
             "foma pan 100",
             "pan 100"
+          ],
+          "dx": [
+            "013954"
           ]
         },
         {
@@ -226,7 +260,8 @@
             "400",
             "foma ortho 400",
             "ortho"
-          ]
+          ],
+          "dx": []
         }
       ]
     },
@@ -246,6 +281,10 @@
             "velvia 100",
             "fuji velvia 100",
             "velvia"
+          ],
+          "dx": [
+            "005230",
+            "005270"
           ]
         },
         {
@@ -256,6 +295,11 @@
             "velvia50",
             "velvia 50",
             "fuji velvia 50"
+          ],
+          "dx": [
+            "005174",
+            "005180",
+            "005170"
           ]
         },
         {
@@ -268,6 +312,9 @@
             "160nps",
             "fuji nps 160",
             "nps"
+          ],
+          "dx": [
+            "001984"
           ]
         },
         {
@@ -280,6 +327,10 @@
             "pro 160 s",
             "160s",
             "fuji pro 160s"
+          ],
+          "dx": [
+            "001340",
+            "001600"
           ]
         },
         {
@@ -292,6 +343,15 @@
             "color 200",
             "fuji c200",
             "fujicolor c200"
+          ],
+          "dx": [
+            "106254",
+            "001290",
+            "001300",
+            "006253",
+            "106253",
+            "606253",
+            "106250"
           ]
         },
         {
@@ -304,7 +364,8 @@
             "acros ii",
             "fuji acros",
             "neopan acros"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "Pro400h",
@@ -316,6 +377,12 @@
             "pro 400 h",
             "fuji pro 400h",
             "400h"
+          ],
+          "dx": [
+            "105844",
+            "001690",
+            "005770",
+            "005840"
           ]
         },
         {
@@ -330,6 +397,11 @@
             "fuji provia 100f",
             "provia 100",
             "provia"
+          ],
+          "dx": [
+            "005574",
+            "005570",
+            "005480"
           ]
         },
         {
@@ -344,6 +416,11 @@
             "fuji provia 400f",
             "provia 400",
             "provia"
+          ],
+          "dx": [
+            "005220",
+            "005540",
+            "005440"
           ]
         },
         {
@@ -356,6 +433,9 @@
             "pro 160 c",
             "160c",
             "fuji pro 160c"
+          ],
+          "dx": [
+            "001610"
           ]
         },
         {
@@ -367,6 +447,29 @@
             "fuji 400",
             "fujicolor 400",
             "superia 400"
+          ],
+          "dx": [
+            "001930",
+            "005750",
+            "005783",
+            "006260",
+            "006280",
+            "005620",
+            "005613",
+            "005623",
+            "106283",
+            "106353",
+            "202003",
+            "206263",
+            "206283",
+            "601973",
+            "005813",
+            "001970",
+            "502003",
+            "602003",
+            "605623",
+            "606263",
+            "106284"
           ]
         },
         {
@@ -378,6 +481,20 @@
             "fuji 200",
             "fujicolor 200",
             "superia 200"
+          ],
+          "dx": [
+            "001290",
+            "001300",
+            "006253",
+            "106253",
+            "606253",
+            "001310",
+            "001410",
+            "001950",
+            "106254",
+            "206244",
+            "701950",
+            "005630"
           ]
         },
         {
@@ -388,7 +505,8 @@
             "Neopan400",
             "neopan 400",
             "fuji neopan 400"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "pro160ns",
@@ -400,6 +518,10 @@
             "pro 160 ns",
             "160ns",
             "fuji pro 160ns"
+          ],
+          "dx": [
+            "002060",
+            "001600"
           ]
         },
         {
@@ -410,7 +532,8 @@
             "Neopan1600",
             "neopan 1600",
             "fuji neopan 1600"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "FP100C",
@@ -420,7 +543,8 @@
             "fp100",
             "fp100c",
             "100c"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "FP100C45",
@@ -430,7 +554,8 @@
             "fp10045",
             "fp100c 45",
             "100c 45"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "FP100C_Silk",
@@ -442,7 +567,8 @@
             "100c",
             "silk",
             "pf 100c silk"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "FP3000B",
@@ -452,7 +578,8 @@
             "fp3000",
             "fp3000b",
             "3000b"
-          ]
+          ],
+          "dx": []
         }
       ]
     },
@@ -467,6 +594,10 @@
             "delta100",
             "delta 100",
             "ilford delta 100"
+          ],
+          "dx": [
+            "017580",
+            "017590"
           ]
         },
         {
@@ -477,6 +608,10 @@
             "delta400",
             "delta 400",
             "ilford delta 400"
+          ],
+          "dx": [
+            "017550",
+            "017520"
           ]
         },
         {
@@ -488,6 +623,9 @@
             "ortho 80",
             "ortho",
             "ilford ortho 80"
+          ],
+          "dx": [
+            "017584"
           ]
         },
         {
@@ -499,6 +637,10 @@
             "xp 2",
             "xp2 super",
             "ilford xp2"
+          ],
+          "dx": [
+            "017630",
+            "017640"
           ]
         },
         {
@@ -510,6 +652,9 @@
             "delta 3200",
             "3200",
             "ilford delta 3200"
+          ],
+          "dx": [
+            "017380"
           ]
         },
         {
@@ -521,6 +666,11 @@
             "fp 4",
             "fp4+",
             "fp4 plus"
+          ],
+          "dx": [
+            "017462",
+            "017500",
+            "017560"
           ]
         },
         {
@@ -532,6 +682,11 @@
             "hp 5",
             "hp5+",
             "hp5 plus"
+          ],
+          "dx": [
+            "017519",
+            "017510",
+            "017530"
           ]
         },
         {
@@ -543,6 +698,11 @@
             "pan f",
             "panf plus",
             "pan f+"
+          ],
+          "dx": [
+            "017490",
+            "017450",
+            "017570"
           ]
         },
         {
@@ -554,6 +714,10 @@
             "sfx 200",
             "sfx",
             "ilford sfx 200"
+          ],
+          "dx": [
+            "017350",
+            "018400"
           ]
         }
       ]
@@ -574,6 +738,9 @@
             "pan 100",
             "100",
             "kentmere pan 100"
+          ],
+          "dx": [
+            "017701"
           ]
         },
         {
@@ -585,7 +752,8 @@
             "pan 200",
             "200",
             "kentmere pan 200"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "pan400",
@@ -596,6 +764,9 @@
             "pan 400",
             "400",
             "kentmere pan 400"
+          ],
+          "dx": [
+            "017703"
           ]
         }
       ]
@@ -603,99 +774,111 @@
     {
       "name": "Kodak",
       "films": [
-          {
-            "filename": "ektapan100",
-            "speed": 100,
-            "type": "BW",
-            "aliases": [
-              "ektapan 100",
-              "ektapan100",
-              "pan 100"
-            ]
-          },
-          {
-            "filename": "ektapan400",
-            "speed": 400,
-            "type": "BW",
-            "aliases": [
-              "ektapan 400",
-              "ektapan400",
-              "pan 400"
-            ]
-          },
-          {
-            "filename": "ektapan3200",
-            "speed": 3200,
-            "type": "BW",
-            "aliases": [
-              "ektapan 3200",
-              "ektapan p3200",
-              "ektapanp3200",
-              "ektapan3200",
-              "p3200",
-              "pan 3200"
-            ]
-          },
-          {
-            "filename": "ektacolor160",
-            "speed": 160,
-            "type": "Color",
-            "aliases": [
-              "ektacolor 160",
-              "ektacolor160",
-              "ekta 160",
-              "ekta160",
-              "pro 160",
-              "ektacolor pro160"
-              
-            ]
-          },
-          {
-            "filename": "ektacolor400",
-            "speed": 400,
-            "type": "Color",
-            "aliases": [
-              "ektacolor 400",
-              "ektacolor400",
-              "ekta 400",
-              "ekta400",
-              "pro 400",
-              "ektacolor pro400"
-              
-            ]
-          },
-          {
-            "filename": "ektacolor800",
-            "speed": 800,
-            "type": "Color",
-            "aliases": [
-              "ektacolor 800",
-              "ektacolor800",
-              "ekta 800",
-              "ekta800",
-              "pro 800",
-              "ektacolor pro800"
-              
-            ]
-          },
-          {
-            "filename": "kodacolor100",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "kodacolor 100",
-              "kodacolor100"
-            ]
-          },
-          {
-            "filename": "kodacolor200",
-            "speed": 200,
-            "type": "Color",
-            "aliases": [
-              "kodacolor 200",
-              "kodacolor200"
-            ]
-          },
+        {
+          "filename": "ektapan100",
+          "speed": 100,
+          "type": "BW",
+          "aliases": [
+            "ektapan 100",
+            "ektapan100",
+            "pan 100"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "ektapan400",
+          "speed": 400,
+          "type": "BW",
+          "aliases": [
+            "ektapan 400",
+            "ektapan400",
+            "pan 400"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "ektapan3200",
+          "speed": 3200,
+          "type": "BW",
+          "aliases": [
+            "ektapan 3200",
+            "ektapan p3200",
+            "ektapanp3200",
+            "ektapan3200",
+            "p3200",
+            "pan 3200"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "ektacolor160",
+          "speed": 160,
+          "type": "Color",
+          "aliases": [
+            "ektacolor 160",
+            "ektacolor160",
+            "ekta 160",
+            "ekta160",
+            "pro 160",
+            "ektacolor pro160"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "ektacolor400",
+          "speed": 400,
+          "type": "Color",
+          "aliases": [
+            "ektacolor 400",
+            "ektacolor400",
+            "ekta 400",
+            "ekta400",
+            "pro 400",
+            "ektacolor pro400"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "ektacolor800",
+          "speed": 800,
+          "type": "Color",
+          "aliases": [
+            "ektacolor 800",
+            "ektacolor800",
+            "ekta 800",
+            "ekta800",
+            "pro 800",
+            "ektacolor pro800"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "kodacolor100",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "kodacolor 100",
+            "kodacolor100"
+          ],
+          "dx": [
+            "012604",
+            "112703",
+            "514574"
+          ]
+        },
+        {
+          "filename": "kodacolor200",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "kodacolor 200",
+            "kodacolor200"
+          ],
+          "dx": [
+            "512714",
+            "012593"
+          ]
+        },
         {
           "filename": "Portra160NC",
           "speed": 160,
@@ -706,6 +889,10 @@
             "portra 160 nc",
             "160nc",
             "kodak portra 160nc"
+          ],
+          "dx": [
+            "112754",
+            "015430"
           ]
         },
         {
@@ -720,7 +907,8 @@
             "vision 50d",
             "vision3 50d",
             "5203"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "V2_50D",
@@ -729,7 +917,8 @@
           "aliases": [
             "vision2 50d",
             "5201"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "V2_250D",
@@ -738,7 +927,8 @@
           "aliases": [
             "vision2 2 50d",
             "5205"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "V2_200T",
@@ -747,7 +937,8 @@
           "aliases": [
             "vision2 200T",
             "5217"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "V2_500T",
@@ -756,17 +947,19 @@
           "aliases": [
             "vision2 500T",
             "5218"
-          ]
+          ],
+          "dx": []
         },
         {
-            "filename": "V2_100T",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "vision2 100T",
-              "5212"
-            ]
-          },
+          "filename": "V2_100T",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "vision2 100T",
+            "5212"
+          ],
+          "dx": []
+        },
         {
           "filename": "Ektachrome400",
           "speed": 400,
@@ -775,6 +968,11 @@
             "Ektachrome400",
             "ektachrome 400",
             "kodak ektachrome 400"
+          ],
+          "dx": [
+            "003330",
+            "003234",
+            "008420"
           ]
         },
         {
@@ -789,7 +987,8 @@
             "vision 200t",
             "vision3 200t",
             "5213"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "Ektachrome200",
@@ -800,6 +999,13 @@
             "ektachrome 200",
             "kodak ektachrome 200",
             "e200"
+          ],
+          "dx": [
+            "003244",
+            "008354",
+            "003350",
+            "003780",
+            "103780"
           ]
         },
         {
@@ -812,6 +1018,10 @@
             "portra 160 vc",
             "160vc",
             "kodak portra 160vc"
+          ],
+          "dx": [
+            "212754",
+            "015440"
           ]
         },
         {
@@ -825,6 +1035,11 @@
             "100 plus",
             "kodak ektachrome 100 plus",
             "EPP"
+          ],
+          "dx": [
+            "008404",
+            "008393",
+            "008394"
           ]
         },
         {
@@ -839,6 +1054,11 @@
             "100 tmx",
             "tmx",
             "kodak tmax 100"
+          ],
+          "dx": [
+            "110793",
+            "010790",
+            "010733"
           ]
         },
         {
@@ -850,6 +1070,12 @@
             "ektar 100",
             "kodak ektar 100",
             "ektar"
+          ],
+          "dx": [
+            "115314",
+            "015320",
+            "013050",
+            "013070"
           ]
         },
         {
@@ -865,6 +1091,13 @@
             "tri-x 400",
             "kodak trix 400",
             "400tx"
+          ],
+          "dx": [
+            "110294",
+            "110271",
+            "012514",
+            "010274",
+            "010293"
           ]
         },
         {
@@ -875,6 +1108,13 @@
             "Portra800",
             "portra 800",
             "kodak portra 800"
+          ],
+          "dx": [
+            "012784",
+            "016954",
+            "006970",
+            "006950",
+            "006930"
           ]
         },
         {
@@ -889,7 +1129,8 @@
             "vision 250d",
             "vision3 250d",
             "5207"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "TMax400",
@@ -903,6 +1144,12 @@
             "400 tmy",
             "tmy",
             "kodak tmax 400"
+          ],
+          "dx": [
+            "310804",
+            "010743",
+            "010800",
+            "210804"
           ]
         },
         {
@@ -921,7 +1168,10 @@
             "TMaxP3200",
             "TMax P3200",
             "TMax P 3200"
-
+          ],
+          "dx": [
+            "010810",
+            "010754"
           ]
         },
         {
@@ -933,6 +1183,22 @@
             "ektachrome 100",
             "e100",
             "kodak ektachrome 100"
+          ],
+          "dx": [
+            "003264",
+            "008470",
+            "003294",
+            "008384",
+            "008600",
+            "003340",
+            "003824",
+            "103744",
+            "103804",
+            "003800",
+            "008390",
+            "003820",
+            "003830",
+            "903824"
           ]
         },
         {
@@ -945,7 +1211,8 @@
             "doublex",
             "kodak double x",
             "5222"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "ultramax",
@@ -956,6 +1223,11 @@
             "ultra max",
             "ultramax 400",
             "kodak ultramax"
+          ],
+          "dx": [
+            "015270",
+            "915353",
+            "915373"
           ]
         },
         {
@@ -968,6 +1240,11 @@
             "portra 400 vc",
             "400vc",
             "kodak portra 400vc"
+          ],
+          "dx": [
+            "015300",
+            "015460",
+            "212774"
           ]
         },
         {
@@ -980,6 +1257,19 @@
             "gold",
             "kodak gold",
             "kodak gold 200"
+          ],
+          "dx": [
+            "912503",
+            "013040",
+            "732983",
+            "832983",
+            "412503",
+            "012500",
+            "015480",
+            "012921",
+            "013333",
+            "512503",
+            "013193"
           ]
         },
         {
@@ -991,6 +1281,10 @@
             "portra 160",
             "p160",
             "kodak portra 160"
+          ],
+          "dx": [
+            "115344",
+            "015500"
           ]
         },
         {
@@ -1003,6 +1297,10 @@
             "portra 400 nc",
             "400nc",
             "kodak portra 400nc"
+          ],
+          "dx": [
+            "015290",
+            "015450"
           ]
         },
         {
@@ -1014,6 +1312,12 @@
             "color plus",
             "colorplus 200",
             "kodak colorplus"
+          ],
+          "dx": [
+            "712704",
+            "512713",
+            "912714",
+            "015504"
           ]
         },
         {
@@ -1025,6 +1329,10 @@
             "portra 400",
             "p400",
             "kodak portra 400"
+          ],
+          "dx": [
+            "115334",
+            "112774"
           ]
         },
         {
@@ -1037,6 +1345,9 @@
             "ektachrome 64 t",
             "64t",
             "kodak ektachrome 64t"
+          ],
+          "dx": [
+            "008410"
           ]
         },
         {
@@ -1052,6 +1363,9 @@
             "techpan",
             "tech pan",
             "technipan"
+          ],
+          "dx": [
+            "000654"
           ]
         },
         {
@@ -1066,7 +1380,8 @@
             "vision 500t",
             "vision3 500t",
             "5219"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "PlusX",
@@ -1078,6 +1393,10 @@
             "plusx",
             "kodak plus x",
             "125px"
+          ],
+          "dx": [
+            "010263",
+            "010280"
           ]
         },
         {
@@ -1091,6 +1410,11 @@
             "160t",
             "kodak ektachrome 160t",
             "EPT"
+          ],
+          "dx": [
+            "003250",
+            "008364",
+            "008360"
           ]
         },
         {
@@ -1104,6 +1428,10 @@
             "320",
             "kodak ektachrome 320t",
             "EPJ"
+          ],
+          "dx": [
+            "008434",
+            "108434"
           ]
         },
         {
@@ -1116,6 +1444,10 @@
             "portra 100 t",
             "100",
             "kodak portra 100t"
+          ],
+          "dx": [
+            "012760",
+            "018040"
           ]
         },
         {
@@ -1128,7 +1460,8 @@
             "tri x 320",
             "320txp",
             "kodak trix 320"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "proimage100",
@@ -1140,6 +1473,9 @@
             "pro image 100",
             "proimage 100",
             "pro image100"
+          ],
+          "dx": [
+            "512574"
           ]
         },
         {
@@ -1153,6 +1489,11 @@
             "ektapress multispeed",
             "PPC",
             "ektapress PPC"
+          ],
+          "dx": [
+            "013024",
+            "012890",
+            "013300"
           ]
         },
         {
@@ -1165,6 +1506,9 @@
             "ektapress gold 100",
             "PPA",
             "ektapress PPA"
+          ],
+          "dx": [
+            "013004"
           ]
         },
         {
@@ -1177,6 +1521,12 @@
             "ektapress gold 400",
             "PPB",
             "ektapress PPB"
+          ],
+          "dx": [
+            "013014",
+            "013064",
+            "013060",
+            "013090"
           ]
         },
         {
@@ -1191,6 +1541,10 @@
             "ektapress PJ800",
             "ektapress gold PJ800",
             "PJ800"
+          ],
+          "dx": [
+            "012550",
+            "012634"
           ]
         },
         {
@@ -1202,6 +1556,10 @@
             "ektapress PJ400",
             "ektapress gold PJ400",
             "PJ400"
+          ],
+          "dx": [
+            "013090",
+            "412544"
           ]
         },
         {
@@ -1217,6 +1575,16 @@
             "kodacolor VR100",
             "kodacolorVR100",
             "VR100"
+          ],
+          "dx": [
+            "012700",
+            "015490",
+            "012841",
+            "012650",
+            "013144",
+            "013160",
+            "013264",
+            "020470"
           ]
         },
         {
@@ -1232,6 +1600,14 @@
             "kodacolor VR200",
             "kodacolorVR200",
             "VR200"
+          ],
+          "dx": [
+            "012831",
+            "013130",
+            "013170",
+            "013250",
+            "012660",
+            "212714"
           ]
         },
         {
@@ -1247,6 +1623,14 @@
             "kodacolor VR400",
             "kodacolorVR400",
             "VR400"
+          ],
+          "dx": [
+            "012820",
+            "012680",
+            "613154",
+            "015270",
+            "615374",
+            "715374"
           ]
         },
         {
@@ -1262,6 +1646,10 @@
             "kodacolor VR1000",
             "kodacolorVR1000",
             "VR1000"
+          ],
+          "dx": [
+            "012944",
+            "012854"
           ]
         }
       ]
@@ -1273,95 +1661,114 @@
     {
       "name": "Lomography",
       "films": [
-          {
-            "filename": "turquoise",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "turquoise",
-              "turquoise 100",
-              "lomo turquoise",
-              "lomography turquoise",
-              "lomo turquoise xr",
-              "lomochrome turquoise xr",
-              "lomochrome turquoise"
-            ]
-          },
-          {
-            "filename": "purple",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "purple",
-              "purple 100",
-              "lomo purple",
-              "lomography purple",
-              "lomo purple xr",
-              "lomochrome purple xr",
-              "lomochrome purple"
-            ]
-          },
-          {
-            "filename": "metropolis",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "purple",
-              "purple 100",
-              "lomo metropolis",
-              "lomography metropolis",
-              "lomo metropolis xr",
-              "lomochrome metropolis xr",
-              "lomochrome metropolis"
-            ]
-          },
-          {
-            "filename": "lomo100",
-            "speed": 100,
-            "type": "Color",
-            "aliases": [
-              "lomo 100",
-              "lomo100",
-              "lomography100",
-              "lomography 100"
-            ]
-          },
-          {
-            "filename": "lomo200",
-            "speed": 200,
-            "type": "Color",
-            "aliases": [
-              "lomo 200",
-              "lomo200",
-              "lomography200",
-              "lomography 200"
-            ]
-          },
-          {
-            "filename": "lomo400",
-            "speed": 400,
-            "type": "Color",
-            "aliases": [
-              "lomo 400",
-              "lomo400",
-              "lomography400",
-              "lomography 400"
-            ]
-          }
+        {
+          "filename": "turquoise",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "turquoise",
+            "turquoise 100",
+            "lomo turquoise",
+            "lomography turquoise",
+            "lomo turquoise xr",
+            "lomochrome turquoise xr",
+            "lomochrome turquoise"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "purple",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "purple",
+            "purple 100",
+            "lomo purple",
+            "lomography purple",
+            "lomo purple xr",
+            "lomochrome purple xr",
+            "lomochrome purple"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "metropolis",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "purple",
+            "purple 100",
+            "lomo metropolis",
+            "lomography metropolis",
+            "lomo metropolis xr",
+            "lomochrome metropolis xr",
+            "lomochrome metropolis"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "lomo100",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "lomo 100",
+            "lomo100",
+            "lomography100",
+            "lomography 100"
+          ],
+          "dx": [
+            "014034",
+            "114034"
+          ]
+        },
+        {
+          "filename": "lomo200",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "lomo 200",
+            "lomo200",
+            "lomography200",
+            "lomography 200"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "lomo400",
+          "speed": 400,
+          "type": "Color",
+          "aliases": [
+            "lomo 400",
+            "lomo400",
+            "lomography400",
+            "lomography 400"
+          ],
+          "dx": [
+            "015610",
+            "013994",
+            "007930"
+          ]
+        }
       ]
     },
     {
       "name": "Lucky",
       "films": [
-          {
-            "filename": "200",
-            "speed": 200,
-            "type": "Color",
-            "aliases": [
-              "lucky 200",
-              "200"
-            ]
-          }
+        {
+          "filename": "200",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "lucky 200",
+            "200"
+          ],
+          "dx": [
+            "016034",
+            "016044",
+            "016060",
+            "016040"
+          ]
+        }
       ]
     },
     {
@@ -1375,20 +1782,20 @@
     {
       "name": "Orwo",
       "films": [
-          
-          {
-            "filename": "nc500",
-            "speed": 500,
-            "type": "Color",
-            "aliases": [
-              "wolfen 500",
-              "wolfen nc500",
-              "nc500",
-              "orwo 500",
-              "orwo nc500",
-              "color nc500"
-            ]
-          }
+        {
+          "filename": "nc500",
+          "speed": 500,
+          "type": "Color",
+          "aliases": [
+            "wolfen 500",
+            "wolfen nc500",
+            "nc500",
+            "orwo 500",
+            "orwo nc500",
+            "color nc500"
+          ],
+          "dx": []
+        }
       ]
     },
     {
@@ -1398,28 +1805,30 @@
     {
       "name": "Reflx",
       "films": [
-          {
-              "filename": "640T",
-              "speed": 640,
-              "type": "Color",
-              "aliases": [
-                  "640t",
-                  "640",
-                  "640t ahu",
-                  "640 ahu"
-              ]
-          },
-          {
-              "filename": "320D",
-              "speed": 320,
-              "type": "Color",
-              "aliases": [
-                  "320d",
-                  "320",
-                  "320d ahu",
-                  "320 ahu"
-              ]
-          },
+        {
+          "filename": "640T",
+          "speed": 640,
+          "type": "Color",
+          "aliases": [
+            "640t",
+            "640",
+            "640t ahu",
+            "640 ahu"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "320D",
+          "speed": 320,
+          "type": "Color",
+          "aliases": [
+            "320d",
+            "320",
+            "320d ahu",
+            "320 ahu"
+          ],
+          "dx": []
+        }
       ]
     },
     {
@@ -1436,6 +1845,10 @@
             "400",
             "rollei retro 400s",
             "400s"
+          ],
+          "dx": [
+            "000194",
+            "854011"
           ]
         },
         {
@@ -1449,6 +1862,9 @@
             "80",
             "rollei retro 80s",
             "80s"
+          ],
+          "dx": [
+            "017334"
           ]
         },
         {
@@ -1460,6 +1876,9 @@
             "rpx 25",
             "25",
             "rollei rpx 25"
+          ],
+          "dx": [
+            "830254"
           ]
         },
         {
@@ -1471,7 +1890,8 @@
             "rpx 100",
             "100",
             "rollei rpx 100"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "rpx400",
@@ -1482,7 +1902,8 @@
             "rpx 400",
             "400",
             "rollei rpx 400"
-          ]
+          ],
+          "dx": []
         },
         {
           "filename": "infrared",
@@ -1492,6 +1913,10 @@
             "infrared",
             "ir",
             "rollei infrared"
+          ],
+          "dx": [
+            "018506",
+            "844004"
           ]
         },
         {
@@ -1505,7 +1930,8 @@
             "25",
             "rollei ortho 25 plus",
             "ortho"
-          ]
+          ],
+          "dx": []
         }
       ]
     },

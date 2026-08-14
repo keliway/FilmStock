@@ -92,12 +92,44 @@ struct AddFilmView: View {
     @State private var showingAddBatch = false
     @State private var batchToEdit: RollBatch?
 
+    // DX scan
+    @State private var showingDXScanner = false
+    @State private var showingDXUnavailable = false
+    @State private var showingDXNotFound = false
+    @State private var showingDXPicker = false
+    @State private var dxMatches: [ImageStorage.DXFilmMatch] = []
+    @State private var scannedDXCode = ""
+
     // Validation
     @State private var nameError: String?
 
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Button {
+                        if DXBarcodeScannerView.isAvailable {
+                            showingDXScanner = true
+                        } else {
+                            showingDXUnavailable = true
+                        }
+                    } label: {
+                        HStack {
+                            Label("dx.scan.button", systemImage: "barcode.viewfinder")
+                            Spacer()
+                            Text("BETA")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
+                        }
+                    }
+                } footer: {
+                    Text("dx.scan.hint")
+                }
+
                 // MARK: Film Information
                 Section("film.filmInformation") {
                     NavigationLink {
@@ -291,6 +323,27 @@ struct AddFilmView: View {
                     selectedImageSource: $catalogSelectedSource
                 )
             }
+            .fullScreenCover(isPresented: $showingDXScanner) {
+                DXBarcodeScannerView { code in
+                    handleScannedDX(code)
+                }
+            }
+            .sheet(isPresented: $showingDXPicker) {
+                DXFilmPickerView(matches: dxMatches) { match in
+                    applyDXMatch(match)
+                    showingDXPicker = false
+                }
+            }
+            .alert("dx.scan.notFound.title", isPresented: $showingDXNotFound) {
+                Button("action.ok", role: .cancel) { }
+            } message: {
+                Text("dx.scan.notFound.message")
+            }
+            .alert("dx.scan.unavailable.title", isPresented: $showingDXUnavailable) {
+                Button("action.ok", role: .cancel) { }
+            } message: {
+                Text("dx.scan.unavailable.message")
+            }
             .sheet(isPresented: $showingAddBatch) {
                 RollBatchSheet(existingBatch: batchToEdit) { saved in
                     if let editing = batchToEdit,
@@ -401,6 +454,68 @@ struct AddFilmView: View {
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .overlay(RoundedRectangle(cornerRadius: 3).stroke(color, lineWidth: 1))
+    }
+
+    // MARK: - DX Scan
+
+    private func handleScannedDX(_ code: String) {
+        scannedDXCode = code
+        let matches = ImageStorage.shared.filmsMatching(dxCode: code)
+        // Wait for the scanner cover to finish dismissing before presenting an alert or sheet.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            switch matches.count {
+            case 0:
+                showingDXNotFound = true
+            case 1:
+                applyDXMatch(matches[0])
+            default:
+                dxMatches = matches
+                showingDXPicker = true
+            }
+        }
+    }
+
+    private func applyDXMatch(_ match: ImageStorage.DXFilmMatch) {
+        hasAutoPopulatedMetadata = true
+        manufacturer = match.manufacturer
+        name = match.displayName
+        if let speed = match.speed, isoValues.contains(speed) {
+            filmSpeed = speed
+        }
+        if let typeStr = match.type {
+            switch typeStr {
+            case "BW": type = .bw
+            case "Color": type = .color
+            case "Slide": type = .slide
+            case "Instant": type = .instant
+            default: break
+            }
+        }
+        addOrUpdateScannedRoll()
+    }
+
+    /// DX barcodes are 35mm only. Add one roll (qty 1) so the user can tweak quantity, expiry, etc.
+    private func addOrUpdateScannedRoll() {
+        let format = FilmStock.FilmFormat.thirtyFive
+        let count = ImageStorage.shared.exposures(fromScannedDXCode: scannedDXCode)
+        let isStandard = format.exposureOptions.contains(count)
+        let exposures = isStandard ? count : -1
+        let custom = isStandard ? "" : "\(count)"
+
+        if rollBatches.isEmpty {
+            rollBatches = [
+                RollBatch(format: format, quantity: 1, exposures: exposures, customExposures: custom)
+            ]
+            return
+        }
+
+        // Re-scan: update exposures on a single 35mm line, keep qty/expiry the user may have edited.
+        if rollBatches.count == 1, rollBatches[0].format == .thirtyFive {
+            var existing = rollBatches[0]
+            existing.exposures = exposures
+            existing.customExposures = custom
+            rollBatches[0] = existing
+        }
     }
 
     // MARK: - Helpers
@@ -830,5 +945,61 @@ struct ManufacturerPickerView: View {
 extension String {
     func localizedCaseInsensitiveEquals(_ other: String) -> Bool {
         self.localizedCaseInsensitiveCompare(other) == .orderedSame
+    }
+}
+
+// MARK: - DX Film Picker
+
+struct DXFilmPickerView: View {
+    let matches: [ImageStorage.DXFilmMatch]
+    let onSelect: (ImageStorage.DXFilmMatch) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(matches) { match in
+                Button {
+                    onSelect(match)
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(match.displayName)
+                            .foregroundColor(.primary)
+                        HStack(spacing: 6) {
+                            Text(match.manufacturer)
+                            if let speed = match.speed {
+                                Text("·")
+                                Text("ISO \(speed)")
+                            }
+                            if let type = match.type {
+                                Text("·")
+                                Text(typeDisplay(type))
+                            }
+                        }
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+            .navigationTitle("dx.scan.pickFilm")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("action.cancel") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    private func typeDisplay(_ type: String) -> String {
+        switch type {
+        case "BW": return "B&W"
+        case "Color": return "Color"
+        case "Slide": return "Slide"
+        case "Instant": return "Instant"
+        default: return type
+        }
     }
 }

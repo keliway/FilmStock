@@ -50,6 +50,14 @@
 "film.frozen" = "CONGELADO";
 "film.expired" = "CADUCADO";
 "film.filmInformation" = "Información de la película";
+"dx.scan.button" = "Escanear cartucho de película";
+"dx.scan.hint" = "Escanea el código de barras del lateral del cartucho.";
+"dx.scan.instruction" = "Escanea el código de barras del lateral del cartucho";
+"dx.scan.notFound.title" = "Película no reconocida";
+"dx.scan.notFound.message" = "No se pudo identificar esta película. Puedes completar los datos manualmente.";
+"dx.scan.unavailable.title" = "Escáner no disponible";
+"dx.scan.unavailable.message" = "El escaneo de códigos de barras no está disponible en este dispositivo.";
+"dx.scan.pickFilm" = "Seleccionar película";
 "film.filmReminder" = "Recordatorio de película";
 "film.addExpiryDate" = "Añadir fecha de caducidad";
 "film.rollsCount" = "%d rollos";
@@ -215,6 +223,7 @@
 "about.tagline" = "Tu gestor personal de colección de películas";
 "about.description" = "FilmStock te ayuda a llevar un registro de tu colección de películas, gestionar películas cargadas en tus cámaras y nunca perder la pista de lo que está en tu cámara y lo que está en tu refrigerador. ¿Comentarios o fabricantes olvidados? ¡Házmelo saber!";
 "about.developedBy" = "Desarrollado por";
+"about.dxCredit" = "Códigos DX de The Big Film Database (dxdatabase), con licencia CC BY-SA 4.0.";
 "about.contactUs" = "Contáctame";
 "about.emailError.title" = "Correo no disponible";
 "about.emailError.message" = "Por favor contáctame en hello@halbe.no";

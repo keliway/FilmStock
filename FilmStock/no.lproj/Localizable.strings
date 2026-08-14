@@ -50,6 +50,14 @@
 "film.frozen" = "FROSSEN";
 "film.expired" = "UTGÅTT";
 "film.filmInformation" = "Filminformasjon";
+"dx.scan.button" = "Skann filmboks";
+"dx.scan.hint" = "Skann strekkoden på siden av filmboksen.";
+"dx.scan.instruction" = "Skann strekkoden på siden av filmboksen";
+"dx.scan.notFound.title" = "Filmen ble ikke gjenkjent";
+"dx.scan.notFound.message" = "Kunne ikke identifisere denne filmen. Du kan fylle inn detaljene manuelt.";
+"dx.scan.unavailable.title" = "Skanner utilgjengelig";
+"dx.scan.unavailable.message" = "Strekkodeskanning er ikke tilgjengelig på denne enheten.";
+"dx.scan.pickFilm" = "Velg film";
 "film.filmReminder" = "Filmpåminnelse";
 "film.addExpiryDate" = "Legg til utløpsdato";
 "film.rollsCount" = "%d ruller";
@@ -215,6 +223,7 @@
 "about.tagline" = "Din personlige filmsamlingshåndterer";
 "about.description" = "FilmStock hjelper deg med å holde styr på filmsamlingen din, administrere innlagte filmer i kameraene dine, og aldri miste oversikten over hva som er i kameraet ditt og hva som er i kjøleskapet. Tilbakemeldinger eller glemte produsenter? Gi meg beskjed!";
 "about.developedBy" = "Utviklet av";
+"about.dxCredit" = "DX-koder fra The Big Film Database (dxdatabase), lisensiert under CC BY-SA 4.0.";
 "about.contactUs" = "Kontakt meg";
 "about.emailError.title" = "E-post ikke tilgjengelig";
 "about.emailError.message" = "Vennligst kontakt meg på hello@halbe.no";
