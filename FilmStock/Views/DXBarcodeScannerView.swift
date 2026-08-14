@@ -2,7 +2,7 @@
 //  DXBarcodeScannerView.swift
 //  FilmStock
 //
-//  Scans the Interleaved 2 of 5 (and related) barcode on a 35mm film canister.
+//  Scans packaging barcodes (EAN/UPC) and the Interleaved 2 of 5 DX code on a 35mm canister.
 //
 
 import SwiftUI
@@ -61,7 +61,11 @@ private struct DXDataScannerRepresentable: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> DataScannerViewController {
         let recognizedTypes: Set<DataScannerViewController.RecognizedDataType> = [
-            .barcode(symbologies: [.i2of5, .i2of5Checksum, .code39, .code128])
+            .barcode(symbologies: [
+                .ean13, .ean8, .upce,
+                .i2of5, .i2of5Checksum,
+                .code39, .code128
+            ])
         ]
         let scanner = DataScannerViewController(
             recognizedDataTypes: recognizedTypes,

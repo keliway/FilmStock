@@ -124,6 +124,16 @@ class ImageStorage {
         let speed: Int?
         let type: String?
     }
+
+    struct PackageBarcodeMatch {
+        let manufacturer: String
+        let filename: String?
+        let displayName: String
+        let speed: Int?
+        let type: String?
+        let format: FilmStock.FilmFormat
+        let quantity: Int
+    }
     
     struct ManufacturerInfo: Codable {
         let name: String
@@ -485,6 +495,159 @@ class ImageStorage {
             return match
         }
         return 36
+    }
+
+    /// Match a packaging barcode (UPC/EAN on the box) to catalog film + pack quantity.
+    func packageMatching(barcode: String) -> PackageBarcodeMatch? {
+        let keys = barcodeIndexKeys(barcode)
+        guard !keys.isEmpty else { return nil }
+        guard let record = packageBarcodeRecords().first(where: { !$0.keys.isDisjoint(with: keys) }) else {
+            return nil
+        }
+        return resolvePackageMatch(record)
+    }
+
+    private struct PackageBarcodeRecord {
+        let keys: Set<String>
+        let manufacturerCSV: String
+        let filmCSV: String
+        let format: FilmStock.FilmFormat
+        let quantity: Int
+    }
+
+    private func packageBarcodeRecords() -> [PackageBarcodeRecord] {
+        struct Cache {
+            static let records: [PackageBarcodeRecord] = ImageStorage.loadPackageBarcodeRecords()
+        }
+        return Cache.records
+    }
+
+    private static func loadPackageBarcodeRecords() -> [PackageBarcodeRecord] {
+        guard let url = Bundle.main.url(forResource: "barcodes", withExtension: "csv"),
+              let raw = try? String(contentsOf: url, encoding: .utf8) else {
+            return []
+        }
+        let text = raw.replacingOccurrences(of: "\u{FEFF}", with: "")
+        var records: [PackageBarcodeRecord] = []
+        for (index, line) in text.split(whereSeparator: \.isNewline).enumerated() {
+            if index == 0 { continue }
+            let cols = line.split(separator: ",", omittingEmptySubsequences: false).map {
+                $0.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            guard cols.count >= 5 else { continue }
+            // Skip Excel scientific-notation values that lost the real digits.
+            guard cols[0].allSatisfy(\.isNumber) else { continue }
+            let barcode = cols[0]
+            guard barcode.count >= 8 else { continue }
+            guard let format = filmFormat(fromCSV: cols[3]),
+                  let quantity = Int(cols[4]), quantity > 0 else { continue }
+            let keys = barcodeIndexKeys(barcode)
+            guard !keys.isEmpty else { continue }
+            records.append(
+                PackageBarcodeRecord(
+                    keys: keys,
+                    manufacturerCSV: cols[1],
+                    filmCSV: cols[2],
+                    format: format,
+                    quantity: quantity
+                )
+            )
+        }
+        return records
+    }
+
+    private static func filmFormat(fromCSV type: String) -> FilmStock.FilmFormat? {
+        switch type.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "35mm", "35": return .thirtyFive
+        case "120": return .oneTwenty
+        case "4x5", "4×5": return .fourByFive
+        default: return nil
+        }
+    }
+
+    /// UPC-A / EAN-13 / short-catalog variants of a single code.
+    /// Applied once to the original digits only — chaining pad/strip/drop would make
+    /// every barcode share keys (and always match the first CSV row).
+    private static func barcodeIndexKeys(_ raw: String) -> Set<String> {
+        let digits = raw.filter(\.isNumber)
+        guard (8...14).contains(digits.count) else { return [] }
+        var keys: Set<String> = [digits]
+        switch digits.count {
+        case 11:
+            keys.insert("0" + digits)
+            keys.insert("00" + digits)
+        case 12:
+            keys.insert("0" + digits)
+            if digits.hasPrefix("0") {
+                keys.insert(String(digits.dropFirst()))
+            }
+            keys.insert(String(digits.dropLast()))
+        case 13:
+            if digits.hasPrefix("0") {
+                keys.insert(String(digits.dropFirst()))
+            }
+            if digits.hasPrefix("00") {
+                keys.insert(String(digits.dropFirst(2)))
+            }
+            keys.insert(String(digits.dropLast()))
+        default:
+            break
+        }
+        return keys
+    }
+
+    private func barcodeIndexKeys(_ raw: String) -> Set<String> {
+        Self.barcodeIndexKeys(raw)
+    }
+
+    private func resolvePackageMatch(_ record: PackageBarcodeRecord) -> PackageBarcodeMatch {
+        let manufacturers = loadManufacturersData()
+        let manufacturerName = resolvedManufacturerName(record.manufacturerCSV, in: manufacturers)
+        let film = resolvedFilm(record.filmCSV, manufacturerName: manufacturerName, in: manufacturers)
+        return PackageBarcodeMatch(
+            manufacturer: manufacturerName,
+            filename: film?.filename,
+            displayName: film.map { displayName(for: $0) } ?? record.filmCSV,
+            speed: film?.speed,
+            type: film?.type,
+            format: record.format,
+            quantity: record.quantity
+        )
+    }
+
+    private func resolvedManufacturerName(_ csv: String, in manufacturers: [ManufacturerInfo]) -> String {
+        let aliases = ["fomapan": "Foma"]
+        let mapped = aliases[csv.lowercased()] ?? csv
+        if let match = manufacturers.first(where: { $0.name.lowercased() == mapped.lowercased() }) {
+            return match.name
+        }
+        if let match = manufacturers.first(where: { $0.name.lowercased() == csv.lowercased() }) {
+            return match.name
+        }
+        return csv
+    }
+
+    private func resolvedFilm(_ csv: String, manufacturerName: String, in manufacturers: [ManufacturerInfo]) -> FilmInfo? {
+        guard let manufacturer = manufacturers.first(where: { $0.name.lowercased() == manufacturerName.lowercased() }) else {
+            return nil
+        }
+        let aliases = [
+            "foma400": "fomapan400",
+            "foma100": "fomapan100",
+            "ektarchrome64t": "ektachrome64t"
+        ]
+        let wanted = aliases[normalizeFilmToken(csv)] ?? normalizeFilmToken(csv)
+        for film in manufacturer.films {
+            let names = ([film.filename] + film.aliases).map(normalizeFilmToken)
+            if names.contains(wanted) || names.contains(normalizeFilmToken(csv)) {
+                return film
+            }
+        }
+        return nil
+    }
+
+    private func normalizeFilmToken(_ value: String) -> String {
+        value.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
     }
 
     private func dxSixDigitOrientations(from scanned: String) -> [String] {

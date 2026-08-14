@@ -1800,7 +1800,31 @@
     },
     {
       "name": "Harman",
-      "films": []
+      "films": [
+        {
+          "filename": "phoenix2",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "phoenix II",
+            "phoenix 2",
+            "phoenix2",
+            "harman phoenix 2",
+            "harman phoenix II"
+          ],
+          "dx": ["017765"]
+        },
+        {
+          "filename": "phoenix",
+          "speed": 200,
+          "type": "Color",
+          "aliases": [
+            "phoenix",
+            "harman phoenix"
+          ],
+          "dx": ["016814"]
+        }
+      ]
     },
     {
       "name": "Reflx",

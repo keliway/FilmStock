@@ -199,16 +199,30 @@
         <header>
             <h1>FilmStock</h1>
             <p class="tagline">Your analog film collection manager</p>
-            <p class="version">Version 2.2 &mdash; Updated April 2026</p>
+            <p class="version">Version 2.4 &mdash; Updated August 2026</p>
         </header>
 
         <div class="content-section">
             <h2>Version History</h2>
             <ul>
+                <li><a href="#whats-new-2-4"><strong>Version 2.4</strong></a> &mdash; August 2026 (scan film boxes and 35mm canisters, beta)</li>
                 <li><a href="#whats-new-2-2"><strong>Version 2.2</strong></a> &mdash; April 2026 (My Films grouping, updated Kodak film cards in the catalog)</li>
                 <li><a href="#whats-new-2-1"><strong>Version 2.1</strong></a> &mdash; March 2026 (quality-of-life updates, sheet workflow improvements, migration stability fixes)</li>
                 <li><a href="#whats-new-2-0"><strong>Version 2.0</strong></a> &mdash; February 2026 (roll-centric model and major redesign)</li>
             </ul>
+        </div>
+
+        <div class="content-section" id="whats-new-2-4">
+            <h2>What's New in Version 2.4</h2>
+            <p>Version 2.4 adds a <strong>Quick Add</strong> barcode scanner on Add Film. This feature is in <strong>beta</strong>.</p>
+
+            <p><strong>Scan packaging barcodes (Beta).</strong> On <strong>Add Film</strong>, tap <strong>Scan barcode</strong> and point the camera at the barcode on a film box. If the pack is recognized, FilmStock prefills manufacturer, name, type, and ISO, and adds the rolls or sheets in that package &mdash; for example, a new Portra 400 pro-pack adds 5 rolls at once. About 70+ packaging codes are included so far, mostly 120 and 35mm, plus others including 4x5. More will be added later. You can edit everything afterward.</p>
+
+            <p><strong>Scan 35mm canisters (Beta).</strong> You can also scan the DX barcode on the <strong>side</strong> of a 35mm can. That prefills the film and adds one 35mm roll (quantity 1), with the exposure count from the barcode when it can be read.</p>
+
+            <p>Packaging lookup and canister DX lookup both only match films FilmStock currently lists. Cine/respool stocks without a DX code, boxes we don’t have a barcode for yet, and films we don’t list yet need to be entered by hand.</p>
+
+            <p><strong>Fujifilm Acros and Neopan</strong> canister barcodes are not supported &mdash; those cartridges use a different format than the DX codes FilmStock reads. You can still add <strong>Acros 120</strong> by scanning the box barcode if we have it. Otherwise add them manually as usual.</p>
         </div>
 
         <div class="content-section" id="whats-new-2-2">
@@ -282,9 +296,10 @@
             <h3>Adding Your First Film</h3>
             <ol>
                 <li>Tap the <strong>+</strong> button in the My Films tab.</li>
-                <li>Fill in the <strong>Film Information</strong> section: manufacturer, name, type, and ISO speed.</li>
+                <li>Tap <strong>Scan barcode</strong> (beta) to quick-add from a film box or a 35mm canister. A box barcode can add a whole pack at once (for example 5 rolls from a Portra 400 pro-pack, or a box of 4x5 sheets). A canister DX barcode adds one 35mm roll. Then edit as needed. Fujifilm Acros and Neopan canisters cannot be scanned (they use a different barcode format); enter those by hand, or scan the box if it is supported.</li>
+                <li>Or fill in the <strong>Film Information</strong> section yourself: manufacturer, name, type, and ISO speed.</li>
                 <li>Optionally add a film card image (tap the camera icon or browse the catalog).</li>
-                <li>In the <strong>Rolls</strong> section, tap <strong>Add Roll Batch</strong> to specify what you have:
+                <li>In the <strong>Rolls</strong> section, tap <strong>Add Rolls</strong> to specify what you have (skip this if a scan already added rolls or sheets):
                     <ul>
                         <li>Choose a format (35mm, 120, etc.)</li>
                         <li>Set the quantity</li>
@@ -405,6 +420,16 @@
 
         <div class="content-section">
             <h2>Frequently Asked Questions</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: How do I scan a film barcode?</div>
+                <div class="faq-answer">A: On Add Film, tap <strong>Scan barcode</strong> and point the camera at the barcode on the <strong>film box</strong>, or at the DX barcode on the <strong>side</strong> of a 35mm can. Box scans are a quick-add: a Portra 400 pro-pack adds 5 rolls, and 4x5 boxes add sheets rather than rolls. About 70+ packaging barcodes are included (mostly 120 and 35mm, plus others including 4x5), with more later. Canister scans add one 35mm roll. This is a beta feature. You can always edit the prefilled details afterward.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: Why didn’t scanning recognize my Fujifilm Acros or Neopan?</div>
+                <div class="faq-answer">A: Acros and Neopan <strong>canisters</strong> use a different barcode format than the DX codes FilmStock reads, so those cans are not supported. Try the barcode on the <strong>box</strong> instead when we have it (for example Acros 120). Otherwise add those films manually. Other films without a DX code (for example many cine/respool stocks) also need to be entered by hand if we don’t have a packaging barcode for them yet.</div>
+            </div>
 
             <div class="faq-item">
                 <div class="faq-question">Q: Does FilmStock require an account or internet connection?</div>
@@ -542,9 +567,20 @@
                 <li>Check that background app refresh is enabled in Settings for FilmStock.</li>
             </ul>
 
+            <h3>Scan barcode doesn’t recognize the film</h3>
+            <ul>
+                <li>Packaging lookup currently covers 70+ box barcodes (mostly 120 and 35mm, plus others including 4x5). More will be added later. If the box isn’t in that list yet, enter the film by hand.</li>
+                <li>Canister scanning only matches films in FilmStock’s catalog that have a standard DX barcode on the can.</li>
+                <li><strong>Fujifilm Acros and Neopan</strong> canisters are not supported &mdash; those cartridges use a different barcode format. Try the box barcode, or enter them manually.</li>
+                <li>Cine and respooled stocks often have no DX code. Enter those manually unless we have a packaging barcode for that box.</li>
+                <li>Hold the camera so the barcode is well lit and in focus (box barcode, or the <strong>side</strong> of a 35mm canister).</li>
+                <li>If nothing is recognized, cancel and fill in the form yourself.</li>
+            </ul>
+
             <h3>Camera or photo library permission denied</h3>
             <ul>
                 <li>Go to <strong>Settings &rarr; Privacy &amp; Security &rarr; Camera</strong> (or <strong>Photos</strong>) and enable access for FilmStock.</li>
+                <li>Camera access is also required to scan film box and canister barcodes.</li>
             </ul>
 
             <h3>App crashes or freezes</h3>

@@ -509,7 +509,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
-				INFOPLIST_KEY_NSCameraUsageDescription = "FilmStock needs camera access to take photos of your film reminder cards and to scan barcodes on film canisters";
+				INFOPLIST_KEY_NSCameraUsageDescription = "FilmStock needs camera access to take photos of your film reminder cards and to scan barcodes on film boxes and canisters";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -549,7 +549,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
-				INFOPLIST_KEY_NSCameraUsageDescription = "FilmStock needs camera access to take photos of your film reminder cards and to scan barcodes on film canisters";
+				INFOPLIST_KEY_NSCameraUsageDescription = "FilmStock needs camera access to take photos of your film reminder cards and to scan barcodes on film boxes and canisters";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

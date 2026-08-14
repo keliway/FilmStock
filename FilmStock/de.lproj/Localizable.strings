@@ -50,11 +50,12 @@
 "film.frozen" = "GEFROREN";
 "film.expired" = "ABGELAUFEN";
 "film.filmInformation" = "Film-Informationen";
-"dx.scan.button" = "Filmdose scannen";
-"dx.scan.hint" = "Scanne den Barcode an der Seite der Filmdose.";
-"dx.scan.instruction" = "Scanne den Barcode an der Seite der Filmdose";
+"dx.scan.section" = "Schnell hinzufügen";
+"dx.scan.button" = "Barcode scannen";
+"dx.scan.hint" = "Scanne den Barcode auf der Filmverpackung oder an der Seite einer 35-mm-Dose. Packungen mit mehreren Rollen oder Blättern werden auf einmal hinzugefügt.";
+"dx.scan.instruction" = "Scanne den Barcode auf der Verpackung oder der Filmdose";
 "dx.scan.notFound.title" = "Film nicht erkannt";
-"dx.scan.notFound.message" = "Dieser Film konnte nicht identifiziert werden. Du kannst die Angaben manuell ausfüllen.";
+"dx.scan.notFound.message" = "Dieser Barcode konnte nicht identifiziert werden. Du kannst die Angaben manuell ausfüllen.";
 "dx.scan.unavailable.title" = "Scanner nicht verfügbar";
 "dx.scan.unavailable.message" = "Barcode-Scanning ist auf diesem Gerät nicht verfügbar.";
 "dx.scan.pickFilm" = "Film auswählen";

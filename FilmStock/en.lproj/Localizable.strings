@@ -50,11 +50,12 @@
 "film.frozen" = "FROZEN";
 "film.expired" = "EXPIRED";
 "film.filmInformation" = "Film Information";
-"dx.scan.button" = "Scan film canister";
-"dx.scan.hint" = "Scan the barcode on the side of the film canister.";
-"dx.scan.instruction" = "Scan the barcode on the side of the film canister";
+"dx.scan.section" = "Quick Add";
+"dx.scan.button" = "Scan barcode";
+"dx.scan.hint" = "Scan the barcode on a film box or the side of a 35mm canister. Packs with several rolls or sheets are added at once.";
+"dx.scan.instruction" = "Scan the barcode on the film box or canister";
 "dx.scan.notFound.title" = "Film not recognized";
-"dx.scan.notFound.message" = "Couldn't identify this film. You can fill in the details manually.";
+"dx.scan.notFound.message" = "Couldn't identify this barcode. You can fill in the details manually.";
 "dx.scan.unavailable.title" = "Scanner unavailable";
 "dx.scan.unavailable.message" = "Barcode scanning isn't available on this device.";
 "dx.scan.pickFilm" = "Select Film";

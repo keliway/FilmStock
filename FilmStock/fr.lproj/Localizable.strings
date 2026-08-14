@@ -50,11 +50,12 @@
 "film.frozen" = "CONGELÉ";
 "film.expired" = "EXPIRÉ";
 "film.filmInformation" = "Informations sur le film";
-"dx.scan.button" = "Scanner la cartouche";
-"dx.scan.hint" = "Scannez le code-barres sur le côté de la cartouche.";
-"dx.scan.instruction" = "Scannez le code-barres sur le côté de la cartouche";
+"dx.scan.section" = "Ajout rapide";
+"dx.scan.button" = "Scanner le code-barres";
+"dx.scan.hint" = "Scannez le code-barres de la boîte ou sur le côté d'une cartouche 35 mm. Les packs de plusieurs films ou feuilles sont ajoutés en une fois.";
+"dx.scan.instruction" = "Scannez le code-barres de la boîte ou de la cartouche";
 "dx.scan.notFound.title" = "Film non reconnu";
-"dx.scan.notFound.message" = "Impossible d'identifier ce film. Vous pouvez remplir les informations manuellement.";
+"dx.scan.notFound.message" = "Impossible d'identifier ce code-barres. Vous pouvez remplir les informations manuellement.";
 "dx.scan.unavailable.title" = "Scanner indisponible";
 "dx.scan.unavailable.message" = "La lecture de codes-barres n'est pas disponible sur cet appareil.";
 "dx.scan.pickFilm" = "Choisir un film";

@@ -8,7 +8,7 @@
 import SwiftUI
 
 // Bump this string whenever you want to show the sheet again on next launch.
-let whatsNewVersion = "2.2"
+let whatsNewVersion = "2.4"
 
 struct WhatsNewFeature: Identifiable {
     let id = UUID()
@@ -24,16 +24,11 @@ struct WhatsNewView: View {
 
     private let features: [WhatsNewFeature] = [
         WhatsNewFeature(
-            icon: "rectangle.3.group",
+            icon: "barcode.viewfinder",
             iconColor: .accentColor,
-            title: "Group My Films",
-            description: "Tap the filter button on My Films, then choose Group by manufacturer or ISO. Your films organize into sections with clear headers; the app remembers your choice."
-        ),
-        WhatsNewFeature(
-            icon: "photo.on.rectangle.angled",
-            iconColor: .orange,
-            title: "New Kodak Ektacolor and Ektapan cards",
-            description: "The recently launched Ektacolor and Ektapan rebranding is now available as film card reminders . Older Kodak names still match when you browse the catalog or rely on auto-detection."
+            title: "Scan barcodes to add film",
+            description: "On Add Film, scan a packaging barcode or the DX code on a 35mm canister to prefill the film and add rolls or sheets. For example, scan a new Portra 400 pro-pack to add 5 rolls at once. Packaging lookup covers 70+ films with more coming later. This feature is in beta, so results may not always be accurate.",
+            showBeta: true
         )
     ]
 

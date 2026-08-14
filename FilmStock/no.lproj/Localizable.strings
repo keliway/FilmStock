@@ -50,11 +50,12 @@
 "film.frozen" = "FROSSEN";
 "film.expired" = "UTGÅTT";
 "film.filmInformation" = "Filminformasjon";
-"dx.scan.button" = "Skann filmboks";
-"dx.scan.hint" = "Skann strekkoden på siden av filmboksen.";
-"dx.scan.instruction" = "Skann strekkoden på siden av filmboksen";
+"dx.scan.section" = "Hurtiginnlegging";
+"dx.scan.button" = "Skann strekkode";
+"dx.scan.hint" = "Skann strekkoden på filmemballasjen eller på siden av en 35 mm-boks. Pakker med flere ruller eller ark legges til med én gang.";
+"dx.scan.instruction" = "Skann strekkoden på esken eller filmboksen";
 "dx.scan.notFound.title" = "Filmen ble ikke gjenkjent";
-"dx.scan.notFound.message" = "Kunne ikke identifisere denne filmen. Du kan fylle inn detaljene manuelt.";
+"dx.scan.notFound.message" = "Kunne ikke identifisere denne strekkoden. Du kan fylle inn detaljene manuelt.";
 "dx.scan.unavailable.title" = "Skanner utilgjengelig";
 "dx.scan.unavailable.message" = "Strekkodeskanning er ikke tilgjengelig på denne enheten.";
 "dx.scan.pickFilm" = "Velg film";

@@ -50,11 +50,12 @@
 "film.frozen" = "冷凍";
 "film.expired" = "期限切れ";
 "film.filmInformation" = "フィルム情報";
-"dx.scan.button" = "フィルム缶をスキャン";
-"dx.scan.hint" = "フィルム缶の側面にあるバーコードをスキャンしてください。";
-"dx.scan.instruction" = "フィルム缶の側面にあるバーコードをスキャン";
+"dx.scan.section" = "クイック追加";
+"dx.scan.button" = "バーコードをスキャン";
+"dx.scan.hint" = "フィルムの箱、または35mmパトローネ側面のバーコードをスキャンしてください。複数本パックやシートもまとめて追加されます。";
+"dx.scan.instruction" = "箱またはパトローネのバーコードをスキャン";
 "dx.scan.notFound.title" = "フィルムを認識できません";
-"dx.scan.notFound.message" = "このフィルムを識別できませんでした。詳細は手動で入力できます。";
+"dx.scan.notFound.message" = "このバーコードを識別できませんでした。詳細は手動で入力できます。";
 "dx.scan.unavailable.title" = "スキャナーを使用できません";
 "dx.scan.unavailable.message" = "このデバイスではバーコードのスキャンは利用できません。";
 "dx.scan.pickFilm" = "フィルムを選択";

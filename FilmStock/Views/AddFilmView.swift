@@ -89,8 +89,7 @@ struct AddFilmView: View {
 
     // Roll batches
     @State private var rollBatches: [RollBatch] = []
-    @State private var showingAddBatch = false
-    @State private var batchToEdit: RollBatch?
+    @State private var batchSheet: RollBatchSheetItem?
 
     // DX scan
     @State private var showingDXScanner = false
@@ -126,6 +125,8 @@ struct AddFilmView: View {
                                 .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
                         }
                     }
+                } header: {
+                    Text("dx.scan.section")
                 } footer: {
                     Text("dx.scan.hint")
                 }
@@ -286,8 +287,7 @@ struct AddFilmView: View {
                     }
 
                     Button {
-                        batchToEdit = nil
-                        showingAddBatch = true
+                        batchSheet = .add()
                     } label: {
                         Label("add.rolls", systemImage: "plus.circle.fill")
                     }
@@ -325,7 +325,7 @@ struct AddFilmView: View {
             }
             .fullScreenCover(isPresented: $showingDXScanner) {
                 DXBarcodeScannerView { code in
-                    handleScannedDX(code)
+                    handleScannedBarcode(code)
                 }
             }
             .sheet(isPresented: $showingDXPicker) {
@@ -344,15 +344,14 @@ struct AddFilmView: View {
             } message: {
                 Text("dx.scan.unavailable.message")
             }
-            .sheet(isPresented: $showingAddBatch) {
-                RollBatchSheet(existingBatch: batchToEdit) { saved in
-                    if let editing = batchToEdit,
+            .sheet(item: $batchSheet) { item in
+                RollBatchSheet(existingBatch: item.batch) { saved in
+                    if let editing = item.batch,
                        let idx = rollBatches.firstIndex(where: { $0.id == editing.id }) {
                         rollBatches[idx] = saved
                     } else {
                         rollBatches.append(saved)
                     }
-                    batchToEdit = nil
                 }
             }
             .onChange(of: rawSelectedImage) { _, newValue in
@@ -389,8 +388,7 @@ struct AddFilmView: View {
     @ViewBuilder
     private func batchRow(_ batch: RollBatch) -> some View {
         Button {
-            batchToEdit = batch
-            showingAddBatch = true
+            batchSheet = .edit(batch)
         } label: {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -456,13 +454,25 @@ struct AddFilmView: View {
             .overlay(RoundedRectangle(cornerRadius: 3).stroke(color, lineWidth: 1))
     }
 
-    // MARK: - DX Scan
+    // MARK: - Barcode Scan
 
-    private func handleScannedDX(_ code: String) {
+    private func handleScannedBarcode(_ code: String) {
         scannedDXCode = code
-        let matches = ImageStorage.shared.filmsMatching(dxCode: code)
         // Wait for the scanner cover to finish dismissing before presenting an alert or sheet.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            if let package = ImageStorage.shared.packageMatching(barcode: code) {
+                applyPackageMatch(package)
+                return
+            }
+
+            let digits = code.filter(\.isNumber)
+            // Box barcodes are 8+ digits; don't treat an unknown UPC/EAN as a DX code.
+            if digits.count >= 8 {
+                showingDXNotFound = true
+                return
+            }
+
+            let matches = ImageStorage.shared.filmsMatching(dxCode: code)
             switch matches.count {
             case 0:
                 showingDXNotFound = true
@@ -475,23 +485,66 @@ struct AddFilmView: View {
         }
     }
 
+    private func applyPackageMatch(_ match: ImageStorage.PackageBarcodeMatch) {
+        applyScannedFilmMetadata(
+            manufacturer: match.manufacturer,
+            name: match.displayName,
+            speed: match.speed,
+            type: match.type
+        )
+        addOrUpdatePackageBatch(format: match.format, quantity: match.quantity)
+    }
+
     private func applyDXMatch(_ match: ImageStorage.DXFilmMatch) {
+        applyScannedFilmMetadata(
+            manufacturer: match.manufacturer,
+            name: match.displayName,
+            speed: match.speed,
+            type: match.type
+        )
+        addOrUpdateScannedRoll()
+    }
+
+    private func applyScannedFilmMetadata(manufacturer: String, name: String, speed: Int?, type: String?) {
         hasAutoPopulatedMetadata = true
-        manufacturer = match.manufacturer
-        name = match.displayName
-        if let speed = match.speed, isoValues.contains(speed) {
+        self.manufacturer = manufacturer
+        self.name = name
+        if let speed, isoValues.contains(speed) {
             filmSpeed = speed
         }
-        if let typeStr = match.type {
+        if let typeStr = type {
             switch typeStr {
-            case "BW": type = .bw
-            case "Color": type = .color
-            case "Slide": type = .slide
-            case "Instant": type = .instant
+            case "BW": self.type = .bw
+            case "Color": self.type = .color
+            case "Slide": self.type = .slide
+            case "Instant": self.type = .instant
             default: break
             }
         }
-        addOrUpdateScannedRoll()
+    }
+
+    /// Packaging barcodes can be a single roll/sheet or a multi-count pack (e.g. Portra 400 pro-pack = 5).
+    private func addOrUpdatePackageBatch(format: FilmStock.FilmFormat, quantity: Int) {
+        let exposures = format.defaultExposures
+        if rollBatches.isEmpty {
+            rollBatches = [
+                RollBatch(format: format, quantity: quantity, exposures: exposures)
+            ]
+            return
+        }
+
+        if rollBatches.count == 1 {
+            var existing = rollBatches[0]
+            existing.format = format
+            existing.customFormatName = nil
+            existing.quantity = quantity
+            existing.exposures = exposures
+            existing.customExposures = ""
+            rollBatches[0] = existing
+            return
+        }
+
+        rollBatches.append(RollBatch(format: format, quantity: quantity, exposures: exposures))
     }
 
     /// DX barcodes are 35mm only. Add one roll (qty 1) so the user can tweak quantity, expiry, etc.
@@ -607,6 +660,19 @@ struct AddFilmView: View {
 }
 
 // MARK: - Roll Batch Sheet
+
+private struct RollBatchSheetItem: Identifiable {
+    let id: UUID
+    let batch: RollBatch?
+
+    static func add() -> RollBatchSheetItem {
+        RollBatchSheetItem(id: UUID(), batch: nil)
+    }
+
+    static func edit(_ batch: RollBatch) -> RollBatchSheetItem {
+        RollBatchSheetItem(id: batch.id, batch: batch)
+    }
+}
 
 struct RollBatchSheet: View {
     let existingBatch: RollBatch?

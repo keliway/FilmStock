@@ -50,11 +50,12 @@
 "film.frozen" = "ZAMROŻONY";
 "film.expired" = "PRZETERMINOWANY";
 "film.filmInformation" = "Informacje o filmie";
-"dx.scan.button" = "Skanuj kasetę filmu";
-"dx.scan.hint" = "Zeskanuj kod kreskowy z boku kasety filmu.";
-"dx.scan.instruction" = "Zeskanuj kod kreskowy z boku kasety filmu";
+"dx.scan.section" = "Szybkie dodawanie";
+"dx.scan.button" = "Skanuj kod kreskowy";
+"dx.scan.hint" = "Zeskanuj kod kreskowy z opakowania lub z boku kasety 35 mm. Paki z wieloma rolkami lub arkuszami zostaną dodane od razu.";
+"dx.scan.instruction" = "Zeskanuj kod kreskowy z opakowania lub kasety";
 "dx.scan.notFound.title" = "Nie rozpoznano filmu";
-"dx.scan.notFound.message" = "Nie udało się zidentyfikować tego filmu. Możesz uzupełnić dane ręcznie.";
+"dx.scan.notFound.message" = "Nie udało się zidentyfikować tego kodu kreskowego. Możesz uzupełnić dane ręcznie.";
 "dx.scan.unavailable.title" = "Skaner niedostępny";
 "dx.scan.unavailable.message" = "Skanowanie kodów kreskowych nie jest dostępne na tym urządzeniu.";
 "dx.scan.pickFilm" = "Wybierz film";
