@@ -114,17 +114,7 @@ struct AddFilmView: View {
                             showingDXUnavailable = true
                         }
                     } label: {
-                        HStack {
-                            Label("dx.scan.button", systemImage: "barcode.viewfinder")
-                            Spacer()
-                            Text("BETA")
-                                .font(.caption2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.orange)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
-                        }
+                        Label("dx.scan.button", systemImage: "barcode.viewfinder")
                     }
                 } header: {
                     Text("dx.scan.section")
