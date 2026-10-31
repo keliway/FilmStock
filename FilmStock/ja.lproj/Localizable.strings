@@ -386,3 +386,7 @@
 "import.preview.summary" = "概要";
 "import.preview.warnings" = "警告";
 "import.preview.confirm" = "Import";
+"import.success" = "インポートが正常に完了しました";
+"import.error.title" = "インポートに失敗しました";
+"import.error.empty" = "選択されたファイルには有効なフィルムまたはカメラのデータが含まれていません。";
+"import.error.database" = "データベースを利用できません。もう一度お試しください。";

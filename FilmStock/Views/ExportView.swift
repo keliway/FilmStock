@@ -20,6 +20,7 @@ extension URL: @retroactive Identifiable {
 struct ExportView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var dataManager: FilmStockDataManager
+    var onImportSuccess: (() -> Void)? = nil
 
     enum Tab: String, CaseIterable, Identifiable {
         case export = "export.tab.export"
@@ -31,6 +32,7 @@ struct ExportView: View {
     @State private var exportURL: URL?
     @State private var isWorking = false
     @State private var errorMessage: String?
+    @State private var showingErrorAlert = false
 
     // Export
     enum ExportFormat: String, CaseIterable, Identifiable {
@@ -87,12 +89,19 @@ struct ExportView: View {
         ) { result in
             handleFilePick(result)
         }
+        .alert(LocalizedStringKey("import.error.title"), isPresented: $showingErrorAlert) {
+            Button("action.ok", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
+        }
     }
 
     // MARK: - Export tab
 
     private var exportContent: some View {
         List {
+            errorSection
+
             Section("export.format") {
                 ForEach(ExportFormat.allCases) { format in
                     Button {
@@ -129,8 +138,6 @@ struct ExportView: View {
                 Label("export.includes.finished", systemImage: "checkmark.circle")
                 Label("export.includes.cameras", systemImage: "camera")
             }
-
-            errorSection
         }
         .safeAreaInset(edge: .bottom) { actionButton("export.action", icon: "square.and.arrow.up") { runExport() } }
     }
@@ -139,6 +146,8 @@ struct ExportView: View {
 
     private var importContent: some View {
         List {
+            errorSection
+
             Section {
                 Label("import.supports.json", systemImage: "curlybraces")
                 Label("import.supports.csv",  systemImage: "tablecells")
@@ -158,8 +167,6 @@ struct ExportView: View {
             } footer: {
                 Text("import.scope.footer")
             }
-
-            errorSection
         }
         .safeAreaInset(edge: .bottom) { actionButton("import.action", icon: "square.and.arrow.down") { showingFilePicker = true } }
     }
@@ -168,7 +175,21 @@ struct ExportView: View {
     private var errorSection: some View {
         if let error = errorMessage {
             Section {
-                Text(error).foregroundColor(.red).font(.caption)
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("import.error.title")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
             }
         }
     }
@@ -198,14 +219,18 @@ struct ExportView: View {
     // MARK: - Actions
 
     private func runExport() {
-        isWorking = true; errorMessage = nil
+        isWorking = true
+        errorMessage = nil
         Task {
             do {
                 let url: URL = selectedFormat == .json
                     ? try ExportManager.shared.exportJSON(context: modelContext)
                     : try ExportManager.shared.exportCSV(context: modelContext)
                 exportURL = url
-            } catch { errorMessage = error.localizedDescription }
+            } catch {
+                errorMessage = error.localizedDescription
+                showingErrorAlert = true
+            }
             isWorking = false
         }
     }
@@ -213,19 +238,33 @@ struct ExportView: View {
     private func handleFilePick(_ result: Result<[URL], Error>) {
         errorMessage = nil
         switch result {
-        case .failure(let err): errorMessage = err.localizedDescription
+        case .failure(let err):
+            let nsError = err as NSError
+            if nsError.domain == NSCocoaErrorDomain && nsError.code == NSUserCancelledError {
+                return
+            }
+            errorMessage = err.localizedDescription
+            showingErrorAlert = true
         case .success(let urls):
             guard let url = urls.first else { return }
             isWorking = true
-            Task {
+            Task { @MainActor in
                 do {
                     // Security-scoped resource access required for file importer
                     _ = url.startAccessingSecurityScopedResource()
                     defer { url.stopAccessingSecurityScopedResource() }
                     let parsed = try ExportManager.shared.importAll(from: url)
+                    if parsed.isEmpty {
+                        throw NSError(
+                            domain: "FilmStock",
+                            code: 1001,
+                            userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("import.error.empty", comment: "")]
+                        )
+                    }
                     importPreview = ImportPreview(result: parsed)
                 } catch {
                     errorMessage = error.localizedDescription
+                    showingErrorAlert = true
                 }
                 isWorking = false
             }
@@ -233,7 +272,22 @@ struct ExportView: View {
     }
 
     private func commitImport(_ result: ImportResult) {
-        dataManager.importData(result)
+        importPreview = nil
+        isWorking = true
+        errorMessage = nil
+        Task { @MainActor in
+            do {
+                try dataManager.importData(result)
+                isWorking = false
+                // Allow a brief moment for the preview sheet animation to settle
+                try? await Task.sleep(nanoseconds: 300_000_000)
+                onImportSuccess?()
+            } catch {
+                isWorking = false
+                errorMessage = error.localizedDescription
+                showingErrorAlert = true
+            }
+        }
     }
 }
 

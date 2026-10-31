@@ -386,3 +386,7 @@
 "import.preview.summary" = "Sammendrag";
 "import.preview.warnings" = "Advarsler";
 "import.preview.confirm" = "Import";
+"import.success" = "Importering fullført";
+"import.error.title" = "Import mislyktes";
+"import.error.empty" = "Den valgte filen inneholder ingen gyldige film- eller kameradata.";
+"import.error.database" = "Databasen er ikke tilgjengelig. Vennligst prøv igjen.";

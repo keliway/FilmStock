@@ -1501,8 +1501,14 @@ class FilmStockDataManager: ObservableObject {
     
     // MARK: - Full Data Import
 
-    func importData(_ result: ImportResult) {
-        guard let context = modelContext else { return }
+    func importData(_ result: ImportResult) throws {
+        guard let context = modelContext else {
+            throw NSError(
+                domain: "FilmStock",
+                code: 1002,
+                userInfo: [NSLocalizedDescriptionKey: NSLocalizedString("import.error.database", comment: "")]
+            )
+        }
 
         // 1. Import Cameras
         let existingCameras = (try? context.fetch(FetchDescriptor<Camera>())) ?? []
@@ -1709,7 +1715,7 @@ class FilmStockDataManager: ObservableObject {
             incrementFinishedFilmsCount(by: qty)
         }
 
-        try? context.save()
+        try context.save()
         loadFilmStocks()
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")

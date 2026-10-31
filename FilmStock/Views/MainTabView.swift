@@ -63,6 +63,9 @@ struct MainTabView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SwitchToMyFilms"))) { _ in
+            selectedTab = 0
+        }
         .onOpenURL { url in
             // Handle deep link from widget
             if url.scheme == "filmstock" {
@@ -90,4 +93,3 @@ struct MainTabView: View {
         }
     }
 }
-

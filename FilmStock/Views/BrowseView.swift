@@ -27,6 +27,8 @@ struct BrowseView: View {
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
     @State private var showingSettings = false
+    @State private var showImportSuccessToastState = false
+    @State private var toastDismissTask: Task<Void, Never>?
     @State private var showAddFilmTooltip = false
     @State private var showFilterTooltip = false
     @State private var tooltipPreferences: [TooltipPreference] = []
@@ -474,8 +476,17 @@ struct BrowseView: View {
                 )
             }
             .sheet(isPresented: $showingSettings) {
-                SettingsView(hideEmpty: $hideEmpty, viewMode: $viewMode)
-                    .environmentObject(dataManager)
+                SettingsView(
+                    hideEmpty: $hideEmpty,
+                    viewMode: $viewMode,
+                    onImportSuccess: {
+                        showingSettings = false
+                        navigationPath = NavigationPath()
+                        NotificationCenter.default.post(name: NSNotification.Name("SwitchToMyFilms"), object: nil)
+                        showImportSuccessToast()
+                    }
+                )
+                .environmentObject(dataManager)
             }
             .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
                 Button("action.ok", role: .cancel) { }
@@ -527,6 +538,13 @@ struct BrowseView: View {
                     tooltipPreferences = preferences
                 }
                 .overlay { tooltipOverlay }
+                .overlay(alignment: .top) {
+                    if showImportSuccessToastState {
+                        importSuccessToast
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .zIndex(100)
+                    }
+                }
         }
     }
     
@@ -793,5 +811,52 @@ struct BrowseView: View {
     
     private func hasAvailableFormats(_ group: GroupedFilm) -> Bool {
         group.formats.contains { $0.quantity > 0 }
+    }
+
+    private var importSuccessToast: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+                .font(.system(size: 18, weight: .semibold))
+            Text("import.success")
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(.primary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
+        )
+        .overlay(
+            Capsule()
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        )
+        .padding(.top, 8)
+        .onTapGesture {
+            withAnimation(.easeOut(duration: 0.25)) {
+                showImportSuccessToastState = false
+            }
+        }
+    }
+
+    private func showImportSuccessToast() {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+            showImportSuccessToastState = true
+        }
+
+        toastDismissTask?.cancel()
+        toastDismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_500_000_000)
+            if !Task.isCancelled {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    showImportSuccessToastState = false
+                }
+            }
+        }
     }
 }

@@ -386,3 +386,7 @@
 "import.preview.summary" = "Summary";
 "import.preview.warnings" = "Warnings";
 "import.preview.confirm" = "Import";
+"import.success" = "Import completed successfully";
+"import.error.title" = "Import Failed";
+"import.error.empty" = "The selected file contains no valid film or camera data.";
+"import.error.database" = "Database is not available. Please try again.";

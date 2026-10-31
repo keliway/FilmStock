@@ -13,6 +13,7 @@ struct SettingsView: View {
     @ObservedObject var settingsManager = SettingsManager.shared
     @Binding var hideEmpty: Bool
     @Binding var viewMode: BrowseView.ViewMode
+    var onImportSuccess: (() -> Void)? = nil
     @State private var showingWhatsNew = false
     
     var body: some View {
@@ -92,8 +93,11 @@ struct SettingsView: View {
                     
                     // Export / Import
                     NavigationLink {
-                        ExportView()
-                            .environmentObject(dataManager)
+                        ExportView(onImportSuccess: {
+                            dismiss()
+                            onImportSuccess?()
+                        })
+                        .environmentObject(dataManager)
                     } label: {
                         Text("settings.export")
                     }

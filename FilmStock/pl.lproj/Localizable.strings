@@ -386,3 +386,7 @@
 "import.preview.summary" = "Podsumowanie";
 "import.preview.warnings" = "Ostrzeżenia";
 "import.preview.confirm" = "Import";
+"import.success" = "Import zakończony pomyślnie";
+"import.error.title" = "Błąd importu";
+"import.error.empty" = "Wybrany plik nie zawiera prawidłowych danych filmów ani aparatów.";
+"import.error.database" = "Baza danych jest niedostępna. Spróbuj ponownie.";
