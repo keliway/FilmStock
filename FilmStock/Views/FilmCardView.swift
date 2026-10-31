@@ -166,7 +166,7 @@ struct FilmCardView: View {
                             }
                         } else {
                             // Setting off — show plain EXPIRED chip
-                            Text("EXPIRED")
+                            Text("film.expired")
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.red)
@@ -183,7 +183,7 @@ struct FilmCardView: View {
 
                     // Blue "FROZEN" chip
                     if isFrozen {
-                        Text("FROZEN")
+                        Text("film.frozen")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)
@@ -199,7 +199,7 @@ struct FilmCardView: View {
 
                     // Blue "FRIDGE" chip
                     if isFridge {
-                        Text("FRIDGE")
+                        Text("film.fridge")
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundColor(.blue)

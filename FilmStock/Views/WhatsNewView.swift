@@ -54,11 +54,11 @@ struct WhatsNewView: View {
                             .foregroundColor(.accentColor)
                             .padding(.top, 32)
 
-                        Text("What's New")
+                        Text("settings.whatsNew")
                             .font(.largeTitle)
                             .fontWeight(.bold)
 
-                        Text("Here's everything that changed in this update.")
+                        Text("whatsnew.subtitle")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -87,7 +87,7 @@ struct WhatsNewView: View {
                 Button {
                     isPresented = false
                 } label: {
-                    Text("Continue")
+                    Text("whatsnew.continue")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)

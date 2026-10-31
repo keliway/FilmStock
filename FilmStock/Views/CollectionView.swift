@@ -194,9 +194,9 @@ struct CollectionView: View {
         } message: {
             if isEditMode && !selectedItems.isEmpty {
                 let count = selectedItems.count
-                Text("Are you sure you want to delete \(count) image\(count == 1 ? "" : "s")?")
+                Text(String(format: NSLocalizedString("alert.deleteImage.multiple", comment: ""), count))
             } else if let item = itemToDelete {
-                Text("Are you sure you want to delete the image for \(item.title)?")
+                Text(String(format: NSLocalizedString("alert.deleteImage.single", comment: ""), item.title))
             }
         }
         .alert("help.collection.title", isPresented: $showingHelp) {

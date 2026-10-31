@@ -15,15 +15,14 @@
 "action.remove" = "Remove";
 "action.done" = "Done";
 "action.cancel" = "Cancel";
+"action.skip" = "Skip";
+"action.gotIt" = "Got it";
 "action.save" = "Save";
 "action.load" = "Load";
 "action.reload" = "Re-load";
-"action.unload" = "Unload";
 "action.unloadOne" = "Unload 1 Sheet";
-"action.unloadAll" = "Unload All";
 "action.finishRoll" = "Finish Roll";
 "action.changeDate" = "Change Date";
-"action.close" = "Close";
 "action.ok" = "OK";
 "finished.status.toDevelop" = "To develop";
 "finished.status.inDevelopment" = "In development";
@@ -36,20 +35,16 @@
 "film.editFilm" = "Edit Film";
 "film.manufacturer" = "Manufacturer";
 "film.selectManufacturer" = "Select Manufacturer";
-"film.filmName" = "Film Name";
 "film.name" = "Name";
-"film.filmSpeed" = "Film Speed";
 "film.speed" = "Speed";
 "film.format" = "Format";
 "film.type" = "Type";
-"film.quantity" = "Quantity";
 "film.expiryDate" = "Expiry Date";
 "film.comments" = "Comments";
 "film.comments.placeholder" = "Add a note about this roll…";
 "film.storage" = "Storage";
 "film.isFrozen" = "Film is frozen";
 "film.frozen" = "FROZEN";
-"film.isFridge" = "Film is in fridge";
 "film.fridge" = "FRIDGE";
 "film.expired" = "EXPIRED";
 "film.filmInformation" = "Film Information";
@@ -63,10 +58,8 @@
 "dx.scan.unavailable.message" = "Barcode scanning isn't available on this device.";
 "dx.scan.pickFilm" = "Select Film";
 "film.filmReminder" = "Film reminder";
-"film.addExpiryDate" = "Add Expiry Date";
 "film.rollsCount" = "%d rolls";
 "film.rollCount" = "%d roll";
-"Quantity: %d" = "Quantity: %d";
 "Sheets: %d" = "Sheets: %d";
 "film.expiryDateFormat" = "MMYYYY or YYYY";
 "film.searchManufacturer" = "Search manufacturer";
@@ -80,16 +73,8 @@
 "manufacturer.deleteErrorMessage" = "This manufacturer cannot be deleted because you have films from this manufacturer in your collection.";
 
 // MARK: - Film Types
-"type.color" = "Color";
-"type.blackAndWhite" = "Black & White";
 
 // MARK: - Film Formats
-"format.35mm" = "35mm";
-"format.120" = "120";
-"format.127" = "127";
-"format.4x5" = "4×5";
-"format.5x7" = "5×7";
-"format.8x10" = "8×10";
 "format.sheet.count" = "%d sheet";
 "format.sheets.count" = "%d sheets";
 
@@ -100,8 +85,6 @@
 "image.defaultCatalog" = "Default Catalog";
 "image.myPhotos" = "My Photos";
 "image.chooseFromLibrary" = "Choose from Library";
-"image.addPhoto" = "Add Photo";
-"image.squareHint" = "Photos will be cropped to square format";
 
 // MARK: - Camera
 "camera.permissionDenied" = "Camera access is required to take photos. Please enable it in Settings.";
@@ -131,8 +114,6 @@
 "sort.by" = "Sort by";
 "sort.field" = "Sort by";
 "sort.order" = "Order";
-"sort.ascending" = "A → Z";
-"sort.descending" = "Z → A";
 "sort.manufacturer" = "Manufacturer";
 "sort.filmType" = "Film Type";
 "sort.filmName" = "Film Name";
@@ -147,28 +128,14 @@
 "filter.manufacturer" = "Manufacturer";
 "filter.camera" = "Camera";
 "filter.speed" = "Speed";
-"filter.filmSpeed" = "Film Speed";
 "filter.options" = "Options";
-"filter.showExpiredOnly" = "Show expired only";
-"filter.showFrozenOnly" = "Show frozen only";
-"filter.showFridgeOnly" = "Show fridge only";
 "filter.clearAll" = "Clear All";
-"filter.apply" = "Apply";
 "filter.reset" = "Reset";
 "search.placeholder" = "Search films...";
 
-// MARK: - View Modes
-"view.cards" = "Cards";
-"view.list" = "List";
-
 // MARK: - Alerts & Confirmations
-"alert.delete.title" = "Delete Film";
-"alert.delete.message" = "Are you sure you want to delete this film? All related formats will be removed.";
-"alert.deleteImage.title" = "Delete Image";
 "alert.deleteImage.single" = "Are you sure you want to delete the image for %@?";
 "alert.deleteImage.multiple" = "Are you sure you want to delete %d image(s)?";
-"alert.unload.title" = "Unload %@";
-"alert.unload.message" = "Are you sure you are finished with your roll of %@?";
 
 // MARK: - Settings
 "settings.title" = "Settings";
@@ -176,7 +143,6 @@
 "settings.general" = "General";
 "settings.support" = "Support";
 "settings.hideEmpty" = "Never show empty films";
-"settings.hideEmpty.footer" = "These settings control the default view when you open the app.";
 "settings.tableView" = "Always show the table view";
 "settings.showExpiryDate" = "Show expiry date in chip";
 "settings.showExpiryDate.footer" = "When enabled, films with an expiry date will always show a date chip. Red if expired, black if not.";
@@ -203,7 +169,6 @@
 "stats.byFormat" = "By Format";
 "stats.largeFormat" = "Large Format";
 "stats.noData" = "No data yet";
-"settings.contact" = "Contact";
 "settings.formats" = "Film Formats";
 "settings.formats.header" = "Film Formats";
 "settings.formats.footer" = "Choose which film formats appear when adding or editing films.";
@@ -224,8 +189,6 @@
 "formats.addCustom" = "Add Custom Format";
 
 // MARK: - About
-"about.title" = "About";
-"about.appName" = "FilmStock";
 "about.version" = "Version %@";
 "about.tagline" = "Your Personal Film Collection Manager";
 "about.description" = "FilmStock helps you keep track of your film collection, manage loaded films in your cameras, and never lose track of whats in your camera and whats in your fridge. Any feedback or manufacturers I forgot? Please let me know!";
@@ -234,8 +197,6 @@
 "about.contactUs" = "Contact me";
 "about.emailError.title" = "Email Not Available";
 "about.emailError.message" = "Please contact me at hello@halbe.no";
-"about.emailNotAvailable.title" = "Email Not Available";
-"about.emailNotAvailable.message" = "Please contact me at hello@halbe.no";
 
 // MARK: - Legal
 "legal.privacyPolicy" = "Privacy Policy";
@@ -254,7 +215,6 @@
 "support.benefits" = "This app is free and will always stay free. Your support helps me keeping the app updated, add new features, and ensures FilmStock continues to be the best film management app.";
 "support.button.withPrice" = "Buy Me a Coffee (%@)";
 "support.loading" = "Loading...";
-"support.selectAmount" = "Select an amount:";
 "support.restore" = "Restore Purchases";
 "support.thankYou.title" = "Thank You!";
 "support.thankYou.message" = "Your support means a lot to me. I truly appreciate it!";
@@ -281,7 +241,6 @@
 "error.nameEmpty" = "Film name cannot be empty";
 "error.invalidYear" = "Year must be between 1950 and 2100";
 "error.invalidMonth" = "Month must be between 01 and 12";
-"error.invalidDate" = "Invalid date format";
 "error.invalidDateFormat" = "Date must be YYYY or MM/YYYY";
 
 // MARK: - Exposures
@@ -325,34 +284,18 @@
 "load.suggestedCameras" = "Suggested";
 "load.otherCameras" = "Other";
 "load.selectFormat" = "Select Format";
-"load.searchCamera" = "Search or add camera";
 "load.error.noRolls" = "No rolls available for this format";
 "load.error.failed" = "Failed to load film. Make sure you have at least %d %@ available.";
 "load.noFormatsAvailable" = "No formats available";
-"load.rollsAvailable" = "roll(s) available";
-"load.sheetsAvailable" = "sheet(s) available";
-"load.loadedSuccessfully" = "Film loaded, have fun!";
-"load.cameraRequired" = "Please select a camera";
-"load.formatRequired" = "Please select a format";
-"load.addNewCamera" = "Add New Camera";
-"load.enterCameraName" = "Enter camera name";
-"load.cameraName" = "Camera Name";
-"load.addCamera" = "Add Camera";
 "load.quantityToLoad" = "Amount to Load";
 "load.shotAtISO" = "Shoot at ISO";
 "load.shotAtISO.hint" = "Different from film's native ISO";
 
 // MARK: - Cameras
-"camera.title" = "Cameras";
-"camera.addCamera" = "Add Camera";
 "camera.name" = "Camera Name";
-"camera.model" = "Model";
 "camera.add" = "Add Camera";
-"camera.addMessage" = "Enter the name of the new camera.";
 "camera.search" = "Search camera";
 "camera.duplicateError" = "This camera already exists.";
-"camera.duplicateTitle" = "Duplicate Camera";
-"camera.duplicateMessage" = "A camera with this name already exists in the list.";
 "camera.deleteError" = "Cannot Delete Camera";
 "camera.deleteErrorMessage" = "This camera cannot be deleted because it currently has films loaded in it.";
 "camera.addFirst" = "Add Your First Camera";
@@ -366,13 +309,8 @@
 "cameras.info.message" = "You can add and manage your cameras from the Loaded Films tab using the camera icon in the top left.";
 
 // MARK: - Film Detail
-"detail.information" = "Film Information";
-"detail.formats" = "Formats";
 "detail.sheets" = "Sheets";
 "detail.other" = "Other";
-"detail.otherFormats" = "Other Formats";
-"detail.noFormats" = "No formats available";
-"detail.loadedAt" = "Loaded";
 
 // MARK: - Onboarding
 "onboarding.welcome.title" = "Welcome to FilmStock!";
@@ -395,20 +333,8 @@
 "help.loadedFilms.title" = "Loaded Films";
 "help.loadedFilms.message" = "This view shows all films currently loaded in your cameras. When you load a film from the My Films tab, it appears here along with the camera name and load date. Swipe left on any film to unload it when you have finished your roll.";
 
-// MARK: - Accessibility
-"accessibility.filmImage" = "Film image";
-"accessibility.manufacturerIcon" = "Manufacturer icon";
-"accessibility.deleteButton" = "Delete";
-"accessibility.editButton" = "Edit";
-"accessibility.filterButton" = "Filter";
-"accessibility.searchField" = "Search films";
-
 // MARK: - Time
 "time.loadedAt" = "Loaded %@";
-"time.justNow" = "just now";
-"time.minutesAgo" = "%d minutes ago";
-"time.hoursAgo" = "%d hours ago";
-"time.daysAgo" = "%d days ago";
 
 // MARK: - Widget
 "widget.title" = "Loaded Films";
@@ -422,16 +348,18 @@
 "widget.config.position" = "Position";
 "widget.config.position.top" = "Top";
 "widget.config.position.bottom" = "Bottom";
+"loaded.segment" = "Filter Loaded Rolls";
 "loaded.segment.loaded" = "Loaded";
 "loaded.segment.finished" = "Finished Rolls";
 "time.finishedAt" = "Finished %@";
 "empty.noFinishedFilms.title" = "No Finished Rolls";
 "empty.noFinishedFilms.message" = "Rolls you unload will appear here.";
 
-
 "image.search.prompt" = "Search films…";
 
 "settings.whatsNew" = "What's New";
+"whatsnew.subtitle" = "Here's everything that changed in this update.";
+"whatsnew.continue" = "Continue";
 
 "settings.export" = "Export or Import Inventory";
 "export.title" = "Export";
@@ -452,12 +380,9 @@
 "import.supports.csv" = "CSV (FilmStock export)";
 "import.footer" = "Select a file exported from FilmStock to import your collection.";
 "import.scope.header" = "What Gets Imported";
-"import.scope.inventory" = "Film inventory";
 "import.scope.footer" = "Existing films, rolls, and cameras are not duplicated. Custom film card photos are not included.";
 "import.action" = "Choose File";
 "import.preview.title" = "Review Import";
 "import.preview.summary" = "Summary";
-"import.preview.count" = "Films to import";
 "import.preview.warnings" = "Warnings";
-"import.preview.films" = "Films";
 "import.preview.confirm" = "Import";

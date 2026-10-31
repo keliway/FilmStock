@@ -392,8 +392,8 @@ struct BrowseView: View {
                     }
                     .onboardingTooltip(
                         id: "filter",
-                        title: "Filter Your Collection",
-                        message: "Use filters to find films by manufacturer, type, speed, or format. Perfect for quickly locating what you need.",
+                        title: NSLocalizedString("onboarding.tooltip.filter.title", comment: ""),
+                        message: NSLocalizedString("onboarding.tooltip.filter.message", comment: ""),
                         anchor: .trailing,
                         isVisible: showFilterTooltip
                     ) {
@@ -416,8 +416,8 @@ struct BrowseView: View {
                     }
                     .onboardingTooltip(
                         id: "addFilm",
-                        title: "Add Your First Film",
-                        message: "Tap the + button to add films to your collection. You can track quantities, expiration dates, and even take photos of your film reminder cards.",
+                        title: NSLocalizedString("onboarding.tooltip.addFilm.title", comment: ""),
+                        message: NSLocalizedString("onboarding.tooltip.addFilm.message", comment: ""),
                         anchor: .trailing,
                         isVisible: showAddFilmTooltip
                     ) {
@@ -679,7 +679,7 @@ struct BrowseView: View {
                         showFilterTooltip = false
                     }
                 } label: {
-                    Text("Got it")
+                    Text("action.gotIt")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)

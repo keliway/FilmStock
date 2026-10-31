@@ -11,28 +11,30 @@ struct WelcomeView: View {
     @Binding var isPresented: Bool
     @State private var currentPage = 0
     
-    private let pages: [WelcomePage] = [
-        WelcomePage(
-            icon: "film",
-            title: "Welcome to FilmStock",
-            description: "Your personal film photography companion. Track your film collection, manage loaded films, and never forget what's in your camera."
-        ),
-        WelcomePage(
-            icon: "plus.circle.fill",
-            title: "Build Your Collection",
-            description: "Add films to your collection, track quantities, and organize by manufacturer, type, and format. Take photos of your film reminder cards for quick reference."
-        ),
-        WelcomePage(
-            icon: "camera.fill",
-            title: "Track Loaded Films",
-            description: "Keep track of what film is currently loaded in your cameras. Swipe to unload when you're done shooting."
-        ),
-        WelcomePage(
-            icon: "square.grid.2x2.fill",
-            title: "Home Screen Widget",
-            description: "Add the FilmStock widget to your home screen to see your loaded films at a glance. Perfect for quick reference while shooting."
-        )
-    ]
+    private var pages: [WelcomePage] {
+        [
+            WelcomePage(
+                icon: "film",
+                title: NSLocalizedString("onboarding.welcome.title", comment: ""),
+                description: NSLocalizedString("onboarding.welcome.subtitle", comment: "")
+            ),
+            WelcomePage(
+                icon: "plus.circle.fill",
+                title: NSLocalizedString("onboarding.feature1.title", comment: ""),
+                description: NSLocalizedString("onboarding.feature1.description", comment: "")
+            ),
+            WelcomePage(
+                icon: "camera.fill",
+                title: NSLocalizedString("onboarding.feature2.title", comment: ""),
+                description: NSLocalizedString("onboarding.feature2.description", comment: "")
+            ),
+            WelcomePage(
+                icon: "square.grid.2x2.fill",
+                title: NSLocalizedString("onboarding.feature3.title", comment: ""),
+                description: NSLocalizedString("onboarding.feature3.description", comment: "")
+            )
+        ]
+    }
     
     var body: some View {
         ZStack {
@@ -56,7 +58,7 @@ struct WelcomeView: View {
                         Button {
                             completeOnboarding()
                         } label: {
-                            Text("Get Started")
+                            Text("onboarding.getStarted")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -70,7 +72,7 @@ struct WelcomeView: View {
                                 currentPage = pages.count - 1
                             }
                         } label: {
-                            Text("Skip")
+                            Text("action.skip")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

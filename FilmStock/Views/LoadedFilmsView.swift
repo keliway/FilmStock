@@ -865,7 +865,7 @@ struct LoadedFilmRow: View {
             
             // Red "EXPIRED" chip in top right
             if isExpired {
-                Text("EXPIRED")
+                Text("film.expired")
                     .font(.caption2)
                     .fontWeight(.bold)
                     .foregroundColor(.red)

@@ -15,15 +15,14 @@
 "action.remove" = "削除";
 "action.done" = "完了";
 "action.cancel" = "キャンセル";
+"action.skip" = "スキップ";
+"action.gotIt" = "了解";
 "action.save" = "保存";
 "action.load" = "装填";
 "action.reload" = "再装填";
-"action.unload" = "取り出す";
 "action.unloadOne" = "1枚取り出す";
-"action.unloadAll" = "すべて取り出す";
 "action.finishRoll" = "ロールを完了";
 "action.changeDate" = "日付を変更";
-"action.close" = "閉じる";
 "action.ok" = "OK";
 "finished.status.toDevelop" = "現像待ち";
 "finished.status.inDevelopment" = "現像中";
@@ -36,20 +35,16 @@
 "film.editFilm" = "フィルムを編集";
 "film.manufacturer" = "メーカー";
 "film.selectManufacturer" = "メーカーを選択";
-"film.filmName" = "フィルム名";
 "film.name" = "名前";
-"film.filmSpeed" = "感度";
 "film.speed" = "感度";
 "film.format" = "フォーマット";
 "film.type" = "種類";
-"film.quantity" = "数量";
 "film.expiryDate" = "有効期限";
 "film.comments" = "コメント";
 "film.comments.placeholder" = "このロールにメモを追加…";
 "film.storage" = "保管";
 "film.isFrozen" = "フィルムは冷凍されています";
 "film.frozen" = "冷凍";
-"film.isFridge" = "フィルムは冷蔵保存されています";
 "film.fridge" = "冷蔵";
 "film.expired" = "期限切れ";
 "film.filmInformation" = "フィルム情報";
@@ -63,10 +58,8 @@
 "dx.scan.unavailable.message" = "このデバイスではバーコードのスキャンは利用できません。";
 "dx.scan.pickFilm" = "フィルムを選択";
 "film.filmReminder" = "フィルムリマインダー";
-"film.addExpiryDate" = "有効期限を追加";
 "film.rollsCount" = "%d本";
 "film.rollCount" = "%d本";
-"Quantity: %d" = "数量：%d";
 "Sheets: %d" = "枚数：%d";
 "film.expiryDateFormat" = "MMYYYY または YYYY";
 "film.searchManufacturer" = "メーカーを検索";
@@ -80,16 +73,8 @@
 "manufacturer.deleteErrorMessage" = "このメーカーのフィルムがコレクションにあるため、削除できません。";
 
 // MARK: - Film Types
-"type.color" = "カラー";
-"type.blackAndWhite" = "白黒";
 
 // MARK: - Film Formats
-"format.35mm" = "35mm";
-"format.120" = "120";
-"format.127" = "127";
-"format.4x5" = "4×5";
-"format.5x7" = "5×7";
-"format.8x10" = "8×10";
 "format.sheet.count" = "%d枚";
 "format.sheets.count" = "%d枚";
 
@@ -100,8 +85,6 @@
 "image.defaultCatalog" = "デフォルトカタログ";
 "image.myPhotos" = "マイフォト";
 "image.chooseFromLibrary" = "ライブラリから選択";
-"image.addPhoto" = "写真を追加";
-"image.squareHint" = "写真は正方形にトリミングされます";
 
 // MARK: - Camera
 "camera.permissionDenied" = "写真を撮るにはカメラへのアクセスが必要です。設定で有効にしてください。";
@@ -134,8 +117,6 @@
 "sort.by" = "並べ替え";
 "sort.field" = "並べ替え";
 "sort.order" = "順序";
-"sort.ascending" = "昇順";
-"sort.descending" = "降順";
 "sort.manufacturer" = "メーカー";
 "sort.filmType" = "フィルムタイプ";
 "sort.filmName" = "フィルム名";
@@ -147,28 +128,14 @@
 "group.none" = "なし";
 "browse.groupHeaderISO" = "ISO %d";
 "sort.finishedDate" = "完了日";
-"filter.filmSpeed" = "感度";
 "filter.options" = "オプション";
-"filter.showExpiredOnly" = "期限切れのみ表示";
-"filter.showFrozenOnly" = "冷凍のみ表示";
-"filter.showFridgeOnly" = "冷蔵のみ表示";
 "filter.clearAll" = "すべてクリア";
-"filter.apply" = "適用";
 "filter.reset" = "リセット";
 "search.placeholder" = "フィルムを検索...";
 
-// MARK: - View Modes
-"view.cards" = "カード";
-"view.list" = "リスト";
-
 // MARK: - Alerts & Confirmations
-"alert.delete.title" = "フィルムを削除";
-"alert.delete.message" = "このフィルムを削除してもよろしいですか？関連するすべてのフォーマットが削除されます。";
-"alert.deleteImage.title" = "画像を削除";
 "alert.deleteImage.single" = "%@ の画像を削除してもよろしいですか？";
 "alert.deleteImage.multiple" = "%d 枚の画像を削除してもよろしいですか？";
-"alert.unload.title" = "%@ を取り出す";
-"alert.unload.message" = "%@ のロールを撮り終えましたか？";
 
 // MARK: - Settings
 "settings.title" = "設定";
@@ -176,7 +143,6 @@
 "settings.general" = "一般";
 "settings.support" = "サポート";
 "settings.hideEmpty" = "空のフィルムを表示しない";
-"settings.hideEmpty.footer" = "これらの設定は、アプリを開いたときのデフォルトビューを制御します。";
 "settings.tableView" = "常にテーブルビューを表示";
 "settings.showExpiryDate" = "期限切れ日を表示";
 "settings.showExpiryDate.footer" = "有効にすると、有効期限のあるフィルムは常に日付チップを表示します。期限切れなら赤、そうでなければ黒。";
@@ -203,7 +169,6 @@
 "stats.byFormat" = "フォーマット別";
 "stats.largeFormat" = "大判フォーマット";
 "stats.noData" = "データなし";
-"settings.contact" = "連絡先";
 "settings.formats" = "フィルムフォーマット";
 "settings.formats.header" = "フィルムフォーマット";
 "settings.formats.footer" = "フィルムの追加・編集時に表示するフォーマットを選択します。";
@@ -224,8 +189,6 @@
 "formats.addCustom" = "カスタムフォーマットを追加";
 
 // MARK: - About
-"about.title" = "について";
-"about.appName" = "FilmStock";
 "about.version" = "バージョン %@";
 "about.tagline" = "あなた専用のフィルムコレクション管理アプリ";
 "about.description" = "FilmStockは、フィルムコレクションの追跡、カメラに装填されたフィルムの管理、カメラに入っているものと冷蔵庫に入っているものを見失わないようにするのに役立ちます。フィードバックや忘れられたメーカーがあれば教えてください！";
@@ -234,8 +197,6 @@
 "about.contactUs" = "お問い合わせ";
 "about.emailError.title" = "メールが利用できません";
 "about.emailError.message" = "hello@halbe.no までご連絡ください";
-"about.emailNotAvailable.title" = "メールが利用できません";
-"about.emailNotAvailable.message" = "hello@halbe.no までご連絡ください";
 
 // MARK: - Legal
 "legal.privacyPolicy" = "プライバシーポリシー";
@@ -254,7 +215,6 @@
 "support.benefits" = "このアプリは無料で、今後も無料のままです。あなたのサポートは、アプリを最新の状態に保ち、新機能を追加し、FilmStockが最高のフィルム管理アプリであり続けることを保証します。";
 "support.button.withPrice" = "コーヒーを贈る (%@)";
 "support.loading" = "読み込み中...";
-"support.selectAmount" = "金額を選択：";
 "support.restore" = "購入を復元";
 "support.thankYou.title" = "ありがとうございます！";
 "support.thankYou.message" = "あなたのサポートは私にとって大きな意味があります。本当に感謝しています！";
@@ -281,7 +241,6 @@
 "error.nameEmpty" = "フィルム名を入力してください";
 "error.invalidYear" = "年は1950から2100の間で入力してください";
 "error.invalidMonth" = "月は01から12の間で入力してください";
-"error.invalidDate" = "無効な日付形式です";
 "error.invalidDateFormat" = "日付はYYYYまたはMM/YYYY形式で入力してください";
 
 // MARK: - Exposures
@@ -325,34 +284,18 @@
 "load.suggestedCameras" = "おすすめ";
 "load.otherCameras" = "その他";
 "load.selectFormat" = "フォーマットを選択";
-"load.searchCamera" = "カメラを検索または追加";
 "load.error.noRolls" = "このフォーマットで利用可能なロールがありません";
 "load.error.failed" = "フィルムの装填に失敗しました。少なくとも %d %@ が利用可能であることを確認してください。";
 "load.noFormatsAvailable" = "利用可能なフォーマットがありません";
-"load.rollsAvailable" = "本利用可能";
-"load.sheetsAvailable" = "枚利用可能";
-"load.loadedSuccessfully" = "フィルムが装填されました、楽しんでください！";
-"load.cameraRequired" = "カメラを選択してください";
-"load.formatRequired" = "フォーマットを選択してください";
-"load.addNewCamera" = "新しいカメラを追加";
-"load.enterCameraName" = "カメラ名を入力";
-"load.cameraName" = "カメラ名";
-"load.addCamera" = "カメラを追加";
 "load.quantityToLoad" = "装填する数量";
 "load.shotAtISO" = "撮影ISO";
 "load.shotAtISO.hint" = "フィルムの定格ISOとは異なります";
 
 // MARK: - Cameras
-"camera.title" = "カメラ";
-"camera.addCamera" = "カメラを追加";
 "camera.name" = "カメラ名";
-"camera.model" = "モデル";
 "camera.add" = "カメラを追加";
-"camera.addMessage" = "新しいカメラの名前を入力してください。";
 "camera.search" = "カメラを検索";
 "camera.duplicateError" = "このカメラは既に存在します。";
-"camera.duplicateTitle" = "重複したカメラ";
-"camera.duplicateMessage" = "この名前のカメラは既にリストに存在します。";
 "camera.deleteError" = "カメラを削除できません";
 "camera.deleteErrorMessage" = "このカメラにフィルムが装填されているため、削除できません。";
 "camera.addFirst" = "最初のカメラを追加";
@@ -366,13 +309,8 @@
 "cameras.info.message" = "「装填済みフィルム」タブの左上にあるカメラアイコンからカメラを追加・管理できます。";
 
 // MARK: - Film Detail
-"detail.information" = "フィルム情報";
-"detail.formats" = "フォーマット";
 "detail.sheets" = "シートフィルム";
 "detail.other" = "その他";
-"detail.otherFormats" = "その他のフォーマット";
-"detail.noFormats" = "利用可能なフォーマットがありません";
-"detail.loadedAt" = "装填済み";
 
 // MARK: - Onboarding
 "onboarding.welcome.title" = "FilmStockへようこそ！";
@@ -395,20 +333,8 @@
 "help.loadedFilms.title" = "装填中のフィルム";
 "help.loadedFilms.message" = "このビューには、カメラに現在装填されているすべてのフィルムが表示されます。マイフィルムタブからフィルムを装填すると、カメラ名と装填日とともにここに表示されます。ロールを撮り終えたら、フィルムを左にスワイプして取り出します。";
 
-// MARK: - Accessibility
-"accessibility.filmImage" = "フィルム画像";
-"accessibility.manufacturerIcon" = "メーカーアイコン";
-"accessibility.deleteButton" = "削除";
-"accessibility.editButton" = "編集";
-"accessibility.filterButton" = "フィルター";
-"accessibility.searchField" = "フィルムを検索";
-
 // MARK: - Time
 "time.loadedAt" = "%@ に装填";
-"time.justNow" = "たった今";
-"time.minutesAgo" = "%d 分前";
-"time.hoursAgo" = "%d 時間前";
-"time.daysAgo" = "%d 日前";
 
 // MARK: - Widget
 "widget.title" = "装填中のフィルム";
@@ -422,17 +348,18 @@
 "widget.config.position" = "位置";
 "widget.config.position.top" = "上";
 "widget.config.position.bottom" = "下";
+"loaded.segment" = "装填されたフィルムを絞り込む";
 "loaded.segment.loaded" = "装填済み";
 "loaded.segment.finished" = "終了したロール";
 "time.finishedAt" = "完了 %@";
 "empty.noFinishedFilms.title" = "終了したロールはありません";
 "empty.noFinishedFilms.message" = "取り出したロールがここに表示されます。";
 
-
-
 "image.search.prompt" = "フィルムを検索…";
 
 "settings.whatsNew" = "新機能";
+"whatsnew.subtitle" = "このアップデートの変更点はこちらです。";
+"whatsnew.continue" = "続ける";
 
 "settings.export" = "在庫のエクスポートまたはインポート";
 "export.title" = "Export";
@@ -453,12 +380,9 @@
 "import.supports.csv" = "CSV（FilmStockエクスポート）";
 "import.footer" = "FilmStockからエクスポートしたファイルを選択して、コレクションをインポートします。";
 "import.scope.header" = "インポートされる内容";
-"import.scope.inventory" = "フィルム在庫";
 "import.scope.footer" = "既存のフィルム、ロール、カメラは重複しません。フィルムカードのカスタム写真は含まれません。";
 "import.action" = "ファイルを選択";
 "import.preview.title" = "インポートの確認";
 "import.preview.summary" = "概要";
-"import.preview.count" = "インポートするフィルム数";
 "import.preview.warnings" = "警告";
-"import.preview.films" = "Films";
 "import.preview.confirm" = "Import";

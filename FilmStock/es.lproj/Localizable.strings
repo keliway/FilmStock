@@ -15,15 +15,14 @@
 "action.remove" = "Quitar";
 "action.done" = "Hecho";
 "action.cancel" = "Cancelar";
+"action.skip" = "Omitir";
+"action.gotIt" = "Entendido";
 "action.save" = "Guardar";
 "action.load" = "Cargar";
 "action.reload" = "Recargar";
-"action.unload" = "Descargar";
 "action.unloadOne" = "Descargar 1 hoja";
-"action.unloadAll" = "Descargar todo";
 "action.finishRoll" = "Terminar rollo";
 "action.changeDate" = "Cambiar fecha";
-"action.close" = "Cerrar";
 "action.ok" = "OK";
 "finished.status.toDevelop" = "Por revelar";
 "finished.status.inDevelopment" = "En revelado";
@@ -36,20 +35,16 @@
 "film.editFilm" = "Editar película";
 "film.manufacturer" = "Fabricante";
 "film.selectManufacturer" = "Seleccionar fabricante";
-"film.filmName" = "Nombre de la película";
 "film.name" = "Nombre";
-"film.filmSpeed" = "Sensibilidad";
 "film.speed" = "Sensibilidad";
 "film.format" = "Formato";
 "film.type" = "Tipo";
-"film.quantity" = "Cantidad";
 "film.expiryDate" = "Fecha de caducidad";
 "film.comments" = "Comentarios";
 "film.comments.placeholder" = "Añadir una nota sobre este carrete…";
 "film.storage" = "Almacenamiento";
 "film.isFrozen" = "La película está congelada";
 "film.frozen" = "CONGELADO";
-"film.isFridge" = "La película está en la nevera";
 "film.fridge" = "NEVERA";
 "film.expired" = "CADUCADO";
 "film.filmInformation" = "Información de la película";
@@ -63,10 +58,8 @@
 "dx.scan.unavailable.message" = "El escaneo de códigos de barras no está disponible en este dispositivo.";
 "dx.scan.pickFilm" = "Seleccionar película";
 "film.filmReminder" = "Recordatorio de película";
-"film.addExpiryDate" = "Añadir fecha de caducidad";
 "film.rollsCount" = "%d rollos";
 "film.rollCount" = "%d rollo";
-"Quantity: %d" = "Cantidad: %d";
 "Sheets: %d" = "Hojas: %d";
 "film.expiryDateFormat" = "MMAAAA o AAAA";
 "film.searchManufacturer" = "Buscar fabricante";
@@ -80,16 +73,8 @@
 "manufacturer.deleteErrorMessage" = "Este fabricante no se puede eliminar porque tienes películas de este fabricante en tu colección.";
 
 // MARK: - Film Types
-"type.color" = "Color";
-"type.blackAndWhite" = "Blanco y Negro";
 
 // MARK: - Film Formats
-"format.35mm" = "35mm";
-"format.120" = "120";
-"format.127" = "127";
-"format.4x5" = "4×5";
-"format.5x7" = "5×7";
-"format.8x10" = "8×10";
 "format.sheet.count" = "%d hoja";
 "format.sheets.count" = "%d hojas";
 
@@ -100,8 +85,6 @@
 "image.defaultCatalog" = "Catálogo predeterminado";
 "image.myPhotos" = "Mis fotos";
 "image.chooseFromLibrary" = "Elegir de la galería";
-"image.addPhoto" = "Añadir foto";
-"image.squareHint" = "Las fotos se recortarán a formato cuadrado";
 
 // MARK: - Camera
 "camera.permissionDenied" = "Se requiere acceso a la cámara para tomar fotos. Actívelo en Ajustes.";
@@ -131,8 +114,6 @@
 "sort.by" = "Ordenar por";
 "sort.field" = "Ordenar por";
 "sort.order" = "Orden";
-"sort.ascending" = "A → Z";
-"sort.descending" = "Z → A";
 "sort.manufacturer" = "Fabricante";
 "sort.filmType" = "Tipo de película";
 "sort.filmName" = "Nombre de película";
@@ -147,28 +128,14 @@
 "filter.manufacturer" = "Fabricante";
 "filter.camera" = "Cámara";
 "filter.speed" = "Sensibilidad";
-"filter.filmSpeed" = "Sensibilidad";
 "filter.options" = "Opciones";
-"filter.showExpiredOnly" = "Mostrar solo caducados";
-"filter.showFrozenOnly" = "Mostrar solo congelados";
-"filter.showFridgeOnly" = "Mostrar solo en nevera";
 "filter.clearAll" = "Borrar todo";
-"filter.apply" = "Aplicar";
 "filter.reset" = "Restablecer";
 "search.placeholder" = "Buscar películas...";
 
-// MARK: - View Modes
-"view.cards" = "Tarjetas";
-"view.list" = "Lista";
-
 // MARK: - Alerts & Confirmations
-"alert.delete.title" = "Eliminar película";
-"alert.delete.message" = "¿Estás seguro de que quieres eliminar esta película? Se eliminarán todos los formatos relacionados.";
-"alert.deleteImage.title" = "Eliminar imagen";
 "alert.deleteImage.single" = "¿Estás seguro de que quieres eliminar la imagen de %@?";
 "alert.deleteImage.multiple" = "¿Estás seguro de que quieres eliminar %d imagen(es)?";
-"alert.unload.title" = "Descargar %@";
-"alert.unload.message" = "¿Estás seguro de que has terminado tu rollo de %@?";
 
 // MARK: - Settings
 "settings.title" = "Ajustes";
@@ -176,7 +143,6 @@
 "settings.general" = "General";
 "settings.support" = "Soporte";
 "settings.hideEmpty" = "Nunca mostrar películas vacías";
-"settings.hideEmpty.footer" = "Estos ajustes controlan la vista predeterminada al abrir la aplicación.";
 "settings.tableView" = "Mostrar siempre la vista de tabla";
 "settings.showExpiryDate" = "Mostrar fecha de caducidad";
 "settings.showExpiryDate.footer" = "Si está activado, las películas con fecha de caducidad siempre mostrarán una etiqueta de fecha. Rojo si está caducado, negro si no.";
@@ -203,7 +169,6 @@
 "stats.byFormat" = "Por formato";
 "stats.largeFormat" = "Gran formato";
 "stats.noData" = "Sin datos aún";
-"settings.contact" = "Contacto";
 "settings.formats" = "Formatos de película";
 "settings.formats.header" = "Formatos de película";
 "settings.formats.footer" = "Elige qué formatos de película aparecen al añadir o editar películas.";
@@ -224,8 +189,6 @@
 "formats.addCustom" = "Añadir formato personalizado";
 
 // MARK: - About
-"about.title" = "Acerca de";
-"about.appName" = "FilmStock";
 "about.version" = "Versión %@";
 "about.tagline" = "Tu gestor personal de colección de películas";
 "about.description" = "FilmStock te ayuda a llevar un registro de tu colección de películas, gestionar películas cargadas en tus cámaras y nunca perder la pista de lo que está en tu cámara y lo que está en tu refrigerador. ¿Comentarios o fabricantes olvidados? ¡Házmelo saber!";
@@ -234,8 +197,6 @@
 "about.contactUs" = "Contáctame";
 "about.emailError.title" = "Correo no disponible";
 "about.emailError.message" = "Por favor contáctame en hello@halbe.no";
-"about.emailNotAvailable.title" = "Correo no disponible";
-"about.emailNotAvailable.message" = "Por favor contáctame en hello@halbe.no";
 
 // MARK: - Legal
 "legal.privacyPolicy" = "Política de privacidad";
@@ -254,7 +215,6 @@
 "support.benefits" = "Esta aplicación es gratuita y siempre lo será. Tu apoyo me ayuda a mantener la aplicación actualizada, añadir nuevas funciones y asegurar que FilmStock siga siendo la mejor aplicación de gestión de películas.";
 "support.button.withPrice" = "Invítame un café (%@)";
 "support.loading" = "Cargando...";
-"support.selectAmount" = "Selecciona una cantidad:";
 "support.restore" = "Restaurar compras";
 "support.thankYou.title" = "¡Gracias!";
 "support.thankYou.message" = "Tu apoyo significa mucho para mí. ¡Realmente lo aprecio!";
@@ -281,7 +241,6 @@
 "error.nameEmpty" = "El nombre de la película no puede estar vacío";
 "error.invalidYear" = "El año debe estar entre 1950 y 2100";
 "error.invalidMonth" = "El mes debe estar entre 01 y 12";
-"error.invalidDate" = "Formato de fecha inválido";
 "error.invalidDateFormat" = "La fecha debe ser AAAA o MM/AAAA";
 
 // MARK: - Exposures
@@ -325,34 +284,18 @@
 "load.suggestedCameras" = "Sugeridas";
 "load.otherCameras" = "Otras";
 "load.selectFormat" = "Seleccionar formato";
-"load.searchCamera" = "Buscar o añadir cámara";
 "load.error.noRolls" = "No hay rollos disponibles para este formato";
 "load.error.failed" = "Error al cargar la película. Asegúrate de tener al menos %d %@ disponibles.";
 "load.noFormatsAvailable" = "No hay formatos disponibles";
-"load.rollsAvailable" = "rollo(s) disponible(s)";
-"load.sheetsAvailable" = "hoja(s) disponible(s)";
-"load.loadedSuccessfully" = "¡Película cargada, diviértete!";
-"load.cameraRequired" = "Por favor selecciona una cámara";
-"load.formatRequired" = "Por favor selecciona un formato";
-"load.addNewCamera" = "Añadir nueva cámara";
-"load.enterCameraName" = "Introduce el nombre de la cámara";
-"load.cameraName" = "Nombre de la cámara";
-"load.addCamera" = "Añadir cámara";
 "load.quantityToLoad" = "Cantidad a cargar";
 "load.shotAtISO" = "Disparar a ISO";
 "load.shotAtISO.hint" = "Diferente al ISO nativo de la película";
 
 // MARK: - Cameras
-"camera.title" = "Cámaras";
-"camera.addCamera" = "Añadir cámara";
 "camera.name" = "Nombre de la cámara";
-"camera.model" = "Modelo";
 "camera.add" = "Añadir cámara";
-"camera.addMessage" = "Introduce el nombre de la nueva cámara.";
 "camera.search" = "Buscar cámara";
 "camera.duplicateError" = "Esta cámara ya existe.";
-"camera.duplicateTitle" = "Cámara duplicada";
-"camera.duplicateMessage" = "Ya existe una cámara con este nombre en la lista.";
 "camera.deleteError" = "No se puede eliminar la cámara";
 "camera.deleteErrorMessage" = "Esta cámara no se puede eliminar porque actualmente tiene películas cargadas.";
 "camera.addFirst" = "Añadir tu primera cámara";
@@ -366,13 +309,8 @@
 "cameras.info.message" = "Puedes añadir y gestionar tus cámaras desde la pestaña Películas cargadas usando el icono de cámara arriba a la izquierda.";
 
 // MARK: - Film Detail
-"detail.information" = "Información de la película";
-"detail.formats" = "Formatos";
 "detail.sheets" = "Películas de Plancha";
 "detail.other" = "Otros";
-"detail.otherFormats" = "Otros formatos";
-"detail.noFormats" = "No hay formatos disponibles";
-"detail.loadedAt" = "Cargada";
 
 // MARK: - Onboarding
 "onboarding.welcome.title" = "¡Bienvenido a FilmStock!";
@@ -395,20 +333,8 @@
 "help.loadedFilms.title" = "Películas Cargadas";
 "help.loadedFilms.message" = "Esta vista muestra todas las películas actualmente cargadas en tus cámaras. Cuando cargas una película desde la pestaña Mis Películas, aparece aquí junto con el nombre de la cámara y la fecha de carga. Desliza hacia la izquierda en una película para descargarla cuando hayas terminado tu rollo.";
 
-// MARK: - Accessibility
-"accessibility.filmImage" = "Imagen de película";
-"accessibility.manufacturerIcon" = "Icono del fabricante";
-"accessibility.deleteButton" = "Eliminar";
-"accessibility.editButton" = "Editar";
-"accessibility.filterButton" = "Filtrar";
-"accessibility.searchField" = "Buscar películas";
-
 // MARK: - Time
 "time.loadedAt" = "Cargada %@";
-"time.justNow" = "justo ahora";
-"time.minutesAgo" = "hace %d minutos";
-"time.hoursAgo" = "hace %d horas";
-"time.daysAgo" = "hace %d días";
 
 // MARK: - Widget
 "widget.title" = "Películas cargadas";
@@ -422,17 +348,18 @@
 "widget.config.position" = "Posición";
 "widget.config.position.top" = "Arriba";
 "widget.config.position.bottom" = "Abajo";
+"loaded.segment" = "Filtrar rollos cargados";
 "loaded.segment.loaded" = "Cargados";
 "loaded.segment.finished" = "Rollos terminados";
 "time.finishedAt" = "Finalizado %@";
 "empty.noFinishedFilms.title" = "Sin rollos terminados";
 "empty.noFinishedFilms.message" = "Los rollos descargados aparecerán aquí.";
 
-
-
 "image.search.prompt" = "Buscar películas…";
 
 "settings.whatsNew" = "Novedades";
+"whatsnew.subtitle" = "Esto es todo lo que ha cambiado en esta actualización.";
+"whatsnew.continue" = "Continuar";
 
 "settings.export" = "Exportar o importar inventario";
 "export.title" = "Export";
@@ -453,12 +380,9 @@
 "import.supports.csv" = "CSV (exportación de FilmStock)";
 "import.footer" = "Selecciona un archivo exportado desde FilmStock para importar tu colección.";
 "import.scope.header" = "Qué se importa";
-"import.scope.inventory" = "Inventario de películas";
 "import.scope.footer" = "Las películas, carretes y cámaras existentes no se duplican. Las fotos personalizadas de tarjetas de película no están incluidas.";
 "import.action" = "Elegir archivo";
 "import.preview.title" = "Revisar importación";
 "import.preview.summary" = "Resumen";
-"import.preview.count" = "Películas a importar";
 "import.preview.warnings" = "Advertencias";
-"import.preview.films" = "Films";
 "import.preview.confirm" = "Import";

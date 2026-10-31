@@ -15,15 +15,14 @@
 "action.remove" = "Usuń";
 "action.done" = "Gotowe";
 "action.cancel" = "Anuluj";
+"action.skip" = "Pomiń";
+"action.gotIt" = "Rozumiem";
 "action.save" = "Zapisz";
 "action.load" = "Załaduj";
 "action.reload" = "Załaduj ponownie";
-"action.unload" = "Wyjmij";
 "action.unloadOne" = "Wyjmij 1 arkusz";
-"action.unloadAll" = "Wyjmij wszystko";
 "action.finishRoll" = "Zakończ rolkę";
 "action.changeDate" = "Zmień datę";
-"action.close" = "Zamknij";
 "action.ok" = "OK";
 "finished.status.toDevelop" = "Do wywołania";
 "finished.status.inDevelopment" = "W trakcie wywoływania";
@@ -36,20 +35,16 @@
 "film.editFilm" = "Edytuj film";
 "film.manufacturer" = "Producent";
 "film.selectManufacturer" = "Wybierz producenta";
-"film.filmName" = "Nazwa filmu";
 "film.name" = "Nazwa";
-"film.filmSpeed" = "Czułość";
 "film.speed" = "Czułość";
 "film.format" = "Format";
 "film.type" = "Typ";
-"film.quantity" = "Ilość";
 "film.expiryDate" = "Data ważności";
 "film.comments" = "Komentarze";
 "film.comments.placeholder" = "Dodaj notatkę o tej rolce…";
 "film.storage" = "Przechowywanie";
 "film.isFrozen" = "Film jest zamrożony";
 "film.frozen" = "ZAMROŻONY";
-"film.isFridge" = "Film jest w lodówce";
 "film.fridge" = "LODÓWKA";
 "film.expired" = "PRZETERMINOWANY";
 "film.filmInformation" = "Informacje o filmie";
@@ -63,10 +58,8 @@
 "dx.scan.unavailable.message" = "Skanowanie kodów kreskowych nie jest dostępne na tym urządzeniu.";
 "dx.scan.pickFilm" = "Wybierz film";
 "film.filmReminder" = "Przypomnienie o filmie";
-"film.addExpiryDate" = "Dodaj datę ważności";
 "film.rollsCount" = "%d rolek";
 "film.rollCount" = "%d rolka";
-"Quantity: %d" = "Ilość: %d";
 "Sheets: %d" = "Arkuszy: %d";
 "film.expiryDateFormat" = "MMRRRR lub RRRR";
 "film.searchManufacturer" = "Szukaj producenta";
@@ -80,16 +73,8 @@
 "manufacturer.deleteErrorMessage" = "Ten producent nie może zostać usunięty, ponieważ masz filmy tego producenta w swojej kolekcji.";
 
 // MARK: - Film Types
-"type.color" = "Kolorowy";
-"type.blackAndWhite" = "Czarno-biały";
 
 // MARK: - Film Formats
-"format.35mm" = "35mm";
-"format.120" = "120";
-"format.127" = "127";
-"format.4x5" = "4×5";
-"format.5x7" = "5×7";
-"format.8x10" = "8×10";
 "format.sheet.count" = "%d arkusz";
 "format.sheets.count" = "%d arkuszy";
 
@@ -100,8 +85,6 @@
 "image.defaultCatalog" = "Domyślny katalog";
 "image.myPhotos" = "Moje zdjęcia";
 "image.chooseFromLibrary" = "Wybierz z galerii";
-"image.addPhoto" = "Dodaj zdjęcie";
-"image.squareHint" = "Zdjęcia zostaną przycięte do formatu kwadratu";
 
 // MARK: - Camera
 "camera.permissionDenied" = "Dostęp do aparatu jest wymagany do robienia zdjęć. Włącz go w Ustawieniach.";
@@ -131,8 +114,6 @@
 "sort.by" = "Sortuj według";
 "sort.field" = "Sortuj według";
 "sort.order" = "Kolejność";
-"sort.ascending" = "A → Z";
-"sort.descending" = "Z → A";
 "sort.manufacturer" = "Producent";
 "sort.filmType" = "Typ filmu";
 "sort.filmName" = "Nazwa filmu";
@@ -147,28 +128,14 @@
 "filter.manufacturer" = "Producent";
 "filter.camera" = "Aparat";
 "filter.speed" = "Czułość";
-"filter.filmSpeed" = "Czułość";
 "filter.options" = "Opcje";
-"filter.showExpiredOnly" = "Pokaż tylko przeterminowane";
-"filter.showFrozenOnly" = "Pokaż tylko zamrożone";
-"filter.showFridgeOnly" = "Pokaż tylko z lodówki";
 "filter.clearAll" = "Wyczyść wszystko";
-"filter.apply" = "Zastosuj";
 "filter.reset" = "Resetuj";
 "search.placeholder" = "Szukaj filmów...";
 
-// MARK: - View Modes
-"view.cards" = "Karty";
-"view.list" = "Lista";
-
 // MARK: - Alerts & Confirmations
-"alert.delete.title" = "Usuń film";
-"alert.delete.message" = "Czy na pewno chcesz usunąć ten film? Wszystkie powiązane formaty zostaną usunięte.";
-"alert.deleteImage.title" = "Usuń obraz";
 "alert.deleteImage.single" = "Czy na pewno chcesz usunąć obraz dla %@?";
 "alert.deleteImage.multiple" = "Czy na pewno chcesz usunąć %d obraz(ów)?";
-"alert.unload.title" = "Wyjmij %@";
-"alert.unload.message" = "Czy na pewno skończyłeś rolkę %@?";
 
 // MARK: - Settings
 "settings.title" = "Ustawienia";
@@ -176,7 +143,6 @@
 "settings.general" = "Ogólne";
 "settings.support" = "Wsparcie";
 "settings.hideEmpty" = "Nigdy nie pokazuj pustych filmów";
-"settings.hideEmpty.footer" = "Te ustawienia kontrolują domyślny widok po otwarciu aplikacji.";
 "settings.tableView" = "Zawsze pokazuj widok tabeli";
 "settings.showExpiryDate" = "Pokaż datę ważności";
 "settings.showExpiryDate.footer" = "Po włączeniu filmy z datą ważności zawsze będą pokazywać etykietę z datą. Czerwona jeśli przeterminowana, czarna jeśli nie.";
@@ -203,7 +169,6 @@
 "stats.byFormat" = "Według formatu";
 "stats.largeFormat" = "Wielki format";
 "stats.noData" = "Brak danych";
-"settings.contact" = "Kontakt";
 "settings.formats" = "Formaty filmów";
 "settings.formats.header" = "Formaty filmów";
 "settings.formats.footer" = "Wybierz, które formaty filmów są wyświetlane podczas dodawania lub edycji filmów.";
@@ -224,8 +189,6 @@
 "formats.addCustom" = "Dodaj własny format";
 
 // MARK: - About
-"about.title" = "O aplikacji";
-"about.appName" = "FilmStock";
 "about.version" = "Wersja %@";
 "about.tagline" = "Twój osobisty menedżer kolekcji filmów";
 "about.description" = "FilmStock pomaga śledzić twoją kolekcję filmów, zarządzać załadowanymi filmami w aparatach i nigdy nie tracić z oczu tego, co jest w twoim aparacie i co jest w lodówce. Uwagi lub zapomniani producenci? Daj mi znać!";
@@ -234,8 +197,6 @@
 "about.contactUs" = "Skontaktuj się ze mną";
 "about.emailError.title" = "E-mail niedostępny";
 "about.emailError.message" = "Skontaktuj się ze mną pod adresem hello@halbe.no";
-"about.emailNotAvailable.title" = "E-mail niedostępny";
-"about.emailNotAvailable.message" = "Skontaktuj się ze mną pod adresem hello@halbe.no";
 
 // MARK: - Legal
 "legal.privacyPolicy" = "Polityka prywatności";
@@ -254,7 +215,6 @@
 "support.benefits" = "Ta aplikacja jest darmowa i zawsze będzie darmowa. Twoje wsparcie pomaga mi utrzymać aplikację zaktualizowaną, dodawać nowe funkcje i zapewnić, że FilmStock pozostanie najlepszą aplikacją do zarządzania filmami.";
 "support.button.withPrice" = "Postaw mi kawę (%@)";
 "support.loading" = "Ładowanie...";
-"support.selectAmount" = "Wybierz kwotę:";
 "support.restore" = "Przywróć zakupy";
 "support.thankYou.title" = "Dziękuję!";
 "support.thankYou.message" = "Twoje wsparcie wiele dla mnie znaczy. Naprawdę to doceniam!";
@@ -281,7 +241,6 @@
 "error.nameEmpty" = "Nazwa filmu nie może być pusta";
 "error.invalidYear" = "Rok musi być pomiędzy 1950 a 2100";
 "error.invalidMonth" = "Miesiąc musi być pomiędzy 01 a 12";
-"error.invalidDate" = "Nieprawidłowy format daty";
 "error.invalidDateFormat" = "Data musi być w formacie RRRR lub MM/RRRR";
 
 // MARK: - Exposures
@@ -325,34 +284,18 @@
 "load.suggestedCameras" = "Sugerowane";
 "load.otherCameras" = "Inne";
 "load.selectFormat" = "Wybierz format";
-"load.searchCamera" = "Szukaj lub dodaj aparat";
 "load.error.noRolls" = "Brak dostępnych rolek dla tego formatu";
 "load.error.failed" = "Nie udało się załadować filmu. Upewnij się, że masz co najmniej %d %@ dostępnych.";
 "load.noFormatsAvailable" = "Brak dostępnych formatów";
-"load.rollsAvailable" = "rolka/rolki dostępne";
-"load.sheetsAvailable" = "arkusz(y) dostępne";
-"load.loadedSuccessfully" = "Film załadowany, baw się dobrze!";
-"load.cameraRequired" = "Proszę wybrać aparat";
-"load.formatRequired" = "Proszę wybrać format";
-"load.addNewCamera" = "Dodaj nowy aparat";
-"load.enterCameraName" = "Wprowadź nazwę aparatu";
-"load.cameraName" = "Nazwa aparatu";
-"load.addCamera" = "Dodaj aparat";
 "load.quantityToLoad" = "Ilość do załadowania";
 "load.shotAtISO" = "Fotografuj przy ISO";
 "load.shotAtISO.hint" = "Różni się od natywnego ISO filmu";
 
 // MARK: - Cameras
-"camera.title" = "Aparaty";
-"camera.addCamera" = "Dodaj aparat";
 "camera.name" = "Nazwa aparatu";
-"camera.model" = "Model";
 "camera.add" = "Dodaj aparat";
-"camera.addMessage" = "Wprowadź nazwę nowego aparatu.";
 "camera.search" = "Szukaj aparatu";
 "camera.duplicateError" = "Ten aparat już istnieje.";
-"camera.duplicateTitle" = "Duplikat aparatu";
-"camera.duplicateMessage" = "Aparat o tej nazwie już istnieje na liście.";
 "camera.deleteError" = "Nie można usunąć aparatu";
 "camera.deleteErrorMessage" = "Ten aparat nie może zostać usunięty, ponieważ ma aktualnie załadowane filmy.";
 "camera.addFirst" = "Dodaj swój pierwszy aparat";
@@ -366,13 +309,8 @@
 "cameras.info.message" = "Możesz dodawać i zarządzać aparatami z zakładki Załadowane filmy, używając ikony aparatu w lewym górnym rogu.";
 
 // MARK: - Film Detail
-"detail.information" = "Informacje o filmie";
-"detail.formats" = "Formaty";
 "detail.sheets" = "Filmy Planszowe";
 "detail.other" = "Inne";
-"detail.otherFormats" = "Inne formaty";
-"detail.noFormats" = "Brak dostępnych formatów";
-"detail.loadedAt" = "Załadowany";
 
 // MARK: - Onboarding
 "onboarding.welcome.title" = "Witaj w FilmStock!";
@@ -395,20 +333,8 @@
 "help.loadedFilms.title" = "Załadowane Filmy";
 "help.loadedFilms.message" = "Ten widok pokazuje wszystkie filmy aktualnie załadowane w twoich aparatach. Kiedy ładujesz film z zakładki Moje Filmy, pojawia się on tutaj wraz z nazwą aparatu i datą załadowania. Przesuń w lewo na filmie, aby go wyjąć, gdy skończysz rolkę.";
 
-// MARK: - Accessibility
-"accessibility.filmImage" = "Obraz filmu";
-"accessibility.manufacturerIcon" = "Ikona producenta";
-"accessibility.deleteButton" = "Usuń";
-"accessibility.editButton" = "Edytuj";
-"accessibility.filterButton" = "Filtruj";
-"accessibility.searchField" = "Szukaj filmów";
-
 // MARK: - Time
 "time.loadedAt" = "Załadowano %@";
-"time.justNow" = "właśnie teraz";
-"time.minutesAgo" = "%d minut temu";
-"time.hoursAgo" = "%d godzin temu";
-"time.daysAgo" = "%d dni temu";
 
 // MARK: - Widget
 "widget.title" = "Załadowane filmy";
@@ -422,17 +348,18 @@
 "widget.config.position" = "Pozycja";
 "widget.config.position.top" = "Góra";
 "widget.config.position.bottom" = "Dół";
+"loaded.segment" = "Filtruj załadowane filmy";
 "loaded.segment.loaded" = "Załadowane";
 "loaded.segment.finished" = "Zakończone rolki";
 "time.finishedAt" = "Zakończono %@";
 "empty.noFinishedFilms.title" = "Brak zakończonych rolek";
 "empty.noFinishedFilms.message" = "Wyjęte rolki pojawią się tutaj.";
 
-
-
 "image.search.prompt" = "Szukaj filmów…";
 
 "settings.whatsNew" = "Co nowego";
+"whatsnew.subtitle" = "Oto wszystko, co zmieniło się w tej aktualizacji.";
+"whatsnew.continue" = "Kontynuuj";
 
 "settings.export" = "Eksportuj lub importuj magazyn";
 "export.title" = "Export";
@@ -453,12 +380,9 @@
 "import.supports.csv" = "CSV (eksport FilmStock)";
 "import.footer" = "Wybierz plik wyeksportowany z FilmStock, aby zaimportować swoją kolekcję.";
 "import.scope.header" = "Co zostanie zaimportowane";
-"import.scope.inventory" = "Magazyn filmów";
 "import.scope.footer" = "Istniejące filmy, rolki i aparaty nie są duplikowane. Niestandardowe zdjęcia kart filmowych nie są uwzględniane.";
 "import.action" = "Wybierz plik";
 "import.preview.title" = "Przegląd importu";
 "import.preview.summary" = "Podsumowanie";
-"import.preview.count" = "Filmy do importu";
 "import.preview.warnings" = "Ostrzeżenia";
-"import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
