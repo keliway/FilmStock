@@ -17,6 +17,7 @@ struct BrowseView: View {
     @State private var selectedFormats: Set<FilmStock.FilmFormat> = []
     @State private var showExpiredOnly = false
     @State private var showFrozenOnly = false
+    @State private var showFridgeOnly = false
     @State private var hideEmpty = SettingsManager.shared.hideEmptyByDefault
     @State private var viewMode: ViewMode = SettingsManager.shared.useTableViewByDefault ? .list : .cards
     @State private var showingAddFilm = false
@@ -123,6 +124,13 @@ struct BrowseView: View {
         if showFrozenOnly {
             grouped = grouped.filter { group in
                 group.formats.contains { $0.isFrozen }
+            }
+        }
+        
+        // Apply show fridge only (only when enabled in settings)
+        if showFridgeOnly && settingsManager.enableFridge {
+            grouped = grouped.filter { group in
+                group.formats.contains { $0.isFridge }
             }
         }
         
@@ -379,9 +387,9 @@ struct BrowseView: View {
                                     .background(Color.accentColor)
                                     .foregroundColor(.white)
                                     .clipShape(Capsule())
+                            }
+                        }
                     }
-                }
-            }
                     .onboardingTooltip(
                         id: "filter",
                         title: "Filter Your Collection",
@@ -457,6 +465,7 @@ struct BrowseView: View {
                     selectedFormats: $selectedFormats,
                     showExpiredOnly: $showExpiredOnly,
                     showFrozenOnly: $showFrozenOnly,
+                    showFridgeOnly: $showFridgeOnly,
                     hideEmpty: $hideEmpty,
                     sortField: $sortField,
                     sortAscending: $sortAscending,
@@ -497,6 +506,14 @@ struct BrowseView: View {
                 .onChange(of: showFrozenOnly) { _, newValue in
                     settingsManager.filterShowFrozenOnly = newValue
                 }
+                .onChange(of: showFridgeOnly) { _, newValue in
+                    settingsManager.filterShowFridgeOnly = newValue
+                }
+                .onChange(of: settingsManager.enableFridge) { _, enabled in
+                    if !enabled {
+                        showFridgeOnly = false
+                    }
+                }
                 .onChange(of: sortField) { _, newValue in
                     settingsManager.sortField = newValue.rawValue
                 }
@@ -521,6 +538,7 @@ struct BrowseView: View {
         selectedFormats = Set(settingsManager.filterFormats.compactMap { FilmStock.FilmFormat(rawValue: $0) })
         showExpiredOnly = settingsManager.filterShowExpiredOnly
         showFrozenOnly = settingsManager.filterShowFrozenOnly
+        showFridgeOnly = settingsManager.enableFridge ? settingsManager.filterShowFridgeOnly : false
         
         // Load saved sort preferences
         if let savedSortField = SortField(rawValue: settingsManager.sortField) {
@@ -690,6 +708,8 @@ struct BrowseView: View {
         if !selectedSpeedRanges.isEmpty { count += selectedSpeedRanges.count }
         if !selectedFormats.isEmpty { count += selectedFormats.count }
         if showExpiredOnly { count += 1 }
+        if showFrozenOnly { count += 1 }
+        if showFridgeOnly && settingsManager.enableFridge { count += 1 }
         if !hideEmpty { count += 1 }
         return count
     }
@@ -775,4 +795,3 @@ struct BrowseView: View {
         group.formats.contains { $0.quantity > 0 }
     }
 }
-

@@ -19,6 +19,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
     var expireDate: [String]? // Array of date strings (YYYY, MM/YYYY, or MM/DD/YYYY) - optional to handle null
     var comments: String?
     var isFrozen: Bool
+    var isFridge: Bool
     var exposures: Int? // Number of exposures on a roll (24, 36, or custom); nil = unspecified
     var createdAt: String?
     var updatedAt: String?
@@ -33,7 +34,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
     
     // Custom decoder to handle null expireDate values
     enum CodingKeys: String, CodingKey {
-        case id, name, manufacturer, type, filmSpeed, format, customFormatName, quantity, expireDate, comments, isFrozen, exposures, createdAt, updatedAt
+        case id, name, manufacturer, type, filmSpeed, format, customFormatName, quantity, expireDate, comments, isFrozen, isFridge, exposures, createdAt, updatedAt
     }
     
     init(from decoder: Decoder) throws {
@@ -48,13 +49,16 @@ struct FilmStock: Identifiable, Codable, Hashable {
         quantity = try container.decode(Int.self, forKey: .quantity)
         expireDate = try container.decodeIfPresent([String].self, forKey: .expireDate)
         comments = try container.decodeIfPresent(String.self, forKey: .comments)
-        isFrozen = try container.decodeIfPresent(Bool.self, forKey: .isFrozen) ?? false
+        let decodedFrozen = try container.decodeIfPresent(Bool.self, forKey: .isFrozen) ?? false
+        let decodedFridge = try container.decodeIfPresent(Bool.self, forKey: .isFridge) ?? false
+        isFrozen = decodedFrozen
+        isFridge = decodedFrozen ? false : decodedFridge
         exposures = try container.decodeIfPresent(Int.self, forKey: .exposures)
         createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
     }
     
-    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, exposures: Int? = nil, createdAt: String? = nil, updatedAt: String? = nil) {
+    init(id: String, name: String, manufacturer: String, type: FilmType, filmSpeed: Int, format: FilmFormat, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, isFridge: Bool = false, exposures: Int? = nil, createdAt: String? = nil, updatedAt: String? = nil) {
         self.id = id
         self.name = name
         self.manufacturer = manufacturer
@@ -66,6 +70,7 @@ struct FilmStock: Identifiable, Codable, Hashable {
         self.expireDate = expireDate
         self.comments = comments
         self.isFrozen = isFrozen
+        self.isFridge = isFrozen ? false : isFridge
         self.exposures = exposures
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -176,10 +181,12 @@ struct GroupedFilm: Identifiable, Hashable {
         let quantity: Int
         let expireDate: [String]?
         let isFrozen: Bool
+        let isFridge: Bool
         let filmId: String
         let comments: String?
         let rollIds: [String] // Individual MyFilm IDs for roll formats (for roll picker in load view)
         let frozenCount: Int // How many individual rolls are frozen
+        let fridgeCount: Int // How many individual rolls are in fridge
         let expiredCount: Int // How many individual rolls are expired
         
         var formatDisplayName: String {
@@ -189,17 +196,19 @@ struct GroupedFilm: Identifiable, Hashable {
             return format.displayName
         }
         
-        init(id: String, format: FilmStock.FilmFormat, customFormatName: String?, quantity: Int, expireDate: [String]?, isFrozen: Bool, filmId: String, comments: String?, rollIds: [String] = [], frozenCount: Int = 0, expiredCount: Int = 0) {
+        init(id: String, format: FilmStock.FilmFormat, customFormatName: String?, quantity: Int, expireDate: [String]?, isFrozen: Bool, isFridge: Bool = false, filmId: String, comments: String?, rollIds: [String] = [], frozenCount: Int = 0, fridgeCount: Int = 0, expiredCount: Int = 0) {
             self.id = id
             self.format = format
             self.customFormatName = customFormatName
             self.quantity = quantity
             self.expireDate = expireDate
             self.isFrozen = isFrozen
+            self.isFridge = isFridge
             self.filmId = filmId
             self.comments = comments
             self.rollIds = rollIds
             self.frozenCount = frozenCount
+            self.fridgeCount = fridgeCount
             self.expiredCount = expiredCount
         }
     }
@@ -212,4 +221,3 @@ struct GroupedFilm: Identifiable, Hashable {
         hasher.combine(id)
     }
 }
-

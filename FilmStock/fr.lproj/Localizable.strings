@@ -46,8 +46,11 @@
 "film.expiryDate" = "Date d'expiration";
 "film.comments" = "Commentaires";
 "film.comments.placeholder" = "Ajouter une note sur cette pellicule…";
+"film.storage" = "Stockage";
 "film.isFrozen" = "Le film est congelé";
 "film.frozen" = "CONGELÉ";
+"film.isFridge" = "Le film est au réfrigérateur";
+"film.fridge" = "FRIGO";
 "film.expired" = "EXPIRÉ";
 "film.filmInformation" = "Informations sur le film";
 "dx.scan.section" = "Ajout rapide";
@@ -148,6 +151,7 @@
 "filter.options" = "Options";
 "filter.showExpiredOnly" = "Afficher uniquement les expirés";
 "filter.showFrozenOnly" = "Afficher uniquement les congelés";
+"filter.showFridgeOnly" = "Afficher uniquement au réfrigérateur";
 "filter.clearAll" = "Tout effacer";
 "filter.apply" = "Appliquer";
 "filter.reset" = "Réinitialiser";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Toujours afficher la vue en liste";
 "settings.showExpiryDate" = "Afficher la date d'expiration";
 "settings.showExpiryDate.footer" = "Si activé, les films avec une date d'expiration afficheront toujours un badge de date. Rouge si expiré, noir sinon.";
+"settings.enableFridge" = "Activer le marquage Frigo";
 "settings.appearance" = "Apparence";
 "settings.appearance.system" = "Système";
 "settings.appearance.light" = "Clair";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Rouleaux terminés";
 "stats.expiredFilms" = "Films expirés";
 "stats.frozenFilms" = "Films congelés";
+"stats.fridgeFilms" = "Films au frigo";
 "stats.byType" = "Par type";
 "stats.byFormat" = "Par format";
 "stats.largeFormat" = "Grand format";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d jour";
 "loaded.detail.days" = "%d jours";
 "loaded.detail.frozen" = "Congelé";
+"loaded.detail.fridge" = "Frigo";
 "finished.detail.title" = "Pellicule terminée";
 "finished.film.unavailable" = "Film indisponible";
 "film.expiryDate.addRow" = "Ajouter une date d’expiration";
@@ -436,6 +443,7 @@
 "export.includes.inventory" = "Inventaire";
 "export.includes.loaded" = "Pellicules en cours";
 "export.includes.finished" = "Pellicules terminées";
+"export.includes.cameras" = "Appareils photo";
 "export.action" = "Exporter et partager";
 
 "export.tab.export" = "Export";
@@ -443,10 +451,10 @@
 "import.supported.formats" = "Formats pris en charge";
 "import.supports.json" = "JSON (export FilmStock)";
 "import.supports.csv" = "CSV (export FilmStock)";
-"import.footer" = "Sélectionnez un fichier exporté depuis FilmStock pour importer votre inventaire.";
+"import.footer" = "Sélectionnez un fichier exporté depuis FilmStock pour importer votre collection.";
 "import.scope.header" = "Ce qui est importé";
-"import.scope.inventory" = "Inventaire uniquement";
-"import.scope.footer" = "Les pellicules chargées, terminées et les appareils ne sont pas importés. Les films existants ne sont pas dupliqués.";
+"import.scope.inventory" = "Inventaire";
+"import.scope.footer" = "Les films, pellicules et appareils existants ne sont pas dupliqués. Les photos personnalisées de fiches film ne sont pas incluses.";
 "import.action" = "Choisir un fichier";
 "import.preview.title" = "Vérifier l'import";
 "import.preview.summary" = "Résumé";
@@ -454,5 +462,3 @@
 "import.preview.warnings" = "Avertissements";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "Cette fonctionnalité est en version bêta. Utilisez le fichier exporté comme référence lors de l'importation. Les images des fiches film ne sont pas importées automatiquement et devront être ajoutées manuellement.";

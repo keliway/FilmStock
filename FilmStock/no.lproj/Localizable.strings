@@ -46,8 +46,11 @@
 "film.expiryDate" = "Utløpsdato";
 "film.comments" = "Kommentarer";
 "film.comments.placeholder" = "Legg til en merknad om denne rullen…";
+"film.storage" = "Oppbevaring";
 "film.isFrozen" = "Filmen er frossen";
 "film.frozen" = "FROSSEN";
+"film.isFridge" = "Filmen er i kjøleskap";
+"film.fridge" = "KJØLESKAP";
 "film.expired" = "UTGÅTT";
 "film.filmInformation" = "Filminformasjon";
 "dx.scan.section" = "Hurtiginnlegging";
@@ -148,6 +151,7 @@
 "filter.options" = "Alternativer";
 "filter.showExpiredOnly" = "Vis kun utgåtte";
 "filter.showFrozenOnly" = "Vis kun frosne";
+"filter.showFridgeOnly" = "Vis kun i kjøleskap";
 "filter.clearAll" = "Tøm alle";
 "filter.apply" = "Bruk";
 "filter.reset" = "Tilbakestill";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Vis alltid tabellvisning";
 "settings.showExpiryDate" = "Vis utløpsdato i merkelapp";
 "settings.showExpiryDate.footer" = "Når aktivert, viser filmer med utløpsdato alltid en datomerkelapp. Rød hvis utløpt, svart hvis ikke.";
+"settings.enableFridge" = "Aktiver kjøleskap-merking";
 "settings.appearance" = "Utseende";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Lys";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Ferdige ruller";
 "stats.expiredFilms" = "Utløpte filmer";
 "stats.frozenFilms" = "Frosne filmer";
+"stats.fridgeFilms" = "Filmer i kjøleskap";
 "stats.byType" = "Etter type";
 "stats.byFormat" = "Etter format";
 "stats.largeFormat" = "Storformat";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d dag";
 "loaded.detail.days" = "%d dager";
 "loaded.detail.frozen" = "Fryst";
+"loaded.detail.fridge" = "Kjøleskap";
 "finished.detail.title" = "Ferdig rulle";
 "finished.film.unavailable" = "Film utilgjengelig";
 "film.expiryDate.addRow" = "Legg til utløpsdato";
@@ -435,7 +442,8 @@
 "export.includes" = "Inkluderer";
 "export.includes.inventory" = "Filmbeholdning";
 "export.includes.loaded" = "Ladede ruller";
-"export.includes.finished" = "Ferdig fremkalt";
+"export.includes.finished" = "Ferdige ruller";
+"export.includes.cameras" = "Kameraer";
 "export.action" = "Eksporter og del";
 
 "export.tab.export" = "Export";
@@ -443,10 +451,10 @@
 "import.supported.formats" = "Støttede formater";
 "import.supports.json" = "JSON (FilmStock-eksport)";
 "import.supports.csv" = "CSV (FilmStock-eksport)";
-"import.footer" = "Velg en fil eksportert fra FilmStock for å importere filmbeholdningen din.";
+"import.footer" = "Velg en fil eksportert fra FilmStock for å importere samlingen din.";
 "import.scope.header" = "Hva som importeres";
-"import.scope.inventory" = "Kun filmbeholdning";
-"import.scope.footer" = "Ladede ruller, ferdige ruller og kameraer importeres ikke. Eksisterende filmer dupliseres ikke.";
+"import.scope.inventory" = "Filmbeholdning";
+"import.scope.footer" = "Eksisterende filmer, ruller og kameraer dupliseres ikke. Egendefinerte filmkortbilder er ikke inkludert.";
 "import.action" = "Velg fil";
 "import.preview.title" = "Gjennomgå import";
 "import.preview.summary" = "Sammendrag";
@@ -454,5 +462,3 @@
 "import.preview.warnings" = "Advarsler";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "Denne funksjonen er i beta. Bruk den eksporterte filen som referanse ved import. Filmkortbilder importeres ikke automatisk og må legges til manuelt etterpå.";

@@ -46,8 +46,11 @@
 "film.expiryDate" = "Haltbarkeit";
 "film.comments" = "Kommentare";
 "film.comments.placeholder" = "Notiz zu dieser Rolle hinzufügen…";
+"film.storage" = "Lagerung";
 "film.isFrozen" = "Film ist gefroren";
 "film.frozen" = "GEFROREN";
+"film.isFridge" = "Film ist im Kühlschrank";
+"film.fridge" = "KÜHLSCHRANK";
 "film.expired" = "ABGELAUFEN";
 "film.filmInformation" = "Film-Informationen";
 "dx.scan.section" = "Schnell hinzufügen";
@@ -148,6 +151,7 @@
 "filter.options" = "Optionen";
 "filter.showExpiredOnly" = "Nur abgelaufene anzeigen";
 "filter.showFrozenOnly" = "Nur eingefrorene anzeigen";
+"filter.showFridgeOnly" = "Nur gekühlte anzeigen";
 "filter.clearAll" = "Alle löschen";
 "filter.apply" = "Anwenden";
 "filter.reset" = "Zurücksetzen";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Immer die Tabellenansicht anzeigen";
 "settings.showExpiryDate" = "Ablaufdatum im Chip anzeigen";
 "settings.showExpiryDate.footer" = "Wenn aktiviert, zeigen Filme mit Ablaufdatum immer einen Datums-Chip. Rot wenn abgelaufen, schwarz wenn nicht.";
+"settings.enableFridge" = "Kühlschrank-Markierung aktivieren";
 "settings.appearance" = "Erscheinungsbild";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Hell";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Fertige Rollen";
 "stats.expiredFilms" = "Abgelaufene Filme";
 "stats.frozenFilms" = "Eingefrorene Filme";
+"stats.fridgeFilms" = "Gekühlte Filme";
 "stats.byType" = "Nach Typ";
 "stats.byFormat" = "Nach Format";
 "stats.largeFormat" = "Großformat";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d Tag";
 "loaded.detail.days" = "%d Tage";
 "loaded.detail.frozen" = "Eingefroren";
+"loaded.detail.fridge" = "Kühlschrank";
 "finished.detail.title" = "Fertige Rolle";
 "finished.film.unavailable" = "Film nicht verfügbar";
 "film.expiryDate.addRow" = "Ablaufdatum hinzufügen";
@@ -435,6 +442,7 @@
 "export.includes.inventory" = "Filmbestand";
 "export.includes.loaded" = "Eingelegte Rollen";
 "export.includes.finished" = "Abgeschlossene Rollen";
+"export.includes.cameras" = "Kameras";
 "export.action" = "Exportieren & Teilen";
 
 "export.tab.export" = "Exportieren";
@@ -442,10 +450,10 @@
 "import.supported.formats" = "Unterstützte Formate";
 "import.supports.json" = "JSON (FilmStock Export)";
 "import.supports.csv" = "CSV (FilmStock Export)";
-"import.footer" = "Wähle eine aus FilmStock exportierte Datei, um den Filmbestand zu importieren.";
+"import.footer" = "Wähle eine aus FilmStock exportierte Datei, um deine Sammlung zu importieren.";
 "import.scope.header" = "Was importiert wird";
-"import.scope.inventory" = "Nur Filmbestand";
-"import.scope.footer" = "Eingelegte Rollen, abgeschlossene Rollen und Kameras werden nicht importiert. Vorhandene Filme werden nicht dupliziert.";
+"import.scope.inventory" = "Filmbestand";
+"import.scope.footer" = "Vorhandene Filme, Rollen und Kameras werden nicht dupliziert. Eigene Filmkarten-Fotos sind nicht enthalten.";
 "import.action" = "Datei auswählen";
 "import.preview.title" = "Import prüfen";
 "import.preview.summary" = "Zusammenfassung";
@@ -453,5 +461,3 @@
 "import.preview.warnings" = "Warnungen";
 "import.preview.films" = "Filme";
 "import.preview.confirm" = "Importieren";
-
-"export.beta.notice" = "Diese Funktion ist noch in der Beta-Phase. Verwende die exportierte Datei als Vorlage beim Importieren. Film-Bilder werden nicht automatisch importiert und müssen danach manuell hinzugefügt werden.";

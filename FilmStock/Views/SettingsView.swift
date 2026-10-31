@@ -35,6 +35,7 @@ struct SettingsView: View {
                         }
                     ))
                     Toggle("settings.showExpiryDate", isOn: $settingsManager.showExpiryDateInChip)
+                    Toggle("settings.enableFridge", isOn: $settingsManager.enableFridge)
                 } header: {
                     Text("settings.myFilms")
                 } footer: {
@@ -94,17 +95,7 @@ struct SettingsView: View {
                         ExportView()
                             .environmentObject(dataManager)
                     } label: {
-                        HStack {
-                            Text("settings.export")
-                            Spacer()
-                            Text("BETA")
-                                .font(.caption2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.orange)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.orange, lineWidth: 1))
-                        }
+                        Text("settings.export")
                     }
 
                     // About
@@ -191,4 +182,3 @@ struct SettingsView: View {
     
     return PreviewWrapper()
 }
-

@@ -2,7 +2,7 @@
 //  ExportView.swift
 //  FilmStock
 //
-//  Export all film data as JSON or CSV, or import an inventory file.
+//  Export all film data as JSON or CSV, or import an exported file.
 //
 
 import SwiftUI
@@ -49,21 +49,11 @@ struct ExportView: View {
 
     struct ImportPreview: Identifiable {
         let id = UUID()
-        let rows: [FilmStock]
-        let warnings: [String]
+        let result: ImportResult
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Beta notice
-            Text(LocalizedStringKey("export.beta.notice"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 4)
-
             Picker("", selection: $activeTab) {
                 ForEach(Tab.allCases) { tab in
                     Text(LocalizedStringKey(tab.rawValue)).tag(tab)
@@ -86,7 +76,7 @@ struct ExportView: View {
         }
         .sheet(item: $importPreview) { preview in
             ImportPreviewSheet(preview: preview) { confirmed in
-                if confirmed { commitImport(preview.rows) }
+                if confirmed { commitImport(preview.result) }
             }
             .environmentObject(dataManager)
         }
@@ -134,8 +124,11 @@ struct ExportView: View {
             }
 
             Section("export.includes") {
-                    Label("export.includes.inventory", systemImage: "film")
-                }
+                Label("export.includes.inventory", systemImage: "film")
+                Label("export.includes.loaded", systemImage: "camera.aperture")
+                Label("export.includes.finished", systemImage: "checkmark.circle")
+                Label("export.includes.cameras", systemImage: "camera")
+            }
 
             errorSection
         }
@@ -156,7 +149,10 @@ struct ExportView: View {
             }
 
             Section {
-                Label("import.scope.inventory", systemImage: "film")
+                Label("export.includes.inventory", systemImage: "film")
+                Label("export.includes.loaded", systemImage: "camera.aperture")
+                Label("export.includes.finished", systemImage: "checkmark.circle")
+                Label("export.includes.cameras", systemImage: "camera")
             } header: {
                 Text("import.scope.header")
             } footer: {
@@ -226,8 +222,8 @@ struct ExportView: View {
                     // Security-scoped resource access required for file importer
                     _ = url.startAccessingSecurityScopedResource()
                     defer { url.stopAccessingSecurityScopedResource() }
-                    let (rows, warnings) = try ExportManager.shared.importInventory(from: url)
-                    importPreview = ImportPreview(rows: rows, warnings: warnings)
+                    let parsed = try ExportManager.shared.importAll(from: url)
+                    importPreview = ImportPreview(result: parsed)
                 } catch {
                     errorMessage = error.localizedDescription
                 }
@@ -236,10 +232,8 @@ struct ExportView: View {
         }
     }
 
-    private func commitImport(_ rows: [FilmStock]) {
-        for row in rows {
-            _ = dataManager.addFilmStock(row)
-        }
+    private func commitImport(_ result: ImportResult) {
+        dataManager.importData(result)
     }
 }
 
@@ -250,41 +244,17 @@ struct ImportPreviewSheet: View {
     let onDismiss: (Bool) -> Void
     @Environment(\.dismiss) private var dismiss
 
+    private var result: ImportResult { preview.result }
+
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    HStack {
-                        Text("import.preview.count")
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text("\(preview.rows.count)")
-                            .fontWeight(.semibold)
-                    }
-                } header: {
-                    Text("import.preview.summary")
-                }
-
-                if !preview.warnings.isEmpty {
-                    Section("import.preview.warnings") {
-                        ForEach(preview.warnings, id: \.self) { w in
-                            Text(w).font(.caption).foregroundColor(.orange)
-                        }
-                    }
-                }
-
-                Section("import.preview.films") {
-                    ForEach(preview.rows) { row in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("\(row.manufacturer) \(row.name)")
-                                .fontWeight(.medium)
-                            Text("\(row.quantity)× \(row.formatDisplayName) · ISO \(row.filmSpeed) · \(row.type.displayName)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.vertical, 2)
-                    }
-                }
+                summarySection
+                warningsSection
+                inventorySection
+                loadedSection
+                finishedSection
+                camerasSection
             }
             .navigationTitle("import.preview.title")
             .navigationBarTitleDisplayMode(.inline)
@@ -297,7 +267,141 @@ struct ImportPreviewSheet: View {
                         onDismiss(true); dismiss()
                     }
                     .fontWeight(.semibold)
-                    .disabled(preview.rows.isEmpty)
+                    .disabled(result.isEmpty)
+                }
+            }
+        }
+    }
+
+    private var summarySection: some View {
+        Section {
+            summaryRow(titleKey: "export.includes.inventory", count: result.inventory.count)
+            summaryRow(titleKey: "export.includes.loaded", count: result.loadedFilms.count)
+            summaryRow(titleKey: "export.includes.finished", count: result.finishedFilms.count)
+            summaryRow(titleKey: "export.includes.cameras", count: result.cameras.count)
+        } header: {
+            Text("import.preview.summary")
+        }
+    }
+
+    private func summaryRow(titleKey: String, count: Int) -> some View {
+        HStack {
+            Text(LocalizedStringKey(titleKey))
+                .foregroundColor(.secondary)
+            Spacer()
+            Text("\(count)")
+                .fontWeight(.semibold)
+        }
+    }
+
+    @ViewBuilder
+    private var warningsSection: some View {
+        if !result.warnings.isEmpty {
+            Section("import.preview.warnings") {
+                ForEach(result.warnings, id: \.self) { w in
+                    Text(w).font(.caption).foregroundColor(.orange)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var inventorySection: some View {
+        if !result.inventory.isEmpty {
+            Section("export.includes.inventory") {
+                ForEach(result.inventory) { row in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(row.manufacturer) \(row.name)")
+                            .fontWeight(.medium)
+                        Text("\(row.quantity)× \(row.formatDisplayName) · ISO \(row.filmSpeed) · \(row.type.displayName)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var loadedSection: some View {
+        if !result.loadedFilms.isEmpty {
+            Section("export.includes.loaded") {
+                ForEach(result.loadedFilms) { item in
+                    loadedRow(item)
+                }
+            }
+        }
+    }
+
+    private func loadedRow(_ item: ExportLoadedFilm) -> some View {
+        let fmt = item.customFormat ?? item.format
+        let iso = item.shotAtISO ?? item.iso
+        return VStack(alignment: .leading, spacing: 2) {
+            Text("\(item.manufacturer) \(item.name)")
+                .fontWeight(.medium)
+            HStack(spacing: 4) {
+                Text("\(item.quantity)× \(fmt) · ISO \(iso)")
+                if let camera = item.camera, !camera.isEmpty {
+                    Text("· \(camera)")
+                }
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 2)
+    }
+
+    @ViewBuilder
+    private var finishedSection: some View {
+        if !result.finishedFilms.isEmpty {
+            Section("export.includes.finished") {
+                ForEach(result.finishedFilms) { item in
+                    finishedRow(item)
+                }
+            }
+        }
+    }
+
+    private func finishedRow(_ item: ExportFinishedFilm) -> some View {
+        let fmt = item.customFormat ?? item.format
+        let iso = item.shotAtISO ?? item.iso
+        let normalizedStatus = ExportManager.normalizeStatus(item.status)
+        let statusDisplay = FinishedFilmStatus(rawValue: normalizedStatus).map { NSLocalizedString($0.labelKey, comment: "") }
+        return VStack(alignment: .leading, spacing: 2) {
+            Text("\(item.manufacturer) \(item.name)")
+                .fontWeight(.medium)
+            HStack(spacing: 4) {
+                Text("\(item.quantity)× \(fmt) · ISO \(iso)")
+                if let camera = item.camera, !camera.isEmpty {
+                    Text("· \(camera)")
+                }
+                if let statusDisplay {
+                    Text("· \(statusDisplay)")
+                }
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 2)
+    }
+
+    @ViewBuilder
+    private var camerasSection: some View {
+        if !result.cameras.isEmpty {
+            Section("export.includes.cameras") {
+                ForEach(result.cameras) { cam in
+                    HStack {
+                        Text(cam.name)
+                            .fontWeight(.medium)
+                        Spacer()
+                        if let fmt = cam.customFormat ?? cam.format, !fmt.isEmpty {
+                            Text(fmt)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 2)
                 }
             }
         }

@@ -10,6 +10,7 @@ import SwiftUI
 struct LoadFilmView: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
     var onLoadComplete: (() -> Void)?
     
@@ -131,6 +132,12 @@ struct LoadFilmView: View {
                             .fontWeight(.bold)
                             .foregroundColor(.blue)
                     }
+                    if info.isFridge && settingsManager.enableFridge {
+                        Text(NSLocalizedString("film.fridge", comment: ""))
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                    }
                 }
             }
         }
@@ -195,10 +202,14 @@ struct LoadFilmView: View {
                     }
                 }
 
-                if group.isFrozen || group.isExpired {
+                let showFridgeChip = group.isFridge && settingsManager.enableFridge
+                if group.isFrozen || showFridgeChip || group.isExpired {
                     HStack(spacing: 5) {
                         if group.isFrozen {
                             rollChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                        }
+                        if showFridgeChip {
+                            rollChip(NSLocalizedString("film.fridge", comment: ""), color: .blue)
                         }
                         if group.isExpired {
                             rollChip(NSLocalizedString("film.expired", comment: ""), color: .red)
@@ -243,7 +254,7 @@ struct LoadFilmView: View {
         var buckets: [String: RollGroupItem] = [:]
         for roll in rolls {
             let expiry = roll.expireDate?.first
-            let key = "\(expiry ?? "")|\(roll.isFrozen)|\(roll.exposures ?? -99)"
+            let key = "\(expiry ?? "")|\(roll.isFrozen)|\(roll.isFridge)|\(roll.exposures ?? -99)"
             if var existing = buckets[key] {
                 existing.rollIds.append(roll.id)
                 buckets[key] = existing
@@ -253,6 +264,7 @@ struct LoadFilmView: View {
                     customFormatName: roll.customFormatName,
                     expireDate: expiry,
                     isFrozen: roll.isFrozen,
+                    isFridge: roll.isFridge,
                     exposures: roll.exposures,
                     comments: roll.comments,
                     rollIds: [roll.id]
@@ -263,7 +275,8 @@ struct LoadFilmView: View {
             if let ld = lhs.expireDate, let rd = rhs.expireDate { return ld < rd }
             if lhs.expireDate != nil { return true }
             if rhs.expireDate != nil { return false }
-            return !lhs.isFrozen && rhs.isFrozen
+            if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
+            return !lhs.isFridge && rhs.isFridge
         }
     }
     
@@ -586,4 +599,3 @@ struct CameraPickerView: View {
         }
     }
 }
-

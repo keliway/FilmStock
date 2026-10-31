@@ -10,6 +10,7 @@ import SwiftData
 
 struct StatisticsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
@@ -22,6 +23,9 @@ struct StatisticsView: View {
                 StatRow(label: "stats.finishedFilms", value: "\(finishedFilmsCount)")
                 StatRow(label: "stats.expiredFilms", value: "\(expiredFilmsCount)")
                 StatRow(label: "stats.frozenFilms", value: "\(frozenFilmsCount)")
+                if settingsManager.enableFridge {
+                    StatRow(label: "stats.fridgeFilms", value: "\(fridgeFilmsCount)")
+                }
             }
             
             // By Type Section
@@ -80,20 +84,24 @@ struct StatisticsView: View {
         [.fourByFive, .fiveBySeven, .eightByTen]
     }
     
+    private var inStockFilms: [FilmStock] {
+        dataManager.filmStocks.filter { $0.quantity > 0 }
+    }
+    
     private var totalRolls: Int {
-        dataManager.filmStocks
+        inStockFilms
             .filter { !sheetFormats.contains($0.format) }
             .reduce(0) { $0 + $1.quantity }
     }
     
     private var totalSheets: Int {
-        dataManager.filmStocks
+        inStockFilms
             .filter { sheetFormats.contains($0.format) }
             .reduce(0) { $0 + $1.quantity }
     }
     
     private var uniqueFilmCount: Int {
-        let uniqueFilms = Set(dataManager.filmStocks.map { "\($0.manufacturer)_\($0.name)" })
+        let uniqueFilms = Set(inStockFilms.map { "\($0.manufacturer)_\($0.name)" })
         return uniqueFilms.count
     }
     
@@ -105,7 +113,7 @@ struct StatisticsView: View {
         let today = Date()
         let calendar = Calendar.current
         
-        return dataManager.filmStocks.filter { film in
+        return inStockFilms.filter { film in
             guard let expireDates = film.expireDate, !expireDates.isEmpty else { return false }
             
             for dateString in expireDates {
@@ -139,17 +147,21 @@ struct StatisticsView: View {
     }
     
     private var frozenFilmsCount: Int {
-        dataManager.filmStocks.filter { $0.isFrozen }.count
+        inStockFilms.filter { $0.isFrozen }.count
+    }
+    
+    private var fridgeFilmsCount: Int {
+        inStockFilms.filter { $0.isFridge }.count
     }
     
     private func rollsByType(_ type: FilmStock.FilmType) -> Int {
-        dataManager.filmStocks
+        inStockFilms
             .filter { $0.type == type && !sheetFormats.contains($0.format) }
             .reduce(0) { $0 + $1.quantity }
     }
     
     private func rollsByFormat(_ format: FilmStock.FilmFormat) -> Int {
-        dataManager.filmStocks
+        inStockFilms
             .filter { $0.format == format && $0.customFormatName == nil }
             .reduce(0) { $0 + $1.quantity }
     }
@@ -157,7 +169,7 @@ struct StatisticsView: View {
     // Custom formats with their counts
     private var customFormatsWithCounts: [(name: String, count: Int)] {
         // Get all unique custom format names from the film stocks
-        let customFormatFilms = dataManager.filmStocks.filter { 
+        let customFormatFilms = inStockFilms.filter { 
             $0.format == .other && $0.customFormatName != nil && !$0.customFormatName!.isEmpty 
         }
         
@@ -197,4 +209,3 @@ struct StatRow: View {
         StatisticsView()
     }
 }
-

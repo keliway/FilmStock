@@ -46,8 +46,11 @@
 "film.expiryDate" = "有効期限";
 "film.comments" = "コメント";
 "film.comments.placeholder" = "このロールにメモを追加…";
+"film.storage" = "保管";
 "film.isFrozen" = "フィルムは冷凍されています";
 "film.frozen" = "冷凍";
+"film.isFridge" = "フィルムは冷蔵保存されています";
+"film.fridge" = "冷蔵";
 "film.expired" = "期限切れ";
 "film.filmInformation" = "フィルム情報";
 "dx.scan.section" = "クイック追加";
@@ -148,6 +151,7 @@
 "filter.options" = "オプション";
 "filter.showExpiredOnly" = "期限切れのみ表示";
 "filter.showFrozenOnly" = "冷凍のみ表示";
+"filter.showFridgeOnly" = "冷蔵のみ表示";
 "filter.clearAll" = "すべてクリア";
 "filter.apply" = "適用";
 "filter.reset" = "リセット";
@@ -176,6 +180,7 @@
 "settings.tableView" = "常にテーブルビューを表示";
 "settings.showExpiryDate" = "期限切れ日を表示";
 "settings.showExpiryDate.footer" = "有効にすると、有効期限のあるフィルムは常に日付チップを表示します。期限切れなら赤、そうでなければ黒。";
+"settings.enableFridge" = "冷蔵保存フラグを有効にする";
 "settings.appearance" = "外観";
 "settings.appearance.system" = "システム";
 "settings.appearance.light" = "ライト";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "撮影済み";
 "stats.expiredFilms" = "期限切れフィルム";
 "stats.frozenFilms" = "冷凍フィルム";
+"stats.fridgeFilms" = "冷蔵フィルム";
 "stats.byType" = "タイプ別";
 "stats.byFormat" = "フォーマット別";
 "stats.largeFormat" = "大判フォーマット";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d日";
 "loaded.detail.days" = "%d日";
 "loaded.detail.frozen" = "冷凍保存";
+"loaded.detail.fridge" = "冷蔵保存";
 "finished.detail.title" = "使用済みロール";
 "finished.film.unavailable" = "フィルム情報を表示できません";
 "film.expiryDate.addRow" = "期限日を追加";
@@ -436,6 +443,7 @@
 "export.includes.inventory" = "フィルム在庫";
 "export.includes.loaded" = "装填中フィルム";
 "export.includes.finished" = "使用済みフィルム";
+"export.includes.cameras" = "カメラ";
 "export.action" = "エクスポートして共有";
 
 "export.tab.export" = "Export";
@@ -443,10 +451,10 @@
 "import.supported.formats" = "対応フォーマット";
 "import.supports.json" = "JSON（FilmStockエクスポート）";
 "import.supports.csv" = "CSV（FilmStockエクスポート）";
-"import.footer" = "FilmStockからエクスポートしたファイルを選択して、フィルム在庫をインポートします。";
+"import.footer" = "FilmStockからエクスポートしたファイルを選択して、コレクションをインポートします。";
 "import.scope.header" = "インポートされる内容";
-"import.scope.inventory" = "フィルム在庫のみ";
-"import.scope.footer" = "装填中フィルム、使用済みフィルム、カメラはインポートされません。既存のフィルムは重複しません。";
+"import.scope.inventory" = "フィルム在庫";
+"import.scope.footer" = "既存のフィルム、ロール、カメラは重複しません。フィルムカードのカスタム写真は含まれません。";
 "import.action" = "ファイルを選択";
 "import.preview.title" = "インポートの確認";
 "import.preview.summary" = "概要";
@@ -454,5 +462,3 @@
 "import.preview.warnings" = "警告";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "この機能はベータ版です。インポート時はエクスポートしたファイルを参考にしてください。フィルムカードの画像は自動的にインポートされないため、後から手動で追加する必要があります。";

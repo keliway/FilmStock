@@ -18,6 +18,7 @@ class SettingsManager: ObservableObject {
     private let enabledFormatsKey = "settings_enabledFormats"
     private let customFormatsKey = "settings_customFormats"
     private let showExpiryDateInChipKey = "settings_showExpiryDateInChip"
+    private let enableFridgeKey = "settings_enableFridge"
     
     // Filter preferences
     private let filterManufacturersKey = "filter_manufacturers"
@@ -26,6 +27,7 @@ class SettingsManager: ObservableObject {
     private let filterFormatsKey = "filter_formats"
     private let filterShowExpiredOnlyKey = "filter_showExpiredOnly"
     private let filterShowFrozenOnlyKey = "filter_showFrozenOnly"
+    private let filterShowFridgeOnlyKey = "filter_showFridgeOnly"
     
     // Sort preferences
     private let sortFieldKey = "sort_field"
@@ -68,6 +70,15 @@ class SettingsManager: ObservableObject {
         }
     }
     
+    @Published var enableFridge: Bool {
+        didSet {
+            UserDefaults.standard.set(enableFridge, forKey: enableFridgeKey)
+            if !enableFridge && filterShowFridgeOnly {
+                filterShowFridgeOnly = false
+            }
+        }
+    }
+    
     // Filter preferences
     @Published var filterManufacturers: Set<String> {
         didSet {
@@ -102,6 +113,12 @@ class SettingsManager: ObservableObject {
     @Published var filterShowFrozenOnly: Bool {
         didSet {
             UserDefaults.standard.set(filterShowFrozenOnly, forKey: filterShowFrozenOnlyKey)
+        }
+    }
+    
+    @Published var filterShowFridgeOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(filterShowFridgeOnly, forKey: filterShowFridgeOnlyKey)
         }
     }
     
@@ -172,6 +189,7 @@ class SettingsManager: ObservableObject {
         self.hideEmptyByDefault = UserDefaults.standard.object(forKey: hideEmptyKey) as? Bool ?? true
         self.useTableViewByDefault = UserDefaults.standard.object(forKey: defaultViewModeKey) as? Bool ?? false
         self.showExpiryDateInChip = UserDefaults.standard.object(forKey: showExpiryDateInChipKey) as? Bool ?? false
+        self.enableFridge = UserDefaults.standard.object(forKey: enableFridgeKey) as? Bool ?? false
         
         if let savedAppearance = UserDefaults.standard.string(forKey: appearanceKey),
            let mode = AppearanceMode(rawValue: savedAppearance) {
@@ -198,6 +216,7 @@ class SettingsManager: ObservableObject {
         self.filterFormats = Set(UserDefaults.standard.array(forKey: filterFormatsKey) as? [String] ?? [])
         self.filterShowExpiredOnly = UserDefaults.standard.object(forKey: filterShowExpiredOnlyKey) as? Bool ?? false
         self.filterShowFrozenOnly = UserDefaults.standard.object(forKey: filterShowFrozenOnlyKey) as? Bool ?? false
+        self.filterShowFridgeOnly = UserDefaults.standard.object(forKey: filterShowFridgeOnlyKey) as? Bool ?? false
         
         // Load sort preferences (default: manufacturer, ascending)
         self.sortField = UserDefaults.standard.string(forKey: sortFieldKey) ?? "manufacturer"
@@ -229,4 +248,3 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
         }
     }
 }
-

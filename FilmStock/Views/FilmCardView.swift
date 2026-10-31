@@ -196,6 +196,22 @@ struct FilmCardView: View {
                                     .stroke(Color.blue, lineWidth: 1)
                             )
                     }
+
+                    // Blue "FRIDGE" chip
+                    if isFridge {
+                        Text("FRIDGE")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .frame(minWidth: 62)
+                            .fixedSize()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.blue, lineWidth: 1)
+                            )
+                    }
                 }
                 .padding(.top, 4)
                 .padding(.trailing, 4)
@@ -259,6 +275,11 @@ struct FilmCardView: View {
         return groupedFilm.formats.contains { $0.isFrozen }
     }
     
+    private var isFridge: Bool {
+        // Check if any format is stored in fridge (only when enabled in settings)
+        return settingsManager.enableFridge && groupedFilm.formats.contains { $0.isFridge }
+    }
+    
     private var hasComments: Bool {
         // Check if any format has comments
         return groupedFilm.formats.contains { 
@@ -269,9 +290,9 @@ struct FilmCardView: View {
         }
     }
     
-    // Whether to show any chip (expiry or frozen)
+    // Whether to show any chip (expiry, frozen, or fridge)
     private var showAnyChip: Bool {
-        return showExpiryChip || isFrozen
+        return showExpiryChip || isFrozen || isFridge
     }
     
     // Whether to show the expiry chip
@@ -427,8 +448,8 @@ struct FilmCardView: View {
                        let compareStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: compareDate) {
                         if todayStart > compareStart {
                             return true
-            }
-        }
+                        }
+                    }
                 }
             }
         }
@@ -436,4 +457,3 @@ struct FilmCardView: View {
         return false
     }
 }
-

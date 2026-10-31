@@ -46,8 +46,11 @@
 "film.expiryDate" = "Expiry Date";
 "film.comments" = "Comments";
 "film.comments.placeholder" = "Add a note about this roll…";
+"film.storage" = "Storage";
 "film.isFrozen" = "Film is frozen";
 "film.frozen" = "FROZEN";
+"film.isFridge" = "Film is in fridge";
+"film.fridge" = "FRIDGE";
 "film.expired" = "EXPIRED";
 "film.filmInformation" = "Film Information";
 "dx.scan.section" = "Quick Add";
@@ -148,6 +151,7 @@
 "filter.options" = "Options";
 "filter.showExpiredOnly" = "Show expired only";
 "filter.showFrozenOnly" = "Show frozen only";
+"filter.showFridgeOnly" = "Show fridge only";
 "filter.clearAll" = "Clear All";
 "filter.apply" = "Apply";
 "filter.reset" = "Reset";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Always show the table view";
 "settings.showExpiryDate" = "Show expiry date in chip";
 "settings.showExpiryDate.footer" = "When enabled, films with an expiry date will always show a date chip. Red if expired, black if not.";
+"settings.enableFridge" = "Enable Fridge flag";
 "settings.appearance" = "Appearance";
 "settings.appearance.system" = "System";
 "settings.appearance.light" = "Light";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Finished Rolls";
 "stats.expiredFilms" = "Expired Films";
 "stats.frozenFilms" = "Frozen Films";
+"stats.fridgeFilms" = "Fridge Films";
 "stats.byType" = "By Type";
 "stats.byFormat" = "By Format";
 "stats.largeFormat" = "Large Format";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d day";
 "loaded.detail.days" = "%d days";
 "loaded.detail.frozen" = "Frozen";
+"loaded.detail.fridge" = "Fridge";
 "finished.detail.title" = "Finished Roll";
 "finished.film.unavailable" = "Film unavailable";
 "film.expiryDate.addRow" = "Add expiry date";
@@ -435,6 +442,7 @@
 "export.includes.inventory" = "Film inventory";
 "export.includes.loaded" = "Loaded rolls";
 "export.includes.finished" = "Finished rolls";
+"export.includes.cameras" = "Cameras";
 "export.action" = "Export & Share";
 
 "export.tab.export" = "Export";
@@ -442,10 +450,10 @@
 "import.supported.formats" = "Supported Formats";
 "import.supports.json" = "JSON (FilmStock export)";
 "import.supports.csv" = "CSV (FilmStock export)";
-"import.footer" = "Select a file exported from FilmStock to import its film inventory.";
+"import.footer" = "Select a file exported from FilmStock to import your collection.";
 "import.scope.header" = "What Gets Imported";
-"import.scope.inventory" = "Film inventory only";
-"import.scope.footer" = "Loaded rolls, finished rolls, and cameras are not imported. Existing films are not duplicated — rolls are added to them.";
+"import.scope.inventory" = "Film inventory";
+"import.scope.footer" = "Existing films, rolls, and cameras are not duplicated. Custom film card photos are not included.";
 "import.action" = "Choose File";
 "import.preview.title" = "Review Import";
 "import.preview.summary" = "Summary";
@@ -453,5 +461,3 @@
 "import.preview.warnings" = "Warnings";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "This feature is in beta. Use the exported file as a reference when importing data. Note that film card pictures are not automatically imported and will need to be added manually afterwards.";

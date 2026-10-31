@@ -46,13 +46,16 @@
 "film.expiryDate" = "Data ważności";
 "film.comments" = "Komentarze";
 "film.comments.placeholder" = "Dodaj notatkę o tej rolce…";
+"film.storage" = "Przechowywanie";
 "film.isFrozen" = "Film jest zamrożony";
 "film.frozen" = "ZAMROŻONY";
+"film.isFridge" = "Film jest w lodówce";
+"film.fridge" = "LODÓWKA";
 "film.expired" = "PRZETERMINOWANY";
 "film.filmInformation" = "Informacje o filmie";
 "dx.scan.section" = "Szybkie dodawanie";
 "dx.scan.button" = "Skanuj kod kreskowy";
-"dx.scan.hint" = "Zeskanuj kod kreskowy z opakowania lub z boku kasety 35 mm. Paki z wieloma rolkami lub arkuszami zostaną dodane od razu.";
+"dx.scan.hint" = "Zeskanuj kod kreskowy z opakowania lub z boku kasety 35 mm. Paki z wielnymi rolkami lub arkuszami zostaną dodane od razu.";
 "dx.scan.instruction" = "Zeskanuj kod kreskowy z opakowania lub kasety";
 "dx.scan.notFound.title" = "Nie rozpoznano filmu";
 "dx.scan.notFound.message" = "Nie udało się zidentyfikować tego kodu kreskowego. Możesz uzupełnić dane ręcznie.";
@@ -148,6 +151,7 @@
 "filter.options" = "Opcje";
 "filter.showExpiredOnly" = "Pokaż tylko przeterminowane";
 "filter.showFrozenOnly" = "Pokaż tylko zamrożone";
+"filter.showFridgeOnly" = "Pokaż tylko z lodówki";
 "filter.clearAll" = "Wyczyść wszystko";
 "filter.apply" = "Zastosuj";
 "filter.reset" = "Resetuj";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Zawsze pokazuj widok tabeli";
 "settings.showExpiryDate" = "Pokaż datę ważności";
 "settings.showExpiryDate.footer" = "Po włączeniu filmy z datą ważności zawsze będą pokazywać etykietę z datą. Czerwona jeśli przeterminowana, czarna jeśli nie.";
+"settings.enableFridge" = "Włącz oznaczenie lodówki";
 "settings.appearance" = "Wygląd";
 "settings.appearance.system" = "Systemowy";
 "settings.appearance.light" = "Jasny";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Ukończone rolki";
 "stats.expiredFilms" = "Przeterminowane filmy";
 "stats.frozenFilms" = "Zamrożone filmy";
+"stats.fridgeFilms" = "Filmy w lodówce";
 "stats.byType" = "Według typu";
 "stats.byFormat" = "Według formatu";
 "stats.largeFormat" = "Wielki format";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d dzień";
 "loaded.detail.days" = "%d dni";
 "loaded.detail.frozen" = "Zamrożona";
+"loaded.detail.fridge" = "Lodówka";
 "finished.detail.title" = "Zakończona rolka";
 "finished.film.unavailable" = "Film niedostępny";
 "film.expiryDate.addRow" = "Dodaj datę ważności";
@@ -436,6 +443,7 @@
 "export.includes.inventory" = "Magazyn filmów";
 "export.includes.loaded" = "Załadowane rolki";
 "export.includes.finished" = "Zakończone rolki";
+"export.includes.cameras" = "Aparaty";
 "export.action" = "Eksportuj i udostępnij";
 
 "export.tab.export" = "Export";
@@ -443,10 +451,10 @@
 "import.supported.formats" = "Obsługiwane formaty";
 "import.supports.json" = "JSON (eksport FilmStock)";
 "import.supports.csv" = "CSV (eksport FilmStock)";
-"import.footer" = "Wybierz plik wyeksportowany z FilmStock, aby zaimportować magazyn filmów.";
+"import.footer" = "Wybierz plik wyeksportowany z FilmStock, aby zaimportować swoją kolekcję.";
 "import.scope.header" = "Co zostanie zaimportowane";
-"import.scope.inventory" = "Tylko magazyn filmów";
-"import.scope.footer" = "Załadowane, zakończone rolki i aparaty nie są importowane. Istniejące filmy nie są duplikowane.";
+"import.scope.inventory" = "Magazyn filmów";
+"import.scope.footer" = "Istniejące filmy, rolki i aparaty nie są duplikowane. Niestandardowe zdjęcia kart filmowych nie są uwzględniane.";
 "import.action" = "Wybierz plik";
 "import.preview.title" = "Przegląd importu";
 "import.preview.summary" = "Podsumowanie";
@@ -454,5 +462,3 @@
 "import.preview.warnings" = "Ostrzeżenia";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "Ta funkcja jest w wersji beta. Przy imporcie używaj wyeksportowanego pliku jako wzorca. Zdjęcia kart filmowych nie są importowane automatycznie i muszą zostać dodane ręcznie.";

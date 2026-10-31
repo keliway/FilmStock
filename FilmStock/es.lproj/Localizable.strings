@@ -46,8 +46,11 @@
 "film.expiryDate" = "Fecha de caducidad";
 "film.comments" = "Comentarios";
 "film.comments.placeholder" = "Añadir una nota sobre este carrete…";
+"film.storage" = "Almacenamiento";
 "film.isFrozen" = "La película está congelada";
 "film.frozen" = "CONGELADO";
+"film.isFridge" = "La película está en la nevera";
+"film.fridge" = "NEVERA";
 "film.expired" = "CADUCADO";
 "film.filmInformation" = "Información de la película";
 "dx.scan.section" = "Añadir rápido";
@@ -148,6 +151,7 @@
 "filter.options" = "Opciones";
 "filter.showExpiredOnly" = "Mostrar solo caducados";
 "filter.showFrozenOnly" = "Mostrar solo congelados";
+"filter.showFridgeOnly" = "Mostrar solo en nevera";
 "filter.clearAll" = "Borrar todo";
 "filter.apply" = "Aplicar";
 "filter.reset" = "Restablecer";
@@ -176,6 +180,7 @@
 "settings.tableView" = "Mostrar siempre la vista de tabla";
 "settings.showExpiryDate" = "Mostrar fecha de caducidad";
 "settings.showExpiryDate.footer" = "Si está activado, las películas con fecha de caducidad siempre mostrarán una etiqueta de fecha. Rojo si está caducado, negro si no.";
+"settings.enableFridge" = "Activar indicador de nevera";
 "settings.appearance" = "Apariencia";
 "settings.appearance.system" = "Sistema";
 "settings.appearance.light" = "Claro";
@@ -193,6 +198,7 @@
 "stats.finishedFilms" = "Rollos terminados";
 "stats.expiredFilms" = "Películas caducadas";
 "stats.frozenFilms" = "Películas congeladas";
+"stats.fridgeFilms" = "Películas en nevera";
 "stats.byType" = "Por tipo";
 "stats.byFormat" = "Por formato";
 "stats.largeFormat" = "Gran formato";
@@ -290,6 +296,7 @@
 "loaded.detail.day" = "%d día";
 "loaded.detail.days" = "%d días";
 "loaded.detail.frozen" = "Congelado";
+"loaded.detail.fridge" = "Nevera";
 "finished.detail.title" = "Carrete terminado";
 "finished.film.unavailable" = "Película no disponible";
 "film.expiryDate.addRow" = "Añadir fecha de caducidad";
@@ -436,6 +443,7 @@
 "export.includes.inventory" = "Inventario de películas";
 "export.includes.loaded" = "Carretes en cámara";
 "export.includes.finished" = "Carretes terminados";
+"export.includes.cameras" = "Cámaras";
 "export.action" = "Exportar y compartir";
 
 "export.tab.export" = "Export";
@@ -443,10 +451,10 @@
 "import.supported.formats" = "Formatos admitidos";
 "import.supports.json" = "JSON (exportación de FilmStock)";
 "import.supports.csv" = "CSV (exportación de FilmStock)";
-"import.footer" = "Selecciona un archivo exportado desde FilmStock para importar tu inventario.";
+"import.footer" = "Selecciona un archivo exportado desde FilmStock para importar tu colección.";
 "import.scope.header" = "Qué se importa";
-"import.scope.inventory" = "Solo inventario de películas";
-"import.scope.footer" = "Los carretes cargados, terminados y las cámaras no se importan. Las películas existentes no se duplican.";
+"import.scope.inventory" = "Inventario de películas";
+"import.scope.footer" = "Las películas, carretes y cámaras existentes no se duplican. Las fotos personalizadas de tarjetas de película no están incluidas.";
 "import.action" = "Elegir archivo";
 "import.preview.title" = "Revisar importación";
 "import.preview.summary" = "Resumen";
@@ -454,5 +462,3 @@
 "import.preview.warnings" = "Advertencias";
 "import.preview.films" = "Films";
 "import.preview.confirm" = "Import";
-
-"export.beta.notice" = "Esta función está en versión beta. Usa el archivo exportado como referencia al importar datos. Las imágenes de las fichas de película no se importan automáticamente y deberán añadirse manualmente.";

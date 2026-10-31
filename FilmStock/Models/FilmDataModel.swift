@@ -61,13 +61,14 @@ final class MyFilm {
     var expireDate: String? // Store as comma-separated string for SwiftData compatibility
     var comments: String?
     var isFrozen: Bool? // Optional for backward compatibility - nil means false
+    var isFridge: Bool? // Optional for backward compatibility - nil means false
     var exposures: Int? // Number of exposures on a roll (24, 36, or custom); nil = unspecified
     var createdAt: String?
     var updatedAt: String?
     @Relationship(deleteRule: .nullify)
     var film: Film?
     
-    init(id: String, format: String, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, exposures: Int? = nil, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
+    init(id: String, format: String, customFormatName: String? = nil, quantity: Int, expireDate: [String]? = nil, comments: String? = nil, isFrozen: Bool = false, isFridge: Bool = false, exposures: Int? = nil, createdAt: String? = nil, updatedAt: String? = nil, film: Film? = nil) {
         self.id = id
         self.format = format
         self.customFormatName = customFormatName
@@ -76,6 +77,7 @@ final class MyFilm {
         self.expireDate = expireDate?.joined(separator: ",")
         self.comments = comments
         self.isFrozen = isFrozen
+        self.isFridge = isFrozen ? false : isFridge
         self.exposures = exposures
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -178,7 +180,7 @@ final class FinishedFilm {
         return film?.filmSpeed ?? 0
     }
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, cameraName: String? = nil) {
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, developedAt: Date? = nil, cameraName: String? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -189,7 +191,7 @@ final class FinishedFilm {
         self.finishedAt = finishedAt
         self.shotAtISO = shotAtISO
         self.status = status
+        self.developedAt = developedAt
         self.cameraName = cameraName
     }
 }
-

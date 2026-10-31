@@ -8,7 +8,7 @@
 import SwiftUI
 
 // Bump this string whenever you want to show the sheet again on next launch.
-let whatsNewVersion = "2.4"
+let whatsNewVersion = "2.6"
 
 struct WhatsNewFeature: Identifiable {
     let id = UUID()
@@ -24,11 +24,22 @@ struct WhatsNewView: View {
 
     private let features: [WhatsNewFeature] = [
         WhatsNewFeature(
-            icon: "barcode.viewfinder",
-            iconColor: .accentColor,
-            title: "Scan barcodes to add film",
-            description: "On Add Film, scan a packaging barcode or the DX code on a 35mm canister to prefill the film and add rolls or sheets. For example, scan a new Portra 400 pro-pack to add 5 rolls at once. Packaging lookup covers 70+ films with more coming later. This feature is in beta, so results may not always be accurate.",
-            showBeta: true
+            icon: "refrigerator",
+            iconColor: .blue,
+            title: "Fridge Storage Toggle",
+            description: "Track films stored in your fridge separately from the freezer. Enable or disable the fridge toggle in Settings, tag rolls and sheets as fridge-stored, and see fridge badges across your collection."
+        ),
+        WhatsNewFeature(
+            icon: "film.stack",
+            iconColor: .green,
+            title: "Finished Rolls Bug Fixes",
+            description: "Resolved issues and crashes when viewing and managing finished rolls, ensuring accurate statuses, dates, and smoother tracking of your completed rolls."
+        ),
+        WhatsNewFeature(
+            icon: "arrow.up.arrow.down",
+            iconColor: .orange,
+            title: "Better Import & Export",
+            description: "Easily backup and restore your data with enhanced JSON and multi-section CSV support, now covering loaded films, finished rolls, cameras, and fridge statuses."
         )
     ]
 

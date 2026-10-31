@@ -14,11 +14,13 @@ struct FilterPopoverView: View {
     @Binding var selectedFormats: Set<FilmStock.FilmFormat>
     @Binding var showExpiredOnly: Bool
     @Binding var showFrozenOnly: Bool
+    @Binding var showFridgeOnly: Bool
     @Binding var hideEmpty: Bool
     @Binding var sortField: BrowseView.SortField
     @Binding var sortAscending: Bool
     @Binding var groupBy: BrowseView.GroupBy
     @ObservedObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
     
     
@@ -172,6 +174,9 @@ struct FilterPopoverView: View {
 
                             Button {
                                 showFrozenOnly.toggle()
+                                if showFrozenOnly {
+                                    showFridgeOnly = false
+                                }
                             } label: {
                                 Text(LocalizedStringKey("film.frozen"))
                                     .font(.caption2)
@@ -187,6 +192,29 @@ struct FilterPopoverView: View {
                                     )
                             }
                             .buttonStyle(.plain)
+
+                            if settingsManager.enableFridge {
+                                Button {
+                                    showFridgeOnly.toggle()
+                                    if showFridgeOnly {
+                                        showFrozenOnly = false
+                                    }
+                                } label: {
+                                    Text(LocalizedStringKey("film.fridge"))
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(showFridgeOnly ? .white : .blue)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(showFridgeOnly ? Color.blue : Color.clear)
+                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(Color.blue, lineWidth: 1)
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
 
                         Toggle("filter.hideEmpty", isOn: $hideEmpty)
@@ -243,6 +271,7 @@ struct FilterPopoverView: View {
                         selectedFormats.removeAll()
                         showExpiredOnly = false
                         showFrozenOnly = false
+                        showFridgeOnly = false
                         hideEmpty = true
                     }
                     .foregroundColor(.orange)
@@ -284,4 +313,3 @@ struct FilterPopoverView: View {
         }
     }
 }
-

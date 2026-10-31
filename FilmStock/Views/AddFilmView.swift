@@ -15,6 +15,7 @@ struct RollBatch: Identifiable {
     var quantity: Int
     var expireDate: String    // formatted: "12/2026" or "2026" or ""
     var isFrozen: Bool
+    var isFridge: Bool
     var exposures: Int?       // nil = unspecified, -1 = custom picker tag, else the value
     var customExposures: String
 
@@ -27,6 +28,7 @@ struct RollBatch: Identifiable {
         quantity: Int = 1,
         expireDate: String = "",
         isFrozen: Bool = false,
+        isFridge: Bool = false,
         exposures: Int? = nil,
         customExposures: String = "",
         comments: String = ""
@@ -37,6 +39,7 @@ struct RollBatch: Identifiable {
         self.quantity = quantity
         self.expireDate = expireDate
         self.isFrozen = isFrozen
+        self.isFridge = isFrozen ? false : isFridge
         self.exposures = exposures ?? format.defaultExposures
         self.customExposures = customExposures
         self.comments = comments
@@ -401,10 +404,13 @@ struct AddFilmView: View {
                         }
                     }
 
-                    if batch.isFrozen || batch.isExpired {
+                    let showFridgeChip = !batch.isFrozen && batch.isFridge && settingsManager.enableFridge
+                    if batch.isFrozen || showFridgeChip || batch.isExpired {
                         HStack(spacing: 5) {
                             if batch.isFrozen {
                                 batchChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                            } else if showFridgeChip {
+                                batchChip(NSLocalizedString("film.fridge", comment: ""), color: .blue)
                             }
                             if batch.isExpired {
                                 batchChip(NSLocalizedString("film.expired", comment: ""), color: .red)
@@ -635,6 +641,7 @@ struct AddFilmView: View {
                 expireDate: dateDigits.isEmpty ? nil : [dateDigits],
                 comments: trimmedComments.isEmpty ? nil : trimmedComments,
                 isFrozen: batch.isFrozen,
+                isFridge: batch.isFrozen ? false : batch.isFridge,
                 exposures: batch.resolvedExposures,
                 createdAt: now,
                 updatedAt: nil
@@ -678,6 +685,7 @@ struct RollBatchSheet: View {
     @State private var quantity: Int
     @State private var expireDate: String
     @State private var isFrozen: Bool
+    @State private var isFridge: Bool
     @State private var exposures: Int?
     @State private var customExposures: String
     @State private var comments: String
@@ -694,6 +702,7 @@ struct RollBatchSheet: View {
         _quantity             = State(initialValue: batch.quantity)
         _expireDate           = State(initialValue: batch.expireDate)
         _isFrozen             = State(initialValue: batch.isFrozen)
+        _isFridge             = State(initialValue: batch.isFrozen ? false : batch.isFridge)
         _comments             = State(initialValue: batch.comments)
         _customExposures      = State(initialValue: batch.customExposures)
         // Map exposure to a valid picker tag for the format
@@ -707,6 +716,29 @@ struct RollBatchSheet: View {
         } else {
             _exposures = State(initialValue: batch.format.defaultExposures)
         }
+    }
+
+    private var storageSelection: Binding<Int> {
+        Binding(
+            get: {
+                if isFrozen { return 2 }
+                if isFridge { return 1 }
+                return 0
+            },
+            set: { newValue in
+                switch newValue {
+                case 1:
+                    isFrozen = false
+                    isFridge = true
+                case 2:
+                    isFrozen = true
+                    isFridge = false
+                default:
+                    isFrozen = false
+                    isFridge = false
+                }
+            }
+        )
     }
 
     private var allEnabledFormats: [String] {
@@ -781,9 +813,23 @@ struct RollBatchSheet: View {
                     }
                 }
 
-                // Frozen: rolls and sheet / other formats (stored per inventory line)
-                Section {
-                    Toggle("film.isFrozen", isOn: $isFrozen)
+                // Frozen & Fridge: rolls and sheet / other formats (stored per inventory line)
+                if settingsManager.enableFridge {
+                    Section("film.storage") {
+                        Picker("film.storage", selection: storageSelection) {
+                            Text("group.none").tag(0)
+                            Text("loaded.detail.fridge").tag(1)
+                            Text("loaded.detail.frozen").tag(2)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                } else {
+                    Section {
+                        Toggle("film.isFrozen", isOn: $isFrozen)
+                            .onChange(of: isFrozen) { _, newValue in
+                                if newValue { isFridge = false }
+                            }
+                    }
                 }
 
                 // Exposures (roll formats only, options vary by format)
@@ -879,6 +925,7 @@ struct RollBatchSheet: View {
             quantity: quantity,
             expireDate: expireDate,
             isFrozen: isFrozen,
+            isFridge: isFrozen ? false : isFridge,
             exposures: exposures,
             customExposures: customExposures,
             comments: comments

@@ -564,6 +564,7 @@ struct LoadedFilmsView: View {
 
 struct LoadedFilmDetailSheet: View {
     let loadedFilm: LoadedFilm
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var filmImage: UIImage?
 
@@ -670,6 +671,9 @@ struct LoadedFilmDetailSheet: View {
                     if loadedFilm.myFilm?.isFrozen == true {
                         frozenChip
                     }
+                    if loadedFilm.myFilm?.isFridge == true && settingsManager.enableFridge {
+                        fridgeChip
+                    }
                 }
 
                 // Comments
@@ -704,6 +708,17 @@ struct LoadedFilmDetailSheet: View {
 
     private var frozenChip: some View {
         Text(LocalizedStringKey("film.frozen"))
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.blue, lineWidth: 1))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var fridgeChip: some View {
+        Text(LocalizedStringKey("film.fridge"))
             .font(.caption2)
             .fontWeight(.bold)
             .foregroundColor(.blue)
@@ -1193,6 +1208,7 @@ struct FinishedFilmRow: View {
 struct FinishedFilmDetailSheet: View {
     let finishedFilm: FinishedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var filmImage: UIImage?
     @State private var showFinishDateEditor = false
@@ -1325,6 +1341,9 @@ struct FinishedFilmDetailSheet: View {
                     if finishedFilm.myFilm?.isFrozen == true {
                         frozenChip
                     }
+                    if finishedFilm.myFilm?.isFridge == true && settingsManager.enableFridge {
+                        fridgeChip
+                    }
                 }
 
                 if let comments = finishedFilm.myFilm?.comments, !comments.isEmpty {
@@ -1410,6 +1429,17 @@ struct FinishedFilmDetailSheet: View {
 
     private var frozenChip: some View {
         Text(LocalizedStringKey("film.frozen"))
+            .font(.caption2)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .overlay(RoundedRectangle(cornerRadius: 3).stroke(Color.blue, lineWidth: 1))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var fridgeChip: some View {
+        Text(LocalizedStringKey("film.fridge"))
             .font(.caption2)
             .fontWeight(.bold)
             .foregroundColor(.blue)

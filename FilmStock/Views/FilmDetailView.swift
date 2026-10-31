@@ -12,6 +12,7 @@ struct RollGroupItem: Identifiable, Hashable {
     let customFormatName: String?
     let expireDate: String?       // single shared date for all rolls in this group
     let isFrozen: Bool
+    var isFridge: Bool = false
     let exposures: Int?           // from first roll; applied to all on edit
     let comments: String?         // from first roll; applied to all on edit
     var rollIds: [String]         // individual MyFilm IDs in this group
@@ -19,7 +20,7 @@ struct RollGroupItem: Identifiable, Hashable {
     var count: Int { rollIds.count }
 
     /// Includes exposures so distinct groups (e.g. 36 vs 12 exp) do not collapse into one row.
-    var id: String { "\(format.rawValue)|\(expireDate ?? "")|\(isFrozen)|\(exposures ?? -99)|\(customFormatName ?? "")" }
+    var id: String { "\(format.rawValue)|\(expireDate ?? "")|\(isFrozen)|\(isFridge)|\(exposures ?? -99)|\(customFormatName ?? "")" }
 
     var isExpired: Bool {
         guard let ds = expireDate, let date = FilmStock.parseExpireDate(ds) else { return false }
@@ -40,6 +41,7 @@ struct RollGroupItem: Identifiable, Hashable {
 struct FilmDetailView: View {
     let groupedFilm: GroupedFilm
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
     @State private var relatedFilms: [FilmStock] = []
@@ -202,6 +204,7 @@ struct FilmDetailView: View {
                     expireDate: dateDigits.isEmpty ? nil : [dateDigits],
                     comments: nil,
                     isFrozen: batch.isFrozen,
+                    isFridge: batch.isFrozen ? false : batch.isFridge,
                     exposures: batch.resolvedExposures,
                     createdAt: ISO8601DateFormatter().string(from: Date()),
                     updatedAt: nil
@@ -230,8 +233,15 @@ struct FilmDetailView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    if film.isFrozen {
-                        tagChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                    let showFridgeChip = !film.isFrozen && film.isFridge && settingsManager.enableFridge
+                    if film.isFrozen || showFridgeChip {
+                        HStack(spacing: 5) {
+                            if film.isFrozen {
+                                tagChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                            } else if showFridgeChip {
+                                tagChip(NSLocalizedString("film.fridge", comment: ""), color: .blue)
+                            }
+                        }
                     }
                     if let c = film.comments, !c.isEmpty {
                         Text(c)
@@ -284,10 +294,13 @@ struct FilmDetailView: View {
                     }
                 }
 
-                if group.isFrozen || group.isExpired {
+                let showFridgeChip = !group.isFrozen && group.isFridge && settingsManager.enableFridge
+                if group.isFrozen || showFridgeChip || group.isExpired {
                     HStack(spacing: 5) {
                         if group.isFrozen {
                             tagChip(NSLocalizedString("film.frozen", comment: ""), color: .blue)
+                        } else if showFridgeChip {
+                            tagChip(NSLocalizedString("film.fridge", comment: ""), color: .blue)
                         }
                         if group.isExpired {
                             tagChip(NSLocalizedString("film.expired", comment: ""), color: .red)
@@ -370,13 +383,13 @@ struct FilmDetailView: View {
     private var rollGroupsByFormat: [(format: FilmStock.FilmFormat, displayName: String, groups: [RollGroupItem])] {
         let rollFilms = relatedFilms.filter { $0.format.isRollFormat && $0.quantity > 0 }
 
-        // Build buckets keyed by format, expiry, frozen, exposures (matches LoadFilmView.rollGroupsForFormat)
+        // Build buckets keyed by format, expiry, frozen, fridge, exposures (matches LoadFilmView.rollGroupsForFormat)
         var buckets: [String: RollGroupItem] = [:]
         for film in rollFilms {
             let expiry = film.expireDate?.first
             let expKey = film.exposures ?? -99
             let otherKey = film.customFormatName ?? ""
-            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(expKey)|\(otherKey)"
+            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(film.isFridge)|\(expKey)|\(otherKey)"
             if var existing = buckets[key] {
                 existing.rollIds.append(film.id)
                 buckets[key] = existing
@@ -386,6 +399,7 @@ struct FilmDetailView: View {
                     customFormatName: film.customFormatName,
                     expireDate: expiry,
                     isFrozen: film.isFrozen,
+                    isFridge: film.isFridge,
                     exposures: film.exposures,
                     comments: film.comments,
                     rollIds: [film.id]
@@ -409,6 +423,7 @@ struct FilmDetailView: View {
                 } else if lhs.expireDate != nil { return true }
                 else if rhs.expireDate != nil { return false }
                 if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
+                if lhs.isFridge != rhs.isFridge { return !lhs.isFridge }
                 let le = lhs.exposures ?? Int.max
                 let re = rhs.exposures ?? Int.max
                 if le != re { return le < re }
@@ -434,11 +449,13 @@ struct FilmDetailView: View {
 struct RollGroupEditSheet: View {
     let group: RollGroupItem
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
     @State private var count: Int
     @State private var expireDate: String
     @State private var isFrozen: Bool
+    @State private var isFridge: Bool
     @State private var exposures: Int?
     @State private var customExposures: String
     @State private var comments: String
@@ -449,6 +466,7 @@ struct RollGroupEditSheet: View {
         _count       = State(initialValue: group.count)
         _expireDate  = State(initialValue: group.expireDate ?? "")
         _isFrozen    = State(initialValue: group.isFrozen)
+        _isFridge    = State(initialValue: group.isFrozen ? false : group.isFridge)
         _comments    = State(initialValue: group.comments ?? "")
         // Map exposures to picker tags: valid option → direct, unknown → -1 (custom), nil → default
         if let exp = group.exposures {
@@ -466,6 +484,29 @@ struct RollGroupEditSheet: View {
             _exposures       = State(initialValue: nil)
             _customExposures = State(initialValue: "")
         }
+    }
+
+    private var storageSelection: Binding<Int> {
+        Binding(
+            get: {
+                if isFrozen { return 2 }
+                if isFridge { return 1 }
+                return 0
+            },
+            set: { newValue in
+                switch newValue {
+                case 1:
+                    isFrozen = false
+                    isFridge = true
+                case 2:
+                    isFrozen = true
+                    isFridge = false
+                default:
+                    isFrozen = false
+                    isFridge = false
+                }
+            }
+        )
     }
 
     var body: some View {
@@ -503,9 +544,23 @@ struct RollGroupEditSheet: View {
                     }
                 }
 
-                // Frozen
-                Section {
-                    Toggle("film.isFrozen", isOn: $isFrozen)
+                // Frozen & Fridge
+                if settingsManager.enableFridge {
+                    Section("film.storage") {
+                        Picker("film.storage", selection: storageSelection) {
+                            Text("group.none").tag(0)
+                            Text("loaded.detail.fridge").tag(1)
+                            Text("loaded.detail.frozen").tag(2)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                } else {
+                    Section {
+                        Toggle("film.isFrozen", isOn: $isFrozen)
+                            .onChange(of: isFrozen) { _, newValue in
+                                if newValue { isFridge = false }
+                            }
+                    }
                 }
 
                 // Exposures (options vary by format)
@@ -596,6 +651,7 @@ struct RollGroupEditSheet: View {
         }()
 
         let delta = count - group.count
+        let effectiveFridge = isFrozen ? false : isFridge
 
         let cleanComments: String? = comments.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? nil : comments.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -607,6 +663,7 @@ struct RollGroupEditSheet: View {
                 ids: group.rollIds,
                 expireDate: cleanDate,
                 isFrozen: isFrozen,
+                isFridge: effectiveFridge,
                 exposures: resolvedExposures,
                 comments: cleanComments
             )
@@ -615,6 +672,7 @@ struct RollGroupEditSheet: View {
                 matchingFilmStockId: group.rollIds.first!,
                 expireDate: cleanDate,
                 isFrozen: isFrozen,
+                isFridge: effectiveFridge,
                 exposures: resolvedExposures,
                 comments: cleanComments
             )
@@ -626,6 +684,7 @@ struct RollGroupEditSheet: View {
                 ids: toKeep,
                 expireDate: cleanDate,
                 isFrozen: isFrozen,
+                isFridge: effectiveFridge,
                 exposures: resolvedExposures,
                 comments: cleanComments
             )
@@ -634,6 +693,7 @@ struct RollGroupEditSheet: View {
                 ids: group.rollIds,
                 expireDate: cleanDate,
                 isFrozen: isFrozen,
+                isFridge: effectiveFridge,
                 exposures: resolvedExposures,
                 comments: cleanComments
             )
@@ -654,14 +714,16 @@ private struct MutableExpiryRow: Identifiable {
     }
 }
 
-/// Edit quantity, frozen, multiple expiry rows, and comments for one `MyFilm` line (sheets & other non-roll).
+/// Edit quantity, frozen, fridge, multiple expiry rows, and comments for one `MyFilm` line (sheets & other non-roll).
 struct SheetGroupEditSheet: View {
     let film: FilmStock
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
     @State private var quantity: Int
     @State private var isFrozen: Bool
+    @State private var isFridge: Bool
     @State private var comments: String
     @State private var expiryRows: [MutableExpiryRow]
     @State private var rowErrors: [UUID: String] = [:]
@@ -670,6 +732,7 @@ struct SheetGroupEditSheet: View {
         self.film = film
         _quantity = State(initialValue: film.quantity)
         _isFrozen = State(initialValue: film.isFrozen)
+        _isFridge = State(initialValue: film.isFrozen ? false : film.isFridge)
         _comments = State(initialValue: film.comments ?? "")
         let initialDates = film.expireDate ?? []
         if initialDates.isEmpty {
@@ -677,6 +740,29 @@ struct SheetGroupEditSheet: View {
         } else {
             _expiryRows = State(initialValue: initialDates.map { MutableExpiryRow(text: FilmStock.formatExpireDate($0)) })
         }
+    }
+
+    private var storageSelection: Binding<Int> {
+        Binding(
+            get: {
+                if isFrozen { return 2 }
+                if isFridge { return 1 }
+                return 0
+            },
+            set: { newValue in
+                switch newValue {
+                case 1:
+                    isFrozen = false
+                    isFridge = true
+                case 2:
+                    isFrozen = true
+                    isFridge = false
+                default:
+                    isFrozen = false
+                    isFridge = false
+                }
+            }
+        )
     }
 
     var body: some View {
@@ -723,8 +809,22 @@ struct SheetGroupEditSheet: View {
                     }
                 }
 
-                Section {
-                    Toggle("film.isFrozen", isOn: $isFrozen)
+                if settingsManager.enableFridge {
+                    Section("film.storage") {
+                        Picker("film.storage", selection: storageSelection) {
+                            Text("group.none").tag(0)
+                            Text("loaded.detail.fridge").tag(1)
+                            Text("loaded.detail.frozen").tag(2)
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                } else {
+                    Section {
+                        Toggle("film.isFrozen", isOn: $isFrozen)
+                            .onChange(of: isFrozen) { _, newValue in
+                                if newValue { isFridge = false }
+                            }
+                    }
                 }
 
                 Section("film.comments") {
@@ -803,6 +903,7 @@ struct SheetGroupEditSheet: View {
             updated.quantity = quantity
             updated.expireDate = rawDates.isEmpty ? nil : rawDates
             updated.isFrozen = isFrozen
+            updated.isFridge = isFrozen ? false : isFridge
             let trimmed = comments.trimmingCharacters(in: .whitespacesAndNewlines)
             updated.comments = trimmed.isEmpty ? nil : trimmed
             dataManager.updateFilmStock(updated)
