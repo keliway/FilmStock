@@ -36,6 +36,19 @@
             "000234",
             "017711"
           ]
+        },
+        {
+          "filename": "agfaortho25",
+          "speed": 25,
+          "type": "BW",
+          "aliases": [
+            "agfaortho25",
+            "agfa ortho 25",
+            "agfa ortho25",
+            "ortho 25",
+            "agfaphoto ortho 25"
+          ],
+          "dx": []
         }
       ]
     },
@@ -93,7 +106,7 @@
       "films": []
     },
     {
-      "name": "Bregger",
+      "name": "Bergger",
       "films": []
     },
     {
@@ -506,7 +519,9 @@
             "neopan 400",
             "fuji neopan 400"
           ],
-          "dx": []
+          "dx": [
+            "000004"
+          ]
         },
         {
           "filename": "pro160ns",
@@ -578,6 +593,103 @@
             "fp3000",
             "fp3000b",
             "3000b"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "provia400x",
+          "speed": 400,
+          "type": "Slide",
+          "aliases": [
+            "provia400x",
+            "provia 400x",
+            "provia 400 x",
+            "400X",
+            "fuji provia 400x"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "sensia100",
+          "speed": 100,
+          "type": "Slide",
+          "aliases": [
+            "sensia100",
+            "sensia 100",
+            "fuji sensia 100",
+            "fujichrome sensia 100"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "sensia200",
+          "speed": 200,
+          "type": "Slide",
+          "aliases": [
+            "sensia200",
+            "sensia 200",
+            "fuji sensia 200",
+            "fujichrome sensia 200"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "velvia100F",
+          "speed": 100,
+          "type": "Slide",
+          "aliases": [
+            "velvia100F",
+            "velvia 100f",
+            "velvia 100 f",
+            "fuji velvia 100f"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "pro160",
+          "speed": 160,
+          "type": "Color",
+          "aliases": [
+            "pro160",
+            "pro 160",
+            "fuji pro 160",
+            "fujicolor pro 160"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "natura1600",
+          "speed": 1600,
+          "type": "Color",
+          "aliases": [
+            "natura1600",
+            "natura 1600",
+            "fuji natura 1600",
+            "natura"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "superia100",
+          "speed": 100,
+          "type": "Color",
+          "aliases": [
+            "superia100",
+            "superia 100",
+            "fuji superia 100",
+            "fujicolor superia 100"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "neopan100",
+          "speed": 100,
+          "type": "BW",
+          "aliases": [
+            "neopan100",
+            "neopan 100",
+            "neopan 100 ss",
+            "fuji neopan 100"
           ],
           "dx": []
         }
@@ -753,7 +865,9 @@
             "200",
             "kentmere pan 200"
           ],
-          "dx": []
+          "dx": [
+            "017683"
+          ]
         },
         {
           "filename": "pan400",
@@ -822,7 +936,9 @@
             "pro 160",
             "ektacolor pro160"
           ],
-          "dx": []
+          "dx": [
+            "114784"
+          ]
         },
         {
           "filename": "ektacolor400",
@@ -836,7 +952,9 @@
             "pro 400",
             "ektacolor pro400"
           ],
-          "dx": []
+          "dx": [
+            "114794"
+          ]
         },
         {
           "filename": "ektacolor800",
@@ -1651,12 +1769,41 @@
             "012944",
             "012854"
           ]
+        },
+        {
+          "filename": "800",
+          "speed": 800,
+          "type": "Color",
+          "aliases": [
+            "800",
+            "kodak 800"
+          ],
+          "dx": [
+            "006907"
+          ]
         }
       ]
     },
     {
       "name": "Kosmo",
       "films": []
+    },
+    {
+      "name": "Leica",
+      "films": [
+        {
+          "filename": "Monopan",
+          "speed": 50,
+          "type": "BW",
+          "aliases": [
+            "Monopan",
+            "monopan 50",
+            "leica monopan",
+            "leica monopan 50"
+          ],
+          "dx": []
+        }
+      ]
     },
     {
       "name": "Lomography",
@@ -1748,6 +1895,31 @@
             "013994",
             "007930"
           ]
+        },
+        {
+          "filename": "Berlin400",
+          "speed": 400,
+          "type": "BW",
+          "aliases": [
+            "Berlin400",
+            "berlin 400",
+            "berlin kino 400",
+            "lomo berlin",
+            "lomography berlin kino 400"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "lomo800",
+          "speed": 800,
+          "type": "Color",
+          "aliases": [
+            "lomo 800",
+            "lomo800",
+            "lomography800",
+            "lomography 800"
+          ],
+          "dx": []
         }
       ]
     },
@@ -1927,7 +2099,9 @@
             "400",
             "rollei rpx 400"
           ],
-          "dx": []
+          "dx": [
+            "834004"
+          ]
         },
         {
           "filename": "infrared",
@@ -1954,6 +2128,18 @@
             "25",
             "rollei ortho 25 plus",
             "ortho"
+          ],
+          "dx": []
+        },
+        {
+          "filename": "superpan200",
+          "speed": 200,
+          "type": "BW",
+          "aliases": [
+            "superpan200",
+            "superpan 200",
+            "rollei superpan 200",
+            "superpan"
           ],
           "dx": []
         }
