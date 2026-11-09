@@ -135,27 +135,24 @@ class FilmStockDataManager: ObservableObject {
     /// - Validates relationship targets using persistentModelID against live objects before accessing properties,
     ///   preventing uncatchable CoreData fault fulfillment exceptions (NSObjectInaccessibleException)
     /// - Decouples FinishedFilm from Camera by backfilling cameraName if needed and setting camera = nil
-    /// - Cleans up dangling references to deleted Film, MyFilm, or Camera entities
+    /// - Cleans up dangling references to deleted Film, MyFilm, or Camera entities only when the reference table fetched cleanly
     /// - Restores missing Film links from valid MyFilm entries when possible
     func repairLoadedAndFinishedIntegrity(context: ModelContext) {
-        do {
-            let allFilms = try context.fetch(FetchDescriptor<Film>())
-            let validFilmPIDs = Set(allFilms.map(\.persistentModelID))
-            
-            let allMyFilms = try context.fetch(FetchDescriptor<MyFilm>())
-            let validMyFilmPIDs = Set(allMyFilms.map(\.persistentModelID))
-            let myFilmByPID = Dictionary(uniqueKeysWithValues: allMyFilms.map { ($0.persistentModelID, $0) })
-            
-            let allCameras = try context.fetch(FetchDescriptor<Camera>())
-            let validCameraPIDs = Set(allCameras.map(\.persistentModelID))
-            let cameraMap = Dictionary(uniqueKeysWithValues: allCameras.map { ($0.persistentModelID, $0.name) })
-            
-            let finishedFilms = try context.fetch(FetchDescriptor<FinishedFilm>())
-            let loadedFilms = try context.fetch(FetchDescriptor<LoadedFilm>())
-            
-            var changed = false
+        let allFilms = try? context.fetch(FetchDescriptor<Film>())
+        let validFilmPIDs = allFilms.map { Set($0.map(\.persistentModelID)) }
+        
+        let allMyFilms = try? context.fetch(FetchDescriptor<MyFilm>())
+        let validMyFilmPIDs = allMyFilms.map { Set($0.map(\.persistentModelID)) }
+        let myFilmByPID = allMyFilms.map { Dictionary(uniqueKeysWithValues: $0.map { ($0.persistentModelID, $0) }) }
+        
+        let allCameras = try? context.fetch(FetchDescriptor<Camera>())
+        let validCameraPIDs = allCameras.map { Set($0.map(\.persistentModelID)) }
+        let cameraMap = allCameras.map { Dictionary(uniqueKeysWithValues: $0.map { ($0.persistentModelID, $0.name) }) }
+        
+        var changed = false
+        
+        if let finishedFilms = try? context.fetch(FetchDescriptor<FinishedFilm>()) {
             var seenFinishedIds = Set<String>()
-            var seenLoadedIds = Set<String>()
             
             for finished in finishedFilms {
                 // 1. Ensure non-empty unique ID
@@ -167,7 +164,7 @@ class FilmStockDataManager: ObservableObject {
                 
                 // 2. Camera relationship cleanup: FinishedFilm uses snapshot cameraName
                 if let camera = finished.camera {
-                    if validCameraPIDs.contains(camera.persistentModelID) {
+                    if let validCameraPIDs, let cameraMap, validCameraPIDs.contains(camera.persistentModelID) {
                         if finished.cameraName == nil {
                             finished.cameraName = cameraMap[camera.persistentModelID]
                         }
@@ -176,16 +173,16 @@ class FilmStockDataManager: ObservableObject {
                     changed = true
                 }
                 
-                // 3. Film relationship validation
-                if let film = finished.film {
+                // 3. Film relationship validation (only if allFilms fetched cleanly)
+                if let validFilmPIDs, let film = finished.film {
                     if !validFilmPIDs.contains(film.persistentModelID) {
                         finished.film = nil
                         changed = true
                     }
                 }
                 
-                // 4. MyFilm relationship validation
-                if let myFilm = finished.myFilm {
+                // 4. MyFilm relationship validation (only if allMyFilms fetched cleanly)
+                if let validMyFilmPIDs, let myFilm = finished.myFilm {
                     if !validMyFilmPIDs.contains(myFilm.persistentModelID) {
                         finished.myFilm = nil
                         changed = true
@@ -193,14 +190,20 @@ class FilmStockDataManager: ObservableObject {
                 }
                 
                 // 5. Restore film from valid linked myFilm if film is missing
-                if finished.film == nil, let myFilm = finished.myFilm,
+                if finished.film == nil,
+                   let myFilm = finished.myFilm,
+                   let myFilmByPID,
                    let validMyFilm = myFilmByPID[myFilm.persistentModelID],
                    let linkedFilm = validMyFilm.film,
-                   validFilmPIDs.contains(linkedFilm.persistentModelID) {
+                   validFilmPIDs?.contains(linkedFilm.persistentModelID) ?? true {
                     finished.film = linkedFilm
                     changed = true
                 }
             }
+        }
+        
+        if let loadedFilms = try? context.fetch(FetchDescriptor<LoadedFilm>()) {
+            var seenLoadedIds = Set<String>()
             
             for loaded in loadedFilms {
                 // 1. Ensure non-empty unique ID
@@ -212,18 +215,20 @@ class FilmStockDataManager: ObservableObject {
                 
                 // 2. Camera relationship validation
                 if let camera = loaded.camera {
-                    if validCameraPIDs.contains(camera.persistentModelID) {
-                        if loaded.cameraName == nil {
-                            loaded.cameraName = cameraMap[camera.persistentModelID]
+                    if let validCameraPIDs, let cameraMap {
+                        if validCameraPIDs.contains(camera.persistentModelID) {
+                            if loaded.cameraName == nil {
+                                loaded.cameraName = cameraMap[camera.persistentModelID]
+                            }
+                        } else {
+                            loaded.camera = nil
+                            changed = true
                         }
-                    } else {
-                        loaded.camera = nil
-                        changed = true
                     }
                 }
                 
                 // 3. Film relationship validation
-                if let film = loaded.film {
+                if let validFilmPIDs, let film = loaded.film {
                     if !validFilmPIDs.contains(film.persistentModelID) {
                         loaded.film = nil
                         changed = true
@@ -231,7 +236,7 @@ class FilmStockDataManager: ObservableObject {
                 }
                 
                 // 4. MyFilm relationship validation
-                if let myFilm = loaded.myFilm {
+                if let validMyFilmPIDs, let myFilm = loaded.myFilm {
                     if !validMyFilmPIDs.contains(myFilm.persistentModelID) {
                         loaded.myFilm = nil
                         changed = true
@@ -239,22 +244,26 @@ class FilmStockDataManager: ObservableObject {
                 }
                 
                 // 5. Restore film from valid linked myFilm if film is missing
-                if loaded.film == nil, let myFilm = loaded.myFilm,
+                if loaded.film == nil,
+                   let myFilm = loaded.myFilm,
+                   let myFilmByPID,
                    let validMyFilm = myFilmByPID[myFilm.persistentModelID],
                    let linkedFilm = validMyFilm.film,
-                   validFilmPIDs.contains(linkedFilm.persistentModelID) {
+                   validFilmPIDs?.contains(linkedFilm.persistentModelID) ?? true {
                     loaded.film = linkedFilm
                     changed = true
                 }
             }
-            
-            if changed {
+        }
+        
+        if changed {
+            do {
                 try context.save()
                 loadFilmStocks()
                 print("repairLoadedAndFinishedIntegrity: database successfully sanitized.")
+            } catch {
+                print("repairLoadedAndFinishedIntegrity: error saving repair: \(error)")
             }
-        } catch {
-            print("repairLoadedAndFinishedIntegrity: error during repair: \(error)")
         }
     }
     
@@ -681,21 +690,31 @@ class FilmStockDataManager: ObservableObject {
         guard let context = modelContext else { return }
         guard !filmStocks.isEmpty else { return }
         
-        // Fetch all MyFilm entries
-        let myFilmDescriptor = FetchDescriptor<MyFilm>()
-        guard let allMyFilms = try? context.fetch(myFilmDescriptor) else { return }
+        guard let allMyFilms = try? context.fetch(FetchDescriptor<MyFilm>()),
+              let allFilms = try? context.fetch(FetchDescriptor<Film>()),
+              let allLoaded = try? context.fetch(FetchDescriptor<LoadedFilm>()),
+              let allFinished = try? context.fetch(FetchDescriptor<FinishedFilm>()) else {
+            return
+        }
         
-        // Fetch all Film entries
-        let filmDescriptor = FetchDescriptor<Film>()
-        guard let allFilms = try? context.fetch(filmDescriptor) else { return }
+        // Collect MyFilm IDs and Film PIDs referenced by LoadedFilm or FinishedFilm so history is never stripped
+        let referencedMyFilmIds = Set(
+            allLoaded.compactMap { $0.myFilm?.id } +
+            allFinished.compactMap { $0.myFilm?.id }
+        )
+        let referencedFilmPIDs = Set(
+            allLoaded.compactMap { $0.film?.persistentModelID } +
+            allFinished.compactMap { $0.film?.persistentModelID } +
+            allLoaded.compactMap { $0.myFilm?.film?.persistentModelID } +
+            allFinished.compactMap { $0.myFilm?.film?.persistentModelID }
+        )
         
-        // Track which films we're deleting MyFilms from and which MyFilms are being deleted
         var filmsToCheck: Set<PersistentIdentifier> = []
         var deletedMyFilmIds: Set<String> = []
         
-        // Find and delete all matching MyFilms from the database
+        // Find matching MyFilms and either preserve them (if referenced by loaded/finished history) or delete them
         for filmStock in filmStocks {
-            let myFilmsToDelete = allMyFilms.filter { myFilm in
+            let matchingMyFilms = allMyFilms.filter { myFilm in
                 guard let film = myFilm.film else { return false }
                 return film.name == filmStock.name &&
                        film.manufacturer?.name == filmStock.manufacturer &&
@@ -703,32 +722,17 @@ class FilmStockDataManager: ObservableObject {
                        film.filmSpeed == filmStock.filmSpeed
             }
             
-            for myFilm in myFilmsToDelete {
+            for myFilm in matchingMyFilms {
                 if let film = myFilm.film {
                     filmsToCheck.insert(film.persistentModelID)
                 }
-                deletedMyFilmIds.insert(myFilm.id)
-                context.delete(myFilm)
-            }
-        }
-        
-        // Fetch loaded and finished films to protect referenced Film entities
-        let allLoaded = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
-        let allFinished = (try? context.fetch(FetchDescriptor<FinishedFilm>())) ?? []
-        let referencedFilmPIDs = Set(
-            allLoaded.compactMap { $0.film?.persistentModelID } +
-            allFinished.compactMap { $0.film?.persistentModelID }
-        )
-        
-        // Clear myFilm reference on loaded or finished films if that roll is being deleted
-        for loaded in allLoaded {
-            if let mf = loaded.myFilm, deletedMyFilmIds.contains(mf.id) {
-                loaded.myFilm = nil
-            }
-        }
-        for finished in allFinished {
-            if let mf = finished.myFilm, deletedMyFilmIds.contains(mf.id) {
-                finished.myFilm = nil
+                if referencedMyFilmIds.contains(myFilm.id) {
+                    // Preserve the backing MyFilm record (exposures, expiry, frozen/fridge, comments) for history
+                    myFilm.quantity = 0
+                } else {
+                    deletedMyFilmIds.insert(myFilm.id)
+                    context.delete(myFilm)
+                }
             }
         }
         
@@ -758,36 +762,35 @@ class FilmStockDataManager: ObservableObject {
     func deleteRollsById(_ ids: [String]) {
         guard let context = modelContext, !ids.isEmpty else { return }
 
-        let myFilmDescriptor = FetchDescriptor<MyFilm>()
-        guard let allMyFilms = try? context.fetch(myFilmDescriptor) else { return }
+        guard let allMyFilms = try? context.fetch(FetchDescriptor<MyFilm>()),
+              let allFilms = try? context.fetch(FetchDescriptor<Film>()),
+              let allLoaded = try? context.fetch(FetchDescriptor<LoadedFilm>()),
+              let allFinished = try? context.fetch(FetchDescriptor<FinishedFilm>()) else {
+            return
+        }
 
-        let filmDescriptor = FetchDescriptor<Film>()
-        guard let allFilms = try? context.fetch(filmDescriptor) else { return }
+        let referencedMyFilmIds = Set(
+            allLoaded.compactMap { $0.myFilm?.id } +
+            allFinished.compactMap { $0.myFilm?.id }
+        )
+        let referencedFilmPIDs = Set(
+            allLoaded.compactMap { $0.film?.persistentModelID } +
+            allFinished.compactMap { $0.film?.persistentModelID } +
+            allLoaded.compactMap { $0.myFilm?.film?.persistentModelID } +
+            allFinished.compactMap { $0.myFilm?.film?.persistentModelID }
+        )
 
         let idSet = Set(ids)
         var filmsToCheck: Set<PersistentIdentifier> = []
+        var deletedMyFilmIds: Set<String> = []
 
         for myFilm in allMyFilms where idSet.contains(myFilm.id) {
             if let film = myFilm.film { filmsToCheck.insert(film.persistentModelID) }
-            context.delete(myFilm)
-        }
-
-        let allLoaded = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
-        let allFinished = (try? context.fetch(FetchDescriptor<FinishedFilm>())) ?? []
-        let referencedFilmPIDs = Set(
-            allLoaded.compactMap { $0.film?.persistentModelID } +
-            allFinished.compactMap { $0.film?.persistentModelID }
-        )
-
-        // Clear myFilm reference on loaded or finished films if that roll is being deleted
-        for loaded in allLoaded {
-            if let mf = loaded.myFilm, idSet.contains(mf.id) {
-                loaded.myFilm = nil
-            }
-        }
-        for finished in allFinished {
-            if let mf = finished.myFilm, idSet.contains(mf.id) {
-                finished.myFilm = nil
+            if referencedMyFilmIds.contains(myFilm.id) {
+                myFilm.quantity = 0
+            } else {
+                deletedMyFilmIds.insert(myFilm.id)
+                context.delete(myFilm)
             }
         }
 
@@ -796,7 +799,7 @@ class FilmStockDataManager: ObservableObject {
             if let film = allFilms.first(where: { $0.persistentModelID == filmPID }) {
                 let remaining = allMyFilms.filter {
                     guard let f = $0.film else { return false }
-                    return f.persistentModelID == filmPID && !idSet.contains($0.id)
+                    return f.persistentModelID == filmPID && !deletedMyFilmIds.contains($0.id)
                 }
                 if remaining.isEmpty && !referencedFilmPIDs.contains(filmPID) {
                     context.delete(film)
@@ -949,7 +952,7 @@ class FilmStockDataManager: ObservableObject {
                 let anyFridge = activeRolls.contains { !($0.isFrozen ?? false) && ($0.isFridge ?? false) }
                 let fridgeCount = activeRolls.filter { !($0.isFrozen ?? false) && ($0.isFridge ?? false) }.count
                 let expiredCount = activeRolls.filter { Self.isMyFilmExpired($0, today: today) }.count
-                let allIds = rolls.map { $0.id }
+                let allIds = activeRolls.map { $0.id }
                 let firstRoll = activeRolls.first ?? rolls.first!
                 let allComments = activeRolls.compactMap { $0.comments }.filter { !$0.isEmpty }
                 
@@ -1254,20 +1257,16 @@ class FilmStockDataManager: ObservableObject {
     
     func getLoadedFilms() -> [LoadedFilm] {
         guard let context = modelContext else { return [] }
-        var descriptor = FetchDescriptor<LoadedFilm>(
+        let descriptor = FetchDescriptor<LoadedFilm>(
             sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
         )
-        descriptor.relationshipKeyPathsForPrefetching = [\LoadedFilm.film, \LoadedFilm.myFilm]
         do {
             return try context.fetch(descriptor)
         } catch {
-            print("getLoadedFilms: primary fetch failed (\(error)); repairing integrity and retrying without prefetch.")
+            print("getLoadedFilms: primary fetch failed (\(error)); repairing integrity and retrying.")
             repairLoadedAndFinishedIntegrity(context: context)
-            let fallback = FetchDescriptor<LoadedFilm>(
-                sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
-            )
             do {
-                return try context.fetch(fallback)
+                return try context.fetch(descriptor)
             } catch {
                 print("getLoadedFilms: fallback fetch failed: \(error)")
                 return []
@@ -1277,20 +1276,16 @@ class FilmStockDataManager: ObservableObject {
     
     func getFinishedFilms() -> [FinishedFilm] {
         guard let context = modelContext else { return [] }
-        var descriptor = FetchDescriptor<FinishedFilm>(
+        let descriptor = FetchDescriptor<FinishedFilm>(
             sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
         )
-        descriptor.relationshipKeyPathsForPrefetching = [\FinishedFilm.film, \FinishedFilm.myFilm]
         do {
             return try context.fetch(descriptor)
         } catch {
-            print("getFinishedFilms: primary fetch failed (\(error)); repairing integrity and retrying without prefetch.")
+            print("getFinishedFilms: primary fetch failed (\(error)); repairing integrity and retrying.")
             repairLoadedAndFinishedIntegrity(context: context)
-            let fallback = FetchDescriptor<FinishedFilm>(
-                sortBy: [SortDescriptor(\.finishedAt, order: .reverse)]
-            )
             do {
-                return try context.fetch(fallback)
+                return try context.fetch(descriptor)
             } catch {
                 print("getFinishedFilms: fallback fetch failed: \(error)")
                 return []
@@ -1411,7 +1406,7 @@ class FilmStockDataManager: ObservableObject {
             cameraName: cameraName
         )
         context.insert(finished)
-        finished.film = loadedFilm.film
+        finished.film = loadedFilm.film ?? loadedFilm.myFilm?.film
         finished.camera = nil // Do not keep camera relationship to prevent dangling pointers
         finished.myFilm = loadedFilm.myFilm
     }
@@ -1455,7 +1450,7 @@ class FilmStockDataManager: ObservableObject {
         )
         
         context.insert(loadedFilm)
-        loadedFilm.film = finishedFilm.film
+        loadedFilm.film = finishedFilm.film ?? finishedFilm.myFilm?.film
         loadedFilm.myFilm = finishedFilm.myFilm
         if let camName = finishedFilm.cameraName, !camName.isEmpty {
             let camDesc = FetchDescriptor<Camera>(predicate: #Predicate { $0.name == camName })

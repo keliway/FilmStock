@@ -139,7 +139,7 @@ final class LoadedFilm {
         if let shotISO = shotAtISO {
             return shotISO
         }
-        return film?.filmSpeed ?? 0
+        return (film ?? myFilm?.film)?.filmSpeed ?? 0
     }
     
     init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil, cameraName: String? = nil) {
@@ -177,7 +177,7 @@ final class FinishedFilm {
         if let shotISO = shotAtISO {
             return shotISO
         }
-        return film?.filmSpeed ?? 0
+        return (film ?? myFilm?.film)?.filmSpeed ?? 0
     }
     
     init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, developedAt: Date? = nil, cameraName: String? = nil) {

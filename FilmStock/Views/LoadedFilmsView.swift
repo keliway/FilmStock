@@ -76,8 +76,9 @@ struct LoadedFilmsView: View {
         // Search filter (manufacturer + film name)
         if !searchText.isEmpty {
             filtered = filtered.filter { film in
-                let manufacturer = film.film?.manufacturer?.name ?? ""
-                let filmName = film.film?.name ?? ""
+                let resolvedFilm = film.film ?? film.myFilm?.film
+                let manufacturer = resolvedFilm?.manufacturer?.name ?? ""
+                let filmName = resolvedFilm?.name ?? ""
                 let searchLower = searchText.lowercased()
                 return manufacturer.lowercased().contains(searchLower) || filmName.lowercased().contains(searchLower)
             }
@@ -86,7 +87,7 @@ struct LoadedFilmsView: View {
         // Film type filter
         if !selectedTypes.isEmpty {
             filtered = filtered.filter { film in
-                guard let filmType = film.film?.type,
+                guard let filmType = (film.film ?? film.myFilm?.film)?.type,
                       let type = FilmStock.FilmType(rawValue: filmType) else { return false }
                 return selectedTypes.contains(type)
             }
@@ -121,12 +122,12 @@ struct LoadedFilmsView: View {
             let ascending = sortAscending
             switch sortField {
             case .manufacturer:
-                let m1 = film1.film?.manufacturer?.name ?? ""
-                let m2 = film2.film?.manufacturer?.name ?? ""
+                let m1 = (film1.film ?? film1.myFilm?.film)?.manufacturer?.name ?? ""
+                let m2 = (film2.film ?? film2.myFilm?.film)?.manufacturer?.name ?? ""
                 return ascending ? m1 < m2 : m1 > m2
             case .filmName:
-                let n1 = film1.film?.name ?? ""
-                let n2 = film2.film?.name ?? ""
+                let n1 = (film1.film ?? film1.myFilm?.film)?.name ?? ""
+                let n2 = (film2.film ?? film2.myFilm?.film)?.name ?? ""
                 return ascending ? n1 < n2 : n1 > n2
             case .finishedDate:
                 return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
@@ -138,7 +139,7 @@ struct LoadedFilmsView: View {
     
     var availableTypes: [FilmStock.FilmType] {
         let types = finishedFilms.compactMap { film -> FilmStock.FilmType? in
-            guard let filmType = film.film?.type else { return nil }
+            guard let filmType = (film.film ?? film.myFilm?.film)?.type else { return nil }
             return FilmStock.FilmType(rawValue: filmType)
         }
         return Array(Set(types)).sorted { $0.displayName < $1.displayName }
@@ -367,6 +368,9 @@ struct LoadedFilmsView: View {
                     loadFinishedFilms()
                 }
             }
+            .onChange(of: selectedTab) { _, _ in
+                refreshFilmsIfAllowed()
+            }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LoadedFilmsChanged"))) { _ in
                 refreshFilmsIfAllowed()
             }
@@ -534,11 +538,13 @@ struct LoadedFilmsView: View {
     private func unloadFilm(_ loadedFilm: LoadedFilm) {
         dataManager.unloadFilm(loadedFilm)
         loadFilms()
+        loadFinishedFilms()
     }
     
     private func unloadOneSheet(_ loadedFilm: LoadedFilm) {
         dataManager.unloadFilm(loadedFilm, quantity: 1)
         loadFilms()
+        loadFinishedFilms()
     }
     
     private func removeLoadedFilm(_ loadedFilm: LoadedFilm) {
@@ -568,11 +574,15 @@ struct LoadedFilmDetailSheet: View {
     @Environment(\.dismiss) var dismiss
     @State private var filmImage: UIImage?
 
+    private var resolvedFilm: Film? {
+        loadedFilm.film ?? loadedFilm.myFilm?.film
+    }
+
     var body: some View {
         NavigationStack {
             List {
                 // Header: image + film name
-                if let film = loadedFilm.film {
+                if let film = resolvedFilm {
                     Section {
                         HStack(spacing: 16) {
                             if let image = filmImage {
@@ -642,7 +652,7 @@ struct LoadedFilmDetailSheet: View {
 
                 // Film properties
                 Section("loaded.detail.filmSection") {
-                    if let film = loadedFilm.film {
+                    if let film = resolvedFilm {
                         if let shotISO = loadedFilm.shotAtISO, shotISO != film.filmSpeed {
                             HStack {
                                 Text(LocalizedStringKey("load.shotAtISO"))
@@ -750,7 +760,7 @@ struct LoadedFilmDetailSheet: View {
     }
 
     private func loadImage() {
-        guard let film = loadedFilm.film else { return }
+        guard let film = resolvedFilm else { return }
         let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
         let mfr = film.manufacturer?.name ?? ""
         switch src {
@@ -789,6 +799,10 @@ struct LoadedFilmRow: View {
     let loadedFilm: LoadedFilm
     @State private var filmImage: UIImage?
     
+    private var resolvedFilm: Film? {
+        loadedFilm.film ?? loadedFilm.myFilm?.film
+    }
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             HStack(spacing: 12) {
@@ -810,17 +824,18 @@ struct LoadedFilmRow: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    if let film = loadedFilm.film {
+                    if let film = resolvedFilm {
                         Text("\(film.manufacturer?.name ?? "") \(film.name)")
                             .font(.headline)
                         
                         HStack(spacing: 4) {
                             // Show effective ISO (shot at ISO if different, otherwise native)
+                            let iso = loadedFilm.shotAtISO ?? film.filmSpeed
                             if loadedFilm.shotAtISO != nil {
-                                Text("ISO \(loadedFilm.effectiveISO)")
+                                Text("ISO \(iso)")
                                     .foregroundColor(.orange)
                             } else {
-                                Text("ISO \(loadedFilm.effectiveISO)")
+                                Text("ISO \(iso)")
                             }
                             Text("•")
                             Text(formatDisplayName)
@@ -902,7 +917,7 @@ struct LoadedFilmRow: View {
     }
     
     private func loadImage() {
-        guard let film = loadedFilm.film else { return }
+        guard let film = resolvedFilm else { return }
         
         let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
         let manufacturerName = film.manufacturer?.name ?? ""
@@ -999,6 +1014,10 @@ struct FinishedFilmRow: View {
     @State private var filmImage: UIImage?
     @EnvironmentObject var dataManager: FilmStockDataManager
     
+    private var resolvedFilm: Film? {
+        finishedFilm.film ?? finishedFilm.myFilm?.film
+    }
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             HStack(spacing: 12) {
@@ -1020,16 +1039,17 @@ struct FinishedFilmRow: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    if let film = finishedFilm.film {
+                    if let film = resolvedFilm {
                         Text("\(film.manufacturer?.name ?? "") \(film.name)")
                             .font(.headline)
                         
                         HStack(spacing: 4) {
+                            let iso = finishedFilm.shotAtISO ?? film.filmSpeed
                             if finishedFilm.shotAtISO != nil {
-                                Text("ISO \(finishedFilm.effectiveISO)")
+                                Text("ISO \(iso)")
                                     .foregroundColor(.orange)
                             } else {
-                                Text("ISO \(finishedFilm.effectiveISO)")
+                                Text("ISO \(iso)")
                             }
                             Text("•")
                             Text(formatDisplayName)
@@ -1162,7 +1182,7 @@ struct FinishedFilmRow: View {
     }
     
     private func loadImage() {
-        guard let film = finishedFilm.film else { return }
+        guard let film = resolvedFilm else { return }
         
         let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
         let manufacturerName = film.manufacturer?.name ?? ""
@@ -1214,6 +1234,10 @@ struct FinishedFilmDetailSheet: View {
     @State private var showFinishDateEditor = false
     @State private var draftFinishedAt = Date()
 
+    private var resolvedFilm: Film? {
+        finishedFilm.film ?? finishedFilm.myFilm?.film
+    }
+
     private var status: FinishedFilmStatus {
         FinishedFilmStatus(rawValue: finishedFilm.status ?? "") ?? .toDevelop
     }
@@ -1222,7 +1246,7 @@ struct FinishedFilmDetailSheet: View {
         NavigationStack {
             List {
                 // Header: image + film name
-                if let film = finishedFilm.film {
+                if let film = resolvedFilm {
                     Section {
                         HStack(spacing: 16) {
                             if let image = filmImage {
@@ -1312,7 +1336,7 @@ struct FinishedFilmDetailSheet: View {
 
                 // Film properties
                 Section("loaded.detail.filmSection") {
-                    if let film = finishedFilm.film {
+                    if let film = resolvedFilm {
                         if let shotISO = finishedFilm.shotAtISO, shotISO != film.filmSpeed {
                             HStack {
                                 Text(LocalizedStringKey("load.shotAtISO"))
@@ -1478,7 +1502,7 @@ struct FinishedFilmDetailSheet: View {
     }
 
     private func loadImage() {
-        guard let film = finishedFilm.film else { return }
+        guard let film = resolvedFilm else { return }
         let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
         let mfr = film.manufacturer?.name ?? ""
         switch src {

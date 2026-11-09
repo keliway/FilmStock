@@ -35,33 +35,18 @@ struct FilmStockApp: App {
         ])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         
-        func createContainer() throws -> ModelContainer {
-            try ModelContainer(for: schema, configurations: [configuration])
-        }
-        
         do {
-            return try createContainer()
+            return try ModelContainer(for: schema, configurations: [configuration])
         } catch {
-            print("FilmStockApp: ModelContainer failed (\(error)). Attempting store reset.")
-            resetPersistedStore(at: configuration.url)
+            // Retry once after a brief pause in case the widget extension briefly held a SQLite lock,
+            // and never destructively delete the user's persisted store.
+            print("FilmStockApp: ModelContainer failed on first attempt (\(error)). Retrying...")
+            Thread.sleep(forTimeInterval: 0.15)
             do {
-                return try createContainer()
+                return try ModelContainer(for: schema, configurations: [configuration])
             } catch {
-                fatalError("FilmStockApp: unable to create ModelContainer after store reset: \(error)")
+                fatalError("FilmStockApp: unable to create ModelContainer: \(error)")
             }
         }
     }
-    
-    private static func resetPersistedStore(at url: URL) {
-        let fileManager = FileManager.default
-        let relatedURLs = [
-            url,
-            URL(fileURLWithPath: url.path + "-wal"),
-            URL(fileURLWithPath: url.path + "-shm")
-        ]
-        for fileURL in relatedURLs where fileManager.fileExists(atPath: fileURL.path) {
-            try? fileManager.removeItem(at: fileURL)
-        }
-    }
 }
-
