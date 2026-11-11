@@ -54,7 +54,15 @@ struct FilmDetailView: View {
     @State private var navImage: UIImage? = nil
 
     private var currentGroupedFilm: GroupedFilm? {
-        dataManager.cachedGroupedFilms.first { $0.id == groupedFilm.id }
+        if let byId = dataManager.cachedGroupedFilms.first(where: { $0.id == groupedFilm.id }) {
+            return byId
+        }
+        return dataManager.cachedGroupedFilms.first {
+            $0.name == groupedFilm.name &&
+            $0.manufacturer == groupedFilm.manufacturer &&
+            $0.type == groupedFilm.type &&
+            $0.filmSpeed == groupedFilm.filmSpeed
+        }
     }
 
     private var displayGroupedFilm: GroupedFilm {
@@ -192,6 +200,7 @@ struct FilmDetailView: View {
         .sheet(isPresented: $showingAddRollsSheet) {
             RollBatchSheet { batch in
                 let dateDigits = batch.expireDate.filter { $0.isNumber }
+                let trimmedComments = batch.comments.trimmingCharacters(in: .whitespacesAndNewlines)
                 let film = FilmStock(
                     id: UUID().uuidString,
                     name: displayGroupedFilm.name,
@@ -202,7 +211,7 @@ struct FilmDetailView: View {
                     customFormatName: batch.customFormatName,
                     quantity: batch.quantity,
                     expireDate: dateDigits.isEmpty ? nil : [dateDigits],
-                    comments: nil,
+                    comments: trimmedComments.isEmpty ? nil : trimmedComments,
                     isFrozen: batch.isFrozen,
                     isFridge: batch.isFrozen ? false : batch.isFridge,
                     exposures: batch.resolvedExposures,
@@ -338,24 +347,12 @@ struct FilmDetailView: View {
 
     private func loadNavImage() {
         let film = displayGroupedFilm
-        let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
-        let mfr = film.manufacturer
-        switch src {
-        case .custom:
-            if let name = film.imageName {
-                let parts = name.split(separator: "/", maxSplits: 1).map(String.init)
-                let (m, filename) = parts.count == 2 ? (parts[0], parts[1]) : (mfr, name)
-                navImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: m)
-            }
-        case .catalog:
-            if let name = film.imageName {
-                navImage = ImageStorage.shared.loadCatalogImage(filename: name)
-            }
-        case .autoDetected:
-            navImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: mfr)
-        case .none:
-            navImage = nil
-        }
+        navImage = ImageStorage.shared.resolveFilmImage(
+            imageSourceRawValue: film.imageSource,
+            imageName: film.imageName,
+            filmName: film.name,
+            manufacturer: film.manufacturer
+        )
     }
 
     // MARK: - Computed
@@ -469,7 +466,7 @@ struct RollGroupEditSheet: View {
         _isFrozen    = State(initialValue: group.isFrozen)
         _isFridge    = State(initialValue: group.isFrozen ? false : group.isFridge)
         _comments    = State(initialValue: group.comments ?? "")
-        // Map exposures to picker tags: valid option → direct, unknown → -1 (custom), nil → default
+        // Map exposures to picker tags: valid option → direct, unknown → -1 (custom), nil → nil (unspecified)
         if let exp = group.exposures {
             if group.format.exposureOptions.contains(exp) {
                 _exposures       = State(initialValue: exp)
@@ -478,9 +475,6 @@ struct RollGroupEditSheet: View {
                 _exposures       = State(initialValue: -1)
                 _customExposures = State(initialValue: "\(exp)")
             }
-        } else if let def = group.format.defaultExposures {
-            _exposures       = State(initialValue: def)
-            _customExposures = State(initialValue: "")
         } else {
             _exposures       = State(initialValue: nil)
             _customExposures = State(initialValue: "")

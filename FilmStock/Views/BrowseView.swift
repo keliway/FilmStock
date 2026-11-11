@@ -37,6 +37,7 @@ struct BrowseView: View {
     @State private var sortField: SortField = .manufacturer
     @State private var sortAscending: Bool = true
     @State private var groupBy: GroupBy = .none
+    @State private var hasLoadedInitialFilters = false
     
     enum ViewMode {
         case cards, list
@@ -80,6 +81,12 @@ struct BrowseView: View {
         }
     }
     
+    private func relevantFormats(for group: GroupedFilm) -> [GroupedFilm.FormatInfo] {
+        if hideEmpty {
+            return group.formats.filter { $0.quantity > 0 }
+        }
+        return group.formats
+    }
     
     var filteredFilms: [GroupedFilm] {
         var grouped = dataManager.cachedGroupedFilms
@@ -101,7 +108,7 @@ struct BrowseView: View {
         
         if !selectedFormats.isEmpty {
             grouped = grouped.filter { group in
-                group.formats.contains { selectedFormats.contains($0.format) }
+                relevantFormats(for: group).contains { selectedFormats.contains($0.format) }
             }
         }
         
@@ -125,14 +132,14 @@ struct BrowseView: View {
         // Apply show frozen only
         if showFrozenOnly {
             grouped = grouped.filter { group in
-                group.formats.contains { $0.isFrozen }
+                relevantFormats(for: group).contains { $0.isFrozen }
             }
         }
         
         // Apply show fridge only (only when enabled in settings)
         if showFridgeOnly && settingsManager.enableFridge {
             grouped = grouped.filter { group in
-                group.formats.contains { $0.isFridge }
+                relevantFormats(for: group).contains { $0.isFridge }
             }
         }
         
@@ -145,42 +152,51 @@ struct BrowseView: View {
         
         // Apply sorting
         grouped = grouped.sorted { film1, film2 in
-            let result: Bool
             switch sortField {
             case .manufacturer:
                 let cmp = film1.manufacturer.localizedCaseInsensitiveCompare(film2.manufacturer)
+                let result: Bool
                 if cmp == .orderedSame {
                     result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
                 } else {
                     result = cmp == .orderedAscending
                 }
+                return sortAscending ? result : !result
             case .filmType:
                 let cmp = film1.type.displayName.localizedCaseInsensitiveCompare(film2.type.displayName)
+                let result: Bool
                 if cmp == .orderedSame {
                     result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
                 } else {
                     result = cmp == .orderedAscending
                 }
+                return sortAscending ? result : !result
             case .iso:
+                let result: Bool
                 if film1.filmSpeed == film2.filmSpeed {
                     result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
                 } else {
                     result = film1.filmSpeed < film2.filmSpeed
                 }
+                return sortAscending ? result : !result
             case .expiryDate:
                 let date1 = getEarliestExpiryDate(for: film1)
                 let date2 = getEarliestExpiryDate(for: film2)
                 if let d1 = date1, let d2 = date2 {
-                    result = d1 < d2
+                    if d1 == d2 {
+                        let cmp = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                        return sortAscending ? cmp : !cmp
+                    }
+                    return sortAscending ? (d1 < d2) : (d1 > d2)
                 } else if date1 != nil {
-                    result = true // Films with dates come before those without
+                    return true // Films with dates always come before those without
                 } else if date2 != nil {
-                    result = false
+                    return false
                 } else {
-                    result = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                    let cmp = film1.name.localizedCaseInsensitiveCompare(film2.name) == .orderedAscending
+                    return sortAscending ? cmp : !cmp
                 }
             }
-            return sortAscending ? result : !result
         }
         
         return grouped
@@ -202,8 +218,10 @@ struct BrowseView: View {
                 }
                 buckets[film.manufacturer]?.append(film)
             }
+            let ascending = sortField == .manufacturer ? sortAscending : true
             let sortedKeys = keyOrder.sorted {
-                $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+                let isAsc = $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+                return ascending ? isAsc : !isAsc
             }
             return sortedKeys.compactMap { key in
                 guard let groupFilms = buckets[key], !groupFilms.isEmpty else { return nil }
@@ -223,7 +241,8 @@ struct BrowseView: View {
                 }
                 buckets[film.filmSpeed]?.append(film)
             }
-            let sortedSpeeds = speedOrder.sorted()
+            let ascending = sortField == .iso ? sortAscending : true
+            let sortedSpeeds = ascending ? speedOrder.sorted() : speedOrder.sorted(by: >)
             return sortedSpeeds.compactMap { speed in
                 guard let groupFilms = buckets[speed], !groupFilms.isEmpty else { return nil }
                 let title = String(format: NSLocalizedString("browse.groupHeaderISO", comment: ""), speed)
@@ -238,7 +257,7 @@ struct BrowseView: View {
     
     private func getEarliestExpiryDate(for film: GroupedFilm) -> Date? {
         var earliestDate: Date? = nil
-        for formatInfo in film.formats {
+        for formatInfo in relevantFormats(for: film) {
             guard let expireDates = formatInfo.expireDate, !expireDates.isEmpty else { continue }
             for dateString in expireDates {
                 if let date = FilmStock.parseExpireDate(dateString) {
@@ -253,7 +272,7 @@ struct BrowseView: View {
     
     private func isFilmExpired(_ film: GroupedFilm) -> Bool {
         let today = Date()
-        for formatInfo in film.formats {
+        for formatInfo in relevantFormats(for: film) {
             guard let expireDates = formatInfo.expireDate, !expireDates.isEmpty else { continue }
             for dateString in expireDates where !dateString.isEmpty {
                 if let expiryDate = FilmStock.parseExpireDate(dateString) {
@@ -549,23 +568,28 @@ struct BrowseView: View {
     }
     
     private func handleOnAppear() {
-        // Load saved filter preferences
-        selectedManufacturers = settingsManager.filterManufacturers
-        selectedTypes = Set(settingsManager.filterTypes.compactMap { FilmStock.FilmType(rawValue: $0) })
-        selectedSpeedRanges = settingsManager.filterSpeedRanges
-        selectedFormats = Set(settingsManager.filterFormats.compactMap { FilmStock.FilmFormat(rawValue: $0) })
-        showExpiredOnly = settingsManager.filterShowExpiredOnly
-        showFrozenOnly = settingsManager.filterShowFrozenOnly
-        showFridgeOnly = settingsManager.enableFridge ? settingsManager.filterShowFridgeOnly : false
-        
-        // Load saved sort preferences
-        if let savedSortField = SortField(rawValue: settingsManager.sortField) {
-            sortField = savedSortField
-        }
-        sortAscending = settingsManager.sortAscending
-        
-        if let savedGroupBy = GroupBy(rawValue: settingsManager.browseGroupBy) {
-            groupBy = savedGroupBy
+        if !hasLoadedInitialFilters {
+            hasLoadedInitialFilters = true
+            // Load saved filter preferences
+            selectedManufacturers = settingsManager.filterManufacturers
+            selectedTypes = Set(settingsManager.filterTypes.compactMap { FilmStock.FilmType(rawValue: $0) })
+            selectedSpeedRanges = settingsManager.filterSpeedRanges
+            selectedFormats = Set(settingsManager.filterFormats.compactMap { FilmStock.FilmFormat(rawValue: $0) })
+            showExpiredOnly = settingsManager.filterShowExpiredOnly
+            showFrozenOnly = settingsManager.filterShowFrozenOnly
+            showFridgeOnly = settingsManager.enableFridge ? settingsManager.filterShowFridgeOnly : false
+            
+            // Load saved sort preferences
+            if let savedSortField = SortField(rawValue: settingsManager.sortField) {
+                sortField = savedSortField
+            }
+            sortAscending = settingsManager.sortAscending
+            
+            if let savedGroupBy = GroupBy(rawValue: settingsManager.browseGroupBy) {
+                groupBy = savedGroupBy
+            }
+        } else if !settingsManager.enableFridge {
+            showFridgeOnly = false
         }
         
         if OnboardingManager.shared.hasCompletedOnboarding {
@@ -623,7 +647,7 @@ struct BrowseView: View {
         case .leading:
             preferredX = buttonFrame.minX - tooltipWidth / 2 - padding
         case .trailing:
-            preferredX = buttonFrame.maxX + tooltipWidth / 2 + padding
+            preferredX = buttonFrame.maxX + tooltipWidth / 2 - padding
         case .top, .bottom:
             preferredX = buttonFrame.midX
         }
@@ -728,7 +752,7 @@ struct BrowseView: View {
         if showExpiredOnly { count += 1 }
         if showFrozenOnly { count += 1 }
         if showFridgeOnly && settingsManager.enableFridge { count += 1 }
-        if !hideEmpty { count += 1 }
+        if hideEmpty != settingsManager.hideEmptyByDefault { count += 1 }
         return count
     }
     

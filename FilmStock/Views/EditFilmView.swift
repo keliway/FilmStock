@@ -2,21 +2,11 @@
 //  EditFilmView.swift
 //  FilmStock
 //
-//  Edits general film properties: name, manufacturer, type, ISO, and film reminder image.
-//  Roll-specific properties (format, expiry, frozen, exposures) are managed via RollGroupEditSheet.
+//  Edit film metadata and reminder image (per-roll expiry/frozen are edited in FilmDetailView)
 //
 
 import SwiftUI
-
-private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
-    if imageName.contains("/") {
-        let components = imageName.split(separator: "/", maxSplits: 1)
-        if components.count == 2 {
-            return (String(components[0]), String(components[1]))
-        }
-    }
-    return (defaultManufacturer, imageName)
-}
+import SwiftData
 
 struct EditFilmView: View {
     let groupedFilm: GroupedFilm
@@ -27,28 +17,27 @@ struct EditFilmView: View {
     @State private var manufacturer = ""
     @State private var type: FilmStock.FilmType = .bw
     @State private var filmSpeed = 400
-
     private let isoValues = [1, 2, 4, 5, 8, 10, 12, 16, 20, 25, 32, 40, 50, 64, 80, 100, 125,
                               160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000,
                               2500, 3200, 6400]
+
+    @State private var relatedFilms: [FilmStock] = []
+    @State private var nameError: String?
 
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
     @State private var showingImagePicker = false
     @State private var showingImageCatalog = false
     @State private var rawSelectedImage: UIImage?
+    @State private var existingImageFilename: String?
     @State private var selectedCatalogFilename: String?
     @State private var imageSource: ImageSource = .autoDetected
     @State private var catalogSelectedSource: ImageSource?
-
-    @State private var nameError: String?
-    @State private var hasLoaded = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("film.filmInformation") {
-                    // Manufacturer
                     NavigationLink {
                         ManufacturerPickerView(
                             selectedManufacturer: $manufacturer,
@@ -56,31 +45,43 @@ struct EditFilmView: View {
                         )
                         .environmentObject(dataManager)
                     } label: {
-                        if manufacturer.isEmpty {
-                            Text("film.selectManufacturer").foregroundColor(.secondary)
-                        } else {
-                            Text(manufacturer).foregroundColor(.primary)
+                        HStack {
+                            Text("film.manufacturer")
+                            Spacer()
+                            if manufacturer.isEmpty {
+                                Text("film.selectManufacturer")
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text(manufacturer)
+                                    .foregroundColor(.primary)
+                            }
                         }
                     }
 
-                    // Name
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("film.name", text: $name)
                             .autocorrectionDisabled()
+                            .submitLabel(.done)
+                            .onSubmit {
+                                UIApplication.shared.sendAction(
+                                    #selector(UIResponder.resignFirstResponder),
+                                    to: nil, from: nil, for: nil
+                                )
+                            }
                             .onChange(of: name) { _, _ in nameError = nil }
                         if let error = nameError {
-                            Text(error).font(.caption).foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
                         }
                     }
 
-                    // Type
                     Picker("film.type", selection: $type) {
-                        ForEach(FilmStock.FilmType.allCases, id: \.self) { t in
-                            Text(t.displayName).tag(t)
+                        ForEach(FilmStock.FilmType.allCases, id: \.self) { filmType in
+                            Text(filmType.displayName).tag(filmType)
                         }
                     }
 
-                    // ISO speed
                     Picker("film.speed", selection: $filmSpeed) {
                         ForEach(isoValues, id: \.self) { iso in
                             Text("ISO \(iso)").tag(iso)
@@ -88,7 +89,7 @@ struct EditFilmView: View {
                     }
                     .pickerStyle(.wheel)
 
-                    // Film reminder image
+                    // Film Reminder Image
                     VStack(alignment: .leading, spacing: 12) {
                         Text("film.filmReminder")
                             .font(.subheadline)
@@ -130,9 +131,9 @@ struct EditFilmView: View {
 
                         if selectedImage != nil || defaultImage != nil {
                             HStack(spacing: 12) {
-                                if let img = selectedImage {
+                                if let customImg = selectedImage {
                                     ZStack(alignment: .topTrailing) {
-                                        Image(uiImage: img)
+                                        Image(uiImage: customImg)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 100, height: 100)
@@ -156,7 +157,8 @@ struct EditFilmView: View {
                                             imageSource = defaultImage != nil ? .autoDetected : .none
                                         } label: {
                                             ZStack {
-                                                Circle().fill(Color.black.opacity(0.6))
+                                                Circle()
+                                                    .fill(Color.black.opacity(0.6))
                                                 Image(systemName: "xmark.circle.fill")
                                                     .foregroundColor(.white)
                                                     .font(.system(size: 20))
@@ -184,7 +186,9 @@ struct EditFilmView: View {
                                                 )
                                         )
                                         .contentShape(Rectangle())
-                                        .onTapGesture { imageSource = .autoDetected }
+                                        .onTapGesture {
+                                            imageSource = .autoDetected
+                                        }
                                 }
                             }
                         }
@@ -200,12 +204,16 @@ struct EditFilmView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("action.save") {
-                        if validateAndSave() { dismiss() }
+                        if validateInputs() {
+                            saveChanges()
+                            dismiss()
+                        }
                     }
                     .fontWeight(.semibold)
                     .disabled(name.isEmpty || manufacturer.isEmpty)
                 }
             }
+            .onAppear { loadInitialValues() }
             .sheet(isPresented: $showingImagePicker) {
                 ImageSourcePicker(finalImage: $rawSelectedImage, isPresented: $showingImagePicker)
             }
@@ -234,24 +242,17 @@ struct EditFilmView: View {
                 }
             }
             .onChange(of: manufacturer) { _, newValue in
-                if !name.isEmpty && !newValue.isEmpty {
+                if selectedImage == nil && !name.isEmpty && !newValue.isEmpty {
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: name, manufacturer: newValue)
                 }
             }
             .onChange(of: name) { _, newValue in
-                if !newValue.isEmpty && !manufacturer.isEmpty {
+                if selectedImage == nil && !newValue.isEmpty && !manufacturer.isEmpty {
                     defaultImage = ImageStorage.shared.loadDefaultImage(filmName: newValue, manufacturer: manufacturer)
                 }
             }
-            .onAppear {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                loadInitialValues()
-            }
         }
     }
-
-    // MARK: - Load
 
     private func loadInitialValues() {
         name = groupedFilm.name
@@ -265,57 +266,103 @@ struct EditFilmView: View {
         switch filmImageSource {
         case .custom:
             if let imageName = groupedFilm.imageName {
-                let (mfr, filename) = parseCustomImageName(imageName, defaultManufacturer: groupedFilm.manufacturer)
+                existingImageFilename = imageName
+                let (mfr, filename) = ImageStorage.parseCustomImageName(imageName, defaultManufacturer: groupedFilm.manufacturer)
                 selectedImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: mfr)
-                selectedCatalogFilename = imageName.contains("/") ? imageName : nil
             }
         case .catalog:
-            if let catalogFilename = groupedFilm.imageName {
-                selectedImage = ImageStorage.shared.loadCatalogImage(filename: catalogFilename)
-                selectedCatalogFilename = catalogFilename
+            if let imageName = groupedFilm.imageName {
+                selectedCatalogFilename = imageName
+                selectedImage = ImageStorage.shared.loadCatalogImage(filename: imageName)
             }
         case .autoDetected:
-            defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer)
+            defaultImage = ImageStorage.shared.loadDefaultImage(
+                filmName: groupedFilm.name,
+                manufacturer: groupedFilm.manufacturer
+            )
         case .none:
             break
         }
+
+        relatedFilms = dataManager.filmStocks.filter { film in
+            film.name == groupedFilm.name &&
+            film.manufacturer == groupedFilm.manufacturer &&
+            film.type == groupedFilm.type &&
+            film.filmSpeed == groupedFilm.filmSpeed
+        }
     }
 
-    // MARK: - Save
-
-    @discardableResult
-    private func validateAndSave() -> Bool {
+    private func validateInputs() -> Bool {
         nameError = nil
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             nameError = NSLocalizedString("error.nameEmpty", comment: "")
             return false
         }
+        return true
+    }
 
-        var resolvedImageName: String? = nil
+    private func saveChanges() {
+        var newImageName: String? = nil
         let finalImageSource = imageSource
 
         switch finalImageSource {
         case .custom:
             if let catalogFilename = selectedCatalogFilename {
-                resolvedImageName = catalogFilename
-            } else if let img = selectedImage {
-                resolvedImageName = ImageStorage.shared.saveImage(img, forManufacturer: manufacturer, filmName: name)
+                newImageName = catalogFilename
+                if let existingFilename = existingImageFilename, existingFilename != catalogFilename {
+                    let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
+                    ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
+                }
+            } else if let customImg = selectedImage {
+                if let existingFilename = existingImageFilename {
+                    let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
+                    ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
+                }
+                newImageName = ImageStorage.shared.saveImage(customImg, forManufacturer: manufacturer, filmName: name)
             }
         case .catalog:
-            resolvedImageName = selectedCatalogFilename
+            if let existingFilename = existingImageFilename {
+                let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
+                ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
+            }
+            newImageName = selectedCatalogFilename
         case .autoDetected, .none:
-            resolvedImageName = nil
+            if let existingFilename = existingImageFilename {
+                let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
+                ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
+            }
+            newImageName = nil
         }
 
-        dataManager.updateFilmInfo(
-            groupedFilm: groupedFilm,
-            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-            manufacturer: manufacturer,
-            type: type,
-            filmSpeed: filmSpeed,
-            imageName: resolvedImageName,
-            imageSource: finalImageSource.rawValue
-        )
-        return true
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Update metadata on all related FilmStock entries (preserving each roll's own expiry, frozen, exposures, etc.)
+        for (index, existing) in relatedFilms.enumerated() {
+            let updated = FilmStock(
+                id: existing.id,
+                name: trimmedName,
+                manufacturer: manufacturer,
+                type: type,
+                filmSpeed: filmSpeed,
+                format: existing.format,
+                customFormatName: existing.customFormatName,
+                quantity: existing.quantity,
+                expireDate: existing.expireDate,
+                comments: existing.comments,
+                isFrozen: existing.isFrozen,
+                isFridge: existing.isFridge,
+                exposures: existing.exposures,
+                createdAt: existing.createdAt,
+                updatedAt: ISO8601DateFormatter().string(from: Date())
+            )
+            dataManager.updateFilmStock(
+                updated,
+                imageName: index == 0 ? newImageName : nil,
+                imageSource: index == 0 ? finalImageSource.rawValue : nil
+            )
+        }
+
+        // Reload to ensure UI reflects changes
+        dataManager.loadFilmStocks()
     }
 }

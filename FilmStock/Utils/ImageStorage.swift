@@ -363,6 +363,35 @@ class ImageStorage {
     func loadCatalogImage(filename: String) -> UIImage? {
         return loadImageFromBundle(filename: filename)
     }
+
+    /// Parse a custom image name into `(manufacturer, filename)` where `"Manufacturer/filename"` overrides `defaultManufacturer`.
+    static func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
+        if imageName.contains("/") {
+            let components = imageName.split(separator: "/", maxSplits: 1)
+            if components.count == 2 {
+                return (String(components[0]), String(components[1]))
+            }
+        }
+        return (defaultManufacturer, imageName)
+    }
+
+    /// Resolve the UIImage for a film given its imageSource raw value, optional imageName, filmName, and manufacturer.
+    func resolveFilmImage(imageSourceRawValue: String, imageName: String?, filmName: String, manufacturer: String) -> UIImage? {
+        let source = ImageSource(rawValue: imageSourceRawValue) ?? .autoDetected
+        switch source {
+        case .custom:
+            guard let customImageName = imageName else { return nil }
+            let (mfr, filename) = Self.parseCustomImageName(customImageName, defaultManufacturer: manufacturer)
+            return loadImage(filename: filename, manufacturer: mfr)
+        case .catalog:
+            guard let catalogImageName = imageName else { return nil }
+            return loadCatalogImage(filename: catalogImageName)
+        case .autoDetected:
+            return loadDefaultImage(filmName: filmName, manufacturer: manufacturer)
+        case .none:
+            return nil
+        }
+    }
     
     /// Detect film metadata (speed, type, and whether a default image exists)
     /// - Parameters:

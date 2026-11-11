@@ -30,6 +30,7 @@ struct RollBatch: Identifiable {
         isFrozen: Bool = false,
         isFridge: Bool = false,
         exposures: Int? = nil,
+        useDefaultExposuresIfNil: Bool = true,
         customExposures: String = "",
         comments: String = ""
     ) {
@@ -40,7 +41,7 @@ struct RollBatch: Identifiable {
         self.expireDate = expireDate
         self.isFrozen = isFrozen
         self.isFridge = isFrozen ? false : isFridge
-        self.exposures = exposures ?? format.defaultExposures
+        self.exposures = useDefaultExposuresIfNil ? (exposures ?? format.defaultExposures) : exposures
         self.customExposures = customExposures
         self.comments = comments
     }
@@ -398,7 +399,7 @@ struct AddFilmView: View {
                         }
 
                         if let exp = batch.resolvedExposures {
-                            Text("· \(exp)exp")
+                            Text("· \(exposureDisplayLabel(exp))exp")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -707,12 +708,14 @@ struct RollBatchSheet: View {
         _customExposures      = State(initialValue: batch.customExposures)
         // Map exposure to a valid picker tag for the format
         if let exp = batch.exposures {
-            if batch.format.exposureOptions.contains(exp) {
+            if batch.format.exposureOptions.contains(exp) || exp == -1 {
                 _exposures = State(initialValue: exp)
             } else {
                 _exposures       = State(initialValue: -1)
                 _customExposures = State(initialValue: "\(exp)")
             }
+        } else if existingBatch != nil {
+            _exposures = State(initialValue: nil)
         } else {
             _exposures = State(initialValue: batch.format.defaultExposures)
         }
@@ -927,6 +930,7 @@ struct RollBatchSheet: View {
             isFrozen: isFrozen,
             isFridge: isFrozen ? false : isFridge,
             exposures: exposures,
+            useDefaultExposuresIfNil: false,
             customExposures: customExposures,
             comments: comments
         )
