@@ -214,15 +214,23 @@ struct LoadedFilmsWidgetEntryView: View {
                         }
                     }
                 }
-                .widgetURL(hasMultiple ? nil : URL(string: "filmstock://loadedfilms"))
+                .widgetURL(widgetURL(for: film))
             } else {
                 Color.gray.opacity(0.3)
                     .widgetBackground {
                         Color.gray.opacity(0.3)
                     }
-                    .widgetURL(URL(string: "filmstock://loadedfilms"))
+                    .widgetURL(widgetURL(for: film))
             }
         }
+    }
+    
+    private func widgetURL(for film: LoadedFilmWidgetData) -> URL? {
+        var components = URLComponents()
+        components.scheme = "filmstock"
+        components.host = "loadedfilms"
+        components.queryItems = [URLQueryItem(name: "id", value: film.id)]
+        return components.url
     }
 }
 

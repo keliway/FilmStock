@@ -25,6 +25,7 @@ private enum LoadedFilmsFormatters {
 
 struct LoadedFilmsView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @Binding var selectedFilmId: String?
     @State private var loadedFilms: [LoadedFilm] = []
     @State private var finishedFilms: [FinishedFilm] = []
     @State private var selectedTab = 0
@@ -35,6 +36,10 @@ struct LoadedFilmsView: View {
     @State private var selectedDate = Date()
     @State private var selectedLoadedFilm: LoadedFilm?
     @State private var selectedFinishedFilm: FinishedFilm?
+    
+    init(selectedFilmId: Binding<String?> = .constant(nil)) {
+        self._selectedFilmId = selectedFilmId
+    }
     
     // Filters and sorting for finished films
     @State private var showingFilters = false
@@ -380,12 +385,23 @@ struct LoadedFilmsView: View {
                 if dataManager.isMigrationComplete {
                     loadFilms()
                     loadFinishedFilms()
+                    if let id = selectedFilmId {
+                        handleSelectedFilmId(id)
+                    }
                 }
             }
             .onChange(of: dataManager.isMigrationComplete) { _, isComplete in
                 if isComplete {
                     loadFilms()
                     loadFinishedFilms()
+                    if let id = selectedFilmId {
+                        handleSelectedFilmId(id)
+                    }
+                }
+            }
+            .onChange(of: selectedFilmId) { _, newId in
+                if let newId = newId {
+                    handleSelectedFilmId(newId)
                 }
             }
             .onChange(of: selectedTab) { _, _ in
@@ -408,6 +424,54 @@ struct LoadedFilmsView: View {
             .onChange(of: showingHelp) { _, _ in refreshFilmsIfAllowed() }
             .onChange(of: selectedLoadedFilm) { _, _ in refreshFilmsIfAllowed() }
             .onChange(of: selectedFinishedFilm) { _, _ in refreshFilmsIfAllowed() }
+        }
+    }
+    
+    private func handleSelectedFilmId(_ filmId: String) {
+        guard dataManager.isMigrationComplete else { return }
+        
+        if selectedTab != 0 {
+            selectedTab = 0
+        }
+        
+        showingManageCameras = false
+        showingDatePicker = false
+        showingFilters = false
+        showingHelp = false
+        selectedFinishedFilm = nil
+        
+        if selectedLoadedFilm?.id == filmId {
+            selectedFilmId = nil
+            return
+        }
+        
+        if let film = loadedFilms.first(where: { $0.id == filmId }) {
+            presentLoadedFilm(film)
+            return
+        }
+        
+        loadFilms()
+        if let film = loadedFilms.first(where: { $0.id == filmId }) {
+            presentLoadedFilm(film)
+            return
+        }
+        
+        selectedFilmId = nil
+    }
+    
+    private func presentLoadedFilm(_ film: LoadedFilm) {
+        if selectedLoadedFilm != nil {
+            selectedLoadedFilm = nil
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                selectedLoadedFilm = film
+                selectedFilmId = nil
+            }
+        } else {
+            Task { @MainActor in
+                selectedLoadedFilm = film
+                selectedFilmId = nil
+            }
         }
     }
     
