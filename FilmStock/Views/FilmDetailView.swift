@@ -44,16 +44,14 @@ struct FilmDetailView: View {
     @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
-    @State private var showingEditMeta = false
-    @State private var showingLoadFilm = false
-    @State private var showingDeleteConfirmation = false
-    @State private var showingDeleteError = false
-    @State private var deleteErrorMessage = ""
-    @State private var showingAddRollsSheet = false
-    @State private var groupToEdit: RollGroupItem?
-    @State private var sheetLineToEdit: FilmStock?
     @State private var relatedFilms: [FilmStock] = []
-    @State private var navImage: UIImage?
+    @State private var showingEditSheet = false
+    @State private var showingLoadSheet = false
+    @State private var shouldDismissAfterLoad = false
+    @State private var groupToEdit: RollGroupItem?
+    @State private var showingAddRollsSheet = false
+    @State private var sheetLineToEdit: FilmStock?
+    @State private var navImage: UIImage? = nil
 
     private var currentGroupedFilm: GroupedFilm? {
         if let byId = dataManager.cachedGroupedFilms.first(where: { $0.id == groupedFilm.id }) {
@@ -95,97 +93,115 @@ struct FilmDetailView: View {
                     showingAddRollsSheet = true
                 } label: {
                     Label("add.rolls", systemImage: "plus.circle")
-                        .fontWeight(.medium)
+                        .foregroundColor(.accentColor)
                 }
             }
 
-            // Sheet formats (4x5, 5x7, 8x10)
-            if !largeFormatFilms.isEmpty {
-                Section("detail.formats") {
-                    ForEach(largeFormatFilms) { film in
-                        sheetInventoryRow(film)
+            // 4x5 / 5x7 / 8x10 sheet formats (per-line expiry, frozen, edit like rolls)
+            let largeFormats = largeFormatFilms
+            if !largeFormats.isEmpty {
+                Section("detail.sheets") {
+                    ForEach(largeFormats) { film in
+                        nonRollInventoryRow(film)
                     }
                 }
             }
 
-            // Other non-roll formats (e.g. Custom / Other)
-            if !otherFormatFilms.isEmpty {
-                Section("detail.otherFormats") {
-                    ForEach(otherFormatFilms) { film in
-                        sheetInventoryRow(film)
+            // Other / custom non-roll formats
+            let otherFormats = otherFormatFilms
+            if !otherFormats.isEmpty {
+                Section("detail.other") {
+                    ForEach(otherFormats) { film in
+                        nonRollInventoryRow(film)
                     }
                 }
             }
 
-            // Comments (aggregated from all rolls)
-            let allComments = Array(Set(relatedFilms.compactMap { $0.comments }.filter { !$0.isEmpty })).sorted()
-            if !allComments.isEmpty {
+            // Comments (roll / sheet lines that still use a single shared comments section on the film)
+            if let comment = relatedFilms.compactMap({ $0.comments }).first(where: { !$0.isEmpty }) {
                 Section("film.comments") {
-                    ForEach(allComments, id: \.self) { comment in
-                        Text(comment).foregroundColor(.secondary)
-                    }
-                }
-            }
-
-            // Actions
-            Section {
-                Button {
-                    showingLoadFilm = true
-                } label: {
-                    HStack {
-                        Spacer()
-                        Label("action.load", systemImage: "camera")
-                            .fontWeight(.semibold)
-                        Spacer()
-                    }
-                }
-                .disabled(!hasAvailableFormats)
-
-                Button(role: .destructive) {
-                    showingDeleteConfirmation = true
-                } label: {
-                    HStack {
-                        Spacer()
-                        Label("action.delete", systemImage: "trash")
-                        Spacer()
-                    }
+                    Text(comment).foregroundColor(.primary)
                 }
             }
         }
-        .navigationTitle(displayGroupedFilm.name)
+        .navigationTitle("\(displayGroupedFilm.manufacturer) \(displayGroupedFilm.name)")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                if let img = navImage {
+                    Image(uiImage: img)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 32, height: 32)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 12) {
-                    if let img = navImage {
-                        Image(uiImage: img)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 30, height: 30)
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                Menu {
+                    Button {
+                        showingEditSheet = true
+                    } label: {
+                        Label("film.editFilm", systemImage: "pencil")
                     }
-                    Button("action.edit") {
-                        showingEditMeta = true
-                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
-        .sheet(isPresented: $showingEditMeta) {
+        .safeAreaInset(edge: .bottom) {
+            if hasAvailableFormats {
+                Button {
+                    showingLoadSheet = true
+                } label: {
+                    Text("load.title")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
+        .onAppear {
+            loadRelatedFilms()
+            loadNavImage()
+        }
+        .onChange(of: dataManager.filmStocks) { _, _ in loadRelatedFilms() }
+        .sheet(isPresented: $showingEditSheet) {
             EditFilmView(groupedFilm: displayGroupedFilm)
+                .environmentObject(dataManager)
+        }
+        .onChange(of: showingEditSheet) { _, newValue in
+            if !newValue {
+                loadRelatedFilms()
+                loadNavImage()
+            }
+        }
+        .sheet(isPresented: $showingLoadSheet) {
+            LoadFilmView(groupedFilm: displayGroupedFilm, onLoadComplete: {
+                shouldDismissAfterLoad = true
+            })
+            .environmentObject(dataManager)
+        }
+        .onChange(of: shouldDismissAfterLoad) { _, newValue in
+            if newValue { dismiss() }
         }
         .sheet(item: $groupToEdit) { group in
-            RollGroupEditSheet(group: group, filmTemplate: displayGroupedFilm)
+            RollGroupEditSheet(group: group)
                 .environmentObject(dataManager)
         }
         .sheet(item: $sheetLineToEdit) { line in
-            SheetStockEditSheet(filmStock: line)
+            SheetGroupEditSheet(film: line)
                 .environmentObject(dataManager)
         }
         .sheet(isPresented: $showingAddRollsSheet) {
             RollBatchSheet { batch in
                 let dateDigits = batch.expireDate.filter { $0.isNumber }
                 let trimmedComments = batch.comments.trimmingCharacters(in: .whitespacesAndNewlines)
-                let newFilm = FilmStock(
+                let film = FilmStock(
                     id: UUID().uuidString,
                     name: displayGroupedFilm.name,
                     manufacturer: displayGroupedFilm.manufacturer,
@@ -202,54 +218,17 @@ struct FilmDetailView: View {
                     createdAt: ISO8601DateFormatter().string(from: Date()),
                     updatedAt: nil
                 )
-                _ = dataManager.addFilmStock(newFilm, imageName: nil, imageSource: ImageSource.autoDetected.rawValue)
-                loadRelatedFilms()
+                _ = dataManager.addFilmStock(film)
             }
-        }
-        .sheet(isPresented: $showingLoadFilm) {
-            LoadFilmView(groupedFilm: displayGroupedFilm)
-                .environmentObject(dataManager)
-        }
-        .confirmationDialog("delete.confirm.title", isPresented: $showingDeleteConfirmation, titleVisibility: .visible) {
-            Button("action.delete", role: .destructive) {
-                let allRelatedFilms = dataManager.filmStocks.filter { film in
-                    film.name == displayGroupedFilm.name &&
-                    film.manufacturer == displayGroupedFilm.manufacturer &&
-                    film.type == displayGroupedFilm.type &&
-                    film.filmSpeed == displayGroupedFilm.filmSpeed
-                }
-                if let loaded = allRelatedFilms.first(where: { dataManager.isFilmLoaded($0) }) {
-                    deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loaded.name)
-                    showingDeleteError = true
-                } else {
-                    dataManager.deleteFilmStocks(allRelatedFilms)
-                    dismiss()
-                }
-            }
-            Button("action.cancel", role: .cancel) { }
-        } message: {
-            Text(String(format: NSLocalizedString("delete.confirm.message", comment: ""), displayGroupedFilm.name))
-        }
-        .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
-            Button("action.ok", role: .cancel) { }
-        } message: {
-            Text(deleteErrorMessage)
-        }
-        .onAppear {
-            loadRelatedFilms()
-            loadNavImage()
-        }
-        .onChange(of: dataManager.filmStocks) { _, _ in
-            loadRelatedFilms()
-            loadNavImage()
+            .environmentObject(dataManager)
         }
     }
 
-    // MARK: - Roll Group Row
+    // MARK: - Row Builder
 
     @ViewBuilder
-    private func sheetInventoryRow(_ film: FilmStock) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+    private func nonRollInventoryRow(_ film: FilmStock) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(film.formatDisplayName)
@@ -407,8 +386,8 @@ struct FilmDetailView: View {
             let expiry = film.expireDate?.first
             let expKey = film.exposures ?? -99
             let otherKey = film.customFormatName ?? ""
-            let commentKey = film.comments ?? ""
-            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(film.isFridge)|\(expKey)|\(otherKey)|\(commentKey)"
+            let commentsKey = film.comments ?? ""
+            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(film.isFridge)|\(expKey)|\(otherKey)|\(commentsKey)"
             if var existing = buckets[key] {
                 existing.rollIds.append(film.id)
                 buckets[key] = existing
@@ -468,16 +447,11 @@ struct FilmDetailView: View {
 
 struct RollGroupEditSheet: View {
     let group: RollGroupItem
-    let filmTemplate: GroupedFilm
-
     @EnvironmentObject var dataManager: FilmStockDataManager
     @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
-    @State private var selectedFormatString: String
-    @State private var format: FilmStock.FilmFormat
-    @State private var customFormatName: String?
-    @State private var quantity: Int
+    @State private var count: Int
     @State private var expireDate: String
     @State private var isFrozen: Bool
     @State private var isFridge: Bool
@@ -485,26 +459,17 @@ struct RollGroupEditSheet: View {
     @State private var customExposures: String
     @State private var comments: String
     @State private var expireDateError: String?
-    @State private var deleteError: String?
-    @State private var showingDeleteError = false
 
-    init(group: RollGroupItem, filmTemplate: GroupedFilm) {
+    init(group: RollGroupItem) {
         self.group = group
-        self.filmTemplate = filmTemplate
-        let fmtDisplay = group.formatDisplayName
-        _selectedFormatString = State(initialValue: fmtDisplay)
-        _format          = State(initialValue: group.format)
-        _customFormatName = State(initialValue: group.customFormatName)
-        _quantity        = State(initialValue: group.count)
-        let formattedExpiry = group.expireDate.map { FilmStock.formatExpireDate($0) } ?? ""
-        _expireDate      = State(initialValue: formattedExpiry)
-        _isFrozen        = State(initialValue: group.isFrozen)
-        _isFridge        = State(initialValue: group.isFrozen ? false : group.isFridge)
-        _comments        = State(initialValue: group.comments ?? "")
-        // Map stored exposure to picker selection; use -1 tag for custom values
-        let opts = group.format.exposureOptions
+        _count       = State(initialValue: group.count)
+        _expireDate  = State(initialValue: group.expireDate ?? "")
+        _isFrozen    = State(initialValue: group.isFrozen)
+        _isFridge    = State(initialValue: group.isFrozen ? false : group.isFridge)
+        _comments    = State(initialValue: group.comments ?? "")
+        // Map exposures to picker tags: valid option → direct, unknown → -1 (custom), nil → nil (unspecified)
         if let exp = group.exposures {
-            if opts.contains(exp) {
+            if group.format.exposureOptions.contains(exp) {
                 _exposures       = State(initialValue: exp)
                 _customExposures = State(initialValue: "")
             } else {
@@ -540,59 +505,21 @@ struct RollGroupEditSheet: View {
         )
     }
 
-    private var allEnabledFormats: [String] {
-        var formats: [String] = []
-        for builtIn in FilmStock.FilmFormat.allCases {
-            if settingsManager.isFormatEnabled(builtIn.displayName) {
-                formats.append(builtIn.displayName)
-            }
-        }
-        for custom in settingsManager.customFormats {
-            if settingsManager.isFormatEnabled(custom) {
-                formats.append(custom)
-            }
-        }
-        if !formats.contains(selectedFormatString) {
-            formats.append(selectedFormatString)
-        }
-        return formats
-    }
-
-    private func formatFromString(_ str: String) -> FilmStock.FilmFormat {
-        FilmStock.FilmFormat.allCases.first { $0.displayName == str } ?? .other
-    }
-
     var body: some View {
         NavigationStack {
             Form {
-                // Format
-                Section {
-                    Picker("film.format", selection: $selectedFormatString) {
-                        ForEach(allEnabledFormats, id: \.self) { f in
-                            Text(f).tag(f)
-                        }
-                    }
-                    .onChange(of: selectedFormatString) { _, newValue in
-                        let newFormat = formatFromString(newValue)
-                        format = newFormat
-                        customFormatName = newFormat == .other ? newValue : nil
-                        exposures = newFormat.defaultExposures
-                        customExposures = ""
-                    }
-                }
-
-                // Quantity
+                // Count
                 Section {
                     Stepper(
-                        quantity == 1
-                            ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
-                            : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity),
-                        value: $quantity,
-                        in: 1...999
+                        count == 1
+                            ? String(format: NSLocalizedString("film.rollCount", comment: ""), count)
+                            : String(format: NSLocalizedString("film.rollsCount", comment: ""), count),
+                        value: $count,
+                        in: 0...999
                     )
                 }
 
-                // Expiry Date
+                // Expiry date
                 Section("film.expiryDate") {
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("film.expiryDateFormat", text: $expireDate)
@@ -608,9 +535,7 @@ struct RollGroupEditSheet: View {
                                 expireDateError = nil
                             }
                         if let error = expireDateError {
-                            Text(error)
-                                .font(.caption)
-                                .foregroundColor(.red)
+                            Text(error).font(.caption).foregroundColor(.red)
                         }
                     }
                 }
@@ -634,12 +559,12 @@ struct RollGroupEditSheet: View {
                     }
                 }
 
-                // Exposures (roll formats only, options vary by format)
-                if format.isRollFormat && !format.exposureOptions.isEmpty {
+                // Exposures (options vary by format)
+                if !group.format.exposureOptions.isEmpty {
                     Section("film.exposures") {
                         Picker("film.exposures", selection: $exposures) {
                             Text(LocalizedStringKey("film.exposures.unspecified")).tag(nil as Int?)
-                            ForEach(format.exposureOptions, id: \.self) { opt in
+                            ForEach(group.format.exposureOptions, id: \.self) { opt in
                                 Text(exposureDisplayLabel(opt)).tag(opt as Int?)
                             }
                             Text(LocalizedStringKey("film.exposures.custom")).tag(-1 as Int?)
@@ -659,22 +584,12 @@ struct RollGroupEditSheet: View {
                     TextField("film.comments.placeholder", text: $comments, axis: .vertical)
                         .lineLimit(3...6)
                 }
-
-                // Delete this group
-                Section {
-                    Button(role: .destructive) {
-                        deleteGroup()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Label("edit.rolls.delete", systemImage: "trash")
-                            Spacer()
-                        }
-                    }
-                }
             }
             .navigationTitle(
-                String(format: NSLocalizedString("edit.rolls.title", comment: ""), group.formatDisplayName)
+                String(
+                    format: NSLocalizedString("edit.rolls.title", comment: ""),
+                    group.formatDisplayName
+                )
             )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -683,21 +598,15 @@ struct RollGroupEditSheet: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("action.save") {
-                        if validate() {
-                            saveChanges()
-                            dismiss()
-                        }
+                        if validate() { save() }
                     }
                     .fontWeight(.semibold)
                 }
             }
-            .alert("error.cannotDelete.title", isPresented: $showingDeleteError) {
-                Button("action.ok", role: .cancel) { }
-            } message: {
-                Text(deleteError ?? "")
-            }
         }
     }
+
+    // MARK: - Validation
 
     private func validate() -> Bool {
         expireDateError = nil
@@ -726,114 +635,107 @@ struct RollGroupEditSheet: View {
         return true
     }
 
-    private var resolvedExposures: Int? {
-        if exposures == kBulkRollExposures { return kBulkRollExposures }
-        if exposures == -1, let n = Int(customExposures), n > 0 { return n }
-        if let e = exposures, e > 0 { return e }
-        return nil
-    }
+    // MARK: - Save
 
-    private func saveChanges() {
-        let dateDigits = expireDate.filter { $0.isNumber }
-        let newExpireDates: [String]? = dateDigits.isEmpty ? nil : [dateDigits]
-        let newComments: String? = comments.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    private func save() {
+        let cleanDate: String? = expireDate.isEmpty ? nil : expireDate.filter { $0.isNumber }
+        let resolvedExposures: Int? = {
+            if exposures == kBulkRollExposures { return kBulkRollExposures }
+            if exposures == -1, let n = Int(customExposures), n > 0 { return n }
+            if let e = exposures, e > 0 { return e }
+            return nil
+        }()
+
+        let delta = count - group.count
+        let effectiveFridge = isFrozen ? false : isFridge
+
+        let cleanComments: String? = comments.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             ? nil : comments.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let existingRolls = dataManager.filmStocks.filter { group.rollIds.contains($0.id) }
-        let currentCount = existingRolls.count
-        let delta = quantity - currentCount
-
-        // Determine the final customFormatName based on current format picker selection
-        let savedCustomFormatName: String? = format == .other ? selectedFormatString : nil
-
-        // Update all rolls that remain (up to min(quantity, currentCount))
-        let toKeep = delta < 0 ? Array(existingRolls.prefix(quantity)) : existingRolls
-        for roll in toKeep {
-            let updated = FilmStock(
-                id: roll.id,
-                name: roll.name,
-                manufacturer: roll.manufacturer,
-                type: roll.type,
-                filmSpeed: roll.filmSpeed,
-                format: format,
-                customFormatName: savedCustomFormatName,
-                quantity: 1,
-                expireDate: newExpireDates,
-                comments: newComments,
+        if count == 0 {
+            dataManager.deleteRollsById(group.rollIds)
+        } else if delta > 0 {
+            dataManager.updateRolls(
+                ids: group.rollIds,
+                expireDate: cleanDate,
                 isFrozen: isFrozen,
-                isFridge: isFrozen ? false : isFridge,
-                exposures: format.isRollFormat ? resolvedExposures : nil,
-                createdAt: roll.createdAt,
-                updatedAt: ISO8601DateFormatter().string(from: Date())
+                isFridge: effectiveFridge,
+                exposures: resolvedExposures,
+                comments: cleanComments
             )
-            dataManager.updateFilmStock(updated, imageName: nil, imageSource: nil)
-        }
-
-        if delta > 0 {
-            // Add extra rolls using addFilmStock (creates individual MyFilm rows)
-            let newFilm = FilmStock(
-                id: UUID().uuidString,
-                name: filmTemplate.name,
-                manufacturer: filmTemplate.manufacturer,
-                type: filmTemplate.type,
-                filmSpeed: filmTemplate.filmSpeed,
-                format: format,
-                customFormatName: savedCustomFormatName,
-                quantity: delta,
-                expireDate: newExpireDates,
-                comments: newComments,
+            _ = dataManager.addRolls(
+                count: delta,
+                matchingFilmStockId: group.rollIds.first!,
+                expireDate: cleanDate,
                 isFrozen: isFrozen,
-                isFridge: isFrozen ? false : isFridge,
-                exposures: format.isRollFormat ? resolvedExposures : nil,
-                createdAt: ISO8601DateFormatter().string(from: Date()),
-                updatedAt: nil
+                isFridge: effectiveFridge,
+                exposures: resolvedExposures,
+                comments: cleanComments
             )
-            _ = dataManager.addFilmStock(newFilm, imageName: nil, imageSource: ImageSource.autoDetected.rawValue)
         } else if delta < 0 {
-            // Remove surplus rolls (unloaded ones first)
-            let unloaded = existingRolls.filter { !dataManager.isFilmLoaded($0) }
-            let toRemove = Array(unloaded.suffix(-delta))
-            dataManager.deleteFilmStocks(toRemove)
+            let toRemove = Array(group.rollIds.suffix(-delta))
+            let toKeep   = Array(group.rollIds.prefix(count))
+            dataManager.deleteRollsById(toRemove)
+            dataManager.updateRolls(
+                ids: toKeep,
+                expireDate: cleanDate,
+                isFrozen: isFrozen,
+                isFridge: effectiveFridge,
+                exposures: resolvedExposures,
+                comments: cleanComments
+            )
+        } else {
+            dataManager.updateRolls(
+                ids: group.rollIds,
+                expireDate: cleanDate,
+                isFrozen: isFrozen,
+                isFridge: effectiveFridge,
+                exposures: resolvedExposures,
+                comments: cleanComments
+            )
         }
 
-        dataManager.loadFilmStocks()
-    }
-
-    private func deleteGroup() {
-        let existingRolls = dataManager.filmStocks.filter { group.rollIds.contains($0.id) }
-        if let loaded = existingRolls.first(where: { dataManager.isFilmLoaded($0) }) {
-            deleteError = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loaded.name)
-            showingDeleteError = true
-            return
-        }
-        dataManager.deleteFilmStocks(existingRolls)
-        dataManager.loadFilmStocks()
         dismiss()
     }
 }
 
-// MARK: - Sheet / non-roll line edit (expiry, frozen, fridge, comments)
+// MARK: - Sheet / other non-roll inventory edit
 
-private struct SheetStockEditSheet: View {
-    let filmStock: FilmStock
+private struct MutableExpiryRow: Identifiable {
+    let id: UUID
+    var text: String
+    init(id: UUID = UUID(), text: String) {
+        self.id = id
+        self.text = text
+    }
+}
+
+/// Edit quantity, frozen, fridge, multiple expiry rows, and comments for one `MyFilm` line (sheets & other non-roll).
+struct SheetGroupEditSheet: View {
+    let film: FilmStock
     @EnvironmentObject var dataManager: FilmStockDataManager
     @ObservedObject private var settingsManager = SettingsManager.shared
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) var dismiss
 
-    @State private var expireDate: String
+    @State private var quantity: Int
     @State private var isFrozen: Bool
     @State private var isFridge: Bool
     @State private var comments: String
-    @State private var expireDateError: String?
+    @State private var expiryRows: [MutableExpiryRow]
+    @State private var rowErrors: [UUID: String] = [:]
 
-    init(filmStock: FilmStock) {
-        self.filmStock = filmStock
-        let raw = filmStock.expireDate?.first ?? ""
-        let formatted = raw.isEmpty ? "" : FilmStock.formatExpireDate(raw)
-        _expireDate = State(initialValue: formatted)
-        _isFrozen = State(initialValue: filmStock.isFrozen)
-        _isFridge = State(initialValue: filmStock.isFrozen ? false : filmStock.isFridge)
-        _comments = State(initialValue: filmStock.comments ?? "")
+    init(film: FilmStock) {
+        self.film = film
+        _quantity = State(initialValue: film.quantity)
+        _isFrozen = State(initialValue: film.isFrozen)
+        _isFridge = State(initialValue: film.isFrozen ? false : film.isFridge)
+        _comments = State(initialValue: film.comments ?? "")
+        let initialDates = film.expireDate ?? []
+        if initialDates.isEmpty {
+            _expiryRows = State(initialValue: [MutableExpiryRow(text: "")])
+        } else {
+            _expiryRows = State(initialValue: initialDates.map { MutableExpiryRow(text: FilmStock.formatExpireDate($0)) })
+        }
     }
 
     private var storageSelection: Binding<Int> {
@@ -862,25 +764,44 @@ private struct SheetStockEditSheet: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Stepper(quantityLabel, value: $quantity, in: 0...999)
+                }
+
                 Section("film.expiryDate") {
-                    VStack(alignment: .leading, spacing: 4) {
-                        TextField("film.expiryDateFormat", text: $expireDate)
-                            .keyboardType(.numberPad)
-                            .onChange(of: expireDate) { _, newValue in
-                                let digits = newValue.filter { $0.isNumber }
-                                let limited = String(digits.prefix(6))
-                                if limited.count == 6 {
-                                    expireDate = "\(limited.prefix(2))/\(limited.suffix(4))"
-                                } else {
-                                    expireDate = limited
+                    ForEach($expiryRows) { $row in
+                        VStack(alignment: .leading, spacing: 4) {
+                            TextField("film.expiryDateFormat", text: $row.text)
+                                .keyboardType(.numberPad)
+                                .onChange(of: row.text) { _, newValue in
+                                    let digits = newValue.filter { $0.isNumber }
+                                    let limited = String(digits.prefix(6))
+                                    if limited.count == 6 {
+                                        row.text = "\(limited.prefix(2))/\(limited.suffix(4))"
+                                    } else {
+                                        row.text = limited
+                                    }
+                                    rowErrors[row.id] = nil
                                 }
-                                expireDateError = nil
+                            if let err = rowErrors[row.id] {
+                                Text(err).font(.caption).foregroundColor(.red)
                             }
-                        if let error = expireDateError {
-                            Text(error)
-                                .font(.caption)
-                                .foregroundColor(.red)
                         }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            if expiryRows.count > 1 {
+                                Button(role: .destructive) {
+                                    expiryRows.removeAll { $0.id == row.id }
+                                    rowErrors[row.id] = nil
+                                } label: {
+                                    Label("action.delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                    }
+                    Button {
+                        expiryRows.append(MutableExpiryRow(text: ""))
+                    } label: {
+                        Label("film.expiryDate.addRow", systemImage: "plus.circle")
                     }
                 }
 
@@ -907,9 +828,7 @@ private struct SheetStockEditSheet: View {
                         .lineLimit(3...6)
                 }
             }
-            .navigationTitle(
-                String(format: NSLocalizedString("edit.rolls.title", comment: ""), filmStock.formatDisplayName)
-            )
+            .navigationTitle("edit.inventoryLine.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -917,10 +836,7 @@ private struct SheetStockEditSheet: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("action.save") {
-                        if validate() {
-                            save()
-                            dismiss()
-                        }
+                        if validateExpiryRows() { save() }
                     }
                     .fontWeight(.semibold)
                 }
@@ -928,59 +844,67 @@ private struct SheetStockEditSheet: View {
         }
     }
 
-    private func validate() -> Bool {
-        expireDateError = nil
-        guard !expireDate.isEmpty else { return true }
-        let digits = expireDate.filter { $0.isNumber }
-        if digits.count == 4 {
-            guard let year = Int(digits), year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else if digits.count == 6 {
-            let month = Int(String(digits.prefix(2))) ?? 0
-            let year  = Int(String(digits.suffix(4))) ?? 0
-            guard month >= 1, month <= 12 else {
-                expireDateError = NSLocalizedString("error.invalidMonth", comment: "")
-                return false
-            }
-            guard year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else {
-            expireDateError = NSLocalizedString("error.invalidDateFormat", comment: "")
-            return false
+    private var quantityLabel: String {
+        let unit = film.format.quantityUnit
+        if unit == "Sheets" {
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
         }
-        return true
+        return quantity == 1
+            ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
+            : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
+    }
+
+    private func validateExpiryRows() -> Bool {
+        rowErrors = [:]
+        var ok = true
+        for row in expiryRows {
+            let digits = row.text.filter { $0.isNumber }
+            guard !digits.isEmpty else { continue }
+            if digits.count == 4 {
+                guard let year = Int(digits), year >= 1950, year <= 2100 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
+                    ok = false
+                    continue
+                }
+            } else if digits.count == 6 {
+                let month = Int(String(digits.prefix(2))) ?? 0
+                let year = Int(String(digits.suffix(4))) ?? 0
+                guard month >= 1, month <= 12 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidMonth", comment: "")
+                    ok = false
+                    continue
+                }
+                guard year >= 1950, year <= 2100 else {
+                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
+                    ok = false
+                    continue
+                }
+            } else {
+                rowErrors[row.id] = NSLocalizedString("error.invalidDateFormat", comment: "")
+                ok = false
+            }
+        }
+        return ok
     }
 
     private func save() {
-        let current = dataManager.filmStocks.first { $0.id == filmStock.id } ?? filmStock
-        let dateDigits = expireDate.filter { $0.isNumber }
-        let newExpireDates: [String]? = dateDigits.isEmpty ? nil : [dateDigits]
-        let trimmed = comments.trimmingCharacters(in: .whitespacesAndNewlines)
-        let newComments: String? = trimmed.isEmpty ? nil : trimmed
+        let rawDates = expiryRows
+            .map { $0.text.filter { $0.isNumber } }
+            .filter { !$0.isEmpty }
 
-        let updated = FilmStock(
-            id: current.id,
-            name: current.name,
-            manufacturer: current.manufacturer,
-            type: current.type,
-            filmSpeed: current.filmSpeed,
-            format: current.format,
-            customFormatName: current.customFormatName,
-            quantity: current.quantity,
-            expireDate: newExpireDates,
-            comments: newComments,
-            isFrozen: isFrozen,
-            isFridge: isFrozen ? false : isFridge,
-            exposures: current.exposures,
-            createdAt: current.createdAt,
-            updatedAt: ISO8601DateFormatter().string(from: Date())
-        )
-        dataManager.updateFilmStock(updated, imageName: nil, imageSource: nil)
-        dataManager.loadFilmStocks()
+        if quantity == 0 {
+            dataManager.deleteRollsById([film.id])
+        } else {
+            var updated = film
+            updated.quantity = quantity
+            updated.expireDate = rawDates.isEmpty ? nil : rawDates
+            updated.isFrozen = isFrozen
+            updated.isFridge = isFrozen ? false : isFridge
+            let trimmed = comments.trimmingCharacters(in: .whitespacesAndNewlines)
+            updated.comments = trimmed.isEmpty ? nil : trimmed
+            dataManager.updateFilmStock(updated)
+        }
+        dismiss()
     }
 }
 
@@ -1004,114 +928,43 @@ struct InfoRow: View {
 struct QuantityControlView: View {
     let film: FilmStock
     @EnvironmentObject var dataManager: FilmStockDataManager
-    @State private var currentQuantity: Int = 0
+    @State private var quantity: Int
+
+    init(film: FilmStock) {
+        self.film = film
+        _quantity = State(initialValue: film.quantity)
+    }
 
     var body: some View {
-        HStack(spacing: 8) {
-            Button {
-                updateQuantity(by: -1)
-            } label: {
-                Image(systemName: "minus.circle.fill")
-                    .foregroundColor(currentQuantity > 0 ? .red : .gray)
-                    .font(.title3)
-            }
-            .buttonStyle(.plain)
-            .disabled(currentQuantity <= 0)
-
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("\(currentQuantity)")
-                    .font(.headline)
-                    .frame(minWidth: 30)
-                Text(film.format.quantityUnit)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-            }
-
-            Button {
-                updateQuantity(by: 1)
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .foregroundColor(.green)
-                    .font(.title3)
-            }
-            .buttonStyle(.plain)
-        }
-        .onAppear {
-            loadCurrentQuantity()
-        }
-        .onChange(of: dataManager.filmStocks) { _, _ in
-            loadCurrentQuantity()
-        }
-    }
-
-    private func loadCurrentQuantity() {
-        if let updated = dataManager.filmStocks.first(where: { $0.id == film.id }) {
-            currentQuantity = updated.quantity
+        if film.format.isRollFormat {
+            Text(quantityText).foregroundColor(.secondary)
         } else {
-            currentQuantity = film.quantity
-        }
-    }
-
-    private func updateQuantity(by delta: Int) {
-        let newQuantity = max(0, currentQuantity + delta)
-        guard let latest = dataManager.filmStocks.first(where: { $0.id == film.id }) else { return }
-
-        if latest.format.isRollFormat {
-            let groupFilms = dataManager.filmStocks.filter { f in
-                f.name == latest.name &&
-                f.manufacturer == latest.manufacturer &&
-                f.type == latest.type &&
-                f.filmSpeed == latest.filmSpeed &&
-                f.format == latest.format &&
-                f.customFormatName == latest.customFormatName
+            Stepper(value: $quantity, in: 0...999) {
+                Text(quantityText)
             }
-
-            if delta > 0 {
-                let newRoll = FilmStock(
-                    id: UUID().uuidString,
-                    name: latest.name,
-                    manufacturer: latest.manufacturer,
-                    type: latest.type,
-                    filmSpeed: latest.filmSpeed,
-                    format: latest.format,
-                    customFormatName: latest.customFormatName,
-                    quantity: 1,
-                    expireDate: latest.expireDate,
-                    comments: latest.comments,
-                    isFrozen: latest.isFrozen,
-                    isFridge: latest.isFridge,
-                    exposures: latest.exposures,
-                    createdAt: ISO8601DateFormatter().string(from: Date()),
-                    updatedAt: nil
-                )
-                _ = dataManager.addFilmStock(newRoll, imageName: nil, imageSource: ImageSource.autoDetected.rawValue)
-            } else if delta < 0, !groupFilms.isEmpty {
-                let unloaded = groupFilms.filter { !dataManager.isFilmLoaded($0) }
-                if let toDelete = unloaded.first {
-                    dataManager.deleteFilmStock(toDelete)
+            .onAppear { quantity = film.quantity }
+            .onChange(of: film.quantity) { _, newVal in quantity = newVal }
+            .onChange(of: quantity) { _, newValue in
+                if newValue == 0 {
+                    dataManager.deleteRollsById([film.id])
+                } else {
+                    var updated = film
+                    updated.quantity = newValue
+                    dataManager.updateFilmStock(updated)
                 }
             }
-            currentQuantity = max(0, groupFilms.count + delta)
-        } else {
-            let updated = FilmStock(
-                id: latest.id,
-                name: latest.name,
-                manufacturer: latest.manufacturer,
-                type: latest.type,
-                filmSpeed: latest.filmSpeed,
-                format: latest.format,
-                customFormatName: latest.customFormatName,
-                quantity: newQuantity,
-                expireDate: latest.expireDate,
-                comments: latest.comments,
-                isFrozen: latest.isFrozen,
-                isFridge: latest.isFridge,
-                exposures: latest.exposures,
-                createdAt: latest.createdAt,
-                updatedAt: ISO8601DateFormatter().string(from: Date())
-            )
-            dataManager.updateFilmStock(updated, imageName: nil, imageSource: nil)
-            currentQuantity = newQuantity
         }
+    }
+
+    private var quantityText: String {
+        let unit = film.format.quantityUnit
+        if unit == "Rolls" {
+            return quantity == 1
+                ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
+                : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
+        } else if unit == "Sheets" {
+            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
+        }
+        return "\(quantity) \(unit)"
     }
 }
