@@ -166,7 +166,7 @@ class ExportManager {
         .sorted { ($0.manufacturer + $0.name) < ($1.manufacturer + $1.name) }
 
         let loadedFilms: [ExportLoadedFilm] = loaded.compactMap { lf in
-            guard let film = lf.film else { return nil }
+            guard let film = lf.film ?? lf.myFilm?.film else { return nil }
             let filmName = film.name
             let mfrName  = film.manufacturer?.name ?? ""
             guard !filmName.isEmpty, !mfrName.isEmpty else { return nil }
@@ -195,7 +195,7 @@ class ExportManager {
         }
 
         let finishedFilms: [ExportFinishedFilm] = finished.compactMap { ff in
-            guard let film = ff.film else { return nil }
+            guard let film = ff.film ?? ff.myFilm?.film else { return nil }
             let filmName = film.name
             let mfrName  = film.manufacturer?.name ?? ""
             guard !filmName.isEmpty, !mfrName.isEmpty else { return nil }

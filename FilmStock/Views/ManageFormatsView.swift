@@ -14,12 +14,13 @@ struct ManageFormatsView: View {
     @State private var showDuplicateError = false
     
     var builtInFormats: [String] {
-        FilmStock.FilmFormat.allCases.map { $0.displayName }
+        FilmStock.FilmFormat.allCases.filter { $0 != .other }.map { $0.displayName }
     }
     
     var isDuplicate: Bool {
         let trimmed = newFormatName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return builtInFormats.contains(trimmed) || settingsManager.customFormats.contains(trimmed)
+        return builtInFormats.contains { $0.caseInsensitiveCompare(trimmed) == .orderedSame }
+            || settingsManager.customFormats.contains { $0.caseInsensitiveCompare(trimmed) == .orderedSame }
     }
     
     var body: some View {

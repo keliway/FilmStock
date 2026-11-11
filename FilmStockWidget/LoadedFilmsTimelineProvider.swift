@@ -127,7 +127,7 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
             
             // Convert to widget data
             return loadedFilms.compactMap { loadedFilm -> LoadedFilmWidgetData? in
-                guard let film = loadedFilm.film else { return nil }
+                guard let film = loadedFilm.film ?? loadedFilm.myFilm?.film else { return nil }
                 
                 // Load image based on imageSource
                 var imageData: Data?

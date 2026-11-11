@@ -76,13 +76,13 @@ struct LoadFilmView: View {
                 }
             }
 
-            autoSelectCamera(for: selectedFormat)
+            autoSelectCamera(for: selectedFormat, customFormatName: selectedFormatInfo?.customFormatName)
             sheetQuantity = 1
             shotAtISO = groupedFilm.filmSpeed
         }
         .onChange(of: selectedFormatLineId) { _, _ in
             sheetQuantity = 1
-            autoSelectCamera(for: selectedFormat)
+            autoSelectCamera(for: selectedFormat, customFormatName: selectedFormatInfo?.customFormatName)
         }
     }
     
@@ -254,7 +254,7 @@ struct LoadFilmView: View {
         var buckets: [String: RollGroupItem] = [:]
         for roll in rolls {
             let expiry = roll.expireDate?.first
-            let key = "\(expiry ?? "")|\(roll.isFrozen)|\(roll.isFridge)|\(roll.exposures ?? -99)"
+            let key = "\(roll.format.rawValue)|\(expiry ?? "")|\(roll.isFrozen)|\(roll.isFridge)|\(roll.exposures ?? -99)|\(roll.customFormatName ?? "")|\(roll.comments ?? "")"
             if var existing = buckets[key] {
                 existing.rollIds.append(roll.id)
                 buckets[key] = existing
@@ -272,19 +272,32 @@ struct LoadFilmView: View {
             }
         }
         return buckets.values.sorted { lhs, rhs in
-            if let ld = lhs.expireDate, let rd = rhs.expireDate { return ld < rd }
-            if lhs.expireDate != nil { return true }
-            if rhs.expireDate != nil { return false }
+            if let ld = lhs.expireDate.flatMap(FilmStock.parseExpireDate),
+               let rd = rhs.expireDate.flatMap(FilmStock.parseExpireDate) {
+                if ld != rd { return ld < rd }
+            } else if lhs.expireDate != nil {
+                return true
+            } else if rhs.expireDate != nil {
+                return false
+            }
             if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
-            return !lhs.isFridge && rhs.isFridge
+            if lhs.isFridge != rhs.isFridge { return !lhs.isFridge }
+            let le = lhs.exposures ?? Int.max
+            let re = rhs.exposures ?? Int.max
+            if le != re { return le < re }
+            return lhs.id < rhs.id
         }
     }
     
     private var cameraSelectionSection: some View {
         Section("load.selectCamera") {
             NavigationLink {
-                CameraPickerView(selectedCamera: $selectedCamera, filmFormat: selectedFormat)
-                    .environmentObject(dataManager)
+                CameraPickerView(
+                    selectedCamera: $selectedCamera,
+                    filmFormat: selectedFormat,
+                    customFormatName: selectedFormatInfo?.customFormatName
+                )
+                .environmentObject(dataManager)
             } label: {
                 HStack {
                     Text("camera.name")
@@ -355,16 +368,32 @@ struct LoadFilmView: View {
             }
         }
     }
-                
+    
+    fileprivate static func cameraMatches(_ camera: Camera, format: FilmStock.FilmFormat, customFormatName: String?) -> Bool {
+        guard camera.format == format.rawValue else { return false }
+        if format == .other {
+            let camCustom = (camera.customFormatName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let filmCustom = (customFormatName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return camCustom.localizedCaseInsensitiveCompare(filmCustom) == .orderedSame
+        }
+        return true
+    }
     
     /// Picks a camera automatically when there is an unambiguous best match for the film format.
-    /// Only sets selectedCamera if it is currently empty or if exactly one camera matches the new format.
-    private func autoSelectCamera(for format: FilmStock.FilmFormat?) {
+    private func autoSelectCamera(for format: FilmStock.FilmFormat?, customFormatName: String? = nil) {
         let cameras = availableCameras
         guard !cameras.isEmpty else { return }
 
         if let format {
-            let matching = cameras.filter { $0.format == format.rawValue }
+            // If currently selected camera has a specific format that doesn't match the new format, clear it
+            if !selectedCamera.isEmpty,
+               let currentCam = cameras.first(where: { $0.name == selectedCamera }),
+               !currentCam.format.isEmpty,
+               !Self.cameraMatches(currentCam, format: format, customFormatName: customFormatName) {
+                selectedCamera = ""
+            }
+
+            let matching = cameras.filter { Self.cameraMatches($0, format: format, customFormatName: customFormatName) }
             if matching.count == 1 {
                 selectedCamera = matching[0].name
                 return
@@ -373,9 +402,12 @@ struct LoadFilmView: View {
             if matching.count > 1 { return }
         }
 
-        // No format set or no camera has a matching format: fall back to single-camera auto-select
+        // No format set or no camera has a matching format: fall back to single-camera auto-select if compatible
         if cameras.count == 1 {
-            selectedCamera = cameras[0].name
+            let onlyCam = cameras[0]
+            if onlyCam.format.isEmpty || (format != nil && Self.cameraMatches(onlyCam, format: format!, customFormatName: customFormatName)) {
+                selectedCamera = onlyCam.name
+            }
         }
     }
 
@@ -421,6 +453,7 @@ struct LoadFilmView: View {
 struct CameraPickerView: View {
     @Binding var selectedCamera: String
     var filmFormat: FilmStock.FilmFormat? = nil
+    var customFormatName: String? = nil
     @EnvironmentObject var dataManager: FilmStockDataManager
     @Environment(\.dismiss) var dismiss
     @State private var searchText: String = ""
@@ -448,7 +481,9 @@ struct CameraPickerView: View {
     /// Cameras whose stored format matches the film being loaded.
     private var matchingCameras: [Camera] {
         guard let filmFormat else { return [] }
-        return allCameras.filter { $0.format == filmFormat.rawValue }
+        return allCameras.filter {
+            LoadFilmView.cameraMatches($0, format: filmFormat, customFormatName: customFormatName)
+        }
     }
 
     /// All remaining cameras (no format set, or a different format).
@@ -590,7 +625,12 @@ struct CameraPickerView: View {
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
-                if !dataManager.deleteCamera(camera) {
+                let deletingName = camera.name
+                if dataManager.deleteCamera(camera) {
+                    if selectedCamera == deletingName {
+                        selectedCamera = ""
+                    }
+                } else {
                     showDeleteError = true
                 }
             } label: {

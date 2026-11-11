@@ -125,7 +125,7 @@ struct StatisticsView: View {
     }
     
     private var fridgeFilmsCount: Int {
-        inStockFilms.filter { $0.isFridge }.count
+        inStockFilms.filter { !$0.isFrozen && $0.isFridge }.count
     }
     
     private func rollsByType(_ type: FilmStock.FilmType) -> Int {

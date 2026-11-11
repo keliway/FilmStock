@@ -126,6 +126,18 @@ struct EditCameraView: View {
         _selectedCustomFormatName = State(initialValue: camera.customFormatName)
     }
 
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isDuplicate: Bool {
+        guard !trimmedName.isEmpty else { return false }
+        return dataManager.getAllCameras().contains {
+            $0.persistentModelID != camera.persistentModelID &&
+            $0.name.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame
+        }
+    }
+
     private var formatLabel: String {
         CameraFormatPickerView.displayName(
             format: selectedFormat,
@@ -138,6 +150,11 @@ struct EditCameraView: View {
             Section("camera.name") {
                 TextField("camera.name", text: $name)
                     .autocorrectionDisabled()
+                if isDuplicate {
+                    Text("camera.duplicateError")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
             }
 
             Section("camera.format") {
@@ -164,18 +181,17 @@ struct EditCameraView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("action.save") {
-                    let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !trimmed.isEmpty else { return }
+                    guard !trimmedName.isEmpty, !isDuplicate else { return }
                     dataManager.updateCamera(
                         camera,
-                        name: trimmed,
+                        name: trimmedName,
                         format: selectedFormat,
                         customFormatName: selectedCustomFormatName
                     )
                     dismiss()
                 }
                 .fontWeight(.semibold)
-                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(trimmedName.isEmpty || isDuplicate)
             }
         }
         .onAppear {
@@ -199,7 +215,6 @@ struct AddCameraSheet: View {
     @State private var name = ""
     @State private var selectedFormat = ""
     @State private var selectedCustomFormatName: String? = nil
-    @State private var showDuplicateError = false
 
     private var isDuplicate: Bool {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -279,6 +294,7 @@ struct AddCameraSheet: View {
 
 struct CameraFormatPickerView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
+    @ObservedObject private var settingsManager = SettingsManager.shared
     @Binding var selectedFormat: String
     @Binding var selectedCustomFormatName: String?
 
@@ -294,10 +310,18 @@ struct CameraFormatPickerView: View {
             FormatOption(id: "__none__", label: NSLocalizedString("camera.format.none", comment: ""),
                          format: "", customName: nil)
         ]
-        for f in FilmStock.FilmFormat.allCases {
+        for f in FilmStock.FilmFormat.allCases where f != .other {
             result.append(FormatOption(id: f.rawValue, label: f.displayName, format: f.rawValue, customName: nil))
         }
-        for customName in dataManager.getCustomFormatNames() {
+        var customNames = Set(dataManager.getCustomFormatNames())
+        for name in settingsManager.customFormats where !name.isEmpty {
+            customNames.insert(name)
+        }
+        if selectedFormat == FilmStock.FilmFormat.other.rawValue,
+           let currentCustom = selectedCustomFormatName, !currentCustom.isEmpty {
+            customNames.insert(currentCustom)
+        }
+        for customName in customNames.sorted() {
             result.append(FormatOption(id: "Other_\(customName)", label: customName,
                                        format: FilmStock.FilmFormat.other.rawValue, customName: customName))
         }

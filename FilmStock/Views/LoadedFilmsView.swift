@@ -8,16 +8,19 @@
 import SwiftUI
 import SwiftData
 
-// Helper function to parse custom image name
-// Returns (manufacturer, filename) tuple
-private func parseCustomImageName(_ imageName: String, defaultManufacturer: String) -> (String, String) {
-    if imageName.contains("/") {
-        let components = imageName.split(separator: "/", maxSplits: 1)
-        if components.count == 2 {
-            return (String(components[0]), String(components[1]))
-        }
-    }
-    return (defaultManufacturer, imageName)
+private enum LoadedFilmsFormatters {
+    static let exactDateTime: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .short
+        return f
+    }()
+
+    static let relativeDate: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.unitsStyle = .full
+        return f
+    }()
 }
 
 struct LoadedFilmsView: View {
@@ -124,14 +127,31 @@ struct LoadedFilmsView: View {
             case .manufacturer:
                 let m1 = (film1.film ?? film1.myFilm?.film)?.manufacturer?.name ?? ""
                 let m2 = (film2.film ?? film2.myFilm?.film)?.manufacturer?.name ?? ""
-                return ascending ? m1 < m2 : m1 > m2
+                let cmp = m1.localizedCaseInsensitiveCompare(m2)
+                if cmp == .orderedSame {
+                    let n1 = (film1.film ?? film1.myFilm?.film)?.name ?? ""
+                    let n2 = (film2.film ?? film2.myFilm?.film)?.name ?? ""
+                    let nameCmp = n1.localizedCaseInsensitiveCompare(n2)
+                    if nameCmp == .orderedSame {
+                        return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
+                    }
+                    return ascending ? (nameCmp == .orderedAscending) : (nameCmp == .orderedDescending)
+                }
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
             case .filmName:
                 let n1 = (film1.film ?? film1.myFilm?.film)?.name ?? ""
                 let n2 = (film2.film ?? film2.myFilm?.film)?.name ?? ""
-                return ascending ? n1 < n2 : n1 > n2
+                let cmp = n1.localizedCaseInsensitiveCompare(n2)
+                if cmp == .orderedSame {
+                    return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
+                }
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
             case .finishedDate:
                 return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
             case .iso:
+                if film1.effectiveISO == film2.effectiveISO {
+                    return ascending ? film1.finishedAt < film2.finishedAt : film1.finishedAt > film2.finishedAt
+                }
                 return ascending ? film1.effectiveISO < film2.effectiveISO : film1.effectiveISO > film2.effectiveISO
             }
         }
@@ -744,7 +764,7 @@ struct LoadedFilmDetailSheet: View {
     }
 
     private var daysOnCamera: String {
-        let days = Calendar.current.dateComponents([.day], from: loadedFilm.loadedAt, to: Date()).day ?? 0
+        let days = max(0, Calendar.current.dateComponents([.day], from: loadedFilm.loadedAt, to: Date()).day ?? 0)
         switch days {
         case 0:  return NSLocalizedString("loaded.detail.today", comment: "")
         case 1:  return String(format: NSLocalizedString("loaded.detail.day", comment: ""), days)
@@ -753,31 +773,20 @@ struct LoadedFilmDetailSheet: View {
     }
 
     private func exactDate(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateStyle = .long
-        f.timeStyle = .short
-        return f.string(from: date)
+        LoadedFilmsFormatters.exactDateTime.string(from: date)
     }
 
     private func loadImage() {
-        guard let film = resolvedFilm else { return }
-        let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
-        let mfr = film.manufacturer?.name ?? ""
-        switch src {
-        case .custom:
-            if let name = film.imageName {
-                let (m, filename) = parseCustomImageName(name, defaultManufacturer: mfr)
-                filmImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: m)
-            }
-        case .catalog:
-            if let name = film.imageName {
-                filmImage = ImageStorage.shared.loadCatalogImage(filename: name)
-            }
-        case .autoDetected:
-            filmImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: mfr)
-        case .none:
+        guard let film = resolvedFilm else {
             filmImage = nil
+            return
         }
+        filmImage = ImageStorage.shared.resolveFilmImage(
+            imageSourceRawValue: film.imageSource,
+            imageName: film.imageName,
+            filmName: film.name,
+            manufacturer: film.manufacturer?.name ?? ""
+        )
     }
 }
 
@@ -911,50 +920,20 @@ struct LoadedFilmRow: View {
     }
     
     private func formatDate(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter.localizedString(for: date, relativeTo: Date())
+        LoadedFilmsFormatters.relativeDate.localizedString(for: date, relativeTo: Date())
     }
     
     private func loadImage() {
-        guard let film = resolvedFilm else { return }
-        
-        let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
-        let manufacturerName = film.manufacturer?.name ?? ""
-        
-        switch imageSource {
-        case .custom:
-            // Load user-taken photo
-            if let customImageName = film.imageName {
-                // Handle manufacturer/filename format (for catalog-selected photos)
-                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: manufacturerName)
-                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
-                    filmImage = userImage
-                    return
-                }
-            }
-            
-        case .catalog:
-            // Load catalog image by exact filename
-            if let catalogImageName = film.imageName {
-                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
-                    filmImage = catalogImage
-                    return
-                }
-            }
-            
-        case .autoDetected:
-            // Auto-detect default image based on manufacturer + film name
-            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: manufacturerName) {
-                filmImage = defaultImage
-                return
-            }
-            
-        case .none:
-            // No image
+        guard let film = resolvedFilm else {
             filmImage = nil
             return
         }
+        filmImage = ImageStorage.shared.resolveFilmImage(
+            imageSourceRawValue: film.imageSource,
+            imageName: film.imageName,
+            filmName: film.name,
+            manufacturer: film.manufacturer?.name ?? ""
+        )
     }
     
     private func isSheetFormat(_ format: String) -> Bool {
@@ -968,44 +947,11 @@ struct LoadedFilmRow: View {
         guard let expireDates = loadedFilm.myFilm?.expireDateArray, !expireDates.isEmpty else {
             return false
         }
-        
         let today = Date()
-        let calendar = Calendar.current
-        
-        // Check if any expire date has passed
-        for dateString in expireDates {
-            if let expireDate = FilmStock.parseExpireDate(dateString) {
-                var compareDate = expireDate
-                
-                // For YYYY format, compare to end of year (Dec 31)
-                if dateString.count == 4 {
-                    let year = calendar.component(.year, from: expireDate)
-                    if let endOfYear = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
-                        compareDate = endOfYear
-                    }
-                } else if dateString.split(separator: "/").count == 2 {
-                    // For MM/YYYY format, compare to end of month
-                    let components = calendar.dateComponents([.year, .month], from: expireDate)
-                    if let year = components.year,
-                       let month = components.month,
-                       let daysInMonth = calendar.range(of: .day, in: .month, for: expireDate)?.count,
-                       let endOfMonth = calendar.date(from: DateComponents(year: year, month: month, day: daysInMonth)) {
-                        compareDate = endOfMonth
-                    }
-                }
-                // For MM/DD/YYYY format, compare directly (already set)
-                
-                // Compare dates (ignore time)
-                if let todayStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: today),
-                   let compareStart = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: compareDate) {
-                    if todayStart > compareStart {
-                        return true
-                    }
-                }
-            }
+        return expireDates.contains { dateString in
+            guard let parsed = FilmStock.parseExpireDate(dateString) else { return false }
+            return parsed < today
         }
-        
-        return false
     }
 }
 
@@ -1176,42 +1122,20 @@ struct FinishedFilmRow: View {
     }
     
     private func formatDate(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter.localizedString(for: date, relativeTo: Date())
+        LoadedFilmsFormatters.relativeDate.localizedString(for: date, relativeTo: Date())
     }
     
     private func loadImage() {
-        guard let film = resolvedFilm else { return }
-        
-        let imageSource = ImageSource(rawValue: film.imageSource) ?? .autoDetected
-        let manufacturerName = film.manufacturer?.name ?? ""
-        
-        switch imageSource {
-        case .custom:
-            if let customImageName = film.imageName {
-                let (manufacturer, filename) = parseCustomImageName(customImageName, defaultManufacturer: manufacturerName)
-                if let userImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: manufacturer) {
-                    filmImage = userImage
-                    return
-                }
-            }
-        case .catalog:
-            if let catalogImageName = film.imageName {
-                if let catalogImage = ImageStorage.shared.loadCatalogImage(filename: catalogImageName) {
-                    filmImage = catalogImage
-                    return
-                }
-            }
-        case .autoDetected:
-            if let defaultImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: manufacturerName) {
-                filmImage = defaultImage
-                return
-            }
-        case .none:
+        guard let film = resolvedFilm else {
             filmImage = nil
             return
         }
+        filmImage = ImageStorage.shared.resolveFilmImage(
+            imageSourceRawValue: film.imageSource,
+            imageName: film.imageName,
+            filmName: film.name,
+            manufacturer: film.manufacturer?.name ?? ""
+        )
     }
     
     private func isSheetFormat(_ format: String) -> Bool {
@@ -1495,28 +1419,19 @@ struct FinishedFilmDetailSheet: View {
     }
 
     private func exactDate(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateStyle = .long
-        f.timeStyle = .short
-        return f.string(from: date)
+        LoadedFilmsFormatters.exactDateTime.string(from: date)
     }
 
     private func loadImage() {
-        guard let film = resolvedFilm else { return }
-        let src = ImageSource(rawValue: film.imageSource) ?? .autoDetected
-        let mfr = film.manufacturer?.name ?? ""
-        switch src {
-        case .custom:
-            if let name = film.imageName {
-                let (m, filename) = parseCustomImageName(name, defaultManufacturer: mfr)
-                filmImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: m)
-            }
-        case .catalog:
-            if let name = film.imageName { filmImage = ImageStorage.shared.loadCatalogImage(filename: name) }
-        case .autoDetected:
-            filmImage = ImageStorage.shared.loadDefaultImage(filmName: film.name, manufacturer: mfr)
-        case .none:
+        guard let film = resolvedFilm else {
             filmImage = nil
+            return
         }
+        filmImage = ImageStorage.shared.resolveFilmImage(
+            imageSourceRawValue: film.imageSource,
+            imageName: film.imageName,
+            filmName: film.name,
+            manufacturer: film.manufacturer?.name ?? ""
+        )
     }
 }

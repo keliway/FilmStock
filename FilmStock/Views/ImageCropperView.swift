@@ -292,18 +292,22 @@ class CropViewController: UIViewController {
         cropRect.size.width = max(1, min(cropRect.width, imageSize.width - cropRect.origin.x))
         cropRect.size.height = max(1, min(cropRect.height, imageSize.height - cropRect.origin.y))
         
-        guard let cgImage = sourceImage.cgImage,
-              let croppedCGImage = cgImage.cropping(to: cropRect) else {
-            return sourceImage
-        }
-        
         let outputSize: CGFloat = 1000
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: outputSize, height: outputSize), false, 1.0)
-        UIImage(cgImage: croppedCGImage).draw(in: CGRect(x: 0, y: 0, width: outputSize, height: outputSize))
-        let result = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return result ?? sourceImage
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: outputSize, height: outputSize), format: format)
+        return renderer.image { _ in
+            let drawScaleX = outputSize / cropRect.width
+            let drawScaleY = outputSize / cropRect.height
+            let drawRect = CGRect(
+                x: -cropRect.origin.x * drawScaleX,
+                y: -cropRect.origin.y * drawScaleY,
+                width: imageSize.width * drawScaleX,
+                height: imageSize.height * drawScaleY
+            )
+            sourceImage.draw(in: drawRect)
+        }
     }
 }
 
