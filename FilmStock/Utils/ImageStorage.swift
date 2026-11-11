@@ -151,28 +151,6 @@ class ImageStorage {
         let hasImage: Bool
     }
     
-    // Helper function to get common image names for a manufacturer
-    // This is a fallback when we can't enumerate - we try common film names
-    private func getCommonImageNames(for manufacturer: String) -> [String] {
-        // This is a simplified list - in practice, you might want to load this from a JSON file
-        // or use a more comprehensive list based on your actual film catalog
-        let commonNames: [String: [String]] = [
-            "Agfa": ["agfaortho25", "apx400"],
-            "Ferrania": ["P30"],
-            "Foma": ["fomapan100", "fomapan200", "fomapan400", "Ortho400", "Pan100"],
-            "Fujifilm": ["fp100c45", "neopan1600", "neopan400", "npc160", "pro160s", "Pro400h", "Provia100F", "provia400f", "xtra400"],
-            "Harman": ["Phoenix200"],
-            "Ilford": ["Delta100", "Delta3200", "Delta400", "FP4", "HP5", "PanF", "XP2"],
-            "Kentmere": ["Pan400"],
-            "Kodak": ["bw400cn", "doublex", "ektachrome160t", "ektachrome64t", "ektapress100", "Ektar100", "Gold200", "Kodacolor200", "plusx", "portra100t", "Portra160", "portra160nc", "portra160vc", "Portra400", "portra400bw", "portra400nc", "Portra800", "techpan", "TMAX100", "tmax400", "trix320", "TriX400", "Vericolor160", "Vision200T", "Vision250D"],
-            "NoColor": ["no10"],
-            "Rollei": ["rpx100", "rpx25", "rpx400", "Superpan200"]
-        ]
-        
-        return commonNames[manufacturer] ?? []
-    }
-    
-    
     /// Save an image for a specific film
     /// - Parameters:
     ///   - image: The image to save
@@ -291,20 +269,18 @@ class ImageStorage {
     ///   - manufacturer: The manufacturer name (user input, can be any case)
     /// - Returns: The UIImage if found, nil otherwise
     func loadDefaultImage(filmName: String, manufacturer: String) -> UIImage? {
-        // Load manufacturers.json to get film name variations
-        guard let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-              let manufacturersData = try? Data(contentsOf: manufacturersURL),
-              let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) else {
+        let manufacturers = loadManufacturersData()
+        guard !manufacturers.isEmpty else {
             return loadDefaultImageDirect(filmName: filmName, manufacturer: manufacturer)
         }
         
         // Find the manufacturer in the JSON (case-insensitive)
-        guard let manufacturerInfo = manufacturersWrapper.manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
+        guard let manufacturerInfo = manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
             return loadDefaultImageDirect(filmName: filmName, manufacturer: manufacturer)
         }
         
         // Normalize the user's film name for comparison (remove spaces/special characters, lowercase)
-        let normalizedUserInput = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+        let normalizedUserInput = normalizeFilmToken(filmName)
         
         // Try to find a matching film by checking all aliases
         for filmInfo in manufacturerInfo.films {
@@ -313,8 +289,7 @@ class ImageStorage {
             let allNames = [filmInfo.filename] + filmInfo.aliases
             
             for alias in allNames {
-                // Normalize alias (remove spaces/special characters, lowercase)
-                let normalizedAlias = alias.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+                let normalizedAlias = normalizeFilmToken(alias)
                 
                 // Check if user input matches this alias
                 if normalizedUserInput == normalizedAlias {
@@ -395,27 +370,20 @@ class ImageStorage {
     ///   - manufacturer: The manufacturer name entered by the user
     /// - Returns: FilmMetadata containing speed, type, and image availability
     func detectFilmMetadata(filmName: String, manufacturer: String) -> FilmMetadata {
-        // Load manufacturers.json to get film information
-        guard let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-              let manufacturersData = try? Data(contentsOf: manufacturersURL),
-              let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) else {
-            return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
-        }
-        
-        // Find the manufacturer in the JSON (case-insensitive)
-        guard let manufacturerInfo = manufacturersWrapper.manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
+        let manufacturers = loadManufacturersData()
+        guard let manufacturerInfo = manufacturers.first(where: { $0.name.lowercased() == manufacturer.lowercased() }) else {
             return FilmMetadata(filmSpeed: nil, type: nil, hasImage: false)
         }
         
         // Normalize the user's film name for comparison
-        let normalizedUserInput = filmName.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+        let normalizedUserInput = normalizeFilmToken(filmName)
         
         // Try to find a matching film by checking all aliases
         for filmInfo in manufacturerInfo.films {
             let allNames = [filmInfo.filename] + filmInfo.aliases
             
             for alias in allNames {
-                let normalizedAlias = alias.replacingOccurrences(of: "[^a-zA-Z0-9]", with: "", options: .regularExpression).lowercased()
+                let normalizedAlias = normalizeFilmToken(alias)
                 
                 if normalizedUserInput == normalizedAlias {
                     // Found a match! Return the metadata
@@ -785,17 +753,19 @@ class ImageStorage {
         return imagesByManufacturer
     }
     
-    /// Get all default images grouped by manufacturer
-    /// Images are now in format: manufacturer_filmname.png in a single folder
-    /// - Returns: Dictionary mapping manufacturer names to arrays of (imageName, image) tuples
-    /// Returns raw manufacturer + film data from manufacturers.json for search/metadata use.
+    /// Returns raw manufacturer + film data from manufacturers.json for search/metadata use (cached in memory).
     func loadManufacturersData() -> [ManufacturerInfo] {
-        guard let url = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let wrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: data) else {
-            return []
+        struct Cache {
+            static let manufacturers: [ManufacturerInfo] = {
+                guard let url = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+                      let data = try? Data(contentsOf: url),
+                      let wrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: data) else {
+                    return []
+                }
+                return wrapper.manufacturers
+            }()
         }
-        return wrapper.manufacturers
+        return Cache.manufacturers
     }
 
     func getAllDefaultImages() -> [String: [(imageName: String, image: UIImage)]] {
@@ -803,12 +773,8 @@ class ImageStorage {
         
         // Load manufacturers.json to get proper manufacturer name capitalization
         var manufacturerNameMap: [String: String] = [:]
-        if let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-           let manufacturersData = try? Data(contentsOf: manufacturersURL),
-           let manufacturersWrapper = try? JSONDecoder().decode(ManufacturersDataWrapper.self, from: manufacturersData) {
-            for manufacturerInfo in manufacturersWrapper.manufacturers {
-                manufacturerNameMap[manufacturerInfo.name.lowercased()] = manufacturerInfo.name
-            }
+        for manufacturerInfo in loadManufacturersData() {
+            manufacturerNameMap[manufacturerInfo.name.lowercased()] = manufacturerInfo.name
         }
         
         // Get all PNG files from bundle root
@@ -899,4 +865,3 @@ class ImageStorage {
         return photos
     }
 }
-

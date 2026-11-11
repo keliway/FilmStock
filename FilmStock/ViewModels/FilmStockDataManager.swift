@@ -20,6 +20,7 @@ class FilmStockDataManager: ObservableObject {
     @Published var isMigrationComplete = false
     
     private var modelContext: ModelContext?
+    private static let iso8601Formatter = ISO8601DateFormatter()
     
     func setModelContext(_ context: ModelContext) {
         self.modelContext = context
@@ -68,6 +69,7 @@ class FilmStockDataManager: ObservableObject {
         }
         
         var created = 0
+        let now = Self.iso8601Formatter.string(from: Date())
         for myFilm in allMyFilms {
             guard Self.rollFormats.contains(myFilm.format), myFilm.quantity > 1 else {
                 continue
@@ -77,7 +79,6 @@ class FilmStockDataManager: ObservableObject {
             let dates = myFilm.expireDateArray ?? []
             let frozen = myFilm.isFrozen ?? false
             let fridge = frozen ? false : (myFilm.isFridge ?? false)
-            let now = ISO8601DateFormatter().string(from: Date())
             
             for i in 0..<originalQty {
                 let dateForRoll: String?
@@ -274,27 +275,15 @@ class FilmStockDataManager: ObservableObject {
             return // Already loaded
         }
         
-        // Load from manufacturers.json
-        var bundleData: Data?
-        if let bundleURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json") {
-            bundleData = try? Data(contentsOf: bundleURL)
+        let manufacturers = ImageStorage.shared.loadManufacturersData()
+        guard !manufacturers.isEmpty else { return }
+        
+        for manufacturerInfo in manufacturers {
+            let manufacturer = Manufacturer(name: manufacturerInfo.name, isCustom: false)
+            context.insert(manufacturer)
         }
         
-        guard let data = bundleData else { return }
-        
-        do {
-            let decoder = JSONDecoder()
-            let wrapper = try decoder.decode(ImageStorage.ManufacturersDataWrapper.self, from: data)
-            
-            for manufacturerInfo in wrapper.manufacturers {
-                let manufacturer = Manufacturer(name: manufacturerInfo.name, isCustom: false)
-                context.insert(manufacturer)
-            }
-            
-            try context.save()
-        } catch {
-            // Failed to load manufacturers
-        }
+        try? context.save()
     }
     
     func loadFilmStocks() {
@@ -421,9 +410,12 @@ class FilmStockDataManager: ObservableObject {
                     if let newComments = filmStock.comments, !newComments.isEmpty {
                         existingMyFilm.comments = newComments
                     }
+                    if let exposures = filmStock.exposures {
+                        existingMyFilm.exposures = exposures
+                    }
                     existingMyFilm.isFrozen = filmStock.isFrozen
                     existingMyFilm.isFridge = effectiveFridge
-                    existingMyFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
+                    existingMyFilm.updatedAt = Self.iso8601Formatter.string(from: Date())
                 } else {
                     // New format entry for sheets
                     let myFilm = MyFilm(
@@ -435,6 +427,7 @@ class FilmStockDataManager: ObservableObject {
                         comments: filmStock.comments,
                         isFrozen: filmStock.isFrozen,
                         isFridge: effectiveFridge,
+                        exposures: filmStock.exposures,
                         createdAt: filmStock.createdAt,
                         updatedAt: filmStock.updatedAt,
                         film: nil
@@ -469,6 +462,7 @@ class FilmStockDataManager: ObservableObject {
                         comments: filmStock.comments,
                         isFrozen: filmStock.isFrozen,
                         isFridge: effectiveFridge,
+                        exposures: filmStock.exposures,
                         createdAt: filmStock.createdAt,
                         updatedAt: filmStock.updatedAt,
                         film: nil
@@ -504,6 +498,7 @@ class FilmStockDataManager: ObservableObject {
                     comments: filmStock.comments,
                     isFrozen: filmStock.isFrozen,
                     isFridge: effectiveFridge,
+                    exposures: filmStock.exposures,
                     createdAt: filmStock.createdAt,
                     updatedAt: filmStock.updatedAt,
                     film: nil
@@ -520,7 +515,7 @@ class FilmStockDataManager: ObservableObject {
     
     private func createIndividualRolls(filmStock: FilmStock, film: Film, context: ModelContext) {
         let dates = filmStock.expireDate ?? []
-        let now = ISO8601DateFormatter().string(from: Date())
+        let now = Self.iso8601Formatter.string(from: Date())
         let effectiveFridge = filmStock.isFrozen ? false : filmStock.isFridge
         
         for i in 0..<filmStock.quantity {
@@ -607,7 +602,7 @@ class FilmStockDataManager: ObservableObject {
         loadFilmStocks()
     }
 
-    func updateFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) {
+    func updateFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String? = nil) {
         guard let context = modelContext else { return }
         
         let descriptor = FetchDescriptor<MyFilm>(
@@ -640,9 +635,11 @@ class FilmStockDataManager: ObservableObject {
             film.manufacturer = manufacturer
         }
         
-        // Update imageName and imageSource (custom photos are kept, user can delete manually)
-        film.imageName = imageName
-        film.imageSource = imageSource
+        // Only update imageName and imageSource if explicitly provided
+        if let imageSource {
+            film.imageName = imageName
+            film.imageSource = imageSource
+        }
         
         // Update MyFilm
         myFilm.quantity = filmStock.quantity
@@ -651,7 +648,7 @@ class FilmStockDataManager: ObservableObject {
         myFilm.isFrozen = filmStock.isFrozen
         myFilm.isFridge = filmStock.isFrozen ? false : filmStock.isFridge
         myFilm.exposures = filmStock.exposures
-        myFilm.updatedAt = ISO8601DateFormatter().string(from: Date())
+        myFilm.updatedAt = Self.iso8601Formatter.string(from: Date())
         
         // If format changed, we need to update it
         if myFilm.format != filmStock.format.rawValue {
@@ -698,10 +695,8 @@ class FilmStockDataManager: ObservableObject {
         }
         
         // Collect MyFilm IDs and Film PIDs referenced by LoadedFilm or FinishedFilm so history is never stripped
-        let referencedMyFilmIds = Set(
-            allLoaded.compactMap { $0.myFilm?.id } +
-            allFinished.compactMap { $0.myFilm?.id }
-        )
+        let loadedMyFilmIds = Set(allLoaded.compactMap { $0.myFilm?.id })
+        let referencedMyFilmIds = loadedMyFilmIds.union(allFinished.compactMap { $0.myFilm?.id })
         let referencedFilmPIDs = Set(
             allLoaded.compactMap { $0.film?.persistentModelID } +
             allFinished.compactMap { $0.film?.persistentModelID } +
@@ -710,7 +705,7 @@ class FilmStockDataManager: ObservableObject {
         )
         
         var filmsToCheck: Set<PersistentIdentifier> = []
-        var deletedMyFilmIds: Set<String> = []
+        var detachedOrDeletedMyFilmIds: Set<String> = []
         
         // Find matching MyFilms and either preserve them (if referenced by loaded/finished history) or delete them
         for filmStock in filmStocks {
@@ -725,12 +720,20 @@ class FilmStockDataManager: ObservableObject {
             for myFilm in matchingMyFilms {
                 if let film = myFilm.film {
                     filmsToCheck.insert(film.persistentModelID)
+                    for finished in allFinished where finished.myFilm?.id == myFilm.id && finished.film == nil {
+                        finished.film = film
+                    }
                 }
                 if referencedMyFilmIds.contains(myFilm.id) {
                     // Preserve the backing MyFilm record (exposures, expiry, frozen/fridge, comments) for history
                     myFilm.quantity = 0
+                    if !loadedMyFilmIds.contains(myFilm.id) {
+                        // Detach from Film's active inventory so the deleted film no longer appears in collection
+                        myFilm.film = nil
+                        detachedOrDeletedMyFilmIds.insert(myFilm.id)
+                    }
                 } else {
-                    deletedMyFilmIds.insert(myFilm.id)
+                    detachedOrDeletedMyFilmIds.insert(myFilm.id)
                     context.delete(myFilm)
                 }
             }
@@ -741,7 +744,7 @@ class FilmStockDataManager: ObservableObject {
             if let film = allFilms.first(where: { $0.persistentModelID == filmId }) {
                 let remainingMyFilms = allMyFilms.filter { myFilm in
                     guard let myFilmFilm = myFilm.film else { return false }
-                    return myFilmFilm.persistentModelID == filmId && !deletedMyFilmIds.contains(myFilm.id)
+                    return myFilmFilm.persistentModelID == filmId && !detachedOrDeletedMyFilmIds.contains(myFilm.id)
                 }
                 
                 if remainingMyFilms.isEmpty && !referencedFilmPIDs.contains(filmId) {
@@ -769,10 +772,8 @@ class FilmStockDataManager: ObservableObject {
             return
         }
 
-        let referencedMyFilmIds = Set(
-            allLoaded.compactMap { $0.myFilm?.id } +
-            allFinished.compactMap { $0.myFilm?.id }
-        )
+        let loadedMyFilmIds = Set(allLoaded.compactMap { $0.myFilm?.id })
+        let referencedMyFilmIds = loadedMyFilmIds.union(allFinished.compactMap { $0.myFilm?.id })
         let referencedFilmPIDs = Set(
             allLoaded.compactMap { $0.film?.persistentModelID } +
             allFinished.compactMap { $0.film?.persistentModelID } +
@@ -782,14 +783,23 @@ class FilmStockDataManager: ObservableObject {
 
         let idSet = Set(ids)
         var filmsToCheck: Set<PersistentIdentifier> = []
-        var deletedMyFilmIds: Set<String> = []
+        var detachedOrDeletedMyFilmIds: Set<String> = []
 
         for myFilm in allMyFilms where idSet.contains(myFilm.id) {
-            if let film = myFilm.film { filmsToCheck.insert(film.persistentModelID) }
+            if let film = myFilm.film {
+                filmsToCheck.insert(film.persistentModelID)
+                for finished in allFinished where finished.myFilm?.id == myFilm.id && finished.film == nil {
+                    finished.film = film
+                }
+            }
             if referencedMyFilmIds.contains(myFilm.id) {
                 myFilm.quantity = 0
+                if !loadedMyFilmIds.contains(myFilm.id) {
+                    myFilm.film = nil
+                    detachedOrDeletedMyFilmIds.insert(myFilm.id)
+                }
             } else {
-                deletedMyFilmIds.insert(myFilm.id)
+                detachedOrDeletedMyFilmIds.insert(myFilm.id)
                 context.delete(myFilm)
             }
         }
@@ -799,7 +809,7 @@ class FilmStockDataManager: ObservableObject {
             if let film = allFilms.first(where: { $0.persistentModelID == filmPID }) {
                 let remaining = allMyFilms.filter {
                     guard let f = $0.film else { return false }
-                    return f.persistentModelID == filmPID && !deletedMyFilmIds.contains($0.id)
+                    return f.persistentModelID == filmPID && !detachedOrDeletedMyFilmIds.contains($0.id)
                 }
                 if remaining.isEmpty && !referencedFilmPIDs.contains(filmPID) {
                     context.delete(film)
@@ -819,7 +829,7 @@ class FilmStockDataManager: ObservableObject {
         guard let allMyFilms = try? context.fetch(descriptor) else { return }
 
         let idSet = Set(ids)
-        let now = ISO8601DateFormatter().string(from: Date())
+        let now = Self.iso8601Formatter.string(from: Date())
         let effectiveFridge = isFrozen ? false : isFridge
         for myFilm in allMyFilms where idSet.contains(myFilm.id) {
             myFilm.expireDate = expireDate
@@ -843,7 +853,7 @@ class FilmStockDataManager: ObservableObject {
         guard let ref = try? context.fetch(descriptor).first,
               let film = ref.film else { return false }
 
-        let now = ISO8601DateFormatter().string(from: Date())
+        let now = Self.iso8601Formatter.string(from: Date())
         let effectiveFridge = isFrozen ? false : isFridge
         for _ in 0..<count {
             let roll = MyFilm(
@@ -892,7 +902,7 @@ class FilmStockDataManager: ObservableObject {
             let key = "\(film.name)_\(manufacturer.name)_\(film.type)_\(film.filmSpeed)"
             
             if groups[key] == nil {
-                let firstMyFilmId = film.myFilms?.first?.id ?? UUID().uuidString
+                let firstMyFilmId = myFilms.first?.id ?? UUID().uuidString
                 groups[key] = GroupedFilm(
                     id: firstMyFilmId,
                     name: film.name,
@@ -906,8 +916,10 @@ class FilmStockDataManager: ObservableObject {
             }
             
             // For roll formats: aggregate individual MyFilm entries per format into one FormatInfo
-            // For sheet formats: keep as-is (one FormatInfo per MyFilm)
+            // For sheet/other formats: keep active (quantity > 0) entries per line, or emit a single empty FormatInfo if all rows for that format have quantity == 0
             var rollBuckets: [String: [MyFilm]] = [:] // keyed by format rawValue
+            var emptySheetBuckets: [String: MyFilm] = [:]
+            var activeSheetFormatKeys: Set<String> = []
             
             for myFilm in myFilms {
                 guard let format = FilmStock.FilmFormat(rawValue: myFilm.format) else { continue }
@@ -916,25 +928,49 @@ class FilmStockDataManager: ObservableObject {
                     let bucketKey = myFilm.format
                     rollBuckets[bucketKey, default: []].append(myFilm)
                 } else {
-                    // Sheet/other format: one FormatInfo per MyFilm (unchanged behavior)
-                    let frozen = myFilm.isFrozen ?? false
-                    let fridge = frozen ? false : (myFilm.isFridge ?? false)
-                    groups[key]?.formats.append(GroupedFilm.FormatInfo(
-                        id: myFilm.id,
-                        format: format,
-                        customFormatName: myFilm.customFormatName,
-                        quantity: myFilm.quantity,
-                        expireDate: myFilm.expireDateArray,
-                        isFrozen: frozen,
-                        isFridge: fridge,
-                        filmId: myFilm.id,
-                        comments: myFilm.comments,
-                        rollIds: [myFilm.id],
-                        frozenCount: frozen ? myFilm.quantity : 0,
-                        fridgeCount: fridge ? myFilm.quantity : 0,
-                        expiredCount: Self.countExpiredEntries(myFilm.expireDateArray, today: today) > 0 ? myFilm.quantity : 0
-                    ))
+                    let sheetKey = "\(myFilm.format)|\(myFilm.customFormatName ?? "")"
+                    if myFilm.quantity > 0 {
+                        activeSheetFormatKeys.insert(sheetKey)
+                        let frozen = myFilm.isFrozen ?? false
+                        let fridge = frozen ? false : (myFilm.isFridge ?? false)
+                        groups[key]?.formats.append(GroupedFilm.FormatInfo(
+                            id: myFilm.id,
+                            format: format,
+                            customFormatName: myFilm.customFormatName,
+                            quantity: myFilm.quantity,
+                            expireDate: myFilm.expireDateArray,
+                            isFrozen: frozen,
+                            isFridge: fridge,
+                            filmId: myFilm.id,
+                            comments: myFilm.comments,
+                            rollIds: [myFilm.id],
+                            frozenCount: frozen ? myFilm.quantity : 0,
+                            fridgeCount: fridge ? myFilm.quantity : 0,
+                            expiredCount: Self.countExpiredEntries(myFilm.expireDateArray, today: today) > 0 ? myFilm.quantity : 0
+                        ))
+                    } else if emptySheetBuckets[sheetKey] == nil {
+                        emptySheetBuckets[sheetKey] = myFilm
+                    }
                 }
+            }
+            
+            for (sheetKey, emptySheet) in emptySheetBuckets where !activeSheetFormatKeys.contains(sheetKey) {
+                guard let format = FilmStock.FilmFormat(rawValue: emptySheet.format) else { continue }
+                groups[key]?.formats.append(GroupedFilm.FormatInfo(
+                    id: emptySheet.id,
+                    format: format,
+                    customFormatName: emptySheet.customFormatName,
+                    quantity: 0,
+                    expireDate: nil,
+                    isFrozen: false,
+                    isFridge: false,
+                    filmId: emptySheet.id,
+                    comments: nil,
+                    rollIds: [],
+                    frozenCount: 0,
+                    fridgeCount: 0,
+                    expiredCount: 0
+                ))
             }
             
             // Aggregate each roll bucket into a single FormatInfo
@@ -1416,6 +1452,9 @@ class FilmStockDataManager: ObservableObject {
         
         // Restore the quantity to MyFilm (since the film wasn't used)
         if let myFilm = loadedFilm.myFilm {
+            if myFilm.film == nil {
+                myFilm.film = loadedFilm.film
+            }
             if let format = FilmStock.FilmFormat(rawValue: loadedFilm.format), format.isRollFormat {
                 myFilm.quantity = 1
             } else {
@@ -1450,8 +1489,12 @@ class FilmStockDataManager: ObservableObject {
         )
         
         context.insert(loadedFilm)
-        loadedFilm.film = finishedFilm.film ?? finishedFilm.myFilm?.film
+        let resolvedFilm = finishedFilm.film ?? finishedFilm.myFilm?.film
+        loadedFilm.film = resolvedFilm
         loadedFilm.myFilm = finishedFilm.myFilm
+        if let myFilm = loadedFilm.myFilm, myFilm.film == nil {
+            myFilm.film = resolvedFilm
+        }
         if let camName = finishedFilm.cameraName, !camName.isEmpty {
             let camDesc = FetchDescriptor<Camera>(predicate: #Predicate { $0.name == camName })
             loadedFilm.camera = try? context.fetch(camDesc).first
@@ -1668,6 +1711,8 @@ class FilmStockDataManager: ObservableObject {
                 context: context
             )
 
+            // Keep backingMyFilm.film = nil for finished history so imported finished films do not
+            // create empty 0-quantity cards in the user's active inventory if they no longer own the film.
             let backingMyFilm = MyFilm(
                 id: UUID().uuidString,
                 format: format.rawValue,
@@ -1683,7 +1728,6 @@ class FilmStockDataManager: ObservableObject {
                 film: nil
             )
             context.insert(backingMyFilm)
-            backingMyFilm.film = film
 
             let isoToStore: Int? = (item.shotAtISO != nil && item.shotAtISO != item.iso) ? item.shotAtISO : nil
             let qty = max(1, item.quantity)
@@ -1738,8 +1782,4 @@ class FilmStockDataManager: ObservableObject {
         try? context.save()
         loadFilmStocks()
     }
-}
-
-private struct ManufacturersDataWrapper: Codable {
-    let manufacturers: [String]
 }

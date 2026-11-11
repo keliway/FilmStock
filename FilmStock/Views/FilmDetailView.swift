@@ -436,6 +436,7 @@ struct FilmDetailView: View {
 
     private func loadRelatedFilms() {
         relatedFilms = dataManager.filmStocks.filter { film in
+            film.quantity > 0 &&
             film.name == displayGroupedFilm.name &&
             film.manufacturer == displayGroupedFilm.manufacturer &&
             film.type == displayGroupedFilm.type &&

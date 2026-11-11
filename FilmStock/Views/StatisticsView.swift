@@ -111,38 +111,12 @@ struct StatisticsView: View {
     
     private var expiredFilmsCount: Int {
         let today = Date()
-        let calendar = Calendar.current
-        
         return inStockFilms.filter { film in
             guard let expireDates = film.expireDate, !expireDates.isEmpty else { return false }
-            
-            for dateString in expireDates {
-                if let expireDate = FilmStock.parseExpireDate(dateString) {
-                    var compareDate = expireDate
-                    
-                    // For YYYY format, compare to end of year
-                    if dateString.count == 4 {
-                        let year = calendar.component(.year, from: expireDate)
-                        if let endOfYear = calendar.date(from: DateComponents(year: year, month: 12, day: 31)) {
-                            compareDate = endOfYear
-                        }
-                    } else if dateString.split(separator: "/").count == 2 {
-                        // For MM/YYYY format, compare to end of month
-                        let components = calendar.dateComponents([.year, .month], from: expireDate)
-                        if let year = components.year,
-                           let month = components.month,
-                           let daysInMonth = calendar.range(of: .day, in: .month, for: expireDate)?.count,
-                           let endOfMonth = calendar.date(from: DateComponents(year: year, month: month, day: daysInMonth)) {
-                            compareDate = endOfMonth
-                        }
-                    }
-                    
-                    if today > compareDate {
-                        return true
-                    }
-                }
+            return expireDates.contains { dateString in
+                guard let expireDate = FilmStock.parseExpireDate(dateString) else { return false }
+                return expireDate < today
             }
-            return false
         }.count
     }
     
