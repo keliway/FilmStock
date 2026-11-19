@@ -510,14 +510,8 @@ struct AddFilmView: View {
         if let speed, isoValues.contains(speed) {
             filmSpeed = speed
         }
-        if let typeStr = type {
-            switch typeStr {
-            case "BW": self.type = .bw
-            case "Color": self.type = .color
-            case "Slide": self.type = .slide
-            case "Instant": self.type = .instant
-            default: break
-            }
+        if let typeStr = type, let scannedType = FilmStock.FilmType(rawValue: typeStr) {
+            self.type = scannedType
         }
     }
 
@@ -766,6 +760,13 @@ struct RollBatchSheet: View {
         FilmStock.FilmFormat.allCases.first { $0.displayName == str } ?? .other
     }
 
+    /// Custom format label to store for a picker selection. The built-in "Other" entry has no custom
+    /// name (it displays as "Other"); only user-defined formats carry their own label.
+    private func customName(for selection: String, format: FilmStock.FilmFormat) -> String? {
+        guard format == .other, selection != FilmStock.FilmFormat.other.displayName else { return nil }
+        return selection
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -779,7 +780,7 @@ struct RollBatchSheet: View {
                     .onChange(of: selectedFormatString) { _, newValue in
                         let newFormat = formatFromString(newValue)
                         format = newFormat
-                        customFormatName = newFormat == .other ? newValue : nil
+                        customFormatName = customName(for: newValue, format: newFormat)
                         // Reset exposures to the new format's default
                         exposures = newFormat.defaultExposures
                         customExposures = ""
@@ -920,7 +921,7 @@ struct RollBatchSheet: View {
     }
 
     private func commit() {
-        let savedCustomFormatName: String? = format == .other ? selectedFormatString : nil
+        let savedCustomFormatName = customName(for: selectedFormatString, format: format)
         let saved = RollBatch(
             id: existingBatch?.id ?? UUID(),
             format: format,
@@ -1102,12 +1103,6 @@ struct DXFilmPickerView: View {
     }
 
     private func typeDisplay(_ type: String) -> String {
-        switch type {
-        case "BW": return "B&W"
-        case "Color": return "Color"
-        case "Slide": return "Slide"
-        case "Instant": return "Instant"
-        default: return type
-        }
+        FilmStock.FilmType(rawValue: type)?.displayName ?? type
     }
 }

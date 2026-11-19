@@ -991,6 +991,8 @@ class FilmStockDataManager: ObservableObject {
         let manufacturer = Manufacturer(name: name, isCustom: true)
         context.insert(manufacturer)
         try? context.save()
+        // Publish a change so manufacturer lists re-render with the new manufacturer
+        loadFilmStocks()
         return manufacturer
     }
     
@@ -1015,6 +1017,8 @@ class FilmStockDataManager: ObservableObject {
         
         context.delete(manufacturer)
         try? context.save()
+        // Publish a change so manufacturer lists re-render without the deleted manufacturer
+        loadFilmStocks()
         return true
     }
     
