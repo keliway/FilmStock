@@ -367,150 +367,86 @@ class FilmStockDataManager: ObservableObject {
         return "\(format)\u{1F}\(custom)\u{1F}\(isFrozen)\u{1F}\(isFridge)\u{1F}\(normalized)"
     }
     
+    /// Adds inventory for a film stock, reusing an existing `Film` entity when name, manufacturer,
+    /// type and speed all match. Roll formats get one `MyFilm` per roll; sheet/other formats merge
+    /// into a matching inventory line when possible.
+    /// - Returns: `true` if the film already existed in the database, `false` if it was newly created.
+    @discardableResult
     func addFilmStock(_ filmStock: FilmStock, imageName: String? = nil, imageSource: String = ImageSource.autoDetected.rawValue) -> Bool {
         guard let context = modelContext else { return false }
         
         let manufacturer = findOrCreateManufacturer(name: filmStock.manufacturer, context: context)
         
-        let descriptor = FetchDescriptor<Film>()
-        let allFilms = (try? context.fetch(descriptor)) ?? []
-        
-        let isRoll = filmStock.format.isRollFormat
-        let effectiveFridge = filmStock.isFrozen ? false : filmStock.isFridge
-        
-        if let existingFilm = allFilms.first(where: { film in
+        let allFilms = (try? context.fetch(FetchDescriptor<Film>())) ?? []
+        let filmAlreadyExisted = allFilms.contains { film in
             film.name == filmStock.name &&
-            film.manufacturer?.name == filmStock.manufacturer
-        }) {
-            if existingFilm.filmSpeed == filmStock.filmSpeed &&
-               existingFilm.type == filmStock.type.rawValue {
-                if let imageName = imageName {
-                    existingFilm.imageName = imageName
-                    existingFilm.imageSource = imageSource
-                }
-                
-                if isRoll {
-                    // Roll format: create N individual MyFilm entries (one per roll)
-                    createIndividualRolls(filmStock: filmStock, film: existingFilm, context: context)
-                } else if let existingMyFilm = matchingSheetMyFilm(for: filmStock, in: existingFilm) {
-                    // Sheet / other non-roll: merge only when format, custom name, frozen, fridge, and expiry set match
-                    existingMyFilm.quantity += filmStock.quantity
-                    existingMyFilm.customFormatName = filmStock.customFormatName
-                    
-                    var existingDates = existingMyFilm.expireDateArray ?? []
-                    if let newDates = filmStock.expireDate {
-                        for newDate in newDates where !newDate.isEmpty {
-                            if !existingDates.contains(newDate) {
-                                existingDates.append(newDate)
-                            }
-                        }
-                    }
-                    existingMyFilm.expireDateArray = existingDates.isEmpty ? nil : existingDates
-                    
-                    if let newComments = filmStock.comments, !newComments.isEmpty {
-                        existingMyFilm.comments = newComments
-                    }
-                    if let exposures = filmStock.exposures {
-                        existingMyFilm.exposures = exposures
-                    }
-                    existingMyFilm.isFrozen = filmStock.isFrozen
-                    existingMyFilm.isFridge = effectiveFridge
-                    existingMyFilm.updatedAt = Self.iso8601Formatter.string(from: Date())
-                } else {
-                    // New format entry for sheets
-                    let myFilm = MyFilm(
-                        id: filmStock.id,
-                        format: filmStock.format.rawValue,
-                        customFormatName: filmStock.customFormatName,
-                        quantity: filmStock.quantity,
-                        expireDate: filmStock.expireDate,
-                        comments: filmStock.comments,
-                        isFrozen: filmStock.isFrozen,
-                        isFridge: effectiveFridge,
-                        exposures: filmStock.exposures,
-                        createdAt: filmStock.createdAt,
-                        updatedAt: filmStock.updatedAt,
-                        film: nil
-                    )
-                    context.insert(myFilm)
-                    myFilm.film = existingFilm
-                }
-                
-                try? context.save()
-                loadFilmStocks()
-                return true
-            } else {
-                let film = findOrCreateFilm(
-                    name: filmStock.name,
-                    manufacturer: manufacturer,
-                    type: filmStock.type.rawValue,
-                    filmSpeed: filmStock.filmSpeed,
-                    imageName: imageName,
-                    imageSource: imageSource,
-                    context: context
-                )
-                
-                if isRoll {
-                    createIndividualRolls(filmStock: filmStock, film: film, context: context)
-                } else {
-                    let myFilm = MyFilm(
-                        id: filmStock.id,
-                        format: filmStock.format.rawValue,
-                        customFormatName: filmStock.customFormatName,
-                        quantity: filmStock.quantity,
-                        expireDate: filmStock.expireDate,
-                        comments: filmStock.comments,
-                        isFrozen: filmStock.isFrozen,
-                        isFridge: effectiveFridge,
-                        exposures: filmStock.exposures,
-                        createdAt: filmStock.createdAt,
-                        updatedAt: filmStock.updatedAt,
-                        film: nil
-                    )
-                    context.insert(myFilm)
-                    myFilm.film = film
-                }
-                
-                try? context.save()
-                loadFilmStocks()
-                return false
-            }
-        } else {
-            let film = findOrCreateFilm(
-                name: filmStock.name,
-                manufacturer: manufacturer,
-                type: filmStock.type.rawValue,
-                filmSpeed: filmStock.filmSpeed,
-                imageName: imageName,
-                imageSource: imageSource,
-                context: context
-            )
-            
-            if isRoll {
-                createIndividualRolls(filmStock: filmStock, film: film, context: context)
-            } else {
-                let myFilm = MyFilm(
-                    id: filmStock.id,
-                    format: filmStock.format.rawValue,
-                    customFormatName: filmStock.customFormatName,
-                    quantity: filmStock.quantity,
-                    expireDate: filmStock.expireDate,
-                    comments: filmStock.comments,
-                    isFrozen: filmStock.isFrozen,
-                    isFridge: effectiveFridge,
-                    exposures: filmStock.exposures,
-                    createdAt: filmStock.createdAt,
-                    updatedAt: filmStock.updatedAt,
-                    film: nil
-                )
-                context.insert(myFilm)
-                myFilm.film = film
-            }
-            
-            try? context.save()
-            loadFilmStocks()
-            return false
+            film.manufacturer?.name == filmStock.manufacturer &&
+            film.type == filmStock.type.rawValue &&
+            film.filmSpeed == filmStock.filmSpeed
         }
+        
+        // Reuses the exact match (updating its image if one was provided) or creates a new Film
+        let film = findOrCreateFilm(
+            name: filmStock.name,
+            manufacturer: manufacturer,
+            type: filmStock.type.rawValue,
+            filmSpeed: filmStock.filmSpeed,
+            imageName: imageName,
+            imageSource: imageSource,
+            context: context
+        )
+        
+        if filmStock.format.isRollFormat {
+            // Roll format: create N individual MyFilm entries (one per roll)
+            createIndividualRolls(filmStock: filmStock, film: film, context: context)
+        } else if let existingMyFilm = matchingSheetMyFilm(for: filmStock, in: film) {
+            // Sheet / other non-roll: merge only when format, custom name, frozen, fridge, and expiry set match
+            mergeSheetInventory(filmStock, into: existingMyFilm)
+        } else {
+            // New inventory line for sheets / other
+            let myFilm = MyFilm(
+                id: filmStock.id,
+                format: filmStock.format.rawValue,
+                customFormatName: filmStock.customFormatName,
+                quantity: filmStock.quantity,
+                expireDate: filmStock.expireDate,
+                comments: filmStock.comments,
+                isFrozen: filmStock.isFrozen,
+                isFridge: filmStock.isFrozen ? false : filmStock.isFridge,
+                exposures: filmStock.exposures,
+                createdAt: filmStock.createdAt,
+                updatedAt: filmStock.updatedAt,
+                film: nil
+            )
+            context.insert(myFilm)
+            myFilm.film = film
+        }
+        
+        try? context.save()
+        loadFilmStocks()
+        return filmAlreadyExisted
+    }
+    
+    /// Adds the quantity (and any new metadata) of a sheet/other film stock to an existing inventory line.
+    private func mergeSheetInventory(_ filmStock: FilmStock, into existingMyFilm: MyFilm) {
+        existingMyFilm.quantity += filmStock.quantity
+        existingMyFilm.customFormatName = filmStock.customFormatName
+        
+        var existingDates = existingMyFilm.expireDateArray ?? []
+        for newDate in filmStock.expireDate ?? [] where !newDate.isEmpty && !existingDates.contains(newDate) {
+            existingDates.append(newDate)
+        }
+        existingMyFilm.expireDateArray = existingDates.isEmpty ? nil : existingDates
+        
+        if let newComments = filmStock.comments, !newComments.isEmpty {
+            existingMyFilm.comments = newComments
+        }
+        if let exposures = filmStock.exposures {
+            existingMyFilm.exposures = exposures
+        }
+        existingMyFilm.isFrozen = filmStock.isFrozen
+        existingMyFilm.isFridge = filmStock.isFrozen ? false : filmStock.isFridge
+        existingMyFilm.updatedAt = Self.iso8601Formatter.string(from: Date())
     }
     
     private func createIndividualRolls(filmStock: FilmStock, film: Film, context: ModelContext) {
@@ -684,8 +620,37 @@ class FilmStockDataManager: ObservableObject {
     }
     
     func deleteFilmStocks(_ filmStocks: [FilmStock]) {
-        guard let context = modelContext else { return }
         guard !filmStocks.isEmpty else { return }
+        
+        // Remove every inventory roll whose Film matches one of the given stocks
+        removeInventoryRolls { myFilm in
+            guard let film = myFilm.film else { return false }
+            return filmStocks.contains { filmStock in
+                film.name == filmStock.name &&
+                film.manufacturer?.name == filmStock.manufacturer &&
+                film.type == filmStock.type.rawValue &&
+                film.filmSpeed == filmStock.filmSpeed
+            }
+        }
+    }
+    
+    // MARK: - Roll-level mutations (used by RollGroupEditSheet)
+
+    /// Delete specific MyFilm entries by their IDs (targeted, does not touch other rolls).
+    func deleteRollsById(_ ids: [String]) {
+        guard !ids.isEmpty else { return }
+        let idSet = Set(ids)
+        removeInventoryRolls { idSet.contains($0.id) }
+    }
+    
+    /// Removes the MyFilm rows selected by `shouldRemove` from inventory without stripping history:
+    /// - Rows referenced by a LoadedFilm or FinishedFilm are kept (quantity set to 0) so their
+    ///   exposures, expiry, storage and comments remain available. Rows referenced only by finished
+    ///   history are detached from their Film so they no longer show up in the collection.
+    /// - Unreferenced rows are deleted.
+    /// - Films left with no inventory and no loaded/finished references are deleted.
+    private func removeInventoryRolls(where shouldRemove: (MyFilm) -> Bool) {
+        guard let context = modelContext else { return }
         
         guard let allMyFilms = try? context.fetch(FetchDescriptor<MyFilm>()),
               let allFilms = try? context.fetch(FetchDescriptor<Film>()),
@@ -693,6 +658,9 @@ class FilmStockDataManager: ObservableObject {
               let allFinished = try? context.fetch(FetchDescriptor<FinishedFilm>()) else {
             return
         }
+        
+        let targets = allMyFilms.filter(shouldRemove)
+        guard !targets.isEmpty else { return }
         
         // Collect MyFilm IDs and Film PIDs referenced by LoadedFilm or FinishedFilm so history is never stripped
         let loadedMyFilmIds = Set(allLoaded.compactMap { $0.myFilm?.id })
@@ -707,94 +675,19 @@ class FilmStockDataManager: ObservableObject {
         var filmsToCheck: Set<PersistentIdentifier> = []
         var detachedOrDeletedMyFilmIds: Set<String> = []
         
-        // Find matching MyFilms and either preserve them (if referenced by loaded/finished history) or delete them
-        for filmStock in filmStocks {
-            let matchingMyFilms = allMyFilms.filter { myFilm in
-                guard let film = myFilm.film else { return false }
-                return film.name == filmStock.name &&
-                       film.manufacturer?.name == filmStock.manufacturer &&
-                       film.type == filmStock.type.rawValue &&
-                       film.filmSpeed == filmStock.filmSpeed
-            }
-            
-            for myFilm in matchingMyFilms {
-                if let film = myFilm.film {
-                    filmsToCheck.insert(film.persistentModelID)
-                    for finished in allFinished where finished.myFilm?.id == myFilm.id && finished.film == nil {
-                        finished.film = film
-                    }
-                }
-                if referencedMyFilmIds.contains(myFilm.id) {
-                    // Preserve the backing MyFilm record (exposures, expiry, frozen/fridge, comments) for history
-                    myFilm.quantity = 0
-                    if !loadedMyFilmIds.contains(myFilm.id) {
-                        // Detach from Film's active inventory so the deleted film no longer appears in collection
-                        myFilm.film = nil
-                        detachedOrDeletedMyFilmIds.insert(myFilm.id)
-                    }
-                } else {
-                    detachedOrDeletedMyFilmIds.insert(myFilm.id)
-                    context.delete(myFilm)
-                }
-            }
-        }
-        
-        // Check if any Films now have zero MyFilm entries and delete them ONLY if no loaded or finished roll references them
-        for filmId in filmsToCheck {
-            if let film = allFilms.first(where: { $0.persistentModelID == filmId }) {
-                let remainingMyFilms = allMyFilms.filter { myFilm in
-                    guard let myFilmFilm = myFilm.film else { return false }
-                    return myFilmFilm.persistentModelID == filmId && !detachedOrDeletedMyFilmIds.contains(myFilm.id)
-                }
-                
-                if remainingMyFilms.isEmpty && !referencedFilmPIDs.contains(filmId) {
-                    context.delete(film)
-                }
-            }
-        }
-        
-        // Save to database and reload immediately
-        if (try? context.save()) != nil {
-            loadFilmStocks()
-        }
-    }
-    
-    // MARK: - Roll-level mutations (used by RollGroupEditSheet)
-
-    /// Delete specific MyFilm entries by their IDs (targeted, does not touch other rolls).
-    func deleteRollsById(_ ids: [String]) {
-        guard let context = modelContext, !ids.isEmpty else { return }
-
-        guard let allMyFilms = try? context.fetch(FetchDescriptor<MyFilm>()),
-              let allFilms = try? context.fetch(FetchDescriptor<Film>()),
-              let allLoaded = try? context.fetch(FetchDescriptor<LoadedFilm>()),
-              let allFinished = try? context.fetch(FetchDescriptor<FinishedFilm>()) else {
-            return
-        }
-
-        let loadedMyFilmIds = Set(allLoaded.compactMap { $0.myFilm?.id })
-        let referencedMyFilmIds = loadedMyFilmIds.union(allFinished.compactMap { $0.myFilm?.id })
-        let referencedFilmPIDs = Set(
-            allLoaded.compactMap { $0.film?.persistentModelID } +
-            allFinished.compactMap { $0.film?.persistentModelID } +
-            allLoaded.compactMap { $0.myFilm?.film?.persistentModelID } +
-            allFinished.compactMap { $0.myFilm?.film?.persistentModelID }
-        )
-
-        let idSet = Set(ids)
-        var filmsToCheck: Set<PersistentIdentifier> = []
-        var detachedOrDeletedMyFilmIds: Set<String> = []
-
-        for myFilm in allMyFilms where idSet.contains(myFilm.id) {
+        for myFilm in targets {
             if let film = myFilm.film {
                 filmsToCheck.insert(film.persistentModelID)
+                // Make sure finished history keeps a direct Film link before the MyFilm is detached
                 for finished in allFinished where finished.myFilm?.id == myFilm.id && finished.film == nil {
                     finished.film = film
                 }
             }
             if referencedMyFilmIds.contains(myFilm.id) {
+                // Preserve the backing MyFilm record for history
                 myFilm.quantity = 0
                 if !loadedMyFilmIds.contains(myFilm.id) {
+                    // Detach from Film's active inventory so it no longer appears in the collection
                     myFilm.film = nil
                     detachedOrDeletedMyFilmIds.insert(myFilm.id)
                 }
@@ -803,21 +696,23 @@ class FilmStockDataManager: ObservableObject {
                 context.delete(myFilm)
             }
         }
-
-        // Clean up Film entities that now have no remaining MyFilms AND no loaded/finished roll references
+        
+        // Delete Films that now have no remaining MyFilms AND no loaded/finished roll references
         for filmPID in filmsToCheck {
-            if let film = allFilms.first(where: { $0.persistentModelID == filmPID }) {
-                let remaining = allMyFilms.filter {
-                    guard let f = $0.film else { return false }
-                    return f.persistentModelID == filmPID && !detachedOrDeletedMyFilmIds.contains($0.id)
-                }
-                if remaining.isEmpty && !referencedFilmPIDs.contains(filmPID) {
-                    context.delete(film)
-                }
+            guard let film = allFilms.first(where: { $0.persistentModelID == filmPID }) else { continue }
+            let hasRemainingInventory = allMyFilms.contains { myFilm in
+                myFilm.film?.persistentModelID == filmPID && !detachedOrDeletedMyFilmIds.contains(myFilm.id)
+            }
+            if !hasRemainingInventory && !referencedFilmPIDs.contains(filmPID) {
+                context.delete(film)
             }
         }
-
-        try? context.save()
+        
+        do {
+            try context.save()
+        } catch {
+            print("removeInventoryRolls: save failed: \(error)")
+        }
         loadFilmStocks()
     }
 
@@ -1286,6 +1181,8 @@ class FilmStockDataManager: ObservableObject {
         
         context.delete(camera)
         try? context.save()
+        // Publish a change so camera lists (ManageCamerasView, CameraPickerView) re-render without the deleted camera
+        loadFilmStocks()
         return true
     }
     
