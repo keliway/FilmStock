@@ -47,7 +47,7 @@ struct FilterChipSection: View {
     }
     
     private func backgroundForItem(_ item: String, isSelected: Bool) -> some View {
-        if title == "Type" && isSelected {
+        if title == String(localized: "filter.type") && isSelected {
             // Get the film type from display name
             if let filmType = FilmStock.FilmType.allCases.first(where: { $0.displayName == item }) {
                 switch filmType {
@@ -88,7 +88,7 @@ struct FilterChipSection: View {
     }
     
     private func foregroundColorForItem(_ item: String, isSelected: Bool) -> Color {
-        if title == "Type" && isSelected {
+        if title == String(localized: "filter.type") && isSelected {
             if let filmType = FilmStock.FilmType.allCases.first(where: { $0.displayName == item }) {
                 switch filmType {
                 case .bw:

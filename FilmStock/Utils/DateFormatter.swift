@@ -64,7 +64,7 @@ extension FilmStock {
 
     static func formatExpireDate(_ dateString: String) -> String {
         let trimmed = dateString.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty { return "Unknown" }
+        if trimmed.isEmpty { return NSLocalizedString("date.unknown", comment: "") }
 
         // YYYY-only — keep as is
         if trimmed.count == 4, trimmed.allSatisfy(\.isNumber) {

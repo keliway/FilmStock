@@ -73,13 +73,17 @@
 "manufacturer.deleteErrorMessage" = "Ten producent nie może zostać usunięty, ponieważ masz filmy tego producenta w swojej kolekcji.";
 
 // MARK: - Film Types
+"type.bw" = "Czarno-biały";
+"type.color" = "Kolor";
+"type.slide" = "Slajd";
+"type.instant" = "Natychmiastowy";
 
 // MARK: - Film Formats
 "format.sheet.count" = "%d arkusz";
 "format.sheets.count" = "%d arkuszy";
 
 // MARK: - Image Selection
-"image.takePhoto" = "Zrób zdjęcie";
+"image.takePhoto" = "Dodaj zdjęcie";
 "image.openCatalog" = "Otwórz katalog";
 "image.catalog" = "Katalog obrazów";
 "image.defaultCatalog" = "Domyślny katalog";
@@ -96,7 +100,7 @@
 "empty.noFilms.message" = "Dodaj swój pierwszy film, aby zacząć!";
 "empty.noLoadedFilms.title" = "Brak załadowanych filmów";
 "empty.noLoadedFilms.message" = "Załaduj film z zakładki Moje Filmy, aby śledzić rolki aktualnie w twoim aparacie/aparatach";
-"empty.noCollection.title" = "brak kart przypomnień filmowych (jeszcze)";
+"empty.noCollection.title" = "Brak kart przypomnień filmowych (jeszcze)";
 "empty.noCollection.message" = "Prześlij własne karty przypomnień filmowych podczas dodawania/edycji filmu i rozpocznij własną kolekcję!";
 "empty.noCatalogImages.title" = "Brak dostępnych obrazów";
 "empty.noCatalogImages.message" = "Nie znaleziono obrazów w katalogu";
@@ -202,7 +206,7 @@
 "legal.privacyPolicy" = "Polityka prywatności";
 "legal.termsOfService" = "Warunki korzystania";
 "legal.copyright" = "© %d Jonas Halbe. Wszelkie prawa zastrzeżone.";
-"legal.lastUpdated" = "Ostatnia aktualizacja: listopad 2025";
+"legal.lastUpdated" = "Ostatnia aktualizacja: styczeń 2026";
 "legal.englishOnly" = "Ten dokument jest dostępny tylko w języku angielskim.";
 
 // MARK: - Support / Buy Me a Coffee
@@ -268,7 +272,7 @@
 "add.rolls.section" = "Rolki";
 "add.rolls.hint" = "Dodaj przynajmniej jedną rolkę, aby zapisać ten film.";
 "film.exposures.unspecified" = "Nieokreślona";
-"film.exposures.bulk" = "100ft bulk";
+"film.exposures.bulk" = "Szpula 100ft";
 "film.exposures.custom" = "Własna";
 "film.exposures.customCount" = "Liczba klatek";
 "edit.rolls.title" = "Edytuj rolki %@";
@@ -285,7 +289,7 @@
 "load.otherCameras" = "Inne";
 "load.selectFormat" = "Wybierz format";
 "load.error.noRolls" = "Brak dostępnych rolek dla tego formatu";
-"load.error.failed" = "Nie udało się załadować filmu. Upewnij się, że masz co najmniej %d %@ dostępnych.";
+"load.error.failed" = "Nie udało się załadować filmu. Upewnij się, że masz co najmniej %@ dostępnych.";
 "load.noFormatsAvailable" = "Brak dostępnych formatów";
 "load.quantityToLoad" = "Ilość do załadowania";
 "load.shotAtISO" = "Fotografuj przy ISO";
@@ -362,7 +366,7 @@
 "whatsnew.continue" = "Kontynuuj";
 
 "settings.export" = "Eksportuj lub importuj magazyn";
-"export.title" = "Export";
+"export.title" = "Eksport";
 "export.format" = "Format";
 "export.format.json.description" = "Dane strukturalne, idealne dla deweloperów";
 "export.format.csv.description" = "Kompatybilny z arkuszami, otwiera się w Numbers lub Excel";
@@ -373,8 +377,8 @@
 "export.includes.cameras" = "Aparaty";
 "export.action" = "Eksportuj i udostępnij";
 
-"export.tab.export" = "Export";
-"export.tab.import" = "Import";
+"export.tab.export" = "Eksportuj";
+"export.tab.import" = "Importuj";
 "import.supported.formats" = "Obsługiwane formaty";
 "import.supports.json" = "JSON (eksport FilmStock)";
 "import.supports.csv" = "CSV (eksport FilmStock)";
@@ -385,8 +389,28 @@
 "import.preview.title" = "Przegląd importu";
 "import.preview.summary" = "Podsumowanie";
 "import.preview.warnings" = "Ostrzeżenia";
-"import.preview.confirm" = "Import";
+"import.preview.confirm" = "Importuj";
 "import.success" = "Import zakończony pomyślnie";
 "import.error.title" = "Błąd importu";
 "import.error.empty" = "Wybrany plik nie zawiera prawidłowych danych filmów ani aparatów.";
 "import.error.database" = "Baza danych jest niedostępna. Spróbuj ponownie.";
+
+// MARK: - Additional strings
+"film.exposures.short" = "%d kl.";
+"collection.imagePosition" = "%d z %d";
+"date.unknown" = "Nieznana";
+"widget.intent.next.title" = "Następny film";
+"widget.intent.next.description" = "Pokaż następny załadowany film";
+"widget.intent.previous.title" = "Poprzedni film";
+"widget.intent.previous.description" = "Pokaż poprzedni załadowany film";
+"import.error.unsupportedFormat" = "Nieobsługiwany typ pliku: .%@. Użyj .json lub .csv.";
+"import.error.invalidJSON" = "Nie udało się odczytać pliku JSON jako eksportu FilmStock.";
+"import.error.invalidCSV" = "Nie znaleziono prawidłowych sekcji CSV FilmStock.";
+"import.warning.csv.inventory" = "Wiersz %d: pominięto wiersz magazynu (brak producenta lub nazwy filmu)";
+"import.warning.csv.loaded" = "Wiersz %d: pominięto wiersz załadowanego filmu (brak producenta lub nazwy filmu)";
+"import.warning.csv.finished" = "Wiersz %d: pominięto wiersz zakończonego filmu (brak producenta lub nazwy filmu)";
+"import.warning.csv.camera" = "Wiersz %d: pominięto wiersz aparatu (brak nazwy)";
+"import.warning.json.inventory" = "Wiersz magazynu %d: pominięto (brak producenta lub nazwy filmu)";
+"import.warning.json.loaded" = "Załadowany film %d: pominięto (brak producenta lub nazwy filmu)";
+"import.warning.json.finished" = "Zakończony film %d: pominięto (brak producenta lub nazwy filmu)";
+"import.warning.json.camera" = "Aparat %d: pominięto (brak nazwy aparatu)";

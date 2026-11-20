@@ -73,6 +73,10 @@
 "manufacturer.deleteErrorMessage" = "This manufacturer cannot be deleted because you have films from this manufacturer in your collection.";
 
 // MARK: - Film Types
+"type.bw" = "B&W";
+"type.color" = "Color";
+"type.slide" = "Slide";
+"type.instant" = "Instant";
 
 // MARK: - Film Formats
 "format.sheet.count" = "%d sheet";
@@ -191,7 +195,7 @@
 // MARK: - About
 "about.version" = "Version %@";
 "about.tagline" = "Your Personal Film Collection Manager";
-"about.description" = "FilmStock helps you keep track of your film collection, manage loaded films in your cameras, and never lose track of whats in your camera and whats in your fridge. Any feedback or manufacturers I forgot? Please let me know!";
+"about.description" = "FilmStock helps you keep track of your film collection, manage loaded films in your cameras, and never lose track of what's in your camera and what's in your fridge. Any feedback or manufacturers I forgot? Please let me know!";
 "about.developedBy" = "Developed by";
 "about.dxCredit" = "DX codes from The Big Film Database (dxdatabase), licensed under CC BY-SA 4.0.";
 "about.contactUs" = "Contact me";
@@ -285,7 +289,7 @@
 "load.otherCameras" = "Other";
 "load.selectFormat" = "Select Format";
 "load.error.noRolls" = "No rolls available for this format";
-"load.error.failed" = "Failed to load film. Make sure you have at least %d %@ available.";
+"load.error.failed" = "Failed to load film. Make sure you have at least %@ available.";
 "load.noFormatsAvailable" = "No formats available";
 "load.quantityToLoad" = "Amount to Load";
 "load.shotAtISO" = "Shoot at ISO";
@@ -318,9 +322,9 @@
 "onboarding.feature1.title" = "Track Your Collection";
 "onboarding.feature1.description" = "Keep track of all your film rolls, sheets, and formats - both in your fridge and currently in your camera";
 "onboarding.feature2.title" = "Manage Loaded Films";
-"onboarding.feature2.description" = "Know exactly films are loaded in which cameras and when. Forgot the ISO or expiry date? I got you!";
+"onboarding.feature2.description" = "Know exactly which films are loaded in which cameras and when. Forgot the ISO or expiry date? I got you!";
 "onboarding.feature3.title" = "Custom Film Reminder Cards";
-"onboarding.feature3.description" = "Take photos of your film boxes and add them to your collection. You can also add your own film reminder holder to your home screen - just add the FilmStock widget and see whats currently loaded in your camera.";
+"onboarding.feature3.description" = "Take photos of your film boxes and add them to your collection. You can also add your own film reminder holder to your home screen - just add the FilmStock widget and see what's currently loaded in your camera.";
 "onboarding.getStarted" = "Get Started";
 "onboarding.tooltip.addFilm.title" = "Add Your First Film";
 "onboarding.tooltip.addFilm.message" = "Tap here to add a film from your stock. You can track different formats, expiry dates, and even add photos of your own reminder cards!";
@@ -390,3 +394,23 @@
 "import.error.title" = "Import Failed";
 "import.error.empty" = "The selected file contains no valid film or camera data.";
 "import.error.database" = "Database is not available. Please try again.";
+
+// MARK: - Additional strings
+"film.exposures.short" = "%d exp";
+"collection.imagePosition" = "%d of %d";
+"date.unknown" = "Unknown";
+"widget.intent.next.title" = "Next Film";
+"widget.intent.next.description" = "Show next loaded film";
+"widget.intent.previous.title" = "Previous Film";
+"widget.intent.previous.description" = "Show previous loaded film";
+"import.error.unsupportedFormat" = "Unsupported file type: .%@. Use .json or .csv.";
+"import.error.invalidJSON" = "Could not decode JSON as a FilmStock export.";
+"import.error.invalidCSV" = "No valid FilmStock CSV sections found.";
+"import.warning.csv.inventory" = "Line %d: skipped inventory row (missing manufacturer or film name)";
+"import.warning.csv.loaded" = "Line %d: skipped loaded film row (missing manufacturer or film name)";
+"import.warning.csv.finished" = "Line %d: skipped finished film row (missing manufacturer or film name)";
+"import.warning.csv.camera" = "Line %d: skipped camera row (missing name)";
+"import.warning.json.inventory" = "Inventory row %d: skipped (missing manufacturer or film name)";
+"import.warning.json.loaded" = "Loaded film %d: skipped (missing manufacturer or film name)";
+"import.warning.json.finished" = "Finished film %d: skipped (missing manufacturer or film name)";
+"import.warning.json.camera" = "Camera %d: skipped (missing camera name)";

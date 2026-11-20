@@ -73,13 +73,17 @@
 "manufacturer.deleteErrorMessage" = "このメーカーのフィルムがコレクションにあるため、削除できません。";
 
 // MARK: - Film Types
+"type.bw" = "モノクロ";
+"type.color" = "カラー";
+"type.slide" = "スライド";
+"type.instant" = "インスタント";
 
 // MARK: - Film Formats
 "format.sheet.count" = "%d枚";
 "format.sheets.count" = "%d枚";
 
 // MARK: - Image Selection
-"image.takePhoto" = "写真を撮る";
+"image.takePhoto" = "画像を追加";
 "image.openCatalog" = "カタログを開く";
 "image.catalog" = "画像カタログ";
 "image.defaultCatalog" = "デフォルトカタログ";
@@ -202,7 +206,7 @@
 "legal.privacyPolicy" = "プライバシーポリシー";
 "legal.termsOfService" = "利用規約";
 "legal.copyright" = "© %d Jonas Halbe. 無断転載禁止。";
-"legal.lastUpdated" = "最終更新：2025年11月";
+"legal.lastUpdated" = "最終更新：2026年1月";
 "legal.englishOnly" = "この文書は英語でのみ提供されています。";
 
 // MARK: - Support / Buy Me a Coffee
@@ -268,7 +272,7 @@
 "add.rolls.section" = "ロール";
 "add.rolls.hint" = "フィルムを保存するには、少なくとも1本のロールを追加してください。";
 "film.exposures.unspecified" = "未指定";
-"film.exposures.bulk" = "100ft bulk";
+"film.exposures.bulk" = "100ft長巻";
 "film.exposures.custom" = "カスタム";
 "film.exposures.customCount" = "コマ数を入力";
 "edit.rolls.title" = "%@ロールを編集";
@@ -276,7 +280,7 @@
 "load.selectRoll" = "ロールを選択";
 "search.noResults" = "結果なし";
 "search.noResults.description" = "検索条件やフィルターを変更してみてください。";
-"finished.status" = "Status";
+"finished.status" = "ステータス";
 
 // MARK: - Load Film
 "load.title" = "フィルムを装填";
@@ -285,7 +289,7 @@
 "load.otherCameras" = "その他";
 "load.selectFormat" = "フォーマットを選択";
 "load.error.noRolls" = "このフォーマットで利用可能なロールがありません";
-"load.error.failed" = "フィルムの装填に失敗しました。少なくとも %d %@ が利用可能であることを確認してください。";
+"load.error.failed" = "フィルムの装填に失敗しました。少なくとも %@ が利用可能であることを確認してください。";
 "load.noFormatsAvailable" = "利用可能なフォーマットがありません";
 "load.quantityToLoad" = "装填する数量";
 "load.shotAtISO" = "撮影ISO";
@@ -362,8 +366,8 @@
 "whatsnew.continue" = "続ける";
 
 "settings.export" = "在庫のエクスポートまたはインポート";
-"export.title" = "Export";
-"export.format" = "Format";
+"export.title" = "エクスポート";
+"export.format" = "フォーマット";
 "export.format.json.description" = "構造化データ、開発者や他のアプリに最適";
 "export.format.csv.description" = "スプレッドシート対応、NumbersやExcelで開けます";
 "export.includes" = "含まれる内容";
@@ -373,8 +377,8 @@
 "export.includes.cameras" = "カメラ";
 "export.action" = "エクスポートして共有";
 
-"export.tab.export" = "Export";
-"export.tab.import" = "Import";
+"export.tab.export" = "エクスポート";
+"export.tab.import" = "インポート";
 "import.supported.formats" = "対応フォーマット";
 "import.supports.json" = "JSON（FilmStockエクスポート）";
 "import.supports.csv" = "CSV（FilmStockエクスポート）";
@@ -385,8 +389,28 @@
 "import.preview.title" = "インポートの確認";
 "import.preview.summary" = "概要";
 "import.preview.warnings" = "警告";
-"import.preview.confirm" = "Import";
+"import.preview.confirm" = "インポート";
 "import.success" = "インポートが正常に完了しました";
 "import.error.title" = "インポートに失敗しました";
 "import.error.empty" = "選択されたファイルには有効なフィルムまたはカメラのデータが含まれていません。";
 "import.error.database" = "データベースを利用できません。もう一度お試しください。";
+
+// MARK: - Additional strings
+"film.exposures.short" = "%d枚撮り";
+"collection.imagePosition" = "%d / %d";
+"date.unknown" = "不明";
+"widget.intent.next.title" = "次のフィルム";
+"widget.intent.next.description" = "次の装填中フィルムを表示";
+"widget.intent.previous.title" = "前のフィルム";
+"widget.intent.previous.description" = "前の装填中フィルムを表示";
+"import.error.unsupportedFormat" = "サポートされていないファイル形式です：.%@。.json または .csv を使用してください。";
+"import.error.invalidJSON" = "JSON を FilmStock のエクスポートとして読み込めませんでした。";
+"import.error.invalidCSV" = "有効な FilmStock の CSV セクションが見つかりません。";
+"import.warning.csv.inventory" = "%d 行目：在庫の行をスキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.csv.loaded" = "%d 行目：装填中フィルムの行をスキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.csv.finished" = "%d 行目：使用済みフィルムの行をスキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.csv.camera" = "%d 行目：カメラの行をスキップしました（名前がありません）";
+"import.warning.json.inventory" = "在庫の行 %d：スキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.json.loaded" = "装填中フィルム %d：スキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.json.finished" = "使用済みフィルム %d：スキップしました（メーカーまたはフィルム名がありません）";
+"import.warning.json.camera" = "カメラ %d：スキップしました（カメラ名がありません）";

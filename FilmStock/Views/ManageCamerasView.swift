@@ -41,10 +41,7 @@ struct ManageCamerasView: View {
                             let camera = allCameras[index]
                             if !dataManager.deleteCamera(camera) {
                                 showDeleteError = true
-                                deleteErrorMessage = String(
-                                    format: NSLocalizedString("camera.deleteErrorMessage", comment: ""),
-                                    camera.name
-                                )
+                                deleteErrorMessage = NSLocalizedString("camera.deleteErrorMessage", comment: "")
                             }
                         }
                     }

@@ -84,10 +84,10 @@ struct FilmStock: Identifiable, Codable, Hashable {
         
         var displayName: String {
             switch self {
-            case .bw: return "B&W"
-            case .color: return "Color"
-            case .slide: return "Slide"
-            case .instant: return "Instant"
+            case .bw: return NSLocalizedString("type.bw", comment: "")
+            case .color: return NSLocalizedString("type.color", comment: "")
+            case .slide: return NSLocalizedString("type.slide", comment: "")
+            case .instant: return NSLocalizedString("type.instant", comment: "")
             }
         }
     }
@@ -161,6 +161,13 @@ let kBulkRollExposures = -2
 func exposureDisplayLabel(_ exp: Int) -> String {
     if exp == kBulkRollExposures { return NSLocalizedString("film.exposures.bulk", comment: "") }
     return "\(exp)"
+}
+
+/// Short chip label for an exposure count, e.g. "36 exp" or "100ft bulk".
+/// The bulk-roll label already describes itself, so no suffix is added for it.
+func exposureShortLabel(_ exp: Int) -> String {
+    if exp == kBulkRollExposures { return exposureDisplayLabel(exp) }
+    return String(format: NSLocalizedString("film.exposures.short", comment: ""), exp)
 }
 
 // Grouped film for display (multiple formats of same film)

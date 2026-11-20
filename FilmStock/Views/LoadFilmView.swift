@@ -101,13 +101,12 @@ struct LoadFilmView: View {
     
     private func formatLineRow(info: GroupedFilm.FormatInfo) -> some View {
         let isSelected = selectedFormatLineId == info.id
-        let quantityUnit = info.format.quantityUnit
         
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(info.formatDisplayName)
                 Spacer()
-                Text("\(info.quantity) \(quantityUnit)")
+                Text(quantityLabel(count: info.quantity, format: info.format))
                     .foregroundColor(.secondary)
                 if isSelected {
                     Image(systemName: "checkmark")
@@ -196,7 +195,7 @@ struct LoadFilmView: View {
                     }
 
                     if let exp = group.exposures, exp > 0 || exp == kBulkRollExposures {
-                        Text("· \(exposureDisplayLabel(exp))exp")
+                        Text("· \(exposureShortLabel(exp))")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -354,6 +353,17 @@ struct LoadFilmView: View {
         format == .fourByFive || format == .fiveBySeven || format == .eightByTen
     }
     
+    /// Localized, pluralized "N rolls" / "N sheets" label for a format.
+    private func quantityLabel(count: Int, format: FilmStock.FilmFormat) -> String {
+        let key: String
+        if isSheetFormat(format) {
+            key = count == 1 ? "format.sheet.count" : "format.sheets.count"
+        } else {
+            key = count == 1 ? "film.rollCount" : "film.rollsCount"
+        }
+        return String(format: NSLocalizedString(key, comment: ""), count)
+    }
+    
     private var maxSheetQuantity: Int {
         selectedFormatInfo?.quantity ?? 1
     }
@@ -444,8 +454,8 @@ struct LoadFilmView: View {
             dismiss()
             onLoadComplete?()
         } else {
-            let unit = isSheetFormat(format) ? "sheets" : "rolls"
-            errorMessage = String(format: NSLocalizedString("load.error.failed", comment: ""), quantityToLoad, unit)
+            let countText = quantityLabel(count: quantityToLoad, format: format)
+            errorMessage = String(format: NSLocalizedString("load.error.failed", comment: ""), countText)
         }
     }
 }

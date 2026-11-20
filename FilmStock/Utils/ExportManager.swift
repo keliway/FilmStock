@@ -378,7 +378,7 @@ class ExportManager {
                 warnings: invWarnings
             )
         }
-        throw ImportError.parseError("Could not decode JSON as a FilmStock export.")
+        throw ImportError.parseError(NSLocalizedString("import.error.invalidJSON", comment: ""))
     }
 
     private enum CSVSection {
@@ -453,7 +453,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append("Line \(lineIdx + 1): skipped inventory row (missing manufacturer or film name)")
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.inventory", comment: ""), lineIdx + 1))
                     continue
                 }
                 let (format, customFormat) = Self.resolveFormat(formatStr: field("format"), explicitCustom: nil)
@@ -488,7 +488,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append("Line \(lineIdx + 1): skipped loaded film row (missing manufacturer or film name)")
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.loaded", comment: ""), lineIdx + 1))
                     continue
                 }
                 let formatStr = field("format")
@@ -527,7 +527,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append("Line \(lineIdx + 1): skipped finished film row (missing manufacturer or film name)")
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.finished", comment: ""), lineIdx + 1))
                     continue
                 }
                 let formatStr = field("format")
@@ -571,7 +571,7 @@ class ExportManager {
             case .cameras:
                 let camName = field("name")
                 guard !camName.isEmpty else {
-                    warnings.append("Line \(lineIdx + 1): skipped camera row (missing name)")
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.camera", comment: ""), lineIdx + 1))
                     continue
                 }
                 let formatStr = field("format")
@@ -589,7 +589,7 @@ class ExportManager {
         }
 
         if !sawKnownSection {
-            throw ImportError.parseError("No valid FilmStock CSV sections found.")
+            throw ImportError.parseError(NSLocalizedString("import.error.invalidCSV", comment: ""))
         }
 
         return ImportResult(
@@ -608,7 +608,7 @@ class ExportManager {
         var warnings: [String] = []
         for (i, f) in films.enumerated() {
             guard !f.manufacturer.isEmpty, !f.name.isEmpty else {
-                warnings.append("Inventory row \(i + 1): skipped (missing manufacturer or film name)")
+                warnings.append(String(format: NSLocalizedString("import.warning.json.inventory", comment: ""), i + 1))
                 continue
             }
             let (format, customFormat) = Self.resolveFormat(formatStr: f.format, explicitCustom: f.customFormat)
@@ -639,7 +639,7 @@ class ExportManager {
         var warnings: [String] = []
         for (i, item) in items.enumerated() {
             guard !item.manufacturer.isEmpty, !item.name.isEmpty else {
-                warnings.append("Loaded film \(i + 1): skipped (missing manufacturer or film name)")
+                warnings.append(String(format: NSLocalizedString("import.warning.json.loaded", comment: ""), i + 1))
                 continue
             }
             rows.append(item)
@@ -652,7 +652,7 @@ class ExportManager {
         var warnings: [String] = []
         for (i, item) in items.enumerated() {
             guard !item.manufacturer.isEmpty, !item.name.isEmpty else {
-                warnings.append("Finished film \(i + 1): skipped (missing manufacturer or film name)")
+                warnings.append(String(format: NSLocalizedString("import.warning.json.finished", comment: ""), i + 1))
                 continue
             }
             rows.append(item)
@@ -666,7 +666,7 @@ class ExportManager {
         for (i, item) in items.enumerated() {
             let trimmed = item.name.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else {
-                warnings.append("Camera \(i + 1): skipped (missing camera name)")
+                warnings.append(String(format: NSLocalizedString("import.warning.json.camera", comment: ""), i + 1))
                 continue
             }
             rows.append(item)
@@ -693,6 +693,7 @@ class ExportManager {
         return FilmStock.FilmType.allCases.first {
             $0.rawValue.lowercased() == trimmed.lowercased()
             || $0.displayName.lowercased() == trimmed.lowercased()
+            || ($0 == .bw && trimmed.lowercased() == "b&w")
         } ?? .bw
     }
 
@@ -777,7 +778,7 @@ class ExportManager {
         case parseError(String)
         var errorDescription: String? {
             switch self {
-            case .unsupportedFormat(let ext): return "Unsupported file type: .\(ext). Use .json or .csv."
+            case .unsupportedFormat(let ext): return String(format: NSLocalizedString("import.error.unsupportedFormat", comment: ""), ext)
             case .parseError(let msg): return msg
             }
         }

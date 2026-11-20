@@ -20,7 +20,7 @@
 "action.save" = "Speichern";
 "action.load" = "Einlegen";
 "action.reload" = "Erneut einlegen";
-"action.unloadOne" = "1 Sheet entnehmen";
+"action.unloadOne" = "1 Blatt entnehmen";
 "action.finishRoll" = "Film entladen";
 "action.changeDate" = "Datum ändern";
 "action.ok" = "OK";
@@ -73,6 +73,10 @@
 "manufacturer.deleteErrorMessage" = "Dieser Hersteller kann nicht gelöscht werden, da Filme von diesem Hersteller in der Sammlung sind.";
 
 // MARK: - Film Types
+"type.bw" = "S/W";
+"type.color" = "Farbe";
+"type.slide" = "Dia";
+"type.instant" = "Sofortbild";
 
 // MARK: - Film Formats
 "format.sheet.count" = "%d Blatt";
@@ -96,7 +100,7 @@
 "empty.noFilms.message" = "Füge deinen ersten Film hinzu, um zu beginnen!";
 "empty.noLoadedFilms.title" = "Keine eingelegten Filme";
 "empty.noLoadedFilms.message" = "Lege einen Film aus dem Tab 'Meine Filme' ein, um zu verfolgen, welche Rollen derzeit in deiner/deinen Kamera(s) sind";
-"empty.noCollection.title" = "Noch keine film-erinnerungskarten";
+"empty.noCollection.title" = "Noch keine Film-Erinnerungskarten";
 "empty.noCollection.message" = "Lade deine eigenen Film-Erinnerungen hoch, wenn du einen Film hinzufügst oder bearbeitest, und starte deine eigene Sammlung!";
 "empty.noCatalogImages.title" = "Keine Bilder verfügbar";
 "empty.noCatalogImages.message" = "Keine Bilder im Katalog gefunden";
@@ -268,7 +272,7 @@
 "add.rolls.section" = "Rollen";
 "add.rolls.hint" = "Füge mindestens eine Rolle hinzu, um diesen Film zu speichern.";
 "film.exposures.unspecified" = "Nicht angegeben";
-"film.exposures.bulk" = "100ft bulk";
+"film.exposures.bulk" = "100ft Meterware";
 "film.exposures.custom" = "Benutzerdefiniert";
 "film.exposures.customCount" = "Anzahl der Aufnahmen";
 "edit.rolls.title" = "%@ Rollen bearbeiten";
@@ -285,7 +289,7 @@
 "load.otherCameras" = "Weitere";
 "load.selectFormat" = "Format auswählen";
 "load.error.noRolls" = "Keine Rollen für dieses Format verfügbar";
-"load.error.failed" = "Film konnte nicht eingelegt werden. Stelle sicher, dass mindestens %d %@ verfügbar sind.";
+"load.error.failed" = "Film konnte nicht eingelegt werden. Stelle sicher, dass mindestens %@ verfügbar sind.";
 "load.noFormatsAvailable" = "Keine Formate verfügbar";
 "load.quantityToLoad" = "Anzahl zum Einlegen";
 "load.shotAtISO" = "Aufnehmen mit ISO";
@@ -390,3 +394,23 @@
 "import.error.title" = "Import fehlgeschlagen";
 "import.error.empty" = "Die ausgewählte Datei enthält keine gültigen Film- oder Kameradaten.";
 "import.error.database" = "Datenbank nicht verfügbar. Bitte erneut versuchen.";
+
+// MARK: - Additional strings
+"film.exposures.short" = "%d Aufn.";
+"collection.imagePosition" = "%d von %d";
+"date.unknown" = "Unbekannt";
+"widget.intent.next.title" = "Nächster Film";
+"widget.intent.next.description" = "Nächsten eingelegten Film anzeigen";
+"widget.intent.previous.title" = "Vorheriger Film";
+"widget.intent.previous.description" = "Vorherigen eingelegten Film anzeigen";
+"import.error.unsupportedFormat" = "Nicht unterstützter Dateityp: .%@. Verwende .json oder .csv.";
+"import.error.invalidJSON" = "JSON konnte nicht als FilmStock-Export gelesen werden.";
+"import.error.invalidCSV" = "Keine gültigen FilmStock-CSV-Abschnitte gefunden.";
+"import.warning.csv.inventory" = "Zeile %d: Bestandszeile übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.csv.loaded" = "Zeile %d: Zeile eines eingelegten Films übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.csv.finished" = "Zeile %d: Zeile eines fertigen Films übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.csv.camera" = "Zeile %d: Kamerazeile übersprungen (Name fehlt)";
+"import.warning.json.inventory" = "Bestandszeile %d: übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.json.loaded" = "Eingelegter Film %d: übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.json.finished" = "Fertiger Film %d: übersprungen (Hersteller oder Filmname fehlt)";
+"import.warning.json.camera" = "Kamera %d: übersprungen (Kameraname fehlt)";

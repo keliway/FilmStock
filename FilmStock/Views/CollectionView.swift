@@ -314,7 +314,7 @@ struct ImageDetailView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .navigationTitle("\(currentIndex + 1) of \(items.count)")
+            .navigationTitle(String(format: NSLocalizedString("collection.imagePosition", comment: ""), currentIndex + 1, items.count))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

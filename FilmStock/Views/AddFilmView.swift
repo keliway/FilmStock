@@ -399,7 +399,7 @@ struct AddFilmView: View {
                         }
 
                         if let exp = batch.resolvedExposures {
-                            Text("· \(exposureDisplayLabel(exp))exp")
+                            Text("· \(exposureShortLabel(exp))")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

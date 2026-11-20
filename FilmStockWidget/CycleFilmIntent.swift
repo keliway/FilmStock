@@ -54,8 +54,8 @@ private enum WidgetLoadedFilmCounter {
 }
 
 struct NextFilmIntent: AppIntent {
-    static var title: LocalizedStringResource = "Next Film"
-    static var description = IntentDescription("Show next loaded film")
+    static var title: LocalizedStringResource = "widget.intent.next.title"
+    static var description = IntentDescription("widget.intent.next.description")
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {
@@ -79,8 +79,8 @@ struct NextFilmIntent: AppIntent {
 }
 
 struct PreviousFilmIntent: AppIntent {
-    static var title: LocalizedStringResource = "Previous Film"
-    static var description = IntentDescription("Show previous loaded film")
+    static var title: LocalizedStringResource = "widget.intent.previous.title"
+    static var description = IntentDescription("widget.intent.previous.description")
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {

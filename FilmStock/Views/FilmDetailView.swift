@@ -297,7 +297,7 @@ struct FilmDetailView: View {
                     }
 
                     if let exp = group.exposures, exp > 0 || exp == kBulkRollExposures {
-                        Text("· \(exposureDisplayLabel(exp))exp")
+                        Text("· \(exposureShortLabel(exp))")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

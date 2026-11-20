@@ -73,13 +73,17 @@
 "manufacturer.deleteErrorMessage" = "Denne produsenten kan ikke slettes fordi du har filmer fra denne produsenten i samlingen din.";
 
 // MARK: - Film Types
+"type.bw" = "S/H";
+"type.color" = "Farge";
+"type.slide" = "Lysbilde";
+"type.instant" = "Instant";
 
 // MARK: - Film Formats
 "format.sheet.count" = "%d ark";
 "format.sheets.count" = "%d ark";
 
 // MARK: - Image Selection
-"image.takePhoto" = "Ta bilde";
+"image.takePhoto" = "Legg til bilde";
 "image.openCatalog" = "Åpne katalog";
 "image.catalog" = "Bildekatalog";
 "image.defaultCatalog" = "Standard katalog";
@@ -96,7 +100,7 @@
 "empty.noFilms.message" = "Legg til din første film for å komme i gang!";
 "empty.noLoadedFilms.title" = "Ingen innlagte filmer";
 "empty.noLoadedFilms.message" = "Legg inn en film fra Mine Filmer-fanen for å spore hvilke ruller som er i kamera(ene) dine";
-"empty.noCollection.title" = "ingen filmpåminnelseskort (ennå)";
+"empty.noCollection.title" = "Ingen filmpåminnelseskort (ennå)";
 "empty.noCollection.message" = "Last opp dine egne filmpåminnelseskort når du legger til/redigerer en film og start din egen samling!";
 "empty.noCatalogImages.title" = "Ingen bilder tilgjengelig";
 "empty.noCatalogImages.message" = "Ingen bilder funnet i katalogen";
@@ -202,7 +206,7 @@
 "legal.privacyPolicy" = "Personvernerklæring";
 "legal.termsOfService" = "Vilkår for bruk";
 "legal.copyright" = "© %d Jonas Halbe. Alle rettigheter reservert.";
-"legal.lastUpdated" = "Sist oppdatert: november 2025";
+"legal.lastUpdated" = "Sist oppdatert: januar 2026";
 "legal.englishOnly" = "Dette dokumentet er kun tilgjengelig på engelsk.";
 
 // MARK: - Support / Buy Me a Coffee
@@ -268,7 +272,7 @@
 "add.rolls.section" = "Ruller";
 "add.rolls.hint" = "Legg til minst én rulle for å lagre denne filmen.";
 "film.exposures.unspecified" = "Ikke spesifisert";
-"film.exposures.bulk" = "100ft bulk";
+"film.exposures.bulk" = "100ft metervare";
 "film.exposures.custom" = "Tilpasset";
 "film.exposures.customCount" = "Antall eksponeringer";
 "edit.rolls.title" = "Rediger %@-ruller";
@@ -285,7 +289,7 @@
 "load.otherCameras" = "Andre";
 "load.selectFormat" = "Velg format";
 "load.error.noRolls" = "Ingen ruller tilgjengelig for dette formatet";
-"load.error.failed" = "Kunne ikke legge inn film. Sørg for at du har minst %d %@ tilgjengelig.";
+"load.error.failed" = "Kunne ikke legge inn film. Sørg for at du har minst %@ tilgjengelig.";
 "load.noFormatsAvailable" = "Ingen formater tilgjengelig";
 "load.quantityToLoad" = "Antall å legge inn";
 "load.shotAtISO" = "Fotografer med ISO";
@@ -362,7 +366,7 @@
 "whatsnew.continue" = "Fortsett";
 
 "settings.export" = "Eksporter eller importer beholdning";
-"export.title" = "Export";
+"export.title" = "Eksporter";
 "export.format" = "Format";
 "export.format.json.description" = "Strukturerte data, ideelt for utviklere";
 "export.format.csv.description" = "Regnearkkompatibel, åpner i Numbers eller Excel";
@@ -373,8 +377,8 @@
 "export.includes.cameras" = "Kameraer";
 "export.action" = "Eksporter og del";
 
-"export.tab.export" = "Export";
-"export.tab.import" = "Import";
+"export.tab.export" = "Eksporter";
+"export.tab.import" = "Importer";
 "import.supported.formats" = "Støttede formater";
 "import.supports.json" = "JSON (FilmStock-eksport)";
 "import.supports.csv" = "CSV (FilmStock-eksport)";
@@ -385,8 +389,28 @@
 "import.preview.title" = "Gjennomgå import";
 "import.preview.summary" = "Sammendrag";
 "import.preview.warnings" = "Advarsler";
-"import.preview.confirm" = "Import";
+"import.preview.confirm" = "Importer";
 "import.success" = "Importering fullført";
 "import.error.title" = "Import mislyktes";
 "import.error.empty" = "Den valgte filen inneholder ingen gyldige film- eller kameradata.";
 "import.error.database" = "Databasen er ikke tilgjengelig. Vennligst prøv igjen.";
+
+// MARK: - Additional strings
+"film.exposures.short" = "%d eksp.";
+"collection.imagePosition" = "%d av %d";
+"date.unknown" = "Ukjent";
+"widget.intent.next.title" = "Neste film";
+"widget.intent.next.description" = "Vis neste innlagte film";
+"widget.intent.previous.title" = "Forrige film";
+"widget.intent.previous.description" = "Vis forrige innlagte film";
+"import.error.unsupportedFormat" = "Filtypen støttes ikke: .%@. Bruk .json eller .csv.";
+"import.error.invalidJSON" = "Kunne ikke lese JSON som en FilmStock-eksport.";
+"import.error.invalidCSV" = "Fant ingen gyldige FilmStock CSV-seksjoner.";
+"import.warning.csv.inventory" = "Linje %d: hoppet over lagerrad (produsent eller filmnavn mangler)";
+"import.warning.csv.loaded" = "Linje %d: hoppet over rad for innlagt film (produsent eller filmnavn mangler)";
+"import.warning.csv.finished" = "Linje %d: hoppet over rad for ferdig film (produsent eller filmnavn mangler)";
+"import.warning.csv.camera" = "Linje %d: hoppet over kamerarad (navn mangler)";
+"import.warning.json.inventory" = "Lagerrad %d: hoppet over (produsent eller filmnavn mangler)";
+"import.warning.json.loaded" = "Innlagt film %d: hoppet over (produsent eller filmnavn mangler)";
+"import.warning.json.finished" = "Ferdig film %d: hoppet over (produsent eller filmnavn mangler)";
+"import.warning.json.camera" = "Kamera %d: hoppet over (kameranavn mangler)";
