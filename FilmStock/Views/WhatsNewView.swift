@@ -8,7 +8,7 @@
 import SwiftUI
 
 // Bump this string whenever you want to show the sheet again on next launch.
-let whatsNewVersion = "2.6"
+let whatsNewVersion = "2.8"
 
 struct WhatsNewFeature: Identifiable {
     let id = UUID()
@@ -24,22 +24,10 @@ struct WhatsNewView: View {
 
     private let features: [WhatsNewFeature] = [
         WhatsNewFeature(
-            icon: "refrigerator",
+            icon: "text.bubble",
             iconColor: .blue,
-            title: "Fridge Storage Toggle",
-            description: "Track films stored in your fridge separately from the freezer. Enable or disable the fridge toggle in Settings, tag rolls and sheets as fridge-stored, and see fridge badges across your collection."
-        ),
-        WhatsNewFeature(
-            icon: "film.stack",
-            iconColor: .green,
-            title: "Finished Rolls Bug Fixes",
-            description: "Resolved issues and crashes when viewing and managing finished rolls, ensuring accurate statuses, dates, and smoother tracking of your completed rolls."
-        ),
-        WhatsNewFeature(
-            icon: "arrow.up.arrow.down",
-            iconColor: .orange,
-            title: "Better Import & Export",
-            description: "Easily backup and restore your data with enhanced JSON and multi-section CSV support, now covering loaded films, finished rolls, cameras, and fridge statuses."
+            title: "Comments on Loaded Films",
+            description: "Add and edit plain text notes directly on your loaded rolls and sheets. Comments are automatically carried over when you finish a roll and are preserved when exporting or importing your data."
         )
     ]
 

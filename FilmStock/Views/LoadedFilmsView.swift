@@ -376,6 +376,7 @@ struct LoadedFilmsView: View {
             }
             .sheet(item: $selectedLoadedFilm) { film in
                 LoadedFilmDetailSheet(loadedFilm: film)
+                    .environmentObject(dataManager)
             }
             .sheet(item: $selectedFinishedFilm) { film in
                 FinishedFilmDetailSheet(finishedFilm: film)
@@ -654,9 +655,11 @@ struct LoadedFilmsView: View {
 
 struct LoadedFilmDetailSheet: View {
     let loadedFilm: LoadedFilm
+    @EnvironmentObject var dataManager: FilmStockDataManager
     @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var filmImage: UIImage?
+    @State private var commentsText: String = ""
 
     private var resolvedFilm: Film? {
         loadedFilm.film ?? loadedFilm.myFilm?.film
@@ -771,24 +774,35 @@ struct LoadedFilmDetailSheet: View {
                 }
 
                 // Comments
-                if let comments = loadedFilm.myFilm?.comments, !comments.isEmpty {
-                    Section("film.comments") {
-                        Text(comments).foregroundColor(.primary)
-                    }
+                Section("film.comments") {
+                    TextField("film.comments.placeholder", text: $commentsText, axis: .vertical)
+                        .lineLimit(3...6)
+                        .onChange(of: commentsText) { _, newValue in
+                            dataManager.updateLoadedFilmComments(loadedFilm, comments: newValue)
+                        }
                 }
             }
             .navigationTitle("loaded.detail.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("action.done") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("action.done") {
+                        dataManager.updateLoadedFilmComments(loadedFilm, comments: commentsText)
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
                 }
             }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        .onAppear { loadImage() }
+        .onAppear {
+            loadImage()
+            commentsText = loadedFilm.effectiveComments ?? ""
+        }
+        .onDisappear {
+            dataManager.updateLoadedFilmComments(loadedFilm, comments: commentsText)
+        }
     }
 
     @ViewBuilder
@@ -1358,7 +1372,7 @@ struct FinishedFilmDetailSheet: View {
                     }
                 }
 
-                if let comments = finishedFilm.myFilm?.comments, !comments.isEmpty {
+                if let comments = finishedFilm.effectiveComments, !comments.isEmpty {
                     Section("film.comments") {
                         Text(comments).foregroundColor(.primary)
                     }

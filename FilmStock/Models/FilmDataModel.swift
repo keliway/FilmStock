@@ -133,6 +133,7 @@ final class LoadedFilm {
     @Relationship(deleteRule: .nullify)
     var myFilm: MyFilm? // Reference to the MyFilm entry that was loaded
     var cameraName: String? = nil // Snapshot of camera name at load time (preserved even if camera is deleted)
+    var comments: String? = nil // Unified comment for this loaded roll/sheet (pre-filled from inventory roll if present)
     
     // Computed property to get the effective ISO (shot ISO or film's native ISO)
     var effectiveISO: Int {
@@ -142,7 +143,18 @@ final class LoadedFilm {
         return (film ?? myFilm?.film)?.filmSpeed ?? 0
     }
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil, cameraName: String? = nil) {
+    /// Resolved comment (checks loaded film's own comment first, falling back to the linked MyFilm's comment).
+    var effectiveComments: String? {
+        if let comments, !comments.isEmpty {
+            return comments
+        }
+        if let myFilmComments = myFilm?.comments, !myFilmComments.isEmpty {
+            return myFilmComments
+        }
+        return nil
+    }
+    
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int = 1, loadedAt: Date = Date(), shotAtISO: Int? = nil, cameraName: String? = nil, comments: String? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -152,6 +164,7 @@ final class LoadedFilm {
         self.loadedAt = loadedAt
         self.shotAtISO = shotAtISO
         self.cameraName = cameraName
+        self.comments = comments
     }
 }
 
@@ -165,6 +178,7 @@ final class FinishedFilm {
     var status: String? // toDevelop, inDevelopment, developed
     var developedAt: Date? // Set when status changes to "developed"
     var cameraName: String? // Snapshot of camera name at time of finishing (preserved even if camera is deleted)
+    var comments: String? = nil // Comment carried over from LoadedFilm (or edited on finished roll)
     @Relationship(deleteRule: .nullify)
     var film: Film?
     var format: String
@@ -180,7 +194,18 @@ final class FinishedFilm {
         return (film ?? myFilm?.film)?.filmSpeed ?? 0
     }
     
-    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, developedAt: Date? = nil, cameraName: String? = nil) {
+    /// Resolved comment (checks finished film's own comment first, falling back to the linked MyFilm's comment).
+    var effectiveComments: String? {
+        if let comments, !comments.isEmpty {
+            return comments
+        }
+        if let myFilmComments = myFilm?.comments, !myFilmComments.isEmpty {
+            return myFilmComments
+        }
+        return nil
+    }
+    
+    init(id: String, film: Film?, format: String, camera: Camera?, myFilm: MyFilm?, quantity: Int, loadedAt: Date, finishedAt: Date = Date(), shotAtISO: Int? = nil, status: String? = nil, developedAt: Date? = nil, cameraName: String? = nil, comments: String? = nil) {
         self.id = id
         self.film = film
         self.format = format
@@ -193,5 +218,6 @@ final class FinishedFilm {
         self.status = status
         self.developedAt = developedAt
         self.cameraName = cameraName
+        self.comments = comments
     }
 }

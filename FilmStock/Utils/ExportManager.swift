@@ -190,7 +190,7 @@ class ExportManager {
                 isFrozen: mf?.isFrozen ?? false,
                 isFridge: mf?.isFridge ?? false,
                 exposures: mf?.exposures,
-                comments: mf?.comments
+                comments: lf.effectiveComments
             )
         }
 
@@ -221,7 +221,7 @@ class ExportManager {
                 isFrozen: mf?.isFrozen ?? false,
                 isFridge: mf?.isFridge ?? false,
                 exposures: mf?.exposures,
-                comments: mf?.comments
+                comments: ff.effectiveComments
             )
         }
 

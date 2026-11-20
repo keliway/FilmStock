@@ -200,6 +200,17 @@ class FilmStockDataManager: ObservableObject {
                     finished.film = linkedFilm
                     changed = true
                 }
+                
+                // 6. Backfill comments snapshot from valid linked myFilm if missing
+                if finished.comments == nil,
+                   let myFilm = finished.myFilm,
+                   let myFilmByPID,
+                   let validMyFilm = myFilmByPID[myFilm.persistentModelID],
+                   let myFilmComments = validMyFilm.comments,
+                   !myFilmComments.isEmpty {
+                    finished.comments = myFilmComments
+                    changed = true
+                }
             }
         }
         
@@ -252,6 +263,17 @@ class FilmStockDataManager: ObservableObject {
                    let linkedFilm = validMyFilm.film,
                    validFilmPIDs?.contains(linkedFilm.persistentModelID) ?? true {
                     loaded.film = linkedFilm
+                    changed = true
+                }
+                
+                // 6. Backfill comments snapshot from valid linked myFilm if missing
+                if loaded.comments == nil,
+                   let myFilm = loaded.myFilm,
+                   let myFilmByPID,
+                   let validMyFilm = myFilmByPID[myFilm.persistentModelID],
+                   let myFilmComments = validMyFilm.comments,
+                   !myFilmComments.isEmpty {
+                    loaded.comments = myFilmComments
                     changed = true
                 }
             }
@@ -1258,6 +1280,7 @@ class FilmStockDataManager: ObservableObject {
         }
         
         let isoToStore: Int? = (shotAtISO != nil && shotAtISO != film.filmSpeed) ? shotAtISO : nil
+        let initialComments: String? = (myFilm.comments?.isEmpty == false) ? myFilm.comments : nil
         
         let loadedFilm = LoadedFilm(
             id: UUID().uuidString,
@@ -1267,7 +1290,8 @@ class FilmStockDataManager: ObservableObject {
             myFilm: nil,
             quantity: quantity,
             shotAtISO: isoToStore,
-            cameraName: cameraName
+            cameraName: cameraName,
+            comments: initialComments
         )
         context.insert(loadedFilm)
         loadedFilm.film = film
@@ -1287,6 +1311,25 @@ class FilmStockDataManager: ObservableObject {
         NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
         WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
         return true
+    }
+    
+    func updateLoadedFilmComments(_ loadedFilm: LoadedFilm, comments: String?) {
+        guard let context = modelContext else { return }
+        let trimmed = comments?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanComments: String? = (trimmed?.isEmpty == false) ? trimmed : nil
+        loadedFilm.comments = cleanComments
+        
+        // For roll formats, each roll has its own dedicated MyFilm record, so keep its comments in sync
+        if let format = FilmStock.FilmFormat(rawValue: loadedFilm.format),
+           format.isRollFormat,
+           let myFilm = loadedFilm.myFilm {
+            myFilm.comments = cleanComments
+            myFilm.updatedAt = Self.iso8601Formatter.string(from: Date())
+        }
+        
+        try? context.save()
+        loadFilmStocks()
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
     }
     
     func unloadFilm(_ loadedFilm: LoadedFilm, quantity: Int? = nil) {
@@ -1328,6 +1371,7 @@ class FilmStockDataManager: ObservableObject {
         
         // Capture camera name as a snapshot (preserves name even if camera is deleted later)
         let cameraName = loadedFilm.cameraName ?? loadedFilm.camera?.name
+        let resolvedComments = loadedFilm.effectiveComments
         
         let finished = FinishedFilm(
             id: UUID().uuidString,
@@ -1340,7 +1384,8 @@ class FilmStockDataManager: ObservableObject {
             finishedAt: Date(),
             shotAtISO: loadedFilm.shotAtISO,
             status: FinishedFilmStatus.toDevelop.rawValue,
-            cameraName: cameraName
+            cameraName: cameraName,
+            comments: resolvedComments
         )
         context.insert(finished)
         finished.film = loadedFilm.film ?? loadedFilm.myFilm?.film
@@ -1358,6 +1403,7 @@ class FilmStockDataManager: ObservableObject {
             }
             if let format = FilmStock.FilmFormat(rawValue: loadedFilm.format), format.isRollFormat {
                 myFilm.quantity = 1
+                myFilm.comments = loadedFilm.comments
             } else {
                 myFilm.quantity += loadedFilm.quantity
             }
@@ -1386,7 +1432,8 @@ class FilmStockDataManager: ObservableObject {
             quantity: finishedFilm.quantity,
             loadedAt: finishedFilm.loadedAt,
             shotAtISO: finishedFilm.shotAtISO,
-            cameraName: finishedFilm.cameraName
+            cameraName: finishedFilm.cameraName,
+            comments: finishedFilm.effectiveComments
         )
         
         context.insert(loadedFilm)
@@ -1569,7 +1616,8 @@ class FilmStockDataManager: ObservableObject {
                 quantity: max(1, item.quantity),
                 loadedAt: loadedDate,
                 shotAtISO: isoToStore,
-                cameraName: cameraObj?.name ?? cameraName
+                cameraName: cameraObj?.name ?? cameraName,
+                comments: item.comments
             )
             context.insert(loadedFilm)
             loadedFilm.film = film
@@ -1644,7 +1692,8 @@ class FilmStockDataManager: ObservableObject {
                 shotAtISO: isoToStore,
                 status: status,
                 developedAt: status == FinishedFilmStatus.developed.rawValue ? (developedDate ?? finishedDate) : nil,
-                cameraName: cameraName
+                cameraName: cameraName,
+                comments: item.comments
             )
             context.insert(finishedFilm)
             finishedFilm.film = film
