@@ -25,7 +25,7 @@ struct AboutView: View {
                     .fontWeight(.bold)
                 
                 // Version
-                Text(String(format: NSLocalizedString("about.version", comment: ""), appVersion))
+                Text(String(format: NSLocalizedString("about.version", comment: ""), Bundle.main.appVersionDisplay))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -124,12 +124,6 @@ struct AboutView: View {
         } message: {
             Text("about.emailError.message")
         }
-    }
-    
-    private var appVersion: String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        return "\(version) (\(build))"
     }
     
     private var copyrightText: String {

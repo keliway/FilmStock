@@ -10,6 +10,14 @@ import StoreKit
 import Combine
 
 struct SupportView: View {
+    static var iconSystemName: String {
+        if #available(iOS 17.4, *) {
+            return "cup.and.heat.waves.fill"
+        } else {
+            return "heart.fill"
+        }
+    }
+
     @StateObject private var storeManager = StoreManager()
     @State private var showConfirmation = false
     @State private var showThankYou = false
@@ -18,17 +26,10 @@ struct SupportView: View {
         ScrollView {
                 VStack(spacing: 24) {
                     // Icon
-                    if #available(iOS 17.4, *) {
-                        Image(systemName: "cup.and.heat.waves.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(.orange)
-                            .padding(.top, 32)
-                    } else {
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(.orange)
-                            .padding(.top, 32)
-                    }
+                    Image(systemName: Self.iconSystemName)
+                        .font(.system(size: 64))
+                        .foregroundColor(.orange)
+                        .padding(.top, 32)
                     
                     // Title
                     Text("support.header")
@@ -67,11 +68,7 @@ struct SupportView: View {
                         }
                     } label: {
                         HStack {
-                            if #available(iOS 17.4, *) {
-                                Image(systemName: "cup.and.heat.waves.fill")
-                            } else {
-                                Image(systemName: "heart.fill")
-                            }
+                            Image(systemName: Self.iconSystemName)
                             if let product = storeManager.products.first {
                                 Text(String(format: NSLocalizedString("support.button.withPrice", comment: ""), product.displayPrice))
                                     .fontWeight(.semibold)
@@ -112,7 +109,7 @@ struct SupportView: View {
                     .padding(.top, 8)
                     .disabled(storeManager.isPurchasing)
                     
-                    if storeManager.products.isEmpty && !storeManager.isPurchasing {
+                    if storeManager.isLoadingProducts && !storeManager.isPurchasing {
                         HStack {
                             ProgressView()
                                 .scaleEffect(0.8)
@@ -175,16 +172,16 @@ struct SupportView: View {
 
 @MainActor
 class StoreManager: ObservableObject {
+    @Published var isLoadingProducts = false
     @Published var isPurchasing = false
     @Published var purchaseError: String?
     @Published var purchaseSuccessful = false
     @Published var products: [Product] = []
     
     private let productID = "halbe.no.FilmStock.support.coffee"
-    private var updateListenerTask: Task<Void, Error>?
+    private var updateListenerTask: Task<Void, Never>?
     
     init() {
-        // Start listening for transaction updates
         updateListenerTask = listenForTransactions()
     }
     
@@ -192,19 +189,15 @@ class StoreManager: ObservableObject {
         updateListenerTask?.cancel()
     }
     
-    private func listenForTransactions() -> Task<Void, Error> {
-        return Task.detached {
-            // Iterate through any unfinished transactions
+    private func listenForTransactions() -> Task<Void, Never> {
+        Task.detached { [weak self] in
             for await result in Transaction.updates {
+                guard !Task.isCancelled else { return }
                 do {
-                    let transaction = try self.checkVerified(result)
-                    
-                    // Deliver content or update UI
+                    let transaction = try Self.checkVerified(result)
                     await MainActor.run {
-                        self.purchaseSuccessful = true
+                        self?.purchaseSuccessful = true
                     }
-                    
-                    // Always finish the transaction
                     await transaction.finish()
                 } catch {
                     // StoreKit has a transaction that fails verification. Don't deliver content.
@@ -213,30 +206,30 @@ class StoreManager: ObservableObject {
         }
     }
     
-    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
-        // Check if the transaction passes StoreKit verification
+    nonisolated private static func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified:
-            // StoreKit parses the JWS, but it fails verification
             throw StoreError.failedVerification
         case .verified(let safe):
-            // The result is verified, return the unwrapped value
             return safe
         }
     }
     
     func loadProducts() {
+        guard !isLoadingProducts, products.isEmpty else { return }
+        isLoadingProducts = true
+        purchaseError = nil
         Task {
             do {
-                let products = try await Product.products(for: [productID])
-                await MainActor.run {
-                    self.products = products
-                }
-            } catch {
-                await MainActor.run {
+                let fetched = try await Product.products(for: [productID])
+                self.products = fetched
+                if fetched.isEmpty {
                     self.purchaseError = NSLocalizedString("support.error.productNotAvailable", comment: "")
                 }
+            } catch {
+                self.purchaseError = NSLocalizedString("support.error.productNotAvailable", comment: "")
             }
+            self.isLoadingProducts = false
         }
     }
     
@@ -256,38 +249,26 @@ class StoreManager: ObservableObject {
                 switch result {
                 case .success(let verification):
                     do {
-                        let transaction = try checkVerified(verification)
+                        let transaction = try Self.checkVerified(verification)
                         await transaction.finish()
-                        await MainActor.run {
-                            purchaseSuccessful = true
-                            isPurchasing = false
-                        }
+                        purchaseSuccessful = true
+                        isPurchasing = false
                     } catch {
-                        await MainActor.run {
-                            purchaseError = NSLocalizedString("support.error.verificationFailed", comment: "")
-                            isPurchasing = false
-                        }
+                        purchaseError = NSLocalizedString("support.error.verificationFailed", comment: "")
+                        isPurchasing = false
                     }
                 case .userCancelled:
-                    await MainActor.run {
-                        isPurchasing = false
-                    }
+                    isPurchasing = false
                 case .pending:
-                    await MainActor.run {
-                        purchaseError = NSLocalizedString("support.error.pending", comment: "")
-                        isPurchasing = false
-                    }
+                    purchaseError = NSLocalizedString("support.error.pending", comment: "")
+                    isPurchasing = false
                 @unknown default:
-                    await MainActor.run {
-                        purchaseError = NSLocalizedString("support.error.unknown", comment: "")
-                        isPurchasing = false
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    purchaseError = String(format: NSLocalizedString("support.error.failed", comment: ""), error.localizedDescription)
+                    purchaseError = NSLocalizedString("support.error.unknown", comment: "")
                     isPurchasing = false
                 }
+            } catch {
+                purchaseError = String(format: NSLocalizedString("support.error.failed", comment: ""), error.localizedDescription)
+                isPurchasing = false
             }
         }
     }
@@ -300,34 +281,24 @@ class StoreManager: ObservableObject {
             do {
                 try await AppStore.sync()
                 
-                // Check if user has purchased the coffee
                 for await result in Transaction.currentEntitlements {
                     do {
-                        let transaction = try checkVerified(result)
-                        
+                        let transaction = try Self.checkVerified(result)
                         if transaction.productID == productID {
-                            await MainActor.run {
-                                purchaseSuccessful = true
-                                isPurchasing = false
-                            }
+                            purchaseSuccessful = true
+                            isPurchasing = false
                             return
                         }
                     } catch {
-                        // Failed verification, skip this transaction
                         continue
                     }
                 }
                 
-                // No purchases found
-                await MainActor.run {
-                    purchaseError = NSLocalizedString("support.error.nothingToRestore", comment: "")
-                    isPurchasing = false
-                }
+                purchaseError = NSLocalizedString("support.error.nothingToRestore", comment: "")
+                isPurchasing = false
             } catch {
-                await MainActor.run {
-                    purchaseError = String(format: NSLocalizedString("support.error.restoreFailed", comment: ""), error.localizedDescription)
-                    isPurchasing = false
-                }
+                purchaseError = String(format: NSLocalizedString("support.error.restoreFailed", comment: ""), error.localizedDescription)
+                isPurchasing = false
             }
         }
     }

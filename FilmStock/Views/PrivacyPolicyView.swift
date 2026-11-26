@@ -11,34 +11,20 @@ struct PrivacyPolicyView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("legal.privacyPolicy")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.bottom, 8)
-                
-                Text("legal.lastUpdated")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Text("legal.englishOnly")
-                    .font(.caption)
-                    .foregroundColor(.orange)
-                    .padding(.top, 4)
-                
-                Divider()
+                LegalDocumentHeaderView(titleKey: "legal.privacyPolicy")
                 
                 Group {
-                    SectionView(
+                    LegalSectionView(
                         title: "Introduction",
                         content: "FilmStock (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our mobile application."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Data Collection",
                         content: "FilmStock does NOT collect, transmit, or share any personal information. All data you create in the app remains exclusively on your device."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Information Stored Locally",
                         content: """
                         The following information is stored locally on your device only:
@@ -51,19 +37,19 @@ struct PrivacyPolicyView: View {
                         """
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Camera Access",
                         content: "FilmStock requests camera access only to allow you to take photos of your film boxes for visual reference. These photos are stored locally on your device and are never uploaded or shared."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "In-App Purchases",
                         content: "FilmStock offers an optional in-app purchase (\"Buy Me a Coffee\") to support development. This transaction is processed securely by Apple through the App Store. We do not receive or store any payment information."
                     )
                 }
                 
                 Group {
-                    SectionView(
+                    LegalSectionView(
                         title: "Third-Party Services",
                         content: """
                         FilmStock uses the following Apple services:
@@ -74,27 +60,27 @@ struct PrivacyPolicyView: View {
                         """
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Data Sharing",
                         content: "We do not share, sell, rent, or trade your information with anyone. Since all data is stored locally on your device, there is no data to share."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Children's Privacy",
                         content: "FilmStock does not knowingly collect any information from children. The app is designed for general audiences and does not target children specifically."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Data Deletion",
                         content: "You can delete all app data at any time by deleting the FilmStock app from your device. This will permanently remove all locally stored information."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Changes to This Policy",
                         content: "We may update this Privacy Policy from time to time. Any changes will be reflected in the app with an updated \"Last updated\" date."
                     )
                     
-                    SectionView(
+                    LegalSectionView(
                         title: "Contact Us",
                         content: "If you have any questions about this Privacy Policy, please contact us at hello@halbe.no"
                     )
@@ -109,7 +95,29 @@ struct PrivacyPolicyView: View {
     }
 }
 
-struct SectionView: View {
+struct LegalDocumentHeaderView: View {
+    let titleKey: LocalizedStringKey
+
+    var body: some View {
+        Text(titleKey)
+            .font(.largeTitle)
+            .fontWeight(.bold)
+            .padding(.bottom, 8)
+        
+        Text("legal.lastUpdated")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        
+        Text("legal.englishOnly")
+            .font(.caption)
+            .foregroundColor(.orange)
+            .padding(.top, 4)
+        
+        Divider()
+    }
+}
+
+struct LegalSectionView: View {
     let title: String
     let content: String
     

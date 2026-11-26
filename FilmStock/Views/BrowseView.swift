@@ -448,9 +448,7 @@ struct BrowseView: View {
                         message: NSLocalizedString("onboarding.tooltip.filter.message", comment: ""),
                         anchor: .trailing,
                         isVisible: showFilterTooltip
-                    ) {
-                        showFilterTooltip = false
-                    }
+                    )
                     Button {
                         showingAddFilm = true
                         if showAddFilmTooltip {
@@ -465,9 +463,7 @@ struct BrowseView: View {
                         message: NSLocalizedString("onboarding.tooltip.addFilm.message", comment: ""),
                         anchor: .trailing,
                         isVisible: showAddFilmTooltip
-                    ) {
-                        dismissTooltip("addFilm")
-                    }
+                    )
                 }
             }
     }
@@ -562,6 +558,9 @@ struct BrowseView: View {
                 .onPreferenceChange(TooltipPreferenceKey.self) { preferences in
                     tooltipPreferences = preferences
                 }
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("OnboardingCompleted"))) { _ in
+                    scheduleOnboardingTooltipIfNeeded()
+                }
                 .overlay { tooltipOverlay }
                 .overlay(alignment: .top) {
                     if showImportSuccessToastState {
@@ -598,11 +597,14 @@ struct BrowseView: View {
             showFridgeOnly = false
         }
         
-        if OnboardingManager.shared.hasCompletedOnboarding {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
-                    showAddFilmTooltip = true
-                }
+        scheduleOnboardingTooltipIfNeeded()
+    }
+    
+    private func scheduleOnboardingTooltipIfNeeded() {
+        guard OnboardingManager.shared.hasCompletedOnboarding else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if !OnboardingManager.shared.hasSeenTooltip("addFilm") {
+                showAddFilmTooltip = true
             }
         }
     }

@@ -51,7 +51,7 @@ struct SettingsView: View {
                         HStack {
                             Text("settings.formats")
                             Spacer()
-                            Text("\(settingsManager.enabledFormats.count)")
+                            Text("\(settingsManager.formatsToShow.count)")
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -87,7 +87,7 @@ struct SettingsView: View {
                         Text("settings.version")
                             .foregroundColor(.primary)
                         Spacer()
-                        Text(appVersion)
+                        Text(Bundle.main.appVersionDisplay)
                             .foregroundColor(.secondary)
                     }
                     
@@ -123,17 +123,10 @@ struct SettingsView: View {
                         SupportView()
                     } label: {
                         HStack(spacing: 16) {
-                            if #available(iOS 17.4, *) {
-                                Image(systemName: "cup.and.heat.waves.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.orange)
-                                    .frame(width: 32)
-                            } else {
-                                Image(systemName: "heart.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.orange)
-                                    .frame(width: 32)
-                            }
+                            Image(systemName: SupportView.iconSystemName)
+                                .font(.title2)
+                                .foregroundColor(.orange)
+                                .frame(width: 32)
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("support.buyMeCoffee")
@@ -165,12 +158,6 @@ struct SettingsView: View {
                 .presentationDragIndicator(.visible)
         }
         .preferredColorScheme(settingsManager.appearance.colorScheme)
-    }
-    
-    private var appVersion: String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        return "\(version) (\(build))"
     }
 }
 

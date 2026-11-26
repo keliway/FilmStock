@@ -121,10 +121,15 @@ class ExportManager {
         return f
     }()
 
+    private static let exportFilenameDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
     private var appVersion: String {
-        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-        let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
-        return "\(v) (\(b))"
+        Bundle.main.appVersionDisplay
     }
 
     // MARK: - Fetch
@@ -397,52 +402,53 @@ class ExportManager {
         var cameraRows: [ExportCamera] = []
         var warnings: [String] = []
 
-        let lines = raw.components(separatedBy: .newlines)
+        let records = parseCSVRecords(raw)
         var section: CSVSection = .none
         var headerParsed = false
         var col: [String: Int] = [:]
         var sawKnownSection = false
 
-        for (lineIdx, line) in lines.enumerated() {
-            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmed.isEmpty { continue }
-
-            if trimmed.hasPrefix("#") {
-                let upper = trimmed.uppercased()
-                if upper.hasPrefix("# INVENTORY") {
-                    section = .inventory
-                    sawKnownSection = true
-                } else if upper.hasPrefix("# LOADED FILMS") || upper.hasPrefix("# LOADED") {
-                    section = .loadedFilms
-                    sawKnownSection = true
-                } else if upper.hasPrefix("# FINISHED FILMS") || upper.hasPrefix("# FINISHED") {
-                    section = .finishedFilms
-                    sawKnownSection = true
-                } else if upper.hasPrefix("# CAMERAS") || upper.hasPrefix("# CAMERA") {
-                    section = .cameras
-                    sawKnownSection = true
-                } else {
-                    section = .none
+        for record in records {
+            if !record.hadQuotes && record.fields.count == 1 {
+                let trimmedHeader = record.fields[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmedHeader.hasPrefix("#") {
+                    let upper = trimmedHeader.uppercased()
+                    if upper.hasPrefix("# INVENTORY") {
+                        section = .inventory
+                        sawKnownSection = true
+                    } else if upper.hasPrefix("# LOADED FILMS") || upper.hasPrefix("# LOADED") {
+                        section = .loadedFilms
+                        sawKnownSection = true
+                    } else if upper.hasPrefix("# FINISHED FILMS") || upper.hasPrefix("# FINISHED") {
+                        section = .finishedFilms
+                        sawKnownSection = true
+                    } else if upper.hasPrefix("# CAMERAS") || upper.hasPrefix("# CAMERA") {
+                        section = .cameras
+                        sawKnownSection = true
+                    } else {
+                        section = .none
+                    }
+                    headerParsed = false
+                    col = [:]
+                    continue
                 }
-                headerParsed = false
-                col = [:]
-                continue
             }
 
             guard section != .none else { continue }
 
-            let fields = parseCSVLine(trimmed)
+            let fields = record.fields
+            let lineNumber = record.lineNumber
 
             if !headerParsed {
                 for (i, name) in fields.enumerated() {
-                    col[name.lowercased().trimmingCharacters(in: .whitespaces)] = i
+                    col[name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)] = i
                 }
                 headerParsed = true
                 continue
             }
 
             func field(_ name: String) -> String {
-                (fields[safe: col[name] ?? -1] ?? "").trimmingCharacters(in: .whitespaces)
+                (fields[safe: col[name] ?? -1] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             }
 
             switch section {
@@ -453,7 +459,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append(String(format: NSLocalizedString("import.warning.csv.inventory", comment: ""), lineIdx + 1))
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.inventory", comment: ""), lineNumber))
                     continue
                 }
                 let (format, customFormat) = Self.resolveFormat(formatStr: field("format"), explicitCustom: nil)
@@ -488,7 +494,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append(String(format: NSLocalizedString("import.warning.csv.loaded", comment: ""), lineIdx + 1))
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.loaded", comment: ""), lineNumber))
                     continue
                 }
                 let formatStr = field("format")
@@ -527,7 +533,7 @@ class ExportManager {
                 let manufacturer = field("manufacturer")
                 let name         = field("film")
                 guard !manufacturer.isEmpty, !name.isEmpty else {
-                    warnings.append(String(format: NSLocalizedString("import.warning.csv.finished", comment: ""), lineIdx + 1))
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.finished", comment: ""), lineNumber))
                     continue
                 }
                 let formatStr = field("format")
@@ -571,7 +577,7 @@ class ExportManager {
             case .cameras:
                 let camName = field("name")
                 guard !camName.isEmpty else {
-                    warnings.append(String(format: NSLocalizedString("import.warning.csv.camera", comment: ""), lineIdx + 1))
+                    warnings.append(String(format: NSLocalizedString("import.warning.csv.camera", comment: ""), lineNumber))
                     continue
                 }
                 let formatStr = field("format")
@@ -749,28 +755,72 @@ class ExportManager {
         return Int(trimmed)
     }
 
-    private func parseCSVLine(_ line: String) -> [String] {
+    private struct CSVRecord {
+        let lineNumber: Int
+        let fields: [String]
+        let hadQuotes: Bool
+    }
+
+    private func parseCSVRecords(_ raw: String) -> [CSVRecord] {
+        var records: [CSVRecord] = []
         var fields: [String] = []
         var current = ""
         var inQuotes = false
-        var idx = line.startIndex
-        while idx < line.endIndex {
-            let c = line[idx]
+        var hadQuotes = false
+        var currentLine = 1
+        var recordStartLine = 1
+
+        func flushRecord() {
+            fields.append(current)
+            let isBlankSingleField = !hadQuotes
+                && fields.count == 1
+                && fields[0].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            if !isBlankSingleField {
+                records.append(CSVRecord(lineNumber: recordStartLine, fields: fields, hadQuotes: hadQuotes))
+            }
+            fields = []
+            current = ""
+            hadQuotes = false
+        }
+
+        // Strip UTF-8 BOM if present at start of file
+        var idx = raw.startIndex
+        if idx < raw.endIndex, raw[idx] == "\u{FEFF}" {
+            idx = raw.index(after: idx)
+        }
+
+        while idx < raw.endIndex {
+            let c = raw[idx]
             if c == "\"" {
-                let next = line.index(after: idx)
-                if inQuotes && next < line.endIndex && line[next] == "\"" {
-                    current.append("\""); idx = line.index(after: next); continue
+                hadQuotes = true
+                let next = raw.index(after: idx)
+                if inQuotes && next < raw.endIndex && raw[next] == "\"" {
+                    current.append("\"")
+                    idx = raw.index(after: next)
+                    continue
                 }
                 inQuotes.toggle()
             } else if c == "," && !inQuotes {
-                fields.append(current); current = ""
+                fields.append(current)
+                current = ""
+            } else if c == "\r\n" || c == "\n" || c == "\r" {
+                currentLine += 1
+                if inQuotes {
+                    current.append("\n")
+                } else {
+                    flushRecord()
+                    recordStartLine = currentLine
+                }
             } else {
                 current.append(c)
             }
-            idx = line.index(after: idx)
+            idx = raw.index(after: idx)
         }
-        fields.append(current)
-        return fields
+
+        if !fields.isEmpty || !current.isEmpty || hadQuotes {
+            flushRecord()
+        }
+        return records
     }
 
     enum ImportError: LocalizedError {
@@ -789,7 +839,7 @@ class ExportManager {
     private func csvRow(_ fields: [String]) -> String {
         fields.map { field in
             let escaped = field.replacingOccurrences(of: "\"", with: "\"\"")
-            return escaped.contains(",") || escaped.contains("\"") || escaped.contains("\n")
+            return escaped.contains(",") || escaped.contains("\"") || escaped.contains("\n") || escaped.contains("\r")
                 ? "\"\(escaped)\""
                 : escaped
         }
@@ -799,10 +849,7 @@ class ExportManager {
     // MARK: - Private
 
     private func temporaryURL(name: String, ext: String) -> URL {
-        let dateStr = DateFormatter.localizedString(from: Date(),
-                        dateStyle: .short, timeStyle: .none)
-            .replacingOccurrences(of: "/", with: "-")
-            .replacingOccurrences(of: ".", with: "-")
+        let dateStr = Self.exportFilenameDateFormatter.string(from: Date())
         let filename = "\(name)_\(dateStr).\(ext)"
         return FileManager.default.temporaryDirectory.appendingPathComponent(filename)
     }

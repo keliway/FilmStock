@@ -1621,8 +1621,8 @@ class FilmStockDataManager: ObservableObject {
                 customFormatName = customFmt
             }
 
-            if let customFormatName, !customFormatName.isEmpty {
-                SettingsManager.shared.addCustomFormat(customFormatName)
+            if let rawCustom = customFormatName, !rawCustom.isEmpty {
+                customFormatName = SettingsManager.shared.canonicalCustomFormat(rawCustom)
             }
 
             let key = trimmedName.lowercased()
@@ -1640,34 +1640,40 @@ class FilmStockDataManager: ObservableObject {
 
         // 2. Import Inventory
         for row in result.inventory {
+            var normalizedRow = row
             if row.format == .other, let custom = row.customFormatName, !custom.isEmpty {
-                SettingsManager.shared.addCustomFormat(custom)
+                normalizedRow.customFormatName = SettingsManager.shared.canonicalCustomFormat(custom)
             }
-            _ = addFilmStock(row)
+            _ = addFilmStock(normalizedRow)
         }
 
         // 3. Import Loaded Films
-        var existingLoaded = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
+        // Match 1-to-1 against pre-existing database records only (consuming each matched record)
+        // so re-importing an export stays idempotent without dropping twin rolls within the same file.
+        var unmatchedExistingLoaded = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
         for item in result.loadedFilms {
-            let (format, customFormat) = ExportManager.resolveFormat(formatStr: item.format, explicitCustom: item.customFormat)
-            if let customFormat, !customFormat.isEmpty {
-                SettingsManager.shared.addCustomFormat(customFormat)
+            var (format, customFormat) = ExportManager.resolveFormat(formatStr: item.format, explicitCustom: item.customFormat)
+            if let rawCustom = customFormat, !rawCustom.isEmpty {
+                customFormat = SettingsManager.shared.canonicalCustomFormat(rawCustom)
             }
             let type = ExportManager.resolveFilmType(item.type)
             let loadedDate = ExportManager.shared.parseISO8601Date(item.loadedAt) ?? Date()
             let trimmedCamera = item.camera?.trimmingCharacters(in: .whitespacesAndNewlines)
             let cameraName: String? = (trimmedCamera?.isEmpty == false) ? trimmedCamera : nil
 
-            let isDuplicate = existingLoaded.contains { lf in
-                guard let f = lf.film else { return false }
+            if let matchIndex = unmatchedExistingLoaded.firstIndex(where: { lf in
+                guard let f = lf.film ?? lf.myFilm?.film else { return false }
                 let existingCam = lf.cameraName ?? lf.camera?.name
                 return f.name.caseInsensitiveCompare(item.name) == .orderedSame
                     && (f.manufacturer?.name ?? "").caseInsensitiveCompare(item.manufacturer) == .orderedSame
                     && lf.format == format.rawValue
+                    && (lf.myFilm?.customFormatName ?? "").caseInsensitiveCompare(customFormat ?? "") == .orderedSame
                     && (existingCam ?? "").caseInsensitiveCompare(cameraName ?? "") == .orderedSame
                     && abs(lf.loadedAt.timeIntervalSince(loadedDate)) < 1.0
+            }) {
+                unmatchedExistingLoaded.remove(at: matchIndex)
+                continue
             }
-            if isDuplicate { continue }
 
             let manufacturer = findOrCreateManufacturer(name: item.manufacturer, context: context)
             let film = findOrCreateFilm(
@@ -1725,15 +1731,14 @@ class FilmStockDataManager: ObservableObject {
             loadedFilm.film = film
             loadedFilm.camera = cameraObj
             loadedFilm.myFilm = backingMyFilm
-            existingLoaded.append(loadedFilm)
         }
 
         // 4. Import Finished Films
-        var existingFinished = (try? context.fetch(FetchDescriptor<FinishedFilm>())) ?? []
+        var unmatchedExistingFinished = (try? context.fetch(FetchDescriptor<FinishedFilm>())) ?? []
         for item in result.finishedFilms {
-            let (format, customFormat) = ExportManager.resolveFormat(formatStr: item.format, explicitCustom: item.customFormat)
-            if let customFormat, !customFormat.isEmpty {
-                SettingsManager.shared.addCustomFormat(customFormat)
+            var (format, customFormat) = ExportManager.resolveFormat(formatStr: item.format, explicitCustom: item.customFormat)
+            if let rawCustom = customFormat, !rawCustom.isEmpty {
+                customFormat = SettingsManager.shared.canonicalCustomFormat(rawCustom)
             }
             let type = ExportManager.resolveFilmType(item.type)
             let loadedDate = ExportManager.shared.parseISO8601Date(item.loadedAt) ?? Date()
@@ -1743,15 +1748,18 @@ class FilmStockDataManager: ObservableObject {
             let trimmedCamera = item.camera?.trimmingCharacters(in: .whitespacesAndNewlines)
             let cameraName: String? = (trimmedCamera?.isEmpty == false) ? trimmedCamera : nil
 
-            let isDuplicate = existingFinished.contains { ff in
-                guard let f = ff.film else { return false }
+            if let matchIndex = unmatchedExistingFinished.firstIndex(where: { ff in
+                guard let f = ff.film ?? ff.myFilm?.film else { return false }
                 return f.name.caseInsensitiveCompare(item.name) == .orderedSame
                     && (f.manufacturer?.name ?? "").caseInsensitiveCompare(item.manufacturer) == .orderedSame
                     && ff.format == format.rawValue
+                    && (ff.myFilm?.customFormatName ?? "").caseInsensitiveCompare(customFormat ?? "") == .orderedSame
                     && (ff.cameraName ?? "").caseInsensitiveCompare(cameraName ?? "") == .orderedSame
                     && abs(ff.finishedAt.timeIntervalSince(finishedDate)) < 1.0
+            }) {
+                unmatchedExistingFinished.remove(at: matchIndex)
+                continue
             }
-            if isDuplicate { continue }
 
             let manufacturer = findOrCreateManufacturer(name: item.manufacturer, context: context)
             let film = findOrCreateFilm(
@@ -1801,7 +1809,6 @@ class FilmStockDataManager: ObservableObject {
             finishedFilm.film = film
             finishedFilm.camera = nil
             finishedFilm.myFilm = backingMyFilm
-            existingFinished.append(finishedFilm)
 
             incrementFinishedFilmsCount(by: qty)
         }

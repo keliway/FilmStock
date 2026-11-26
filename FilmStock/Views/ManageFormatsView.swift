@@ -11,16 +11,20 @@ struct ManageFormatsView: View {
     @ObservedObject var settingsManager = SettingsManager.shared
     @State private var showingAddFormat = false
     @State private var newFormatName = ""
-    @State private var showDuplicateError = false
     
     var builtInFormats: [String] {
-        FilmStock.FilmFormat.allCases.filter { $0 != .other }.map { $0.displayName }
+        FilmStock.FilmFormat.allCases.map { $0.displayName }
     }
     
     var isDuplicate: Bool {
         let trimmed = newFormatName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return builtInFormats.contains { $0.caseInsensitiveCompare(trimmed) == .orderedSame }
-            || settingsManager.customFormats.contains { $0.caseInsensitiveCompare(trimmed) == .orderedSame }
+        guard !trimmed.isEmpty else { return false }
+        return FilmStock.FilmFormat.allCases.contains {
+            $0.displayName.caseInsensitiveCompare(trimmed) == .orderedSame ||
+            $0.rawValue.caseInsensitiveCompare(trimmed) == .orderedSame
+        } || settingsManager.customFormats.contains {
+            $0.caseInsensitiveCompare(trimmed) == .orderedSame
+        }
     }
     
     var body: some View {
@@ -106,8 +110,6 @@ struct ManageFormatsView: View {
                 let trimmed = newFormatName.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !trimmed.isEmpty && !isDuplicate {
                     settingsManager.addCustomFormat(trimmed)
-                } else if isDuplicate {
-                    showDuplicateError = true
                 }
                 newFormatName = ""
             }
@@ -118,11 +120,6 @@ struct ManageFormatsView: View {
             } else {
                 Text("formats.addMessage")
             }
-        }
-        .alert("formats.duplicateTitle", isPresented: $showDuplicateError) {
-            Button("action.ok", role: .cancel) { }
-        } message: {
-            Text("formats.duplicateMessage")
         }
     }
 }

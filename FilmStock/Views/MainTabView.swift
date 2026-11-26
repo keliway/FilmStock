@@ -20,19 +20,17 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            NavigationStack {
             BrowseView()
-            }
-            .tabItem {
-                Label("tab.myFilms", systemImage: "film")
-            }
-            .tag(0)
+                .tabItem {
+                    Label("tab.myFilms", systemImage: "film")
+                }
+                .tag(0)
             
             LoadedFilmsView(selectedFilmId: $selectedLoadedFilmId)
                 .tabItem {
                     Label("tab.loadedFilms", systemImage: "camera")
                 }
-            .tag(1)
+                .tag(1)
             
             NavigationStack {
                 CollectionView()
@@ -48,13 +46,16 @@ struct MainTabView: View {
 
             // Show welcome screen on very first launch
             if !OnboardingManager.shared.hasCompletedOnboarding {
+                seenWhatsNewVersion = whatsNewVersion
                 showingWelcome = true
             } else if seenWhatsNewVersion != whatsNewVersion {
                 // Show what's new sheet after an update (existing users only)
                 showingWhatsNew = true
             }
         }
-        .fullScreenCover(isPresented: $showingWelcome) {
+        .fullScreenCover(isPresented: $showingWelcome, onDismiss: {
+            NotificationCenter.default.post(name: NSNotification.Name("OnboardingCompleted"), object: nil)
+        }) {
             WelcomeView(isPresented: $showingWelcome)
         }
         .sheet(isPresented: $showingWhatsNew, onDismiss: {

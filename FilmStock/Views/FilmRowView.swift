@@ -24,7 +24,10 @@ private func quantityForBrowseFormatColumn(
 ) -> Int {
     if settings.isCustomFormat(title) {
         return formats
-            .filter { $0.format == .other && $0.customFormatName == title }
+            .filter {
+                $0.format == .other &&
+                $0.customFormatName?.caseInsensitiveCompare(title) == .orderedSame
+            }
             .reduce(0) { $0 + $1.quantity }
     }
     guard let builtIn = FilmStock.FilmFormat.allCases.first(where: { $0.displayName == title }) else {

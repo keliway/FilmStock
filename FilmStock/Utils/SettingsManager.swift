@@ -166,22 +166,41 @@ class SettingsManager: ObservableObject {
     }
     
     func addCustomFormat(_ name: String) {
+        _ = canonicalCustomFormat(name)
+    }
+    
+    /// Returns the existing canonical custom format name if one matches case-insensitively,
+    /// or registers `name` as a new enabled custom format (unless it matches a built-in format).
+    @discardableResult
+    func canonicalCustomFormat(_ name: String) -> String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        guard !customFormats.contains(trimmed) else { return }
-        guard !FilmStock.FilmFormat.allCases.map({ $0.displayName }).contains(trimmed) else { return }
+        guard !trimmed.isEmpty else { return trimmed }
+        if let existing = customFormats.first(where: { $0.caseInsensitiveCompare(trimmed) == .orderedSame }) {
+            return existing
+        }
+        if let builtIn = FilmStock.FilmFormat.allCases.first(where: {
+            $0.displayName.caseInsensitiveCompare(trimmed) == .orderedSame ||
+            $0.rawValue.caseInsensitiveCompare(trimmed) == .orderedSame
+        }) {
+            return builtIn.displayName
+        }
         
         customFormats.append(trimmed)
         enabledFormats.insert(trimmed)
+        return trimmed
     }
     
     func deleteCustomFormat(_ name: String) {
-        customFormats.removeAll { $0 == name }
+        let matching = customFormats.filter { $0.caseInsensitiveCompare(name) == .orderedSame }
+        customFormats.removeAll { $0.caseInsensitiveCompare(name) == .orderedSame }
+        for item in matching {
+            enabledFormats.remove(item)
+        }
         enabledFormats.remove(name)
     }
     
     func isCustomFormat(_ name: String) -> Bool {
-        customFormats.contains(name)
+        customFormats.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
     }
     
     private init() {
@@ -246,5 +265,13 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
         case .light: return .light
         case .dark: return .dark
         }
+    }
+}
+
+extension Bundle {
+    var appVersionDisplay: String {
+        let version = infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let build = infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        return "\(version) (\(build))"
     }
 }

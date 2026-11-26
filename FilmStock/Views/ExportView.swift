@@ -251,8 +251,12 @@ struct ExportView: View {
             Task { @MainActor in
                 do {
                     // Security-scoped resource access required for file importer
-                    _ = url.startAccessingSecurityScopedResource()
-                    defer { url.stopAccessingSecurityScopedResource() }
+                    let didStartAccess = url.startAccessingSecurityScopedResource()
+                    defer {
+                        if didStartAccess {
+                            url.stopAccessingSecurityScopedResource()
+                        }
+                    }
                     let parsed = try ExportManager.shared.importAll(from: url)
                     if parsed.isEmpty {
                         throw NSError(
@@ -352,7 +356,7 @@ struct ImportPreviewSheet: View {
     private var warningsSection: some View {
         if !result.warnings.isEmpty {
             Section("import.preview.warnings") {
-                ForEach(result.warnings, id: \.self) { w in
+                ForEach(Array(result.warnings.enumerated()), id: \.offset) { _, w in
                     Text(w).font(.caption).foregroundColor(.orange)
                 }
             }
@@ -363,7 +367,7 @@ struct ImportPreviewSheet: View {
     private var inventorySection: some View {
         if !result.inventory.isEmpty {
             Section("export.includes.inventory") {
-                ForEach(result.inventory) { row in
+                ForEach(Array(result.inventory.enumerated()), id: \.offset) { _, row in
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(row.manufacturer) \(row.name)")
                             .fontWeight(.medium)
@@ -381,7 +385,7 @@ struct ImportPreviewSheet: View {
     private var loadedSection: some View {
         if !result.loadedFilms.isEmpty {
             Section("export.includes.loaded") {
-                ForEach(result.loadedFilms) { item in
+                ForEach(Array(result.loadedFilms.enumerated()), id: \.offset) { _, item in
                     loadedRow(item)
                 }
             }
@@ -410,7 +414,7 @@ struct ImportPreviewSheet: View {
     private var finishedSection: some View {
         if !result.finishedFilms.isEmpty {
             Section("export.includes.finished") {
-                ForEach(result.finishedFilms) { item in
+                ForEach(Array(result.finishedFilms.enumerated()), id: \.offset) { _, item in
                     finishedRow(item)
                 }
             }
@@ -444,7 +448,7 @@ struct ImportPreviewSheet: View {
     private var camerasSection: some View {
         if !result.cameras.isEmpty {
             Section("export.includes.cameras") {
-                ForEach(result.cameras) { cam in
+                ForEach(Array(result.cameras.enumerated()), id: \.offset) { _, cam in
                     HStack {
                         Text(cam.name)
                             .fontWeight(.medium)

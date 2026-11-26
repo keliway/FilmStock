@@ -30,7 +30,6 @@ struct OnboardingTooltip: ViewModifier {
     let message: String
     let anchor: TooltipAnchor
     let isVisible: Bool
-    let onDismiss: () -> Void
     
     enum TooltipAnchor {
         case top
@@ -65,16 +64,14 @@ extension View {
         title: String,
         message: String,
         anchor: OnboardingTooltip.TooltipAnchor = .bottom,
-        isVisible: Bool = true,
-        onDismiss: @escaping () -> Void = {}
+        isVisible: Bool = true
     ) -> some View {
         modifier(OnboardingTooltip(
             id: id,
             title: title,
             message: message,
             anchor: anchor,
-            isVisible: isVisible,
-            onDismiss: onDismiss
+            isVisible: isVisible
         ))
     }
 }
