@@ -77,19 +77,12 @@ struct AddFilmView: View {
     @State private var manufacturer = ""
     @State private var type: FilmStock.FilmType = .bw
     @State private var filmSpeed = 400
-    private let isoValues = [1, 2, 4, 5, 8, 10, 12, 16, 20, 25, 32, 40, 50, 64, 80, 100, 125,
-                              160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000,
-                              2500, 3200, 6400]
 
     // Image
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
-    @State private var showingImagePicker = false
-    @State private var showingImageCatalog = false
-    @State private var rawSelectedImage: UIImage?
     @State private var selectedCatalogFilename: String?
     @State private var imageSource: ImageSource = .autoDetected
-    @State private var catalogSelectedSource: ImageSource?
     @State private var hasAutoPopulatedMetadata = false
 
     // Roll batches
@@ -162,110 +155,19 @@ struct AddFilmView: View {
                     }
 
                     Picker("film.speed", selection: $filmSpeed) {
-                        ForEach(isoValues, id: \.self) { iso in
+                        ForEach(FilmStock.standardISOValues, id: \.self) { iso in
                             Text("ISO \(iso)").tag(iso)
                         }
                     }
                     .pickerStyle(.wheel)
 
                     // Film reminder image
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("film.filmReminder")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-
-                        if selectedImage == nil {
-                            HStack(spacing: 12) {
-                                Button { showingImagePicker = true } label: {
-                                    HStack {
-                                        Image(systemName: "camera.fill")
-                                        Text("image.takePhoto")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(Color.accentColor)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                                }
-                                .buttonStyle(.plain)
-
-                                Button { showingImageCatalog = true } label: {
-                                    HStack {
-                                        Image(systemName: "photo.on.rectangle")
-                                        Text("image.openCatalog")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(Color(.systemGray5))
-                                    .foregroundColor(.primary)
-                                    .cornerRadius(8)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-
-                        if selectedImage != nil || defaultImage != nil {
-                            HStack(spacing: 12) {
-                                if let img = selectedImage {
-                                    ZStack(alignment: .topTrailing) {
-                                        Image(uiImage: img)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 100)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(
-                                                        imageSource == .custom || imageSource == .catalog
-                                                            ? Color.accentColor : Color.clear,
-                                                        lineWidth: 3
-                                                    )
-                                            )
-                                            .contentShape(Rectangle())
-                                            .onTapGesture {
-                                                imageSource = selectedCatalogFilename != nil ? .catalog : .custom
-                                            }
-
-                                        Button {
-                                            selectedImage = nil
-                                            selectedCatalogFilename = nil
-                                            imageSource = defaultImage != nil ? .autoDetected : .none
-                                        } label: {
-                                            ZStack {
-                                                Circle().fill(Color.black.opacity(0.6))
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .foregroundColor(.white)
-                                                    .font(.system(size: 20))
-                                            }
-                                            .frame(width: 24, height: 24)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .offset(x: 4, y: -4)
-                                        .zIndex(1)
-                                    }
-                                    .frame(width: 100, height: 100)
-                                }
-
-                                if let defImg = defaultImage {
-                                    Image(uiImage: defImg)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(
-                                                    imageSource == .autoDetected ? Color.accentColor : Color.clear,
-                                                    lineWidth: 3
-                                                )
-                                        )
-                                        .contentShape(Rectangle())
-                                        .onTapGesture { imageSource = .autoDetected }
-                                }
-                            }
-                        }
-                    }
-                    .padding(.vertical, 4)
+                    FilmReminderImageEditor(
+                        selectedImage: $selectedImage,
+                        defaultImage: defaultImage,
+                        selectedCatalogFilename: $selectedCatalogFilename,
+                        imageSource: $imageSource
+                    )
                 }
 
                 // MARK: Rolls
@@ -308,16 +210,6 @@ struct AddFilmView: View {
                     .disabled(name.isEmpty || manufacturer.isEmpty || rollBatches.isEmpty)
                 }
             }
-            .sheet(isPresented: $showingImagePicker) {
-                ImageSourcePicker(finalImage: $rawSelectedImage, isPresented: $showingImagePicker)
-            }
-            .sheet(isPresented: $showingImageCatalog) {
-                ImageCatalogView(
-                    selectedImage: $selectedImage,
-                    selectedImageFilename: $selectedCatalogFilename,
-                    selectedImageSource: $catalogSelectedSource
-                )
-            }
             .fullScreenCover(isPresented: $showingDXScanner) {
                 DXBarcodeScannerView { code in
                     handleScannedBarcode(code)
@@ -347,23 +239,6 @@ struct AddFilmView: View {
                     } else {
                         rollBatches.append(saved)
                     }
-                }
-            }
-            .onChange(of: rawSelectedImage) { _, newValue in
-                if let img = newValue {
-                    selectedImage = img
-                    imageSource = .custom
-                    selectedCatalogFilename = nil
-                    catalogSelectedSource = nil
-                }
-            }
-            .onChange(of: catalogSelectedSource) { _, newValue in
-                if let source = newValue { imageSource = source }
-            }
-            .onChange(of: selectedImage) { _, newValue in
-                if newValue == nil {
-                    selectedCatalogFilename = nil
-                    imageSource = defaultImage != nil ? .autoDetected : .none
                 }
             }
             .onChange(of: manufacturer) { _, newValue in
@@ -507,7 +382,7 @@ struct AddFilmView: View {
         hasAutoPopulatedMetadata = true
         self.manufacturer = manufacturer
         self.name = name
-        if let speed, isoValues.contains(speed) {
+        if let speed, FilmStock.standardISOValues.contains(speed) {
             filmSpeed = speed
         }
         if let typeStr = type, let scannedType = FilmStock.FilmType(rawValue: typeStr) {
@@ -609,8 +484,9 @@ struct AddFilmView: View {
         case .custom:
             if let catalogFilename = selectedCatalogFilename {
                 imageName = catalogFilename
-            } else if let img = selectedImage {
-                imageName = ImageStorage.shared.saveImage(img, forManufacturer: manufacturer, filmName: name)
+            } else if let img = selectedImage,
+                      let savedFile = ImageStorage.shared.saveImage(img, forManufacturer: manufacturer, filmName: name) {
+                imageName = "\(manufacturer)/\(savedFile)"
             }
         case .catalog:
             imageName = selectedCatalogFilename
@@ -715,29 +591,6 @@ struct RollBatchSheet: View {
         }
     }
 
-    private var storageSelection: Binding<Int> {
-        Binding(
-            get: {
-                if isFrozen { return 2 }
-                if isFridge { return 1 }
-                return 0
-            },
-            set: { newValue in
-                switch newValue {
-                case 1:
-                    isFrozen = false
-                    isFridge = true
-                case 2:
-                    isFrozen = true
-                    isFridge = false
-                default:
-                    isFrozen = false
-                    isFridge = false
-                }
-            }
-        )
-    }
-
     private var allEnabledFormats: [String] {
         var formats: [String] = []
         for builtIn in FilmStock.FilmFormat.allCases {
@@ -790,7 +643,7 @@ struct RollBatchSheet: View {
                 // Quantity
                 Section {
                     Stepper(
-                        quantityLabel,
+                        FilmStock.localizedQuantityLabel(quantity: quantity, format: format),
                         value: $quantity,
                         in: 1...999
                     )
@@ -802,13 +655,7 @@ struct RollBatchSheet: View {
                         TextField("film.expiryDateFormat", text: $expireDate)
                             .keyboardType(.numberPad)
                             .onChange(of: expireDate) { _, newValue in
-                                let digits = newValue.filter { $0.isNumber }
-                                let limited = String(digits.prefix(6))
-                                if limited.count == 6 {
-                                    expireDate = "\(limited.prefix(2))/\(limited.suffix(4))"
-                                } else {
-                                    expireDate = limited
-                                }
+                                expireDate = FilmStock.formatExpiryInput(newValue)
                                 expireDateError = nil
                             }
                         if let error = expireDateError {
@@ -818,23 +665,7 @@ struct RollBatchSheet: View {
                 }
 
                 // Frozen & Fridge: rolls and sheet / other formats (stored per inventory line)
-                if settingsManager.enableFridge {
-                    Section("film.storage") {
-                        Picker("film.storage", selection: storageSelection) {
-                            Text("group.none").tag(0)
-                            Text("loaded.detail.fridge").tag(1)
-                            Text("loaded.detail.frozen").tag(2)
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                } else {
-                    Section {
-                        Toggle("film.isFrozen", isOn: $isFrozen)
-                            .onChange(of: isFrozen) { _, newValue in
-                                if newValue { isFridge = false }
-                            }
-                    }
-                }
+                FilmStorageSection(isFrozen: $isFrozen, isFridge: $isFridge)
 
                 // Exposures (roll formats only, options vary by format)
                 if format.isRollFormat && !format.exposureOptions.isEmpty {
@@ -881,43 +712,9 @@ struct RollBatchSheet: View {
         }
     }
 
-    private var quantityLabel: String {
-        let unit = format.quantityUnit
-        if unit == "Rolls" {
-            return quantity == 1
-                ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
-                : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
-        } else if unit == "Sheets" {
-            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
-        }
-        return "\(quantity) \(unit)"
-    }
-
     private func validate() -> Bool {
-        expireDateError = nil
-        guard !expireDate.isEmpty else { return true }
-        let digits = expireDate.filter { $0.isNumber }
-        if digits.count == 4 {
-            guard let year = Int(digits), year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else if digits.count == 6 {
-            let month = Int(String(digits.prefix(2))) ?? 0
-            let year  = Int(String(digits.suffix(4))) ?? 0
-            guard month >= 1, month <= 12 else {
-                expireDateError = NSLocalizedString("error.invalidMonth", comment: "")
-                return false
-            }
-            guard year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else {
-            expireDateError = NSLocalizedString("error.invalidDateFormat", comment: "")
-            return false
-        }
-        return true
+        expireDateError = FilmStock.validateExpiryInput(expireDate)
+        return expireDateError == nil
     }
 
     private func commit() {

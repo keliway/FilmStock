@@ -18,19 +18,12 @@ struct EditFilmView: View {
     @State private var type: FilmStock.FilmType = .bw
     @State private var filmSpeed = 400
 
-    private let isoValues = [1, 2, 4, 5, 8, 10, 12, 16, 20, 25, 32, 40, 50, 64, 80, 100, 125,
-                              160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000,
-                              2500, 3200, 6400]
-
     @State private var selectedImage: UIImage?
     @State private var defaultImage: UIImage?
-    @State private var showingImagePicker = false
-    @State private var showingImageCatalog = false
-    @State private var rawSelectedImage: UIImage?
-    @State private var existingImageFilename: String?
-    @State private var selectedCatalogFilename: String?
+    @State private var existingCustomImageKey: String?   // normalized "Manufacturer/filename" if film started with a custom photo
+    @State private var selectedCatalogFilename: String?  // for .catalog: catalog key; for .custom: "Manufacturer/filename"
+    @State private var didPickFreshCameraPhoto = false   // true only when user took/picked a brand-new photo in this session
     @State private var imageSource: ImageSource = .autoDetected
-    @State private var catalogSelectedSource: ImageSource?
 
     @State private var nameError: String?
     @State private var hasLoaded = false
@@ -73,114 +66,20 @@ struct EditFilmView: View {
 
                     // ISO speed
                     Picker("film.speed", selection: $filmSpeed) {
-                        ForEach(isoValues, id: \.self) { iso in
+                        ForEach(FilmStock.standardISOValues, id: \.self) { iso in
                             Text("ISO \(iso)").tag(iso)
                         }
                     }
                     .pickerStyle(.wheel)
 
                     // Film reminder image
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("film.filmReminder")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-
-                        if selectedImage == nil {
-                            HStack(spacing: 12) {
-                                Button {
-                                    showingImagePicker = true
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "camera.fill")
-                                        Text("image.takePhoto")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(Color.accentColor)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(8)
-                                }
-                                .buttonStyle(.plain)
-
-                                Button {
-                                    showingImageCatalog = true
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "photo.on.rectangle")
-                                        Text("image.openCatalog")
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(Color(.systemGray5))
-                                    .foregroundColor(.primary)
-                                    .cornerRadius(8)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-
-                        if selectedImage != nil || defaultImage != nil {
-                            HStack(spacing: 12) {
-                                if let img = selectedImage {
-                                    ZStack(alignment: .topTrailing) {
-                                        Image(uiImage: img)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 100)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(
-                                                        imageSource == .custom || imageSource == .catalog
-                                                            ? Color.accentColor : Color.clear,
-                                                        lineWidth: 3
-                                                    )
-                                            )
-                                            .contentShape(Rectangle())
-                                            .onTapGesture {
-                                                imageSource = selectedCatalogFilename != nil ? .catalog : .custom
-                                            }
-
-                                        Button {
-                                            selectedImage = nil
-                                            selectedCatalogFilename = nil
-                                            imageSource = defaultImage != nil ? .autoDetected : .none
-                                        } label: {
-                                            ZStack {
-                                                Circle().fill(Color.black.opacity(0.6))
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .foregroundColor(.white)
-                                                    .font(.system(size: 20))
-                                            }
-                                            .frame(width: 24, height: 24)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .offset(x: 4, y: -4)
-                                        .zIndex(1)
-                                    }
-                                    .frame(width: 100, height: 100)
-                                }
-
-                                if let defImg = defaultImage {
-                                    Image(uiImage: defImg)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(
-                                                    imageSource == .autoDetected ? Color.accentColor : Color.clear,
-                                                    lineWidth: 3
-                                                )
-                                        )
-                                        .contentShape(Rectangle())
-                                        .onTapGesture { imageSource = .autoDetected }
-                                }
-                            }
-                        }
-                    }
-                    .padding(.vertical, 4)
+                    FilmReminderImageEditor(
+                        selectedImage: $selectedImage,
+                        defaultImage: defaultImage,
+                        selectedCatalogFilename: $selectedCatalogFilename,
+                        imageSource: $imageSource,
+                        onCustomPhotoPicked: { didPickFreshCameraPhoto = true }
+                    )
                 }
             }
             .navigationTitle("film.editFilm")
@@ -195,33 +94,6 @@ struct EditFilmView: View {
                     }
                     .fontWeight(.semibold)
                     .disabled(name.isEmpty || manufacturer.isEmpty)
-                }
-            }
-            .sheet(isPresented: $showingImagePicker) {
-                ImageSourcePicker(finalImage: $rawSelectedImage, isPresented: $showingImagePicker)
-            }
-            .sheet(isPresented: $showingImageCatalog) {
-                ImageCatalogView(
-                    selectedImage: $selectedImage,
-                    selectedImageFilename: $selectedCatalogFilename,
-                    selectedImageSource: $catalogSelectedSource
-                )
-            }
-            .onChange(of: rawSelectedImage) { _, newValue in
-                if let img = newValue {
-                    selectedImage = img
-                    imageSource = .custom
-                    selectedCatalogFilename = nil
-                    catalogSelectedSource = nil
-                }
-            }
-            .onChange(of: catalogSelectedSource) { _, newValue in
-                if let source = newValue { imageSource = source }
-            }
-            .onChange(of: selectedImage) { _, newValue in
-                if newValue == nil {
-                    selectedCatalogFilename = nil
-                    imageSource = defaultImage != nil ? .autoDetected : .none
                 }
             }
             .onChange(of: manufacturer) { _, newValue in
@@ -249,6 +121,7 @@ struct EditFilmView: View {
         manufacturer = groupedFilm.manufacturer
         type = groupedFilm.type
         filmSpeed = groupedFilm.filmSpeed
+        defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer)
 
         let filmImageSource = ImageSource(rawValue: groupedFilm.imageSource) ?? .autoDetected
         imageSource = filmImageSource
@@ -256,19 +129,18 @@ struct EditFilmView: View {
         switch filmImageSource {
         case .custom:
             if let imageName = groupedFilm.imageName {
-                existingImageFilename = imageName
                 let (mfr, filename) = ImageStorage.parseCustomImageName(imageName, defaultManufacturer: groupedFilm.manufacturer)
+                let qualifiedKey = "\(mfr)/\(filename)"
+                existingCustomImageKey = qualifiedKey
+                selectedCatalogFilename = qualifiedKey
                 selectedImage = ImageStorage.shared.loadImage(filename: filename, manufacturer: mfr)
-                selectedCatalogFilename = imageName.contains("/") ? imageName : nil
             }
         case .catalog:
             if let catalogFilename = groupedFilm.imageName {
                 selectedImage = ImageStorage.shared.loadCatalogImage(filename: catalogFilename)
                 selectedCatalogFilename = catalogFilename
             }
-        case .autoDetected:
-            defaultImage = ImageStorage.shared.loadDefaultImage(filmName: groupedFilm.name, manufacturer: groupedFilm.manufacturer)
-        case .none:
+        case .autoDetected, .none:
             break
         }
     }
@@ -278,7 +150,8 @@ struct EditFilmView: View {
     @discardableResult
     private func validateAndSave() -> Bool {
         nameError = nil
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
             nameError = NSLocalizedString("error.nameEmpty", comment: "")
             return false
         }
@@ -288,42 +161,36 @@ struct EditFilmView: View {
 
         switch finalImageSource {
         case .custom:
-            if let catalogFilename = selectedCatalogFilename {
-                resolvedImageName = catalogFilename
-                if let existingFilename = existingImageFilename, existingFilename != catalogFilename {
-                    let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
-                    ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
-                }
-            } else if let img = selectedImage {
-                if let existingFilename = existingImageFilename {
-                    let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
-                    ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
-                }
-                resolvedImageName = ImageStorage.shared.saveImage(img, forManufacturer: manufacturer, filmName: name)
+            if let qualifiedFilename = selectedCatalogFilename, !didPickFreshCameraPhoto {
+                // Existing custom photo (unchanged or picked from "My Photos"): keep its qualified
+                // "Manufacturer/filename" reference — no re-compression, survives manufacturer changes.
+                resolvedImageName = qualifiedFilename
+            } else if let img = selectedImage,
+                      let savedFile = ImageStorage.shared.saveImage(img, forManufacturer: manufacturer, filmName: trimmedName) {
+                resolvedImageName = "\(manufacturer)/\(savedFile)"
             }
         case .catalog:
-            if let existingFilename = existingImageFilename {
-                let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
-                ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
-            }
             resolvedImageName = selectedCatalogFilename
         case .autoDetected, .none:
-            if let existingFilename = existingImageFilename {
-                let (oldMfr, oldFile) = ImageStorage.parseCustomImageName(existingFilename, defaultManufacturer: groupedFilm.manufacturer)
-                ImageStorage.shared.deleteImage(filename: oldFile, manufacturer: oldMfr)
-            }
             resolvedImageName = nil
         }
 
+        // Update database first so reference counting sees the post-edit state
         dataManager.updateFilmInfo(
             groupedFilm: groupedFilm,
-            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+            name: trimmedName,
             manufacturer: manufacturer,
             type: type,
             filmSpeed: filmSpeed,
             imageName: resolvedImageName,
             imageSource: finalImageSource.rawValue
         )
+
+        // Only delete the previous custom photo file if this edit stopped using it AND no other film references it
+        if let oldKey = existingCustomImageKey, oldKey != resolvedImageName {
+            dataManager.deleteCustomImageIfUnreferenced(imageName: oldKey, defaultManufacturer: groupedFilm.manufacturer)
+        }
+
         return true
     }
 }

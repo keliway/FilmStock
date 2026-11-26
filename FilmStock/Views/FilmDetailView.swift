@@ -448,7 +448,6 @@ struct FilmDetailView: View {
 struct RollGroupEditSheet: View {
     let group: RollGroupItem
     @EnvironmentObject var dataManager: FilmStockDataManager
-    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
     @State private var count: Int
@@ -482,38 +481,13 @@ struct RollGroupEditSheet: View {
         }
     }
 
-    private var storageSelection: Binding<Int> {
-        Binding(
-            get: {
-                if isFrozen { return 2 }
-                if isFridge { return 1 }
-                return 0
-            },
-            set: { newValue in
-                switch newValue {
-                case 1:
-                    isFrozen = false
-                    isFridge = true
-                case 2:
-                    isFrozen = true
-                    isFridge = false
-                default:
-                    isFrozen = false
-                    isFridge = false
-                }
-            }
-        )
-    }
-
     var body: some View {
         NavigationStack {
             Form {
                 // Count
                 Section {
                     Stepper(
-                        count == 1
-                            ? String(format: NSLocalizedString("film.rollCount", comment: ""), count)
-                            : String(format: NSLocalizedString("film.rollsCount", comment: ""), count),
+                        FilmStock.localizedQuantityLabel(quantity: count, format: group.format),
                         value: $count,
                         in: 0...999
                     )
@@ -525,13 +499,7 @@ struct RollGroupEditSheet: View {
                         TextField("film.expiryDateFormat", text: $expireDate)
                             .keyboardType(.numberPad)
                             .onChange(of: expireDate) { _, newValue in
-                                let digits = newValue.filter { $0.isNumber }
-                                let limited = String(digits.prefix(6))
-                                if limited.count == 6 {
-                                    expireDate = "\(limited.prefix(2))/\(limited.suffix(4))"
-                                } else {
-                                    expireDate = limited
-                                }
+                                expireDate = FilmStock.formatExpiryInput(newValue)
                                 expireDateError = nil
                             }
                         if let error = expireDateError {
@@ -541,23 +509,7 @@ struct RollGroupEditSheet: View {
                 }
 
                 // Frozen & Fridge
-                if settingsManager.enableFridge {
-                    Section("film.storage") {
-                        Picker("film.storage", selection: storageSelection) {
-                            Text("group.none").tag(0)
-                            Text("loaded.detail.fridge").tag(1)
-                            Text("loaded.detail.frozen").tag(2)
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                } else {
-                    Section {
-                        Toggle("film.isFrozen", isOn: $isFrozen)
-                            .onChange(of: isFrozen) { _, newValue in
-                                if newValue { isFridge = false }
-                            }
-                    }
-                }
+                FilmStorageSection(isFrozen: $isFrozen, isFridge: $isFridge)
 
                 // Exposures (options vary by format)
                 if !group.format.exposureOptions.isEmpty {
@@ -609,30 +561,8 @@ struct RollGroupEditSheet: View {
     // MARK: - Validation
 
     private func validate() -> Bool {
-        expireDateError = nil
-        guard !expireDate.isEmpty else { return true }
-        let digits = expireDate.filter { $0.isNumber }
-        if digits.count == 4 {
-            guard let year = Int(digits), year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else if digits.count == 6 {
-            let month = Int(String(digits.prefix(2))) ?? 0
-            let year  = Int(String(digits.suffix(4))) ?? 0
-            guard month >= 1, month <= 12 else {
-                expireDateError = NSLocalizedString("error.invalidMonth", comment: "")
-                return false
-            }
-            guard year >= 1950, year <= 2100 else {
-                expireDateError = NSLocalizedString("error.invalidYear", comment: "")
-                return false
-            }
-        } else {
-            expireDateError = NSLocalizedString("error.invalidDateFormat", comment: "")
-            return false
-        }
-        return true
+        expireDateError = FilmStock.validateExpiryInput(expireDate)
+        return expireDateError == nil
     }
 
     // MARK: - Save
@@ -714,7 +644,6 @@ private struct MutableExpiryRow: Identifiable {
 struct SheetGroupEditSheet: View {
     let film: FilmStock
     @EnvironmentObject var dataManager: FilmStockDataManager
-    @ObservedObject private var settingsManager = SettingsManager.shared
     @Environment(\.dismiss) var dismiss
 
     @State private var quantity: Int
@@ -738,34 +667,15 @@ struct SheetGroupEditSheet: View {
         }
     }
 
-    private var storageSelection: Binding<Int> {
-        Binding(
-            get: {
-                if isFrozen { return 2 }
-                if isFridge { return 1 }
-                return 0
-            },
-            set: { newValue in
-                switch newValue {
-                case 1:
-                    isFrozen = false
-                    isFridge = true
-                case 2:
-                    isFrozen = true
-                    isFridge = false
-                default:
-                    isFrozen = false
-                    isFridge = false
-                }
-            }
-        )
-    }
-
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Stepper(quantityLabel, value: $quantity, in: 0...999)
+                    Stepper(
+                        FilmStock.localizedQuantityLabel(quantity: quantity, format: film.format),
+                        value: $quantity,
+                        in: 0...999
+                    )
                 }
 
                 Section("film.expiryDate") {
@@ -774,13 +684,7 @@ struct SheetGroupEditSheet: View {
                             TextField("film.expiryDateFormat", text: $row.text)
                                 .keyboardType(.numberPad)
                                 .onChange(of: row.text) { _, newValue in
-                                    let digits = newValue.filter { $0.isNumber }
-                                    let limited = String(digits.prefix(6))
-                                    if limited.count == 6 {
-                                        row.text = "\(limited.prefix(2))/\(limited.suffix(4))"
-                                    } else {
-                                        row.text = limited
-                                    }
+                                    row.text = FilmStock.formatExpiryInput(newValue)
                                     rowErrors[row.id] = nil
                                 }
                             if let err = rowErrors[row.id] {
@@ -805,23 +709,7 @@ struct SheetGroupEditSheet: View {
                     }
                 }
 
-                if settingsManager.enableFridge {
-                    Section("film.storage") {
-                        Picker("film.storage", selection: storageSelection) {
-                            Text("group.none").tag(0)
-                            Text("loaded.detail.fridge").tag(1)
-                            Text("loaded.detail.frozen").tag(2)
-                        }
-                        .pickerStyle(.segmented)
-                    }
-                } else {
-                    Section {
-                        Toggle("film.isFrozen", isOn: $isFrozen)
-                            .onChange(of: isFrozen) { _, newValue in
-                                if newValue { isFridge = false }
-                            }
-                    }
-                }
+                FilmStorageSection(isFrozen: $isFrozen, isFridge: $isFridge)
 
                 Section("film.comments") {
                     TextField("film.comments.placeholder", text: $comments, axis: .vertical)
@@ -844,47 +732,14 @@ struct SheetGroupEditSheet: View {
         }
     }
 
-    private var quantityLabel: String {
-        let unit = film.format.quantityUnit
-        if unit == "Sheets" {
-            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
-        }
-        return quantity == 1
-            ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
-            : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
-    }
-
     private func validateExpiryRows() -> Bool {
         rowErrors = [:]
-        var ok = true
         for row in expiryRows {
-            let digits = row.text.filter { $0.isNumber }
-            guard !digits.isEmpty else { continue }
-            if digits.count == 4 {
-                guard let year = Int(digits), year >= 1950, year <= 2100 else {
-                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
-                    ok = false
-                    continue
-                }
-            } else if digits.count == 6 {
-                let month = Int(String(digits.prefix(2))) ?? 0
-                let year = Int(String(digits.suffix(4))) ?? 0
-                guard month >= 1, month <= 12 else {
-                    rowErrors[row.id] = NSLocalizedString("error.invalidMonth", comment: "")
-                    ok = false
-                    continue
-                }
-                guard year >= 1950, year <= 2100 else {
-                    rowErrors[row.id] = NSLocalizedString("error.invalidYear", comment: "")
-                    ok = false
-                    continue
-                }
-            } else {
-                rowErrors[row.id] = NSLocalizedString("error.invalidDateFormat", comment: "")
-                ok = false
+            if let error = FilmStock.validateExpiryInput(row.text) {
+                rowErrors[row.id] = error
             }
         }
-        return ok
+        return rowErrors.isEmpty
     }
 
     private func save() {
@@ -957,14 +812,6 @@ struct QuantityControlView: View {
     }
 
     private var quantityText: String {
-        let unit = film.format.quantityUnit
-        if unit == "Rolls" {
-            return quantity == 1
-                ? String(format: NSLocalizedString("film.rollCount", comment: ""), quantity)
-                : String(format: NSLocalizedString("film.rollsCount", comment: ""), quantity)
-        } else if unit == "Sheets" {
-            return String(format: NSLocalizedString("Sheets: %d", comment: ""), quantity)
-        }
-        return "\(quantity) \(unit)"
+        FilmStock.localizedQuantityLabel(quantity: quantity, format: film.format)
     }
 }

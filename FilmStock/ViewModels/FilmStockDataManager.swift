@@ -506,8 +506,29 @@ class FilmStockDataManager: ObservableObject {
         }
     }
     
+    /// Deletes a custom user photo file only if no remaining `Film` entity still references it.
+    func deleteCustomImageIfUnreferenced(imageName: String, defaultManufacturer: String) {
+        let (targetMfr, targetFile) = ImageStorage.parseCustomImageName(imageName, defaultManufacturer: defaultManufacturer)
+        if let context = modelContext,
+           let allFilms = try? context.fetch(FetchDescriptor<Film>()) {
+            let stillReferenced = allFilms.contains { film in
+                guard ImageSource(rawValue: film.imageSource) == .custom,
+                      let otherName = film.imageName else { return false }
+                let (otherMfr, otherFile) = ImageStorage.parseCustomImageName(
+                    otherName,
+                    defaultManufacturer: film.manufacturer?.name ?? ""
+                )
+                return otherMfr == targetMfr && otherFile == targetFile
+            }
+            if stillReferenced { return }
+        }
+        ImageStorage.shared.deleteImage(filename: targetFile, manufacturer: targetMfr)
+    }
+
     /// Updates only the Film-entity-level properties (name, manufacturer, type, speed, image).
     /// Does NOT touch any MyFilm (roll) properties like quantity, expiry, frozen, or exposures.
+    /// If another `Film` already has the target (name, manufacturer, type, speed), merges all
+    /// inventory, loaded, and finished references into that existing `Film` so duplicates never form.
     func updateFilmInfo(
         groupedFilm: GroupedFilm,
         name: String,
@@ -519,41 +540,93 @@ class FilmStockDataManager: ObservableObject {
     ) {
         guard let context = modelContext else { return }
 
-        // Locate the Film entity via the groupedFilm's representative MyFilm ID
+        let allFilms = (try? context.fetch(FetchDescriptor<Film>())) ?? []
+
+        // Collect every Film currently backing this groupedFilm (handles any legacy duplicates too)
+        var sourceFilms = allFilms.filter {
+            $0.name == groupedFilm.name &&
+            $0.manufacturer?.name == groupedFilm.manufacturer &&
+            $0.type == groupedFilm.type.rawValue &&
+            $0.filmSpeed == groupedFilm.filmSpeed
+        }
         let representativeId = groupedFilm.id
-        let film: Film?
         let myFilmDescriptor = FetchDescriptor<MyFilm>(predicate: #Predicate { $0.id == representativeId })
-        if let ref = try? context.fetch(myFilmDescriptor).first {
-            film = ref.film
-        } else {
-            // Fallback: match by film properties
-            let filmDescriptor = FetchDescriptor<Film>()
-            film = (try? context.fetch(filmDescriptor))?.first {
-                $0.name == groupedFilm.name &&
-                $0.manufacturer?.name == groupedFilm.manufacturer &&
-                $0.type == groupedFilm.type.rawValue &&
-                $0.filmSpeed == groupedFilm.filmSpeed
-            }
+        if let refFilm = (try? context.fetch(myFilmDescriptor).first)?.film,
+           !sourceFilms.contains(where: { $0.persistentModelID == refFilm.persistentModelID }) {
+            sourceFilms.insert(refFilm, at: 0)
         }
 
-        guard let film else { return }
+        guard let primaryFilm = sourceFilms.first else { return }
+        let sourcePIDs = Set(sourceFilms.map(\.persistentModelID))
 
-        film.name = name
-        film.type = type.rawValue
-        film.filmSpeed = filmSpeed
-        film.imageName = imageName
-        film.imageSource = imageSource
+        // Check whether a *different* Film already owns the target identity
+        let collisionTarget = allFilms.first {
+            !sourcePIDs.contains($0.persistentModelID) &&
+            $0.name == name &&
+            $0.manufacturer?.name == manufacturerName &&
+            $0.type == type.rawValue &&
+            $0.filmSpeed == filmSpeed
+        }
 
-        if film.manufacturer?.name != manufacturerName {
-            let mfrDescriptor = FetchDescriptor<Manufacturer>(predicate: #Predicate { $0.name == manufacturerName })
-            let mfr: Manufacturer
-            if let existing = try? context.fetch(mfrDescriptor).first {
-                mfr = existing
-            } else {
-                mfr = Manufacturer(name: manufacturerName, isCustom: true)
-                context.insert(mfr)
+        let destinationFilm = collisionTarget ?? primaryFilm
+
+        // Update destination properties
+        destinationFilm.name = name
+        destinationFilm.type = type.rawValue
+        destinationFilm.filmSpeed = filmSpeed
+        // When merging into an existing Film and the user kept auto-detected/none while the target
+        // already has a chosen image, preserve the target's image; otherwise apply the edited choice.
+        if collisionTarget == nil || imageName != nil || destinationFilm.imageName == nil {
+            destinationFilm.imageName = imageName
+            destinationFilm.imageSource = imageSource
+        }
+
+        if destinationFilm.manufacturer?.name != manufacturerName {
+            destinationFilm.manufacturer = findOrCreateManufacturer(name: manufacturerName, context: context)
+        }
+
+        // Re-home any MyFilm / LoadedFilm / FinishedFilm rows from redundant source Film entities
+        let filmsToMergeOut = sourceFilms.filter { $0.persistentModelID != destinationFilm.persistentModelID }
+        if !filmsToMergeOut.isEmpty {
+            let mergeOutPIDs = Set(filmsToMergeOut.map(\.persistentModelID))
+            let allMyFilms = (try? context.fetch(FetchDescriptor<MyFilm>())) ?? []
+            let allLoaded = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
+            let allFinished = (try? context.fetch(FetchDescriptor<FinishedFilm>())) ?? []
+
+            for myFilm in allMyFilms where myFilm.film.map({ mergeOutPIDs.contains($0.persistentModelID) }) == true {
+                if let fmt = FilmStock.FilmFormat(rawValue: myFilm.format),
+                   !fmt.isRollFormat,
+                   myFilm.quantity > 0,
+                   let existingSheet = (destinationFilm.myFilms ?? []).first(where: {
+                       $0.persistentModelID != myFilm.persistentModelID &&
+                       $0.quantity > 0 &&
+                       Self.sheetInventoryMergeKey(for: $0) == Self.sheetInventoryMergeKey(for: myFilm)
+                   }) {
+                    // Merge matching sheet lines and repoint any history references before deleting
+                    existingSheet.quantity += myFilm.quantity
+                    existingSheet.updatedAt = Self.iso8601Formatter.string(from: Date())
+                    for lf in allLoaded where lf.myFilm?.persistentModelID == myFilm.persistentModelID {
+                        lf.myFilm = existingSheet
+                    }
+                    for ff in allFinished where ff.myFilm?.persistentModelID == myFilm.persistentModelID {
+                        ff.myFilm = existingSheet
+                    }
+                    context.delete(myFilm)
+                } else {
+                    myFilm.film = destinationFilm
+                }
             }
-            film.manufacturer = mfr
+
+            for lf in allLoaded where lf.film.map({ mergeOutPIDs.contains($0.persistentModelID) }) == true {
+                lf.film = destinationFilm
+            }
+            for ff in allFinished where ff.film.map({ mergeOutPIDs.contains($0.persistentModelID) }) == true {
+                ff.film = destinationFilm
+            }
+
+            for redundant in filmsToMergeOut {
+                context.delete(redundant)
+            }
         }
 
         try? context.save()
