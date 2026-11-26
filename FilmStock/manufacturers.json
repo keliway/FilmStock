@@ -1029,7 +1029,7 @@
           "dx": []
         },
         {
-          "filename": "V2_50D",
+          "filename": "v2_50D",
           "speed": 50,
           "type": "Color",
           "aliases": [
@@ -1039,17 +1039,18 @@
           "dx": []
         },
         {
-          "filename": "V2_250D",
+          "filename": "v2_250D",
           "speed": 250,
           "type": "Color",
           "aliases": [
+            "vision2 250d",
             "vision2 2 50d",
             "5205"
           ],
           "dx": []
         },
         {
-          "filename": "V2_200T",
+          "filename": "v2_200T",
           "speed": 200,
           "type": "Color",
           "aliases": [
@@ -1059,7 +1060,7 @@
           "dx": []
         },
         {
-          "filename": "V2_500T",
+          "filename": "v2_500T",
           "speed": 500,
           "type": "Color",
           "aliases": [
@@ -1069,7 +1070,7 @@
           "dx": []
         },
         {
-          "filename": "V2_100T",
+          "filename": "v2_100T",
           "speed": 100,
           "type": "Color",
           "aliases": [
@@ -1843,8 +1844,8 @@
           "speed": 100,
           "type": "Color",
           "aliases": [
-            "purple",
-            "purple 100",
+            "metropolis",
+            "metropolis 100",
             "lomo metropolis",
             "lomography metropolis",
             "lomo metropolis xr",

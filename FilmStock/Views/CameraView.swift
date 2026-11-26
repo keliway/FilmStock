@@ -175,25 +175,26 @@ class CameraViewControllerNew: UIViewController {
     
     private func setupCamera() {
         let session = AVCaptureSession()
-        session.sessionPreset = .photo
         
-        // Get the best available camera
         guard let videoDevice = getBestCamera() else {
             return
         }
         
         do {
             let videoInput = try AVCaptureDeviceInput(device: videoDevice)
+            let output = AVCapturePhotoOutput()
+
+            session.beginConfiguration()
+            session.sessionPreset = .photo
             if session.canAddInput(videoInput) {
                 session.addInput(videoInput)
                 videoDeviceInput = videoInput
             }
-            
-            let output = AVCapturePhotoOutput()
             if session.canAddOutput(output) {
                 session.addOutput(output)
                 photoOutput = output
             }
+            session.commitConfiguration()
             
             captureSession = session
             
@@ -510,85 +511,62 @@ extension CameraViewControllerNew: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        // Fix orientation first
-        let fixedImage = fixImageOrientation(image)
-        
-        // Crop to match the square preview area
+        let fixedImage = image.normalizedForCropping()
         let croppedImage = cropToSquarePreview(fixedImage)
         delegate?.didCaptureImage(croppedImage)
     }
     
     private func cropToSquarePreview(_ image: UIImage) -> UIImage {
-        guard let previewLayer = previewLayer else { return image }
-        
-        // NOTE: The captured image already has zoom applied by the camera hardware.
-        // We just need to crop to the square overlay position.
+        guard let previewLayer = previewLayer,
+              previewLayer.bounds.width > 0,
+              previewLayer.bounds.height > 0 else { return image }
         
         let imageSize = image.size
         let previewBounds = previewLayer.bounds
         
-        // Calculate how the captured image maps to the preview (aspectFill)
         let previewAspect = previewBounds.width / previewBounds.height
         let imageAspect = imageSize.width / imageSize.height
         
-        var visibleImageRect: CGRect
-        
+        let visibleImageRect: CGRect
         if imageAspect > previewAspect {
-            // Image is wider than preview - height fits, width is cropped on sides
             let visibleWidth = imageSize.height * previewAspect
             let offsetX = (imageSize.width - visibleWidth) / 2
             visibleImageRect = CGRect(x: offsetX, y: 0, width: visibleWidth, height: imageSize.height)
         } else {
-            // Image is taller than preview - width fits, height is cropped on top/bottom
             let visibleHeight = imageSize.width / previewAspect
             let offsetY = (imageSize.height - visibleHeight) / 2
             visibleImageRect = CGRect(x: 0, y: offsetY, width: imageSize.width, height: visibleHeight)
         }
         
-        // Scale from preview coordinates to visible image coordinates
         let scaleX = visibleImageRect.width / previewBounds.width
         let scaleY = visibleImageRect.height / previewBounds.height
         
-        // Convert square overlay position to image coordinates
-        // The square is positioned relative to the preview, so we scale it
-        let squareInImageX = visibleImageRect.origin.x + (squareFrame.origin.x * scaleX)
-        let squareInImageY = visibleImageRect.origin.y + (squareFrame.origin.y * scaleY)
-        let squareInImageWidth = squareFrame.width * scaleX
-        let squareInImageHeight = squareFrame.height * scaleY
-        
         var cropRect = CGRect(
-            x: squareInImageX,
-            y: squareInImageY,
-            width: squareInImageWidth,
-            height: squareInImageHeight
+            x: visibleImageRect.origin.x + (squareFrame.origin.x * scaleX),
+            y: visibleImageRect.origin.y + (squareFrame.origin.y * scaleY),
+            width: squareFrame.width * scaleX,
+            height: squareFrame.height * scaleY
         )
         
-        // Clamp to image bounds
         cropRect.origin.x = max(0, min(cropRect.origin.x, imageSize.width - cropRect.width))
         cropRect.origin.y = max(0, min(cropRect.origin.y, imageSize.height - cropRect.height))
         cropRect.size.width = min(cropRect.width, imageSize.width - cropRect.origin.x)
         cropRect.size.height = min(cropRect.height, imageSize.height - cropRect.origin.y)
         
-        guard cropRect.width > 0, cropRect.height > 0,
+        let pixelRect = CGRect(
+            x: cropRect.origin.x * image.scale,
+            y: cropRect.origin.y * image.scale,
+            width: cropRect.size.width * image.scale,
+            height: cropRect.size.height * image.scale
+        )
+        
+        guard pixelRect.width > 0, pixelRect.height > 0,
               let cgImage = image.cgImage,
-              let croppedCGImage = cgImage.cropping(to: cropRect) else {
+              let croppedCGImage = cgImage.cropping(to: pixelRect) else {
             return image
         }
         
-        return UIImage(cgImage: croppedCGImage, scale: image.scale, orientation: image.imageOrientation)
-    }
-    
-    private func fixImageOrientation(_ image: UIImage) -> UIImage {
-        if image.imageOrientation == .up {
-            return image
-        }
-        
-        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
-        image.draw(in: CGRect(origin: .zero, size: image.size))
-        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return normalizedImage ?? image
+        return UIImage(cgImage: croppedCGImage, scale: 1.0, orientation: .up)
     }
 }
 

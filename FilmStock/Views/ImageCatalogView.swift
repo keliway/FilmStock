@@ -2,22 +2,56 @@
 //  ImageCatalogView.swift
 //  FilmStock
 //
-//  Gallery view showing all custom images grouped by manufacturer
+//  Gallery view showing default catalog and custom images
 //
 
 import SwiftUI
+
+struct SquareGridThumbnail: View {
+    let image: UIImage
+
+    var body: some View {
+        Color.clear
+            .aspectRatio(1, contentMode: .fit)
+            .overlay(
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
+    }
+}
 
 struct ImageCatalogView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var selectedImage: UIImage?
     @Binding var selectedImageFilename: String?
     @Binding var selectedImageSource: ImageSource?
+
+    private struct CustomPhotoEntry: Identifiable {
+        var id: String { "\(manufacturer)/\(filename)" }
+        let filename: String
+        let manufacturer: String
+        let image: UIImage
+    }
+
     @State private var imagesByManufacturer: [String: [(imageName: String, image: UIImage)]] = [:]
-    @State private var customPhotos: [(filename: String, manufacturer: String, image: UIImage)] = []
+    @State private var customPhotos: [CustomPhotoEntry] = []
+    @State private var isLoading = true
     @State private var catalogMode: CatalogMode = .defaultCatalog
     @State private var searchText: String = ""
     // manufacturer name (lowercased) → [filmName (lowercased): [alias (lowercased)]]
     @State private var aliasMap: [String: [String: [String]]] = [:]
+
+    private static let gridColumns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8)
+    ]
 
     enum CatalogMode: String, CaseIterable, Identifiable {
         case defaultCatalog
@@ -33,13 +67,16 @@ struct ImageCatalogView: View {
         }
     }
 
+    private var trimmedQuery: String {
+        searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
     var sortedManufacturers: [String] {
         filteredImagesByManufacturer.keys.sorted()
     }
 
-    // Filtered catalog: when search is active, keep only matching images per manufacturer.
     var filteredImagesByManufacturer: [String: [(imageName: String, image: UIImage)]] {
-        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let q = trimmedQuery
         guard !q.isEmpty else { return imagesByManufacturer }
 
         var result: [String: [(imageName: String, image: UIImage)]] = [:]
@@ -49,11 +86,7 @@ struct ImageCatalogView: View {
 
             let matching = images.filter { item in
                 let nameLower = item.imageName.lowercased()
-                // Match manufacturer name
-                if mfrLower.contains(q) { return true }
-                // Match image filename
-                if nameLower.contains(q) { return true }
-                // Match any alias from the JSON
+                if mfrLower.contains(q) || nameLower.contains(q) { return true }
                 let aliases = filmAliases[nameLower] ?? []
                 return aliases.contains { $0.contains(q) }
             }
@@ -64,23 +97,31 @@ struct ImageCatalogView: View {
         return result
     }
 
+    private var filteredCustomPhotos: [CustomPhotoEntry] {
+        let q = trimmedQuery
+        guard !q.isEmpty else { return customPhotos }
+        return customPhotos.filter {
+            $0.manufacturer.lowercased().contains(q) || $0.filename.lowercased().contains(q)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Segmented control — hidden while searching
-                if searchText.isEmpty {
-                    Picker("Catalog Mode", selection: $catalogMode) {
-                        ForEach(CatalogMode.allCases) { mode in
-                            Text(mode.localizedName).tag(mode)
-                        }
+                Picker("Catalog Mode", selection: $catalogMode) {
+                    ForEach(CatalogMode.allCases) { mode in
+                        Text(mode.localizedName).tag(mode)
                     }
-                    .pickerStyle(.segmented)
-                    .padding()
                 }
+                .pickerStyle(.segmented)
+                .padding()
 
-                // Content
                 Group {
-                    if !searchText.isEmpty || catalogMode == .defaultCatalog {
+                    if isLoading {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    } else if catalogMode == .defaultCatalog {
                         defaultCatalogView
                     } else {
                         myPhotosView
@@ -95,14 +136,12 @@ struct ImageCatalogView: View {
                     Button("action.done") { dismiss() }
                 }
             }
-            .onAppear {
-                loadImages()
-                loadCustomPhotos()
-                loadAliasMap()
+            .task {
+                await loadCatalogData()
             }
         }
     }
-    
+
     @ViewBuilder
     private var defaultCatalogView: some View {
         if imagesByManufacturer.isEmpty {
@@ -111,7 +150,7 @@ struct ImageCatalogView: View {
                 systemImage: "photo.on.rectangle",
                 description: Text("empty.noCatalogImages.message")
             )
-        } else if !searchText.isEmpty && filteredImagesByManufacturer.isEmpty {
+        } else if !trimmedQuery.isEmpty && filteredImagesByManufacturer.isEmpty {
             ContentUnavailableView.search(text: searchText)
         } else {
             ScrollView {
@@ -123,31 +162,18 @@ struct ImageCatalogView: View {
                                     .font(.headline)
                                     .foregroundColor(.primary)
                                     .padding(.horizontal, 16)
-                                
-                                LazyVGrid(columns: [
-                                    GridItem(.flexible(), spacing: 8),
-                                    GridItem(.flexible(), spacing: 8),
-                                    GridItem(.flexible(), spacing: 8)
-                                ], spacing: 8) {
+
+                                LazyVGrid(columns: Self.gridColumns, spacing: 8) {
                                     ForEach(images, id: \.imageName) { item in
                                         Button {
                                             selectedImage = item.image
-                                            // Store the filename as manufacturer_filmname (without .png)
-                                            let manufacturerLower = manufacturer.lowercased()
-                                            selectedImageFilename = "\(manufacturerLower)_\(item.imageName)"
+                                            selectedImageFilename = "\(manufacturer.lowercased())_\(item.imageName)"
                                             selectedImageSource = .catalog
                                             dismiss()
                                         } label: {
-                                            Image(uiImage: item.image)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: (UIScreen.main.bounds.width - 64) / 3, height: (UIScreen.main.bounds.width - 64) / 3)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                                )
+                                            SquareGridThumbnail(image: item.image)
                                         }
+                                        .buttonStyle(.plain)
                                     }
                                 }
                                 .padding(.horizontal, 16)
@@ -159,7 +185,7 @@ struct ImageCatalogView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var myPhotosView: some View {
         if customPhotos.isEmpty {
@@ -168,59 +194,49 @@ struct ImageCatalogView: View {
                 systemImage: "camera",
                 description: Text("empty.noCustomPhotos.message")
             )
+        } else if !trimmedQuery.isEmpty && filteredCustomPhotos.isEmpty {
+            ContentUnavailableView.search(text: searchText)
         } else {
             ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 8),
-                    GridItem(.flexible(), spacing: 8),
-                    GridItem(.flexible(), spacing: 8)
-                ], spacing: 8) {
-                    ForEach(customPhotos, id: \.filename) { item in
+                LazyVGrid(columns: Self.gridColumns, spacing: 8) {
+                    ForEach(filteredCustomPhotos) { item in
                         Button {
                             selectedImage = item.image
-                            // Store manufacturer/filename so we can load from correct directory
-                            selectedImageFilename = "\(item.manufacturer)/\(item.filename)"
+                            selectedImageFilename = item.id
                             selectedImageSource = .custom
                             dismiss()
                         } label: {
-                            Image(uiImage: item.image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: (UIScreen.main.bounds.width - 48) / 3, height: (UIScreen.main.bounds.width - 48) / 3)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                )
+                            SquareGridThumbnail(image: item.image)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(16)
             }
         }
     }
-    
-    private func loadImages() {
-        imagesByManufacturer = ImageStorage.shared.getAllDefaultImages()
-    }
 
-    private func loadCustomPhotos() {
-        customPhotos = ImageStorage.shared.getAllCustomPhotos()
-    }
-
-    /// Build a fast lookup: manufacturerLower → filmnameLower → [aliasLower]
-    private func loadAliasMap() {
-        var map: [String: [String: [String]]] = [:]
-        for mfr in ImageStorage.shared.loadManufacturersData() {
-            let mfrKey = mfr.name.lowercased()
-            var filmMap: [String: [String]] = [:]
-            for film in mfr.films {
-                let nameKey = film.filename.lowercased()
-                filmMap[nameKey] = film.aliases.map { $0.lowercased() }
+    private func loadCatalogData() async {
+        let loaded = await Task.detached(priority: .userInitiated) {
+            let defaults = ImageStorage.shared.getAllDefaultImages()
+            let customs = ImageStorage.shared.getAllCustomPhotos().map {
+                CustomPhotoEntry(filename: $0.filename, manufacturer: $0.manufacturer, image: $0.image)
             }
-            map[mfrKey] = filmMap
-        }
-        aliasMap = map
+            var aliases: [String: [String: [String]]] = [:]
+            for mfr in ImageStorage.shared.loadManufacturersData() {
+                let mfrKey = mfr.name.lowercased()
+                var filmMap: [String: [String]] = [:]
+                for film in mfr.films {
+                    filmMap[film.filename.lowercased()] = film.aliases.map { $0.lowercased() }
+                }
+                aliases[mfrKey] = filmMap
+            }
+            return (defaults, customs, aliases)
+        }.value
+
+        imagesByManufacturer = loaded.0
+        customPhotos = loaded.1
+        aliasMap = loaded.2
+        isLoading = false
     }
 }
-

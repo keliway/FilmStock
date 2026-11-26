@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct CollectionView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
@@ -18,9 +19,15 @@ struct CollectionView: View {
     @State private var isEditMode = false
     @State private var selectedItems: Set<String> = []
     @State private var showingHelp = false
-    
+
+    private static let gridColumns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8)
+    ]
+
     var body: some View {
-        NavigationStack {
+        Group {
             if filmsWithImages.isEmpty {
                 ContentUnavailableView(
                     "empty.noCollection.title",
@@ -30,37 +37,22 @@ struct CollectionView: View {
             } else {
                 ZStack {
                     ScrollView {
-                        LazyVGrid(columns: [
-                            GridItem(.flexible(), spacing: 8),
-                            GridItem(.flexible(), spacing: 8),
-                            GridItem(.flexible(), spacing: 8)
-                        ], spacing: 8) {
+                        LazyVGrid(columns: Self.gridColumns, spacing: 8) {
                             ForEach(Array(filmsWithImages.enumerated()), id: \.element.id) { index, item in
                                 ZStack(alignment: .topTrailing) {
                                     Button {
                                         if isEditMode {
-                                            // Toggle selection in edit mode
                                             if selectedItems.contains(item.id) {
                                                 selectedItems.remove(item.id)
                                             } else {
                                                 selectedItems.insert(item.id)
                                             }
                                         } else {
-                                            // Open detail view in normal mode
                                             selectedIndex = index
                                         }
                                     } label: {
-                                        Image(uiImage: item.image)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: (UIScreen.main.bounds.width - 48) / 3, height: (UIScreen.main.bounds.width - 48) / 3)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        SquareGridThumbnail(image: item.image)
                                             .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                            )
-                                            .overlay(
-                                                // Selection overlay
                                                 Group {
                                                     if isEditMode {
                                                         RoundedRectangle(cornerRadius: 8)
@@ -69,8 +61,8 @@ struct CollectionView: View {
                                                 }
                                             )
                                     }
-                                    
-                                    // Selection checkmark
+                                    .buttonStyle(.plain)
+
                                     if isEditMode {
                                         Image(systemName: selectedItems.contains(item.id) ? "checkmark.circle.fill" : "circle")
                                             .font(.title2)
@@ -98,8 +90,7 @@ struct CollectionView: View {
                         .padding(.vertical, 8)
                         .padding(.bottom, isEditMode && !selectedItems.isEmpty ? 80 : 0)
                     }
-                    
-                    // Floating delete button at bottom right
+
                     if isEditMode && !selectedItems.isEmpty {
                         VStack {
                             Spacer()
@@ -133,8 +124,7 @@ struct CollectionView: View {
                 } label: {
                     Image(systemName: "questionmark.circle")
                 }
-                
-                // Only show Edit button when there are images in the collection
+
                 if !filmsWithImages.isEmpty {
                     if isEditMode {
                         Button("action.done") {
@@ -150,7 +140,10 @@ struct CollectionView: View {
             }
         }
         .onAppear {
-            loadCollectionItems()
+            Task { await reloadCollectionItems() }
+        }
+        .onChange(of: dataManager.filmStocksVersion) { _, _ in
+            Task { await reloadCollectionItems() }
         }
         .sheet(isPresented: Binding(
             get: { selectedIndex != nil && !isEditMode },
@@ -164,20 +157,19 @@ struct CollectionView: View {
             }
         }
         .alert("delete.image.title", isPresented: $showingDeleteAlert) {
-            Button("action.cancel", role: .cancel) { }
+            Button("action.cancel", role: .cancel) {
+                itemToDelete = nil
+            }
             Button("action.delete", role: .destructive) {
                 if isEditMode && !selectedItems.isEmpty {
-                    // Delete multiple selected items
                     let itemsToDelete = filmsWithImages.filter { selectedItems.contains($0.id) }
-                    for item in itemsToDelete {
-                        deleteImage(item)
-                    }
+                    deleteImages(itemsToDelete)
                     selectedItems.removeAll()
                     isEditMode = false
                 } else if let item = itemToDelete {
-                    // Delete single item from context menu
-                    deleteImage(item)
+                    deleteImages([item])
                 }
+                itemToDelete = nil
             }
         } message: {
             if isEditMode && !selectedItems.isEmpty {
@@ -193,39 +185,35 @@ struct CollectionView: View {
             Text("help.collection.message")
         }
     }
-    
-    private func loadCollectionItems() {
-        // Load ALL custom photos from disk, regardless of whether they're associated with a film
-        let allPhotos = ImageStorage.shared.getAllCustomPhotos()
-        let descriptor = FetchDescriptor<Film>()
-        let allFilms = (try? modelContext.fetch(descriptor)) ?? []
-        
+
+    private func reloadCollectionItems() async {
+        let allPhotos = await Task.detached(priority: .userInitiated) {
+            ImageStorage.shared.getAllCustomPhotos()
+        }.value
+
+        let allFilms = (try? modelContext.fetch(FetchDescriptor<Film>())) ?? []
         var items: [CollectionItem] = []
         var seenIds: Set<String> = []
-        
+
         for photo in allPhotos {
-            // Create unique ID from manufacturer and filename
-            let uniqueId = "\(photo.manufacturer)_\(photo.filename)"
-            
-            // Avoid duplicates
-            guard !seenIds.contains(uniqueId) else { continue }
-            seenIds.insert(uniqueId)
-            
+            let uniqueId = "\(photo.manufacturer)/\(photo.filename)"
+            guard seenIds.insert(uniqueId).inserted else { continue }
+
             var title = photo.manufacturer
-            // Check if this image is used by any film (handle manufacturer/filename format)
             for film in allFilms {
-                if let filmImageName = film.imageName,
-                   let filmManufacturer = film.manufacturer {
-                    // Parse the stored image name
-                    let (storedManufacturer, storedFilename) = ImageStorage.parseCustomImageName(filmImageName, defaultManufacturer: filmManufacturer.name)
-                    
-                    if storedManufacturer == photo.manufacturer && storedFilename == photo.filename {
-                        title = "\(filmManufacturer.name) \(film.name)"
-                        break
-                    }
+                guard ImageSource(rawValue: film.imageSource) == .custom,
+                      let filmImageName = film.imageName else { continue }
+                let mfrName = film.manufacturer?.name ?? ""
+                let (storedManufacturer, storedFilename) = ImageStorage.parseCustomImageName(
+                    filmImageName,
+                    defaultManufacturer: mfrName
+                )
+                if storedManufacturer == photo.manufacturer && storedFilename == photo.filename {
+                    title = mfrName.isEmpty ? film.name : "\(mfrName) \(film.name)"
+                    break
                 }
             }
-            
+
             items.append(CollectionItem(
                 id: uniqueId,
                 image: photo.image,
@@ -234,35 +222,38 @@ struct CollectionView: View {
                 title: title
             ))
         }
-        
+
         filmsWithImages = items
     }
-    
-    private func deleteImage(_ item: CollectionItem) {
-        // Delete the image file
-        ImageStorage.shared.deleteImage(filename: item.imageName, manufacturer: item.manufacturer)
-        
-        // Remove imageName from all films that use this image
-        let descriptor = FetchDescriptor<Film>()
-        let allFilms = (try? modelContext.fetch(descriptor)) ?? []
-        
+
+    private func deleteImages(_ items: [CollectionItem]) {
+        guard !items.isEmpty else { return }
+
+        let targetPairs = Set(items.map { "\($0.manufacturer)/\($0.imageName)" })
+        for item in items {
+            ImageStorage.shared.deleteImage(filename: item.imageName, manufacturer: item.manufacturer)
+        }
+
+        let allFilms = (try? modelContext.fetch(FetchDescriptor<Film>())) ?? []
         for film in allFilms {
-            if let filmImageName = film.imageName,
-               let filmManufacturer = film.manufacturer {
-                // Parse the stored image name to handle manufacturer/filename format
-                let (storedManufacturer, storedFilename) = ImageStorage.parseCustomImageName(filmImageName, defaultManufacturer: filmManufacturer.name)
-                
-                // If this film uses the image being deleted, clear it
-                if storedManufacturer == item.manufacturer && storedFilename == item.imageName {
-                    film.imageName = nil
-                    film.imageSource = ImageSource.autoDetected.rawValue // Revert to auto-detected
-                }
+            guard ImageSource(rawValue: film.imageSource) == .custom,
+                  let filmImageName = film.imageName else { continue }
+            let mfrName = film.manufacturer?.name ?? ""
+            let (storedManufacturer, storedFilename) = ImageStorage.parseCustomImageName(
+                filmImageName,
+                defaultManufacturer: mfrName
+            )
+            if targetPairs.contains("\(storedManufacturer)/\(storedFilename)") {
+                film.imageName = nil
+                film.imageSource = ImageSource.autoDetected.rawValue
             }
         }
-        
+
         try? modelContext.save()
         dataManager.loadFilmStocks()
-        loadCollectionItems()
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+        Task { await reloadCollectionItems() }
     }
 }
 
@@ -279,31 +270,31 @@ struct ImageDetailView: View {
     let initialIndex: Int
     @State private var currentIndex: Int
     @Environment(\.dismiss) var dismiss
-    
+
     init(items: [CollectionItem], initialIndex: Int) {
         self.items = items
         self.initialIndex = initialIndex
         _currentIndex = State(initialValue: initialIndex)
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
-                
+
                 TabView(selection: $currentIndex) {
                     ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                         VStack {
                             Spacer()
-                            
+
                             Image(uiImage: item.image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .padding()
-                            
+
                             Spacer()
-                            
+
                             Text(item.title)
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -327,4 +318,3 @@ struct ImageDetailView: View {
         }
     }
 }
-

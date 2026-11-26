@@ -82,7 +82,7 @@ private struct DXDataScannerRepresentable: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: DataScannerViewController, context: Context) {
         context.coordinator.onCode = onCode
-        guard !uiViewController.isScanning else { return }
+        guard !context.coordinator.didHandle, !uiViewController.isScanning else { return }
         try? uiViewController.startScanning()
     }
 
@@ -94,7 +94,7 @@ private struct DXDataScannerRepresentable: UIViewControllerRepresentable {
 
     final class Coordinator: NSObject, DataScannerViewControllerDelegate {
         var onCode: (String) -> Void
-        private var didHandle = false
+        private(set) var didHandle = false
 
         init(onCode: @escaping (String) -> Void) {
             self.onCode = onCode
