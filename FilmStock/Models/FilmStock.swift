@@ -220,11 +220,21 @@ struct GroupedFilm: Identifiable, Hashable {
         }
     }
     
-    static func == (lhs: GroupedFilm, rhs: GroupedFilm) -> Bool {
-        lhs.id == rhs.id
+    var identityKey: String {
+        "\(name)\u{1F}\(manufacturer)\u{1F}\(type.rawValue)\u{1F}\(filmSpeed)"
     }
-    
+}
+
+/// Stable navigation value for pushing a `GroupedFilm` onto `NavigationStack` without decoupling
+/// `GroupedFilm`'s synthesized `Equatable` (which SwiftUI rows rely on to detect quantity/expiry/image edits).
+struct FilmDetailRoute: Hashable {
+    let snapshot: GroupedFilm
+
+    static func == (lhs: FilmDetailRoute, rhs: FilmDetailRoute) -> Bool {
+        lhs.snapshot.id == rhs.snapshot.id
+    }
+
     func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(snapshot.id)
     }
 }

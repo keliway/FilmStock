@@ -54,7 +54,8 @@ struct FilterPopoverView: View {
         
         if excludingCategory != .format && !selectedFormats.isEmpty {
             filtered = filtered.filter { group in
-                group.formats.contains { selectedFormats.contains($0.format) }
+                let formats = hideEmpty ? group.formats.filter { $0.quantity > 0 } : group.formats
+                return formats.contains { selectedFormats.contains($0.format) }
             }
         }
         
@@ -80,7 +81,10 @@ struct FilterPopoverView: View {
     
     private var availableFormats: [FilmStock.FilmFormat] {
         let films = getAvailableFilms(excludingCategory: .format)
-        let availableFormatSet = Set(films.flatMap { $0.formats.map { $0.format } })
+        let availableFormatSet = Set(films.flatMap { group in
+            let formats = hideEmpty ? group.formats.filter { $0.quantity > 0 } : group.formats
+            return formats.map { $0.format }
+        })
         return FilmStock.FilmFormat.allCases.filter { availableFormatSet.contains($0) }
     }
     
@@ -272,7 +276,7 @@ struct FilterPopoverView: View {
                         showExpiredOnly = false
                         showFrozenOnly = false
                         showFridgeOnly = false
-                        hideEmpty = true
+                        hideEmpty = settingsManager.hideEmptyByDefault
                     }
                     .foregroundColor(.orange)
                 }

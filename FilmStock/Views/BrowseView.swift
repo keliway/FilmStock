@@ -21,9 +21,7 @@ struct BrowseView: View {
     @State private var hideEmpty = SettingsManager.shared.hideEmptyByDefault
     @State private var viewMode: ViewMode = SettingsManager.shared.useTableViewByDefault ? .list : .cards
     @State private var showingAddFilm = false
-    @State private var filmToEdit: GroupedFilm?
     @State private var filmToLoad: GroupedFilm?
-    @State private var showingLoadFilm = false
     @State private var navigationPath = NavigationPath()
     @State private var showingFilters = false
     @State private var showingSettings = false
@@ -285,24 +283,57 @@ struct BrowseView: View {
         return false
     }
     
-    var totalRolls: Int {
-        dataManager.filmStocks
-            .filter { film in
-                let format = film.format
-                return format != .fourByFive && format != .fiveBySeven && format != .eightByTen && film.quantity > 0
-            }
-            .reduce(0) { $0 + $1.quantity }
-    }
-    
     var filteredTotalRolls: Int {
-        let allFormats = filteredFilms.flatMap { $0.formats }
-        let validFormats = allFormats.filter { formatInfo in
+        let nonSheetRollCount: (GroupedFilm.FormatInfo) -> Int = { formatInfo in
             let format = formatInfo.format
-            return format != .fourByFive && format != .fiveBySeven && format != .eightByTen && formatInfo.quantity > 0
+            guard format != .fourByFive && format != .fiveBySeven && format != .eightByTen && formatInfo.quantity > 0 else {
+                return 0
+            }
+            if !selectedFormats.isEmpty && !selectedFormats.contains(format) {
+                return 0
+            }
+            if format.isRollFormat {
+                // Use per-roll counts when a single storage/expiry filter is active; intersect via individual rolls when combined
+                if showFrozenOnly && showExpiredOnly {
+                    return matchingActiveRollCount(in: formatInfo)
+                }
+                if showFridgeOnly && settingsManager.enableFridge && showExpiredOnly {
+                    return matchingActiveRollCount(in: formatInfo)
+                }
+                if showFrozenOnly { return formatInfo.frozenCount }
+                if showFridgeOnly && settingsManager.enableFridge { return formatInfo.fridgeCount }
+                if showExpiredOnly { return formatInfo.expiredCount }
+                return formatInfo.quantity
+            } else {
+                if showFrozenOnly && !formatInfo.isFrozen { return 0 }
+                if showFridgeOnly && settingsManager.enableFridge && !formatInfo.isFridge { return 0 }
+                if showExpiredOnly && formatInfo.expiredCount == 0 { return 0 }
+                return formatInfo.quantity
+            }
         }
-        return validFormats.reduce(0) { total, formatInfo in
-            total + formatInfo.quantity
-        }
+
+        return filteredFilms
+            .flatMap { relevantFormats(for: $0) }
+            .reduce(0) { $0 + nonSheetRollCount($1) }
+    }
+
+    /// Exact active roll count when multiple per-roll status filters (e.g. Frozen + Expired) are combined.
+    private func matchingActiveRollCount(in formatInfo: GroupedFilm.FormatInfo) -> Int {
+        let idSet = Set(formatInfo.rollIds)
+        let today = Date()
+        return dataManager.filmStocks.filter { roll in
+            guard idSet.contains(roll.id), roll.quantity > 0 else { return false }
+            if showFrozenOnly && !roll.isFrozen { return false }
+            if showFridgeOnly && settingsManager.enableFridge && !roll.isFridge { return false }
+            if showExpiredOnly {
+                let expired = (roll.expireDate ?? []).contains {
+                    guard let d = FilmStock.parseExpireDate($0) else { return false }
+                    return d < today
+                }
+                if !expired { return false }
+            }
+            return true
+        }.reduce(0) { $0 + $1.quantity }
     }
     
     private var mainContent: some View {
@@ -423,14 +454,7 @@ struct BrowseView: View {
                     Button {
                         showingAddFilm = true
                         if showAddFilmTooltip {
-                            OnboardingManager.shared.markTooltipSeen("addFilm")
-                            showAddFilmTooltip = false
-                            // Show next tooltip
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                if !OnboardingManager.shared.hasSeenTooltip("filter") {
-                                    showFilterTooltip = true
-                                }
-                            }
+                            dismissTooltip("addFilm")
                         }
                     } label: {
                         Image(systemName: "plus")
@@ -442,12 +466,7 @@ struct BrowseView: View {
                         anchor: .trailing,
                         isVisible: showAddFilmTooltip
                     ) {
-                        showAddFilmTooltip = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
-                                showFilterTooltip = true
-                            }
-                        }
+                        dismissTooltip("addFilm")
                     }
                 }
             }
@@ -455,28 +474,15 @@ struct BrowseView: View {
     
     private var navigationContent: some View {
         mainContent
-            .navigationDestination(for: GroupedFilm.self) { film in
-                FilmDetailView(groupedFilm: film)
+            .navigationDestination(for: FilmDetailRoute.self) { route in
+                FilmDetailView(groupedFilm: route.snapshot)
             }
             .sheet(isPresented: $showingAddFilm) {
                 AddFilmView()
             }
-            .sheet(item: $filmToEdit) { film in
-                EditFilmView(groupedFilm: film)
-            }
-            .sheet(isPresented: $showingLoadFilm) {
-                if let film = filmToLoad {
-                    LoadFilmView(groupedFilm: film)
-                        .environmentObject(dataManager)
-                }
-            }
-            .onChange(of: filmToLoad) { _, newValue in
-                showingLoadFilm = newValue != nil
-            }
-            .onChange(of: showingLoadFilm) { _, newValue in
-                if !newValue {
-                    filmToLoad = nil
-                }
+            .sheet(item: $filmToLoad) { film in
+                LoadFilmView(groupedFilm: film)
+                    .environmentObject(dataManager)
             }
             .sheet(isPresented: $showingFilters) {
                 FilterPopoverView(
@@ -623,15 +629,19 @@ struct BrowseView: View {
     }
     
     private func handleTooltipTap(_ tooltip: TooltipPreference) {
-        OnboardingManager.shared.markTooltipSeen(tooltip.id)
-        if tooltip.id == "addFilm" {
+        dismissTooltip(tooltip.id)
+    }
+
+    private func dismissTooltip(_ id: String) {
+        OnboardingManager.shared.markTooltipSeen(id)
+        if id == "addFilm" {
             showAddFilmTooltip = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 if !OnboardingManager.shared.hasSeenTooltip("filter") {
                     showFilterTooltip = true
                 }
             }
-        } else if tooltip.id == "filter" {
+        } else if id == "filter" {
             showFilterTooltip = false
         }
     }
@@ -709,17 +719,7 @@ struct BrowseView: View {
             HStack {
                 Spacer()
                 Button {
-                    OnboardingManager.shared.markTooltipSeen(tooltip.id)
-                    if tooltip.id == "addFilm" {
-                        showAddFilmTooltip = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            if !OnboardingManager.shared.hasSeenTooltip("filter") {
-                                showFilterTooltip = true
-                            }
-                        }
-                    } else if tooltip.id == "filter" {
-                        showFilterTooltip = false
-                    }
+                    dismissTooltip(tooltip.id)
                 } label: {
                     Text("action.gotIt")
                         .font(.subheadline)
@@ -770,7 +770,7 @@ struct BrowseView: View {
     @ViewBuilder
     private func cardView(for group: GroupedFilm) -> some View {
         Button {
-            navigationPath.append(group)
+            navigationPath.append(FilmDetailRoute(snapshot: group))
         } label: {
             SwipeableFilmCard(groupedFilm: group)
                 .environmentObject(dataManager)
@@ -783,7 +783,7 @@ struct BrowseView: View {
     @ViewBuilder
     private func listView(for group: GroupedFilm) -> some View {
         Button {
-            navigationPath.append(group)
+            navigationPath.append(FilmDetailRoute(snapshot: group))
         } label: {
             FilmRowViewContent(groupedFilm: group)
                 .contentShape(Rectangle())
@@ -798,7 +798,7 @@ struct BrowseView: View {
             }
             
             Button {
-                loadFilm(group)
+                filmToLoad = group
             } label: {
                 Label("action.load", systemImage: "camera")
             }
@@ -808,29 +808,10 @@ struct BrowseView: View {
     }
     
     private func deleteFilm(_ group: GroupedFilm) {
-        let filmsToDelete = dataManager.filmStocks.filter { film in
-            film.name == group.name &&
-            film.manufacturer == group.manufacturer &&
-            film.type == group.type &&
-            film.filmSpeed == group.filmSpeed
-        }
-        
-        // Check if any of the films are currently loaded
-        if let loadedFilm = filmsToDelete.first(where: { dataManager.isFilmLoaded($0) }) {
-            deleteErrorMessage = String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), loadedFilm.name)
+        if let error = dataManager.deleteGroupedFilm(group) {
+            deleteErrorMessage = error
             showingDeleteError = true
-            return
         }
-        
-        dataManager.deleteFilmStocks(filmsToDelete)
-    }
-    
-    private func editFilm(_ group: GroupedFilm) {
-        filmToEdit = group
-    }
-    
-    private func loadFilm(_ group: GroupedFilm) {
-        filmToLoad = group
     }
     
     private func hasAvailableFormats(_ group: GroupedFilm) -> Bool {

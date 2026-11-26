@@ -17,6 +17,8 @@ class FilmStockDataManager: ObservableObject {
     @Published var filmStocksVersion: Int = 0
     /// Pre-computed grouped film list, refreshed once per save — avoids per-render DB fetches.
     @Published var cachedGroupedFilms: [GroupedFilm] = []
+    /// Identity keys (`GroupedFilm.identityKey`) of films that currently have at least one roll/sheet loaded.
+    @Published private(set) var loadedFilmGroupKeys: Set<String> = []
     @Published var isMigrationComplete = false
     
     private var modelContext: ModelContext?
@@ -315,6 +317,8 @@ class FilmStockDataManager: ObservableObject {
         descriptor.relationshipKeyPathsForPrefetching = [\MyFilm.film]
         guard let myFilms = try? context.fetch(descriptor) else {
             filmStocks = []
+            cachedGroupedFilms = []
+            loadedFilmGroupKeys = []
             filmStocksVersion &+= 1
             return
         }
@@ -348,9 +352,14 @@ class FilmStockDataManager: ObservableObject {
             )
         }
         
-        // Rebuild the grouped view once — callers use cachedGroupedFilms instead of
-        // calling groupedFilms() on every render.
+        // Rebuild the grouped view and loaded-film lookup once — callers read cached properties
+        // instead of running SQLite fetches on every SwiftUI render pass.
         cachedGroupedFilms = groupedFilms()
+        let loadedFilms = (try? context.fetch(FetchDescriptor<LoadedFilm>())) ?? []
+        loadedFilmGroupKeys = Set(loadedFilms.compactMap { lf -> String? in
+            guard let film = lf.film ?? lf.myFilm?.film else { return nil }
+            return "\(film.name)\u{1F}\(film.manufacturer?.name ?? "")\u{1F}\(film.type)\u{1F}\(film.filmSpeed)"
+        })
         filmStocksVersion &+= 1
     }
     
@@ -697,21 +706,29 @@ class FilmStockDataManager: ObservableObject {
         deleteFilmStocks([filmStock])
     }
     
+    func isGroupedFilmLoaded(_ group: GroupedFilm) -> Bool {
+        loadedFilmGroupKeys.contains(group.identityKey)
+    }
+
     func isFilmLoaded(_ filmStock: FilmStock) -> Bool {
-        guard let context = modelContext else { return false }
-        
-        // Fetch all LoadedFilm entries
-        let loadedFilmDescriptor = FetchDescriptor<LoadedFilm>()
-        guard let loadedFilms = try? context.fetch(loadedFilmDescriptor) else { return false }
-        
-        // Check if any loaded film matches this film
-        return loadedFilms.contains { loadedFilm in
-            guard let film = loadedFilm.film else { return false }
-            return film.name == filmStock.name &&
-                   film.manufacturer?.name == filmStock.manufacturer &&
-                   film.type == filmStock.type.rawValue &&
-                   film.filmSpeed == filmStock.filmSpeed
+        let key = "\(filmStock.name)\u{1F}\(filmStock.manufacturer)\u{1F}\(filmStock.type.rawValue)\u{1F}\(filmStock.filmSpeed)"
+        return loadedFilmGroupKeys.contains(key)
+    }
+
+    /// Deletes every inventory roll belonging to `group` unless one is currently loaded in a camera.
+    /// - Returns: `nil` on success, or a localized error message if the film is currently loaded.
+    func deleteGroupedFilm(_ group: GroupedFilm) -> String? {
+        if isGroupedFilmLoaded(group) {
+            return String(format: NSLocalizedString("error.cannotDeleteLoaded", comment: ""), group.name)
         }
+        let filmsToDelete = filmStocks.filter { film in
+            film.name == group.name &&
+            film.manufacturer == group.manufacturer &&
+            film.type == group.type &&
+            film.filmSpeed == group.filmSpeed
+        }
+        deleteFilmStocks(filmsToDelete)
+        return nil
     }
     
     func deleteFilmStocks(_ filmStocks: [FilmStock]) {
