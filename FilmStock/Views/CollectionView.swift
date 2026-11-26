@@ -188,7 +188,7 @@ struct CollectionView: View {
 
     private func reloadCollectionItems() async {
         let allPhotos = await Task.detached(priority: .userInitiated) {
-            ImageStorage.shared.getAllCustomPhotos()
+            await ImageStorage.shared.getAllCustomPhotos()
         }.value
 
         let allFilms = (try? modelContext.fetch(FetchDescriptor<Film>())) ?? []

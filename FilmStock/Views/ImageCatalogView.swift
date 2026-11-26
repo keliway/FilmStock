@@ -218,12 +218,12 @@ struct ImageCatalogView: View {
 
     private func loadCatalogData() async {
         let loaded = await Task.detached(priority: .userInitiated) {
-            let defaults = ImageStorage.shared.getAllDefaultImages()
-            let customs = ImageStorage.shared.getAllCustomPhotos().map {
+            let defaults = await ImageStorage.shared.getAllDefaultImages()
+            let customs = await ImageStorage.shared.getAllCustomPhotos().map {
                 CustomPhotoEntry(filename: $0.filename, manufacturer: $0.manufacturer, image: $0.image)
             }
             var aliases: [String: [String: [String]]] = [:]
-            for mfr in ImageStorage.shared.loadManufacturersData() {
+            for mfr in await ImageStorage.shared.loadManufacturersData() {
                 let mfrKey = mfr.name.lowercased()
                 var filmMap: [String: [String]] = [:]
                 for film in mfr.films {

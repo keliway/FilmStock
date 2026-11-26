@@ -59,8 +59,8 @@ struct RollGroupItem: Identifiable, Hashable {
             }
         }
         return buckets.values.sorted { lhs, rhs in
-            if let ld = lhs.expireDate.flatMap(FilmStock.parseExpireDate),
-               let rd = rhs.expireDate.flatMap(FilmStock.parseExpireDate) {
+            if let ld = lhs.expireDate.flatMap({ FilmStock.parseExpireDate($0) }),
+               let rd = rhs.expireDate.flatMap({ FilmStock.parseExpireDate($0) }) {
                 if ld != rd { return ld < rd }
             } else if lhs.expireDate != nil {
                 return true

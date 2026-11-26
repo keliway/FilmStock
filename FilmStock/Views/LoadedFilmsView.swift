@@ -238,7 +238,7 @@ struct LoadedFilmsView: View {
     }
 
     private var availableFormats: [FinishedFormatFilterOption] {
-        let formats = finishedFilms.compactMap(FinishedFormatFilterOption.from)
+        let formats = finishedFilms.compactMap { FinishedFormatFilterOption.from($0) }
         return Array(Set(formats)).sorted {
             $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
         }

@@ -195,7 +195,7 @@ class StoreManager: ObservableObject {
                 guard !Task.isCancelled else { return }
                 do {
                     let transaction = try Self.checkVerified(result)
-                    await MainActor.run {
+                    await MainActor.run { [weak self] in
                         self?.purchaseSuccessful = true
                     }
                     await transaction.finish()
