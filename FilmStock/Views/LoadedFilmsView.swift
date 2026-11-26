@@ -345,6 +345,7 @@ struct LoadedFilmsView: View {
                                         Image(systemName: hasActiveFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
                                             .foregroundColor(hasActiveFilters ? .accentColor : .primary)
                                     }
+                                    .accessibilityIdentifier("finished.filterButton")
                                 }
                                 .padding(.horizontal)
                                 .padding(.bottom, 8)
@@ -388,6 +389,7 @@ struct LoadedFilmsView: View {
                     } label: {
                         Image(systemName: "camera")
                     }
+                    .accessibilityIdentifier("loaded.manageCamerasButton")
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -395,6 +397,7 @@ struct LoadedFilmsView: View {
                     } label: {
                         Image(systemName: "questionmark.circle")
                     }
+                    .accessibilityIdentifier("loaded.helpButton")
                 }
             }
             .sheet(isPresented: $showingManageCameras) {

@@ -237,6 +237,7 @@ struct FilterPopoverView: View {
                                 }
                             }
                             .labelsHidden()
+                            .accessibilityIdentifier("filter.sortFieldPicker")
                             
                             Spacer()
                             
@@ -246,6 +247,7 @@ struct FilterPopoverView: View {
                             }
                             .pickerStyle(.segmented)
                             .frame(width: 100)
+                            .accessibilityIdentifier("filter.sortOrderPicker")
                         }
                     }
                     
@@ -260,6 +262,7 @@ struct FilterPopoverView: View {
                             }
                         }
                         .labelsHidden()
+                        .accessibilityIdentifier("filter.groupByPicker")
                     }
                 }
                 .padding()

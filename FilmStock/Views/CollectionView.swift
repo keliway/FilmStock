@@ -62,6 +62,7 @@ struct CollectionView: View {
                                             )
                                     }
                                     .buttonStyle(.plain)
+                                    .accessibilityIdentifier("collection.thumbnail.\(index)")
 
                                     if isEditMode {
                                         Image(systemName: selectedItems.contains(item.id) ? "checkmark.circle.fill" : "circle")
@@ -107,6 +108,7 @@ struct CollectionView: View {
                                         .clipShape(Circle())
                                         .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                                 }
+                                .accessibilityIdentifier("collection.deleteSelectedButton")
                                 .padding(.trailing, 20)
                                 .padding(.bottom, 20)
                             }
@@ -124,6 +126,7 @@ struct CollectionView: View {
                 } label: {
                     Image(systemName: "questionmark.circle")
                 }
+                .accessibilityIdentifier("collection.helpButton")
 
                 if !filmsWithImages.isEmpty {
                     if isEditMode {

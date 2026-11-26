@@ -188,6 +188,7 @@ struct FilmDetailView: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+                .accessibilityIdentifier("filmDetail.moreMenu")
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -309,6 +310,7 @@ struct FilmDetailView: View {
                         .font(.title3)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("filmDetail.editSheetButton")
             }
             HStack {
                 Spacer(minLength: 0)
@@ -369,6 +371,7 @@ struct FilmDetailView: View {
                     .font(.title3)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("filmDetail.editRollGroupButton")
         }
         .padding(.vertical, 2)
     }

@@ -203,6 +203,26 @@ class SettingsManager: ObservableObject {
         customFormats.contains { $0.caseInsensitiveCompare(name) == .orderedSame }
     }
     
+    func resetToDefaults() {
+        hideEmptyByDefault = true
+        useTableViewByDefault = false
+        appearance = .system
+        enabledFormats = Set(FilmStock.FilmFormat.allCases.map { $0.displayName })
+        customFormats = []
+        showExpiryDateInChip = false
+        enableFridge = false
+        filterManufacturers = []
+        filterTypes = []
+        filterSpeedRanges = []
+        filterFormats = []
+        filterShowExpiredOnly = false
+        filterShowFrozenOnly = false
+        filterShowFridgeOnly = false
+        sortField = "manufacturer"
+        sortAscending = true
+        browseGroupBy = "none"
+    }
+    
     private init() {
         // Load saved settings or use defaults
         self.hideEmptyByDefault = UserDefaults.standard.object(forKey: hideEmptyKey) as? Bool ?? true

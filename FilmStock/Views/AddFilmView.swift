@@ -801,6 +801,7 @@ struct ManufacturerPickerView: View {
                     Button { newManufacturerName = ""; showingAddManufacturer = true } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityIdentifier("manufacturerPicker.addButton")
                 }
             } else {
                 ToolbarItem(placement: .navigationBarTrailing) {

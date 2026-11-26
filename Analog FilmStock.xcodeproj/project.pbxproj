@@ -26,6 +26,20 @@
 			remoteGlobalIDString = 95DA01DB2EBA296E0040E997;
 			remoteInfo = FilmStockWidgetExtension;
 		};
+		DD1AC05630B8DC6A00AE0D50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95D20FAF2EB901CB00EF7348 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95D20FB62EB901CB00EF7348;
+			remoteInfo = "Analog FilmStock";
+		};
+		DD1AC06330B8DC7300AE0D50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 95D20FAF2EB901CB00EF7348 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95D20FB62EB901CB00EF7348;
+			remoteInfo = "Analog FilmStock";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +65,8 @@
 		95DA01DE2EBA296E0040E997 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		95DA01E02EBA296E0040E997 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FilmStockWidgetExtension.entitlements; sourceTree = "<group>"; };
+		DD1AC05230B8DC6A00AE0D50 /* FilmStockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FilmStockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD1AC05F30B8DC7300AE0D50 /* FilmStockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FilmStockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -185,6 +201,16 @@
 			path = FilmStockWidget;
 			sourceTree = "<group>";
 		};
+		DD1AC05330B8DC6A00AE0D50 /* FilmStockTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FilmStockTests;
+			sourceTree = "<group>";
+		};
+		DD1AC06030B8DC7300AE0D50 /* FilmStockUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FilmStockUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +230,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD1AC04F30B8DC6A00AE0D50 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD1AC05C30B8DC7300AE0D50 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -216,6 +256,8 @@
 				95DA05F82EBA3B910040E997 /* FilmStockWidgetExtension.entitlements */,
 				95D20FB92EB901CB00EF7348 /* FilmStock */,
 				95DA01E22EBA296E0040E997 /* FilmStockWidget */,
+				DD1AC05330B8DC6A00AE0D50 /* FilmStockTests */,
+				DD1AC06030B8DC7300AE0D50 /* FilmStockUITests */,
 				95DA01DD2EBA296E0040E997 /* Frameworks */,
 				95D20FB82EB901CB00EF7348 /* Products */,
 			);
@@ -226,6 +268,8 @@
 			children = (
 				95D20FB72EB901CB00EF7348 /* Analog FilmStock.app */,
 				95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */,
+				DD1AC05230B8DC6A00AE0D50 /* FilmStockTests.xctest */,
+				DD1AC05F30B8DC7300AE0D50 /* FilmStockUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -288,6 +332,52 @@
 			productReference = 95DA01DC2EBA296E0040E997 /* Analog FilmStockWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		DD1AC05130B8DC6A00AE0D50 /* FilmStockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD1AC05830B8DC6A00AE0D50 /* Build configuration list for PBXNativeTarget "FilmStockTests" */;
+			buildPhases = (
+				DD1AC04E30B8DC6A00AE0D50 /* Sources */,
+				DD1AC04F30B8DC6A00AE0D50 /* Frameworks */,
+				DD1AC05030B8DC6A00AE0D50 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DD1AC05730B8DC6A00AE0D50 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DD1AC05330B8DC6A00AE0D50 /* FilmStockTests */,
+			);
+			name = FilmStockTests;
+			packageProductDependencies = (
+			);
+			productName = FilmStockTests;
+			productReference = DD1AC05230B8DC6A00AE0D50 /* FilmStockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DD1AC05E30B8DC7300AE0D50 /* FilmStockUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD1AC06530B8DC7300AE0D50 /* Build configuration list for PBXNativeTarget "FilmStockUITests" */;
+			buildPhases = (
+				DD1AC05B30B8DC7300AE0D50 /* Sources */,
+				DD1AC05C30B8DC7300AE0D50 /* Frameworks */,
+				DD1AC05D30B8DC7300AE0D50 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DD1AC06430B8DC7300AE0D50 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DD1AC06030B8DC7300AE0D50 /* FilmStockUITests */,
+			);
+			name = FilmStockUITests;
+			packageProductDependencies = (
+			);
+			productName = FilmStockUITests;
+			productReference = DD1AC05F30B8DC7300AE0D50 /* FilmStockUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -295,7 +385,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2720;
 				LastUpgradeCheck = 2720;
 				TargetAttributes = {
 					95D20FB62EB901CB00EF7348 = {
@@ -304,6 +394,14 @@
 					};
 					95DA01DB2EBA296E0040E997 = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					DD1AC05130B8DC6A00AE0D50 = {
+						CreatedOnToolsVersion = 27.2;
+						TestTargetID = 95D20FB62EB901CB00EF7348;
+					};
+					DD1AC05E30B8DC7300AE0D50 = {
+						CreatedOnToolsVersion = 27.2;
+						TestTargetID = 95D20FB62EB901CB00EF7348;
 					};
 				};
 			};
@@ -330,6 +428,8 @@
 			targets = (
 				95D20FB62EB901CB00EF7348 /* Analog FilmStock */,
 				95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */,
+				DD1AC05130B8DC6A00AE0D50 /* FilmStockTests */,
+				DD1AC05E30B8DC7300AE0D50 /* FilmStockUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -355,6 +455,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD1AC05030B8DC6A00AE0D50 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD1AC05D30B8DC7300AE0D50 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -372,6 +486,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD1AC04E30B8DC6A00AE0D50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD1AC05B30B8DC7300AE0D50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -379,6 +507,16 @@
 			isa = PBXTargetDependency;
 			target = 95DA01DB2EBA296E0040E997 /* Analog FilmStockWidgetExtension */;
 			targetProxy = 95DA01EE2EBA29700040E997 /* PBXContainerItemProxy */;
+		};
+		DD1AC05730B8DC6A00AE0D50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95D20FB62EB901CB00EF7348 /* Analog FilmStock */;
+			targetProxy = DD1AC05630B8DC6A00AE0D50 /* PBXContainerItemProxy */;
+		};
+		DD1AC06430B8DC7300AE0D50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95D20FB62EB901CB00EF7348 /* Analog FilmStock */;
+			targetProxy = DD1AC06330B8DC7300AE0D50 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -517,7 +655,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
@@ -556,7 +694,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FilmStock/FilmStock.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStock;
@@ -592,7 +730,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStockWidget;
@@ -623,7 +761,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = FilmStockWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FilmStockWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FilmStockWidget;
@@ -644,6 +782,104 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DD1AC05930B8DC6A00AE0D50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
+				MACOSX_DEPLOYMENT_TARGET = 27.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Analog FilmStock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Analog FilmStock";
+				XROS_DEPLOYMENT_TARGET = 27.2;
+			};
+			name = Debug;
+		};
+		DD1AC05A30B8DC6A00AE0D50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
+				MACOSX_DEPLOYMENT_TARGET = 27.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Analog FilmStock.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Analog FilmStock";
+				XROS_DEPLOYMENT_TARGET = 27.2;
+			};
+			name = Release;
+		};
+		DD1AC06630B8DC7300AE0D50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
+				MACOSX_DEPLOYMENT_TARGET = 27.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = "Analog FilmStock";
+				XROS_DEPLOYMENT_TARGET = 27.2;
+			};
+			name = Debug;
+		};
+		DD1AC06730B8DC7300AE0D50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.2;
+				MACOSX_DEPLOYMENT_TARGET = 27.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.halbe.no.FilmStock.FilmStockUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = "Analog FilmStock";
+				XROS_DEPLOYMENT_TARGET = 27.2;
 			};
 			name = Release;
 		};
@@ -673,6 +909,24 @@
 			buildConfigurations = (
 				95DA01F32EBA29700040E997 /* Debug */,
 				95DA01F42EBA29700040E997 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD1AC05830B8DC6A00AE0D50 /* Build configuration list for PBXNativeTarget "FilmStockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD1AC05930B8DC6A00AE0D50 /* Debug */,
+				DD1AC05A30B8DC6A00AE0D50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD1AC06530B8DC7300AE0D50 /* Build configuration list for PBXNativeTarget "FilmStockUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD1AC06630B8DC7300AE0D50 /* Debug */,
+				DD1AC06730B8DC7300AE0D50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

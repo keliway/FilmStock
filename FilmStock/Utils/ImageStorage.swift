@@ -15,8 +15,13 @@ class ImageStorage {
     private let appGroupID = "group.app.halbe.no.FilmStock"
     
     private init() {
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        userImagesDirectory = documentsPath.appendingPathComponent("UserImages", isDirectory: true)
+        if ProcessInfo.processInfo.arguments.contains("-UITesting") {
+            userImagesDirectory = FileManager.default.temporaryDirectory
+                .appendingPathComponent("UITestUserImages_\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
+        } else {
+            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            userImagesDirectory = documentsPath.appendingPathComponent("UserImages", isDirectory: true)
+        }
         
         // Create directory if it doesn't exist
         if !FileManager.default.fileExists(atPath: userImagesDirectory.path) {

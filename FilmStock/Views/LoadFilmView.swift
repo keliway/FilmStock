@@ -291,6 +291,7 @@ struct LoadFilmView: View {
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 80)
+                    .accessibilityIdentifier("loadFilm.shotAtISOField")
             }
         } footer: {
             if effectiveShotAtISO != groupedFilm.filmSpeed {

@@ -10,10 +10,24 @@ import SwiftData
 
 @main
 struct FilmStockApp: App {
-    @StateObject private var dataManager = FilmStockDataManager()
-    @StateObject private var settingsManager = SettingsManager.shared
+    @StateObject private var dataManager: FilmStockDataManager
+    @StateObject private var settingsManager: SettingsManager
     
-    private let modelContainer: ModelContainer = FilmStockApp.makeModelContainer()
+    private let modelContainer: ModelContainer
+    
+    init() {
+        let args = ProcessInfo.processInfo.arguments
+        let isUITesting = args.contains("-UITesting")
+        if isUITesting {
+            Self.configureUITestingDefaults(arguments: args)
+        }
+        _dataManager = StateObject(wrappedValue: FilmStockDataManager())
+        _settingsManager = StateObject(wrappedValue: SettingsManager.shared)
+        if isUITesting {
+            SettingsManager.shared.resetToDefaults()
+        }
+        modelContainer = Self.makeModelContainer(inMemory: isUITesting)
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -24,7 +38,39 @@ struct FilmStockApp: App {
         .modelContainer(modelContainer)
     }
     
-    private static func makeModelContainer() -> ModelContainer {
+    private static func configureUITestingDefaults(arguments: [String]) {
+        let defaults = UserDefaults.standard
+        let keysToClear = [
+            "settings_hideEmpty", "settings_defaultViewMode", "settings_appearance",
+            "settings_enabledFormats", "settings_customFormats", "settings_showExpiryDateInChip",
+            "settings_enableFridge", "filter_manufacturers", "filter_types",
+            "filter_speedRanges", "filter_formats", "filter_showExpiredOnly",
+            "filter_showFrozenOnly", "filter_showFridgeOnly", "sort_field",
+            "sort_ascending", "browse_group_by", "stats_finishedFilmsCount",
+            "migration_rollCentric_v1"
+        ]
+        for key in keysToClear {
+            defaults.removeObject(forKey: key)
+        }
+        defaults.set(true, forKey: "hasCopiedDefaultImagesToAppGroup_v4")
+        
+        OnboardingManager.shared.resetOnboarding()
+        if arguments.contains("-UITestOnboarding") {
+            defaults.removeObject(forKey: "seenWhatsNewVersion")
+        } else if arguments.contains("-UITestWhatsNew") {
+            OnboardingManager.shared.hasCompletedOnboarding = true
+            OnboardingManager.shared.markTooltipSeen("addFilm")
+            OnboardingManager.shared.markTooltipSeen("filter")
+            defaults.set("2.0", forKey: "seenWhatsNewVersion")
+        } else {
+            OnboardingManager.shared.hasCompletedOnboarding = true
+            OnboardingManager.shared.markTooltipSeen("addFilm")
+            OnboardingManager.shared.markTooltipSeen("filter")
+            defaults.set(whatsNewVersion, forKey: "seenWhatsNewVersion")
+        }
+    }
+    
+    private static func makeModelContainer(inMemory: Bool = false) -> ModelContainer {
         let schema = Schema([
             Manufacturer.self,
             Film.self,
@@ -33,7 +79,7 @@ struct FilmStockApp: App {
             LoadedFilm.self,
             FinishedFilm.self
         ])
-        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
         
         do {
             return try ModelContainer(for: schema, configurations: [configuration])

@@ -71,6 +71,7 @@ struct ManageCamerasView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityIdentifier("manageCameras.addButton")
                 }
             }
             .sheet(isPresented: $showingAddCamera) {

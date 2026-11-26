@@ -43,6 +43,10 @@ struct MainTabView: View {
             dataManager.setModelContext(modelContext)
             await dataManager.migrateIfNeeded()
 
+            if ProcessInfo.processInfo.arguments.contains("-UITestSeedCustomPhotos") {
+                seedUITestCustomPhotos()
+            }
+
             // Show welcome screen on very first launch
             if !OnboardingManager.shared.hasCompletedOnboarding {
                 seenWhatsNewVersion = whatsNewVersion
@@ -88,6 +92,38 @@ struct MainTabView: View {
                 if let filmId = filmId {
                     selectedLoadedFilmId = filmId
                 }
+            }
+        }
+    }
+
+    private func seedUITestCustomPhotos() {
+        guard dataManager.filmStocks.isEmpty else { return }
+        let samples: [(manufacturer: String, name: String, type: FilmStock.FilmType, speed: Int, color: UIColor)] = [
+            ("Ilford", "HP5 Plus", .bw, 400, .darkGray),
+            ("Kodak", "Portra 400", .color, 400, .systemOrange)
+        ]
+        for sample in samples {
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: 240, height: 240))
+            let img = renderer.image { ctx in
+                sample.color.setFill()
+                ctx.fill(CGRect(x: 0, y: 0, width: 240, height: 240))
+            }
+            if let savedFile = ImageStorage.shared.saveImage(img, forManufacturer: sample.manufacturer, filmName: sample.name) {
+                let stock = FilmStock(
+                    id: UUID().uuidString,
+                    name: sample.name,
+                    manufacturer: sample.manufacturer,
+                    type: sample.type,
+                    filmSpeed: sample.speed,
+                    format: .thirtyFive,
+                    quantity: 2,
+                    exposures: 36
+                )
+                _ = dataManager.addFilmStock(
+                    stock,
+                    imageName: "\(sample.manufacturer)/\(savedFile)",
+                    imageSource: ImageSource.custom.rawValue
+                )
             }
         }
     }

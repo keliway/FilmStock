@@ -373,6 +373,7 @@ struct BrowseView: View {
                                 }
                                 .pickerStyle(.segmented)
                                 .frame(width: 120)
+                                .accessibilityIdentifier("browse.viewModePicker")
                             }
                             .padding(.horizontal, 4)
                             .padding(.vertical, 8)
@@ -419,6 +420,7 @@ struct BrowseView: View {
                     } label: {
                         Image(systemName: "gearshape")
                     }
+                    .accessibilityIdentifier("browse.settingsButton")
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
@@ -442,6 +444,7 @@ struct BrowseView: View {
                             }
                         }
                     }
+                    .accessibilityIdentifier("browse.filterButton")
                     .onboardingTooltip(
                         id: "filter",
                         title: NSLocalizedString("onboarding.tooltip.filter.title", comment: ""),
@@ -457,6 +460,7 @@ struct BrowseView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityIdentifier("browse.addFilmButton")
                     .onboardingTooltip(
                         id: "addFilm",
                         title: NSLocalizedString("onboarding.tooltip.addFilm.title", comment: ""),
