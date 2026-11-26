@@ -75,14 +75,6 @@ struct LoadedFilmWidgetData: Identifiable {
     var isoDisplayString: String {
         return "ISO \(effectiveISO)"
     }
-    
-    var loadedDateString: String {
-        guard let loadedAt = loadedAt else { return "" }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .none
-        return formatter.string(from: loadedAt)
-    }
 }
 
 struct LoadedFilmsWidgetEntryView: View {
@@ -105,123 +97,119 @@ struct LoadedFilmsWidgetEntryView: View {
                 }
                 .widgetURL(URL(string: "filmstock://loadedfilms"))
         } else {
-            // Show current film based on index
-            let filmIndex = min(entry.currentIndex, entry.loadedFilms.count - 1)
-            let film = entry.loadedFilms[max(0, filmIndex)]
+            let filmIndex = max(0, min(entry.currentIndex, entry.loadedFilms.count - 1))
+            let film = entry.loadedFilms[filmIndex]
             let hasMultiple = entry.loadedFilms.count > 1
+            let resolvedImage = film.imageData.flatMap { UIImage(data: $0) }
             
-            if let imageData = film.imageData,
-               let uiImage = UIImage(data: imageData) {
-                ZStack {
-                    Color.clear
-                        .widgetBackground {
+            ZStack {
+                Color.clear
+                    .widgetBackground {
+                        if let uiImage = resolvedImage {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .scaledToFill()
-                        }
-                    
-                    // Film info bar (date and format) - conditionally shown and positioned
-                    if entry.configuration.showFilmInfo ?? false {
-                        VStack {
-                            if (entry.configuration.infoPosition ?? .top) == .top {
-                                // Top position
-                                HStack {
-                                    // Camera on the left
-                                    if !film.camera.isEmpty {
-                                        Text(film.camera)
-                                            .font(.system(size: 11, weight: .medium))
-                                            .foregroundColor(.white)
-                                            .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
-                                            .padding(.leading, 8)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    // ISO chip on the right
-                                    Text(film.isoDisplayString)
-                                        .font(.system(size: 10, weight: .semibold))
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .fixedSize()
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color.white)
-                                        )
-                                        .padding(.trailing, 8)
-                                }
-                                .padding(.top, 0)
-                            }
-                            
-                            Spacer()
-                            
-                            if (entry.configuration.infoPosition ?? .top) == .bottom {
-                                // Bottom position
-                                HStack {
-                                    // Camera on the left
-                                    if !film.camera.isEmpty {
-                                        Text(film.camera)
-                                            .font(.system(size: 11, weight: .medium))
-                                            .foregroundColor(.white)
-                                            .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
-                                            .padding(.leading, 8)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    // ISO chip on the right
-                                    Text(film.isoDisplayString)
-                                        .font(.system(size: 10, weight: .semibold))
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .fixedSize()
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color.white)
-                                        )
-                                        .padding(.trailing, 8)
-                                }
-                                .padding(.bottom, 0)
-                            }
+                        } else {
+                            noImageBackground(for: film, hasMultiple: hasMultiple)
                         }
                     }
-                    
-                    // Navigation buttons (only if multiple films) - centered vertically
-                    if hasMultiple {
-                        HStack {
-                            // Left button - previous film
-                            Button(intent: PreviousFilmIntent()) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .shadow(color: .black.opacity(0.6), radius: 1, x: 0, y: 0.5)
-                                    .padding(.leading, 4)
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Spacer()
-                            
-                            // Right button - next film
-                            Button(intent: NextFilmIntent()) {
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .shadow(color: .black.opacity(0.6), radius: 1, x: 0, y: 0.5)
-                                    .padding(.trailing, 4)
-                            }
-                            .buttonStyle(.plain)
+                
+                if entry.configuration.showFilmInfo ?? false {
+                    VStack {
+                        if (entry.configuration.infoPosition ?? .top) == .top {
+                            filmInfoBar(for: film)
+                        }
+                        Spacer()
+                        if (entry.configuration.infoPosition ?? .top) == .bottom {
+                            filmInfoBar(for: film)
                         }
                     }
                 }
-                .widgetURL(widgetURL(for: film))
-            } else {
-                Color.gray.opacity(0.3)
-                    .widgetBackground {
-                        Color.gray.opacity(0.3)
+                
+                if hasMultiple {
+                    HStack {
+                        Button(intent: PreviousFilmIntent()) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .shadow(color: .black.opacity(0.6), radius: 1, x: 0, y: 0.5)
+                                .frame(width: 28, height: 44, alignment: .leading)
+                                .padding(.leading, 4)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Spacer()
+                        
+                        Button(intent: NextFilmIntent()) {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.85))
+                                .shadow(color: .black.opacity(0.6), radius: 1, x: 0, y: 0.5)
+                                .frame(width: 28, height: 44, alignment: .trailing)
+                                .padding(.trailing, 4)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .widgetURL(widgetURL(for: film))
+                }
             }
+            .widgetURL(widgetURL(for: film))
+        }
+    }
+    
+    @ViewBuilder
+    private func filmInfoBar(for film: LoadedFilmWidgetData) -> some View {
+        HStack(spacing: 4) {
+            if !film.camera.isEmpty {
+                Text(film.camera)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
+                    .padding(.leading, 8)
+            }
+            
+            Spacer(minLength: 4)
+            
+            Text(film.isoDisplayString)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(.black)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .fixedSize()
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.white)
+                )
+                .padding(.trailing, 8)
+        }
+    }
+    
+    @ViewBuilder
+    private func noImageBackground(for film: LoadedFilmWidgetData, hasMultiple: Bool) -> some View {
+        ZStack {
+            Color(white: 0.16)
+            VStack(spacing: 4) {
+                if !film.manufacturer.isEmpty {
+                    Text(film.manufacturer.uppercased())
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.65))
+                        .lineLimit(1)
+                }
+                Text(film.filmName)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+                Text(film.formatDisplayName)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.white.opacity(0.75))
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, hasMultiple ? 26 : 12)
         }
     }
     

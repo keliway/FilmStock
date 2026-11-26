@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftData
-import WidgetKit
 
 struct MainTabView: View {
     @EnvironmentObject var dataManager: FilmStockDataManager
@@ -88,23 +87,6 @@ struct MainTabView: View {
                 
                 if let filmId = filmId {
                     selectedLoadedFilmId = filmId
-                }
-            } else if url.host == "widget" {
-                // Handle widget navigation
-                let appGroupID = "group.app.halbe.no.FilmStock"
-                if let userDefaults = UserDefaults(suiteName: appGroupID) {
-                    var currentIndex = userDefaults.integer(forKey: "currentFilmIndex")
-                    
-                    if url.path == "/previous" {
-                        currentIndex = max(0, currentIndex - 1)
-                    } else if url.path == "/next" {
-                        currentIndex = currentIndex + 1 // Will be clamped by widget
-                    }
-                    
-                    userDefaults.set(currentIndex, forKey: "currentFilmIndex")
-                    
-                    // Reload widget timeline
-                    WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
                 }
             }
         }

@@ -29,22 +29,28 @@ class ImageStorage {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)
     }
     
-    /// Copy default images from bundle to App Group container for widget access
-    /// This is called once on app launch to make images available to the widget extension
+    /// Copy default images and catalog metadata from bundle to App Group container for widget access.
     func copyDefaultImagesToAppGroup() {
-        // Check if images have already been copied
-        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup_v4" // Incremented to force re-copy
+        guard let containerURL = appGroupContainer else {
+            return
+        }
         
-        // Clear old flags to force re-copy
+        // Always refresh manufacturers.json so catalog metadata/alias fixes propagate to the widget on every launch
+        if let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
+           let jsonData = try? Data(contentsOf: manufacturersURL) {
+            let destinationJSON = containerURL.appendingPathComponent("manufacturers.json")
+            try? jsonData.write(to: destinationJSON, options: .atomic)
+        }
+        
+        // Check if bundled PNG images have already been copied for this version
+        let hasCopiedImagesKey = "hasCopiedDefaultImagesToAppGroup_v4"
+        
+        // Clear old flags
         UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup")
         UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup_v2")
         UserDefaults.standard.removeObject(forKey: "hasCopiedDefaultImagesToAppGroup_v3")
         
         if UserDefaults.standard.bool(forKey: hasCopiedImagesKey) {
-            return // Already copied
-        }
-        
-        guard let containerURL = appGroupContainer else {
             return
         }
         
@@ -55,10 +61,10 @@ class ImageStorage {
             try? FileManager.default.createDirectory(at: destinationImagesURL, withIntermediateDirectories: true)
         }
         
-        // Get all png files from the bundle root (new format: manufacturer_filmname.png)
+        // Get all png files from the bundle root (format: manufacturer_filmname.png)
         let allImagePaths = Bundle.main.paths(forResourcesOfType: "png", inDirectory: nil)
         
-        // Copy each image to the appropriate manufacturer directory
+        // Copy each image to the appropriate lowercased manufacturer directory
         for imagePath in allImagePaths {
             let imageURL = URL(fileURLWithPath: imagePath)
             let fileName = imageURL.lastPathComponent
@@ -66,7 +72,7 @@ class ImageStorage {
             
             // Parse manufacturer_filmname format
             if let underscoreIndex = filenameWithoutExt.firstIndex(of: "_") {
-                let manufacturerName = String(filenameWithoutExt[..<underscoreIndex])
+                let manufacturerName = String(filenameWithoutExt[..<underscoreIndex]).lowercased()
                 
                 let destinationManufacturerURL = destinationImagesURL.appendingPathComponent(manufacturerName, isDirectory: true)
                 
@@ -74,21 +80,11 @@ class ImageStorage {
                     try? FileManager.default.createDirectory(at: destinationManufacturerURL, withIntermediateDirectories: true)
                 }
                 
-                // Save as manufacturer_filmname.png in the manufacturer subdirectory
                 let destinationFile = destinationManufacturerURL.appendingPathComponent(fileName)
-                
-                if !FileManager.default.fileExists(atPath: destinationFile.path),
-                   let imageData = try? Data(contentsOf: imageURL) {
-                    try? imageData.write(to: destinationFile)
+                if let imageData = try? Data(contentsOf: imageURL) {
+                    try? imageData.write(to: destinationFile, options: .atomic)
                 }
             }
-        }
-        
-        // Also copy manufacturers.json to App Group for widget access
-        if let manufacturersURL = Bundle.main.url(forResource: "manufacturers", withExtension: "json"),
-           let jsonData = try? Data(contentsOf: manufacturersURL) {
-            let destinationJSON = containerURL.appendingPathComponent("manufacturers.json")
-            try? jsonData.write(to: destinationJSON)
         }
         
         // Mark as copied

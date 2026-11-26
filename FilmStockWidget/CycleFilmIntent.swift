@@ -2,7 +2,7 @@
 //  CycleFilmIntent.swift
 //  FilmStockWidget
 //
-//  App Intent for cycling through loaded films in the widget
+//  App Intent and shared store helpers for cycling through loaded films in the widget
 //
 
 import AppIntents
@@ -10,46 +10,50 @@ import WidgetKit
 import SwiftData
 import Foundation
 
-private enum WidgetLoadedFilmCounter {
-    static func count() -> Int {
-        let schema = Schema([
-            Manufacturer.self,
-            Film.self,
-            MyFilm.self,
-            Camera.self,
-            LoadedFilm.self,
-            FinishedFilm.self
-        ])
-        
-        let appGroupID = "group.app.halbe.no.FilmStock"
-        var databaseURL: URL?
-        
-        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
-            databaseURL = containerURL.appendingPathComponent("default.store")
-        } else if let appSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            databaseURL = appSupportURL.appendingPathComponent("default.store")
-        }
-        
-        guard databaseURL != nil else {
-            return 0
-        }
-        
+enum WidgetDataStore {
+    static let appGroupID = "group.app.halbe.no.FilmStock"
+    static let widgetKind = "LoadedFilmsWidget"
+    static let currentFilmIndexKey = "currentFilmIndex"
+
+    static let schema = Schema([
+        Manufacturer.self,
+        Film.self,
+        MyFilm.self,
+        Camera.self,
+        LoadedFilm.self,
+        FinishedFilm.self
+    ])
+
+    static func makeModelContainer() throws -> ModelContainer {
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false
         )
-        
+        return try ModelContainer(for: schema, configurations: [modelConfiguration])
+    }
+
+    static func loadedFilmCount() -> Int {
         do {
-            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try makeModelContainer()
             let context = ModelContext(container)
-            let descriptor = FetchDescriptor<LoadedFilm>(
-                sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
-            )
-            let loadedFilms = try context.fetch(descriptor)
-            return loadedFilms.count
+            let descriptor = FetchDescriptor<LoadedFilm>()
+            return try context.fetchCount(descriptor)
         } catch {
             return 0
         }
+    }
+
+    static func stepFilmIndex(by delta: Int) {
+        guard let userDefaults = UserDefaults(suiteName: appGroupID) else { return }
+        let filmCount = loadedFilmCount()
+        if filmCount > 0 {
+            let current = max(0, min(userDefaults.integer(forKey: currentFilmIndexKey), filmCount - 1))
+            let next = ((current + delta) % filmCount + filmCount) % filmCount
+            userDefaults.set(next, forKey: currentFilmIndexKey)
+        } else {
+            userDefaults.set(0, forKey: currentFilmIndexKey)
+        }
+        WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
     }
 }
 
@@ -59,21 +63,7 @@ struct NextFilmIntent: AppIntent {
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {
-        let appGroupID = "group.app.halbe.no.FilmStock"
-        guard let userDefaults = UserDefaults(suiteName: appGroupID) else {
-            return .result()
-        }
-        
-        var currentIndex = userDefaults.integer(forKey: "currentFilmIndex")
-        let filmCount = WidgetLoadedFilmCounter.count()
-        
-        if filmCount > 0 {
-            currentIndex = (currentIndex + 1) % filmCount
-            userDefaults.set(currentIndex, forKey: "currentFilmIndex")
-        }
-        
-        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
-        
+        WidgetDataStore.stepFilmIndex(by: 1)
         return .result()
     }
 }
@@ -84,21 +74,7 @@ struct PreviousFilmIntent: AppIntent {
     static var openAppWhenRun: Bool = false
     
     func perform() async throws -> some IntentResult {
-        let appGroupID = "group.app.halbe.no.FilmStock"
-        guard let userDefaults = UserDefaults(suiteName: appGroupID) else {
-            return .result()
-        }
-        
-        var currentIndex = userDefaults.integer(forKey: "currentFilmIndex")
-        let filmCount = WidgetLoadedFilmCounter.count()
-        
-        if filmCount > 0 {
-            currentIndex = (currentIndex - 1 + filmCount) % filmCount
-            userDefaults.set(currentIndex, forKey: "currentFilmIndex")
-        }
-        
-        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
-        
+        WidgetDataStore.stepFilmIndex(by: -1)
         return .result()
     }
 }
