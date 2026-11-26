@@ -34,6 +34,47 @@ struct RollGroupItem: Identifiable, Hashable {
 
     static func == (lhs: RollGroupItem, rhs: RollGroupItem) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+
+    /// Buckets individual roll entries by identical metadata and sorts them consistently
+    /// (earliest expiry first, rolls with expiry before rolls without, room-temp before fridge/frozen, fewer exposures first).
+    static func grouped(from rolls: [FilmStock]) -> [RollGroupItem] {
+        var buckets: [String: RollGroupItem] = [:]
+        for roll in rolls {
+            let expiry = roll.expireDate?.first
+            let key = "\(roll.format.rawValue)|\(expiry ?? "")|\(roll.isFrozen)|\(roll.isFridge)|\(roll.exposures ?? -99)|\(roll.customFormatName ?? "")|\(roll.comments ?? "")"
+            if var existing = buckets[key] {
+                existing.rollIds.append(roll.id)
+                buckets[key] = existing
+            } else {
+                buckets[key] = RollGroupItem(
+                    format: roll.format,
+                    customFormatName: roll.customFormatName,
+                    expireDate: expiry,
+                    isFrozen: roll.isFrozen,
+                    isFridge: roll.isFridge,
+                    exposures: roll.exposures,
+                    comments: roll.comments,
+                    rollIds: [roll.id]
+                )
+            }
+        }
+        return buckets.values.sorted { lhs, rhs in
+            if let ld = lhs.expireDate.flatMap(FilmStock.parseExpireDate),
+               let rd = rhs.expireDate.flatMap(FilmStock.parseExpireDate) {
+                if ld != rd { return ld < rd }
+            } else if lhs.expireDate != nil {
+                return true
+            } else if rhs.expireDate != nil {
+                return false
+            }
+            if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
+            if lhs.isFridge != rhs.isFridge { return !lhs.isFridge }
+            let le = lhs.exposures ?? Int.max
+            let re = rhs.exposures ?? Int.max
+            if le != re { return le < re }
+            return lhs.id < rhs.id
+        }
+    }
 }
 
 // MARK: - Film Detail View
@@ -361,74 +402,34 @@ struct FilmDetailView: View {
         displayGroupedFilm.formats.contains { $0.quantity > 0 }
     }
 
-    private static let sheetFormats: Set<FilmStock.FilmFormat> = [.fourByFive, .fiveBySeven, .eightByTen]
-
     private var largeFormatFilms: [FilmStock] {
         relatedFilms.filter {
-            Self.sheetFormats.contains($0.format) && $0.quantity > 0
+            $0.format.isSheetFormat && $0.quantity > 0
         }
     }
 
     private var otherFormatFilms: [FilmStock] {
         relatedFilms.filter {
             !$0.format.isRollFormat &&
-            !Self.sheetFormats.contains($0.format) &&
+            !$0.format.isSheetFormat &&
             $0.quantity > 0
         }
     }
 
     private var rollGroupsByFormat: [(format: FilmStock.FilmFormat, displayName: String, groups: [RollGroupItem])] {
         let rollFilms = relatedFilms.filter { $0.format.isRollFormat && $0.quantity > 0 }
+        let sortedGroups = RollGroupItem.grouped(from: rollFilms)
 
-        // Build buckets keyed by format, expiry, frozen, fridge, exposures, customFormatName, comments (matches LoadFilmView.rollGroupsForFormat)
-        var buckets: [String: RollGroupItem] = [:]
-        for film in rollFilms {
-            let expiry = film.expireDate?.first
-            let expKey = film.exposures ?? -99
-            let otherKey = film.customFormatName ?? ""
-            let commentsKey = film.comments ?? ""
-            let key = "\(film.format.rawValue)|\(expiry ?? "")|\(film.isFrozen)|\(film.isFridge)|\(expKey)|\(otherKey)|\(commentsKey)"
-            if var existing = buckets[key] {
-                existing.rollIds.append(film.id)
-                buckets[key] = existing
-            } else {
-                buckets[key] = RollGroupItem(
-                    format: film.format,
-                    customFormatName: film.customFormatName,
-                    expireDate: expiry,
-                    isFrozen: film.isFrozen,
-                    isFridge: film.isFridge,
-                    exposures: film.exposures,
-                    comments: film.comments,
-                    rollIds: [film.id]
-                )
-            }
-        }
-
-        // Group by format
         var byFormat: [FilmStock.FilmFormat: [RollGroupItem]] = [:]
-        for (_, group) in buckets {
+        for group in sortedGroups {
             byFormat[group.format, default: []].append(group)
         }
 
         let formatOrder: [FilmStock.FilmFormat] = [.thirtyFive, .oneTwenty, .oneTen, .oneTwentySeven, .twoTwenty]
         return formatOrder.compactMap { format in
             guard let groups = byFormat[format], !groups.isEmpty else { return nil }
-            let sorted = groups.sorted { lhs, rhs in
-                if let ld = lhs.expireDate.flatMap(FilmStock.parseExpireDate),
-                   let rd = rhs.expireDate.flatMap(FilmStock.parseExpireDate) {
-                    if ld != rd { return ld < rd }
-                } else if lhs.expireDate != nil { return true }
-                else if rhs.expireDate != nil { return false }
-                if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
-                if lhs.isFridge != rhs.isFridge { return !lhs.isFridge }
-                let le = lhs.exposures ?? Int.max
-                let re = rhs.exposures ?? Int.max
-                if le != re { return le < re }
-                return lhs.id < rhs.id
-            }
             let displayName = groups.compactMap { $0.customFormatName }.first ?? format.displayName
-            return (format, displayName, sorted)
+            return (format, displayName, groups)
         }
     }
 

@@ -133,6 +133,19 @@ struct FilmStock: Identifiable, Codable, Hashable {
             }
         }
         
+        var isSheetFormat: Bool {
+            switch self {
+            case .fourByFive, .fiveBySeven, .eightByTen:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        static func isSheetFormat(_ rawValue: String) -> Bool {
+            FilmFormat(rawValue: rawValue)?.isSheetFormat ?? false
+        }
+        
         /// Default exposure count for this format. nil for formats where it doesn't apply.
         var defaultExposures: Int? {
             switch self {

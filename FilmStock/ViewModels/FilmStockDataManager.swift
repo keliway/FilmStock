@@ -1403,10 +1403,22 @@ class FilmStockDataManager: ObservableObject {
         return true
     }
     
+    func updateLoadedFilmDate(_ loadedFilm: LoadedFilm, loadedAt: Date) {
+        guard let context = modelContext else { return }
+        guard loadedFilm.loadedAt != loadedAt else { return }
+        loadedFilm.loadedAt = loadedAt
+        try? context.save()
+        loadFilmStocks()
+        NotificationCenter.default.post(name: NSNotification.Name("LoadedFilmsChanged"), object: nil)
+        WidgetCenter.shared.reloadTimelines(ofKind: "LoadedFilmsWidget")
+    }
+
     func updateLoadedFilmComments(_ loadedFilm: LoadedFilm, comments: String?) {
         guard let context = modelContext else { return }
         let trimmed = comments?.trimmingCharacters(in: .whitespacesAndNewlines)
         let cleanComments: String? = (trimmed?.isEmpty == false) ? trimmed : nil
+        guard cleanComments != loadedFilm.effectiveComments else { return }
+
         loadedFilm.comments = cleanComments
         
         // For roll formats, each roll has its own dedicated MyFilm record, so keep its comments in sync

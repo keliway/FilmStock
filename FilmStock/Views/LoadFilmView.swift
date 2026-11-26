@@ -20,7 +20,12 @@ struct LoadFilmView: View {
     @State private var selectedCamera: String = ""
     @State private var errorMessage: String?
     @State private var sheetQuantity: Int = 1
-    @State private var shotAtISO: Int = 0
+    @State private var shotAtISOText: String = ""
+
+    private var effectiveShotAtISO: Int {
+        guard let value = Int(shotAtISOText) else { return groupedFilm.filmSpeed }
+        return min(max(value, 1), 12800)
+    }
     
     private var availableFormatLines: [GroupedFilm.FormatInfo] {
         groupedFilm.formats.filter { $0.quantity > 0 }
@@ -78,7 +83,7 @@ struct LoadFilmView: View {
 
             autoSelectCamera(for: selectedFormat, customFormatName: selectedFormatInfo?.customFormatName)
             sheetQuantity = 1
-            shotAtISO = groupedFilm.filmSpeed
+            shotAtISOText = "\(groupedFilm.filmSpeed)"
         }
         .onChange(of: selectedFormatLineId) { _, _ in
             sheetQuantity = 1
@@ -249,43 +254,7 @@ struct LoadFilmView: View {
     }
 
     private func rollGroupsForFormat(_ formatInfo: GroupedFilm.FormatInfo) -> [RollGroupItem] {
-        let rolls = rollsForFormat(formatInfo)
-        var buckets: [String: RollGroupItem] = [:]
-        for roll in rolls {
-            let expiry = roll.expireDate?.first
-            let key = "\(roll.format.rawValue)|\(expiry ?? "")|\(roll.isFrozen)|\(roll.isFridge)|\(roll.exposures ?? -99)|\(roll.customFormatName ?? "")|\(roll.comments ?? "")"
-            if var existing = buckets[key] {
-                existing.rollIds.append(roll.id)
-                buckets[key] = existing
-            } else {
-                buckets[key] = RollGroupItem(
-                    format: roll.format,
-                    customFormatName: roll.customFormatName,
-                    expireDate: expiry,
-                    isFrozen: roll.isFrozen,
-                    isFridge: roll.isFridge,
-                    exposures: roll.exposures,
-                    comments: roll.comments,
-                    rollIds: [roll.id]
-                )
-            }
-        }
-        return buckets.values.sorted { lhs, rhs in
-            if let ld = lhs.expireDate.flatMap(FilmStock.parseExpireDate),
-               let rd = rhs.expireDate.flatMap(FilmStock.parseExpireDate) {
-                if ld != rd { return ld < rd }
-            } else if lhs.expireDate != nil {
-                return true
-            } else if rhs.expireDate != nil {
-                return false
-            }
-            if lhs.isFrozen != rhs.isFrozen { return !lhs.isFrozen }
-            if lhs.isFridge != rhs.isFridge { return !lhs.isFridge }
-            let le = lhs.exposures ?? Int.max
-            let re = rhs.exposures ?? Int.max
-            if le != re { return le < re }
-            return lhs.id < rhs.id
-        }
+        RollGroupItem.grouped(from: rollsForFormat(formatInfo))
     }
     
     private var cameraSelectionSection: some View {
@@ -318,30 +287,32 @@ struct LoadFilmView: View {
             HStack {
                 Text("load.shotAtISO")
                 Spacer()
-                TextField("ISO", value: $shotAtISO, format: .number)
+                TextField("\(groupedFilm.filmSpeed)", text: $shotAtISOText)
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 80)
             }
         } footer: {
-            if shotAtISO != groupedFilm.filmSpeed {
+            if effectiveShotAtISO != groupedFilm.filmSpeed {
                 Text("load.shotAtISO.hint")
                     .foregroundColor(.orange)
             }
         }
-        .onChange(of: shotAtISO) { oldValue, newValue in
-            // Clamp value between 1 and 12800
-            if newValue < 1 {
-                shotAtISO = 1
-            } else if newValue > 12800 {
-                shotAtISO = 12800
+        .onChange(of: shotAtISOText) { _, newValue in
+            let digits = newValue.filter(\.isNumber)
+            if digits != newValue {
+                shotAtISOText = digits
+                return
+            }
+            if let value = Int(digits), value > 12800 {
+                shotAtISOText = "12800"
             }
         }
     }
     
     private var quantitySelectionSection: some View {
         Group {
-            if let format = selectedFormat, isSheetFormat(format) {
+            if let format = selectedFormat, format.isSheetFormat {
                 Section("load.quantityToLoad") {
                     Stepper(String(format: NSLocalizedString("Sheets: %d", comment: ""), sheetQuantity), value: $sheetQuantity, in: 1...maxSheetQuantity)
                 }
@@ -349,18 +320,12 @@ struct LoadFilmView: View {
         }
     }
     
-    private func isSheetFormat(_ format: FilmStock.FilmFormat) -> Bool {
-        format == .fourByFive || format == .fiveBySeven || format == .eightByTen
-    }
-    
     /// Localized, pluralized "N rolls" / "N sheets" label for a format.
     private func quantityLabel(count: Int, format: FilmStock.FilmFormat) -> String {
-        let key: String
-        if isSheetFormat(format) {
-            key = count == 1 ? "format.sheet.count" : "format.sheets.count"
-        } else {
-            key = count == 1 ? "film.rollCount" : "film.rollsCount"
+        if format.isSheetFormat {
+            return FilmStock.localizedSheetCount(count)
         }
+        let key = count == 1 ? "film.rollCount" : "film.rollsCount"
         return String(format: NSLocalizedString(key, comment: ""), count)
     }
     
@@ -446,10 +411,10 @@ struct LoadFilmView: View {
             quantityToLoad = 1
         } else {
             filmStockId = formatInfo.filmId
-            quantityToLoad = isSheetFormat(format) ? sheetQuantity : 1
+            quantityToLoad = format.isSheetFormat ? sheetQuantity : 1
         }
         
-        let isoToPass = shotAtISO != groupedFilm.filmSpeed ? shotAtISO : nil
+        let isoToPass = effectiveShotAtISO != groupedFilm.filmSpeed ? effectiveShotAtISO : nil
         if dataManager.loadFilm(filmStockId: filmStockId, format: format, cameraName: selectedCamera, quantity: quantityToLoad, shotAtISO: isoToPass) {
             dismiss()
             onLoadComplete?()

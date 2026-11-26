@@ -49,6 +49,12 @@ extension FilmStock {
         return NSLocalizedString("error.invalidDateFormat", comment: "")
     }
 
+    /// Localized sheet count label (e.g. "1 sheet", "4 sheets").
+    static func localizedSheetCount(_ count: Int) -> String {
+        let key = count == 1 ? "format.sheet.count" : "format.sheets.count"
+        return String(format: NSLocalizedString(key, comment: ""), count)
+    }
+
     /// Localized roll / sheet quantity label (e.g. "1 Roll", "3 Rolls", "10 Sheets").
     static func localizedQuantityLabel(quantity: Int, format: FilmFormat) -> String {
         let unit = format.quantityUnit
