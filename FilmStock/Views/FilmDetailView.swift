@@ -675,6 +675,20 @@ struct SheetGroupEditSheet: View {
         }
     }
 
+    private func expiryTextBinding(for rowId: UUID) -> Binding<String> {
+        Binding(
+            get: { expiryRows.first(where: { $0.id == rowId })?.text ?? "" },
+            set: { newValue in
+                guard let idx = expiryRows.firstIndex(where: { $0.id == rowId }) else { return }
+                let formatted = FilmStock.formatExpiryInput(newValue)
+                if expiryRows[idx].text != formatted {
+                    expiryRows[idx].text = formatted
+                }
+                rowErrors[rowId] = nil
+            }
+        )
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -687,23 +701,20 @@ struct SheetGroupEditSheet: View {
                 }
 
                 Section("film.expiryDate") {
-                    ForEach($expiryRows) { $row in
+                    ForEach(expiryRows) { row in
+                        let rowId = row.id
                         VStack(alignment: .leading, spacing: 4) {
-                            TextField("film.expiryDateFormat", text: $row.text)
+                            TextField("film.expiryDateFormat", text: expiryTextBinding(for: rowId))
                                 .keyboardType(.numberPad)
-                                .onChange(of: row.text) { _, newValue in
-                                    row.text = FilmStock.formatExpiryInput(newValue)
-                                    rowErrors[row.id] = nil
-                                }
-                            if let err = rowErrors[row.id] {
+                            if let err = rowErrors[rowId] {
                                 Text(err).font(.caption).foregroundColor(.red)
                             }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if expiryRows.count > 1 {
                                 Button(role: .destructive) {
-                                    expiryRows.removeAll { $0.id == row.id }
-                                    rowErrors[row.id] = nil
+                                    expiryRows.removeAll { $0.id == rowId }
+                                    rowErrors[rowId] = nil
                                 } label: {
                                     Label("action.delete", systemImage: "trash")
                                 }

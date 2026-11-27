@@ -89,16 +89,44 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
             let container = try WidgetDataStore.makeModelContainer()
             let context = ModelContext(container)
             
+            // Validate relationship targets against live persistentModelIDs before reading
+            // persisted properties so un-repaired legacy stores never trap in the widget extension.
+            let validFilmPIDs = (try? context.fetch(FetchDescriptor<Film>())).map { Set($0.map(\.persistentModelID)) }
+            let validMyFilmPIDs = (try? context.fetch(FetchDescriptor<MyFilm>())).map { Set($0.map(\.persistentModelID)) }
+            let validCameraPIDs = (try? context.fetch(FetchDescriptor<Camera>())).map { Set($0.map(\.persistentModelID)) }
+            let validManufacturerPIDs = (try? context.fetch(FetchDescriptor<Manufacturer>())).map { Set($0.map(\.persistentModelID)) }
+            
             let descriptor = FetchDescriptor<LoadedFilm>(
                 sortBy: [SortDescriptor(\.loadedAt, order: .reverse)]
             )
             let loadedFilms = try context.fetch(descriptor)
             
             return loadedFilms.compactMap { loadedFilm -> LoadedFilmWidgetData? in
-                guard let film = loadedFilm.film ?? loadedFilm.myFilm?.film else { return nil }
+                let validMyFilm: MyFilm? = {
+                    guard let mf = loadedFilm.myFilm else { return nil }
+                    guard validMyFilmPIDs?.contains(mf.persistentModelID) ?? true else { return nil }
+                    return mf
+                }()
+                let directFilm: Film? = {
+                    guard let f = loadedFilm.film else { return nil }
+                    guard validFilmPIDs?.contains(f.persistentModelID) ?? true else { return nil }
+                    return f
+                }()
+                let fallbackFilm: Film? = {
+                    guard let f = validMyFilm?.film else { return nil }
+                    guard validFilmPIDs?.contains(f.persistentModelID) ?? true else { return nil }
+                    return f
+                }()
+                guard let film = directFilm ?? fallbackFilm else { return nil }
                 
                 var imageData: Data?
-                let manufacturerName = film.manufacturer?.name ?? ""
+                let manufacturerName: String = {
+                    guard let mfr = film.manufacturer,
+                          validManufacturerPIDs?.contains(mfr.persistentModelID) ?? true else {
+                        return ""
+                    }
+                    return mfr.name
+                }()
                 
                 switch film.imageSource {
                 case "custom":
@@ -120,14 +148,23 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
                 }
                 
                 let effectiveISO = loadedFilm.shotAtISO ?? film.filmSpeed
-                let resolvedCamera = loadedFilm.cameraName ?? loadedFilm.camera?.name ?? ""
+                let resolvedCamera: String = {
+                    if let snap = loadedFilm.cameraName, !snap.isEmpty {
+                        return snap
+                    }
+                    if let cam = loadedFilm.camera,
+                       validCameraPIDs?.contains(cam.persistentModelID) ?? true {
+                        return cam.name
+                    }
+                    return ""
+                }()
                 
                 return LoadedFilmWidgetData(
                     id: loadedFilm.id,
                     filmName: film.name,
                     manufacturer: manufacturerName,
                     format: loadedFilm.format,
-                    customFormatName: loadedFilm.myFilm?.customFormatName,
+                    customFormatName: validMyFilm?.customFormatName,
                     camera: resolvedCamera,
                     imageData: imageData,
                     loadedAt: loadedFilm.loadedAt,
@@ -285,4 +322,3 @@ struct LoadedFilmsTimelineProvider: AppIntentTimelineProvider {
         var manufacturers: [ManufacturerInfo]
     }
 }
-

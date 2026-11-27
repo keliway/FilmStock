@@ -110,7 +110,10 @@ class CameraViewControllerNew: UIViewController {
     private var minZoomFactor: CGFloat = 1.0
     private var maxZoomFactor: CGFloat = 10.0
     
-    private var squareOverlayView: UIView!
+    private var squareOverlayView: UIView?
+    private var overlayDimLayer: CAShapeLayer?
+    private var squareBorderView: UIView?
+    private var cornerGuideViews: [UIView] = []
     private var captureButton: UIButton!
     private var zoomLabel: UILabel!
     private var lastLayoutBounds: CGRect = .zero
@@ -242,100 +245,86 @@ class CameraViewControllerNew: UIViewController {
     }
     
     private func setupSquareOverlay() {
-        squareOverlayView = UIView(frame: view.bounds)
-        squareOverlayView.isUserInteractionEnabled = false
-        view.addSubview(squareOverlayView)
-        
-        updateSquareOverlay()
-    }
-    
-    private func updateSquareOverlay() {
-        guard squareOverlayView != nil else { return }
-        
-        // Remove existing layers safely (create copies to avoid mutation during iteration)
-        if let sublayers = squareOverlayView.layer.sublayers {
-            for layer in sublayers {
-                layer.removeFromSuperlayer()
-            }
-        }
-        for subview in squareOverlayView.subviews {
-            subview.removeFromSuperview()
-        }
-        
-        let bounds = view.bounds
-        let squareSize = bounds.width - 32 // 16pt padding on each side
-        let squareY = (bounds.height - squareSize) / 2 - 40 // Offset up a bit for buttons
-        squareFrame = CGRect(x: 16, y: squareY, width: squareSize, height: squareSize) // Store for cropping
-        
-        // Create darkened overlay with cutout
-        let overlayPath = UIBezierPath(rect: bounds)
-        let cutoutPath = UIBezierPath(roundedRect: squareFrame, cornerRadius: 12)
-        overlayPath.append(cutoutPath.reversing())
-        
-        let overlayLayer = CAShapeLayer()
-        overlayLayer.path = overlayPath.cgPath
-        overlayLayer.fillColor = UIColor.black.withAlphaComponent(0.6).cgColor
-        squareOverlayView.layer.addSublayer(overlayLayer)
-        
-        // Add border to square
-        let borderView = UIView(frame: squareFrame)
+        let overlayContainer = UIView(frame: view.bounds)
+        overlayContainer.isUserInteractionEnabled = false
+        view.addSubview(overlayContainer)
+        squareOverlayView = overlayContainer
+
+        let dimLayer = CAShapeLayer()
+        dimLayer.fillColor = UIColor.black.withAlphaComponent(0.6).cgColor
+        overlayContainer.layer.addSublayer(dimLayer)
+        overlayDimLayer = dimLayer
+
+        let borderView = UIView()
         borderView.layer.borderColor = UIColor.white.cgColor
         borderView.layer.borderWidth = 2
         borderView.layer.cornerRadius = 12
         borderView.backgroundColor = .clear
         borderView.isUserInteractionEnabled = false
-        squareOverlayView.addSubview(borderView)
-        
-        // Add corner guides
-        addCornerGuides(to: squareFrame)
+        overlayContainer.addSubview(borderView)
+        squareBorderView = borderView
+
+        cornerGuideViews = (0..<8).map { _ in
+            let guide = UIView()
+            guide.backgroundColor = .white
+            guide.isUserInteractionEnabled = false
+            overlayContainer.addSubview(guide)
+            return guide
+        }
+
+        updateSquareOverlay()
     }
     
-    private func addCornerGuides(to frame: CGRect) {
+    private func updateSquareOverlay() {
+        guard let squareOverlayView,
+              let overlayDimLayer,
+              let squareBorderView else { return }
+        
+        let bounds = view.bounds
+        guard bounds.width > 32, bounds.height > 32 else { return }
+
+        squareOverlayView.frame = bounds
+        let squareSize = bounds.width - 32 // 16pt padding on each side
+        let squareY = (bounds.height - squareSize) / 2 - 40 // Offset up a bit for buttons
+        squareFrame = CGRect(x: 16, y: squareY, width: squareSize, height: squareSize) // Store for cropping
+        
+        // Update darkened overlay path without mutating the UIView hierarchy during layout
+        let overlayPath = UIBezierPath(rect: bounds)
+        let cutoutPath = UIBezierPath(roundedRect: squareFrame, cornerRadius: 12)
+        overlayPath.append(cutoutPath.reversing())
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        overlayDimLayer.path = overlayPath.cgPath
+        CATransaction.commit()
+        
+        squareBorderView.frame = squareFrame
+        updateCornerGuideFrames(for: squareFrame)
+    }
+    
+    private func updateCornerGuideFrames(for frame: CGRect) {
+        guard cornerGuideViews.count == 8 else { return }
         let guideLength: CGFloat = 24
         let guideWidth: CGFloat = 3
-        let cornerRadius: CGFloat = 12
-        let corners: [(CGPoint, [CGPoint])] = [
-            // Top-left
-            (CGPoint(x: frame.minX, y: frame.minY + cornerRadius), [
-                CGPoint(x: frame.minX, y: frame.minY + guideLength),
-                CGPoint(x: frame.minX + guideLength, y: frame.minY)
-            ]),
-            // Top-right
-            (CGPoint(x: frame.maxX, y: frame.minY + cornerRadius), [
-                CGPoint(x: frame.maxX, y: frame.minY + guideLength),
-                CGPoint(x: frame.maxX - guideLength, y: frame.minY)
-            ]),
-            // Bottom-left
-            (CGPoint(x: frame.minX, y: frame.maxY - cornerRadius), [
-                CGPoint(x: frame.minX, y: frame.maxY - guideLength),
-                CGPoint(x: frame.minX + guideLength, y: frame.maxY)
-            ]),
-            // Bottom-right
-            (CGPoint(x: frame.maxX, y: frame.maxY - cornerRadius), [
-                CGPoint(x: frame.maxX, y: frame.maxY - guideLength),
-                CGPoint(x: frame.maxX - guideLength, y: frame.maxY)
-            ])
+        let halfWidth = guideWidth / 2
+
+        let frames: [CGRect] = [
+            // Top-left (vertical, horizontal)
+            CGRect(x: frame.minX - halfWidth, y: frame.minY, width: guideWidth, height: guideLength),
+            CGRect(x: frame.minX, y: frame.minY - halfWidth, width: guideLength, height: guideWidth),
+            // Top-right (vertical, horizontal)
+            CGRect(x: frame.maxX - halfWidth, y: frame.minY, width: guideWidth, height: guideLength),
+            CGRect(x: frame.maxX - guideLength, y: frame.minY - halfWidth, width: guideLength, height: guideWidth),
+            // Bottom-left (vertical, horizontal)
+            CGRect(x: frame.minX - halfWidth, y: frame.maxY - guideLength, width: guideWidth, height: guideLength),
+            CGRect(x: frame.minX, y: frame.maxY - halfWidth, width: guideLength, height: guideWidth),
+            // Bottom-right (vertical, horizontal)
+            CGRect(x: frame.maxX - halfWidth, y: frame.maxY - guideLength, width: guideWidth, height: guideLength),
+            CGRect(x: frame.maxX - guideLength, y: frame.maxY - halfWidth, width: guideLength, height: guideWidth)
         ]
-        
-        for (_, endpoints) in corners {
-            for endpoint in endpoints {
-                let guide = UIView()
-                guide.backgroundColor = .white
-                
-                if endpoint.y == frame.minY || endpoint.y == frame.maxY {
-                    // Horizontal guide
-                    let x = endpoint.x < frame.midX ? frame.minX : frame.maxX - guideLength
-                    let y = endpoint.y == frame.minY ? frame.minY - guideWidth/2 : frame.maxY - guideWidth/2
-                    guide.frame = CGRect(x: x, y: y, width: guideLength, height: guideWidth)
-                } else {
-                    // Vertical guide
-                    let x = endpoint.x == frame.minX ? frame.minX - guideWidth/2 : frame.maxX - guideWidth/2
-                    let y = endpoint.y < frame.midY ? frame.minY : frame.maxY - guideLength
-                    guide.frame = CGRect(x: x, y: y, width: guideWidth, height: guideLength)
-                }
-                
-                squareOverlayView.addSubview(guide)
-            }
+
+        for (guide, guideFrame) in zip(cornerGuideViews, frames) {
+            guide.frame = guideFrame
         }
     }
     
@@ -494,11 +483,7 @@ class CameraViewControllerNew: UIViewController {
         lastLayoutBounds = view.bounds
         
         previewLayer?.frame = view.bounds
-        
-        if squareOverlayView != nil {
-            squareOverlayView.frame = view.bounds
-            updateSquareOverlay()
-        }
+        updateSquareOverlay()
     }
 }
 
@@ -569,4 +554,3 @@ extension CameraViewControllerNew: AVCapturePhotoCaptureDelegate {
         return UIImage(cgImage: croppedCGImage, scale: 1.0, orientation: .up)
     }
 }
-
