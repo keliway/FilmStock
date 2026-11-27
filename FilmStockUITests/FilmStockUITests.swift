@@ -36,15 +36,33 @@ final class FilmStockUITests: XCTestCase {
         )
     }
 
+    /// Swipes vertically near the trailing margin so centered wheel pickers (like ISO Speed) aren't accidentally spun.
+    private func scrollDownForm(in app: XCUIApplication) {
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.75))
+        let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.25))
+        start.press(forDuration: 0.02, thenDragTo: end)
+    }
+
     private func scrollToAndTap(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 5) {
         let target = element.firstMatch
         var attempts = 0
         while (!target.exists || !target.isHittable) && attempts < maxSwipes {
-            app.swipeUp(velocity: .fast)
+            scrollDownForm(in: app)
             attempts += 1
         }
         XCTAssertTrue(target.waitForExistence(timeout: 3), "Element \(target) not found after scrolling")
         target.tap()
+    }
+
+    private func toggleSwitch(_ toggle: XCUIElement) {
+        waitFor(toggle)
+        let innerSwitch = toggle.switches.firstMatch
+        if innerSwitch.exists && innerSwitch.isHittable {
+            innerSwitch.tap()
+        } else {
+            let thumb = toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
+            thumb.tap()
+        }
     }
 
     private func incrementFirstStepper(in app: XCUIApplication, times: Int = 1) {
@@ -123,18 +141,21 @@ final class FilmStockUITests: XCTestCase {
 
         if frozen {
             let frozenToggle = app.switches["Film is frozen"]
+            if !frozenToggle.exists || !frozenToggle.isHittable {
+                scrollDownForm(in: app)
+            }
             if frozenToggle.waitForExistence(timeout: 2) {
-                if !frozenToggle.isHittable { app.swipeUp(velocity: .fast) }
-                frozenToggle.tap()
+                toggleSwitch(frozenToggle)
             }
         }
 
         if let comment {
-            let commentField = app.textFields["Add a note about this roll…"].exists
-                ? app.textFields["Add a note about this roll…"]
-                : app.textViews["Add a note about this roll…"]
+            scrollDownForm(in: app)
+            let commentField = app.textViews.firstMatch.exists
+                ? app.textViews.firstMatch
+                : app.textFields["Add a note about this roll…"]
             if commentField.waitForExistence(timeout: 2) {
-                scrollToAndTap(commentField, in: app)
+                commentField.tap()
                 commentField.typeText(comment)
             }
         }
@@ -291,7 +312,10 @@ final class FilmStockUITests: XCTestCase {
         incrementFirstStepper(in: app, times: 1) // 2 rolls
 
         let frozenToggle = app.switches["Film is frozen"]
-        scrollToAndTap(frozenToggle, in: app)
+        if !frozenToggle.exists || !frozenToggle.isHittable {
+            scrollDownForm(in: app)
+        }
+        toggleSwitch(frozenToggle)
 
         app.navigationBars.buttons["Save"].firstMatch.tap()
 
@@ -504,10 +528,9 @@ final class FilmStockUITests: XCTestCase {
 
         let isoField = app.textFields["loadFilm.shotAtISOField"]
         waitFor(isoField)
-        isoField.tap()
-        if let currentVal = isoField.value as? String, !currentVal.isEmpty {
-            isoField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentVal.count))
-        }
+        // Tap trailing side of right-aligned TextField so cursor sits after "400", then backspace 4x
+        isoField.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        isoField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 5))
         isoField.typeText("800")
         waitFor(app.staticTexts["Different from film's native ISO"])
 
@@ -530,6 +553,7 @@ final class FilmStockUITests: XCTestCase {
         // Switch to Loaded Films tab
         app.tabBars.buttons["Loaded Films"].tap()
         waitFor(app.staticTexts["Ilford HP5 Plus"])
+        XCTAssertTrue(app.staticTexts["ISO 800"].exists)
 
         // Protection Rule 2: Cannot delete camera while it has a loaded film
         app.buttons["loaded.manageCamerasButton"].tap()
@@ -543,17 +567,26 @@ final class FilmStockUITests: XCTestCase {
         }
         app.navigationBars["Manage Cameras"].buttons["Done"].tap()
 
-        // Tap loaded row -> Roll Details sheet -> verify ISO 800 & update comment
+        // Tap loaded row -> Roll Details sheet -> expand sheet, verify ISO 800 & update comment
         app.staticTexts["Ilford HP5 Plus"].firstMatch.tap()
         waitFor(app.navigationBars["Roll Details"])
         XCTAssertTrue(app.staticTexts["Leica M6 TTL"].exists)
-        XCTAssertTrue(app.staticTexts["ISO 800"].exists)
 
-        let loadedCommentField = app.textFields["Add a note about this roll…"].exists
-            ? app.textFields["Add a note about this roll…"]
-            : app.textViews["Add a note about this roll…"]
-        if loadedCommentField.waitForExistence(timeout: 2) {
-            loadedCommentField.tap()
+        // Scroll inside the sheet's List so Film & Comments sections materialize in the half-sheet
+        let rollDetailsList = app.collectionViews.firstMatch
+        if rollDetailsList.exists {
+            rollDetailsList.swipeUp()
+        }
+        waitFor(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'ISO 800'")).firstMatch)
+
+        if rollDetailsList.exists {
+            rollDetailsList.swipeUp()
+        }
+        let loadedCommentField = app.textViews.firstMatch.exists
+            ? app.textViews.firstMatch
+            : app.textFields["Add a note about this roll…"]
+        if loadedCommentField.waitForExistence(timeout: 3) {
+            loadedCommentField.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.5)).tap()
             loadedCommentField.typeText(" +1")
         }
         app.navigationBars["Roll Details"].buttons["Done"].tap()
@@ -577,15 +610,20 @@ final class FilmStockUITests: XCTestCase {
         waitFor(app.staticTexts["Ilford HP5 Plus"])
         XCTAssertTrue(app.staticTexts["To develop"].exists)
 
-        // Tap finished row -> Finished Roll detail sheet + Edit finished date
+        // Tap finished row -> Finished Roll detail sheet + Edit finished date + verify comment carried over
         app.staticTexts["Ilford HP5 Plus"].firstMatch.tap()
         waitFor(app.navigationBars["Finished Roll"])
-        XCTAssertTrue(app.staticTexts["Street roll +1"].exists)
         let editFinDateBtn = app.buttons["Edit finished date"]
         waitFor(editFinDateBtn)
         editFinDateBtn.tap()
         waitFor(app.navigationBars["Change finished date"])
         app.navigationBars["Change finished date"].buttons["Save"].tap()
+
+        let finishedDetailList = app.collectionViews.firstMatch
+        if finishedDetailList.exists {
+            finishedDetailList.swipeUp()
+        }
+        waitFor(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Street roll'")).firstMatch)
         app.navigationBars["Finished Roll"].buttons["Done"].tap()
 
         // Status transitions via swipe: To develop -> In development -> Developed
@@ -687,12 +725,11 @@ final class FilmStockUITests: XCTestCase {
 
         // Enable Fridge flag & Show expiry date in chip
         let fridgeSwitch = app.switches["Enable Fridge flag"]
-        waitFor(fridgeSwitch)
-        fridgeSwitch.tap()
+        toggleSwitch(fridgeSwitch)
 
         let expiryChipSwitch = app.switches["Show expiry date in chip"]
         if expiryChipSwitch.exists {
-            expiryChipSwitch.tap()
+            toggleSwitch(expiryChipSwitch)
         }
 
         // Manage Formats: add & delete a custom format
@@ -738,7 +775,7 @@ final class FilmStockUITests: XCTestCase {
         scrollToAndTap(app.staticTexts["Export or Import Inventory"], in: app)
         waitFor(app.navigationBars["Export"])
         XCTAssertTrue(app.staticTexts["Film inventory"].exists)
-        app.buttons["CSV"].firstMatch.tap()
+        app.staticTexts["CSV"].firstMatch.tap()
         XCTAssertTrue(app.buttons["Export & Share"].exists)
 
         // Switch to Import segment
@@ -753,12 +790,12 @@ final class FilmStockUITests: XCTestCase {
         waitFor(app.navigationBars["About"])
         XCTAssertTrue(app.staticTexts["Your Personal Film Collection Manager"].exists)
 
-        scrollToAndTap(app.staticTexts["Privacy Policy"], in: app)
+        scrollToAndTap(app.buttons["Privacy Policy"], in: app)
         waitFor(app.navigationBars["Privacy Policy"])
         app.navigationBars["Privacy Policy"].buttons.firstMatch.tap()
 
         waitFor(app.navigationBars["About"])
-        scrollToAndTap(app.staticTexts["Terms of Service"], in: app)
+        scrollToAndTap(app.buttons["Terms of Service"], in: app)
         waitFor(app.navigationBars["Terms of Service"])
         app.navigationBars["Terms of Service"].buttons.firstMatch.tap()
 
