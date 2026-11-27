@@ -820,4 +820,80 @@ final class FilmStockUITests: XCTestCase {
         app.navigationBars["Settings"].buttons["Done"].tap()
         waitFor(app.navigationBars["My Films"])
     }
+
+    // MARK: - 7. Existing v1.x-Origin Library Upgrade, Editing, Camera Deletion & History Preservation
+
+    func testExistingLegacyLibraryUpgradeEditingAndHistoryPreservation() throws {
+        let app = makeApp(extraArgs: ["-UITestSeedLegacyLibrary"])
+        app.launch()
+
+        // 1. Verify v1.x multi-quantity film ("Kodak Tri-X 400", qty 2) migrated & renders cleanly
+        waitFor(app.staticTexts["Kodak Tri-X 400"])
+        XCTAssertTrue(app.staticTexts["2 rolls"].exists)
+
+        // Open FilmDetailView on migrated v1 film -> verify formatted unpadded date ("03/2028") & edit roll group
+        app.staticTexts["Kodak Tri-X 400"].firstMatch.tap()
+        waitFor(app.navigationBars["Kodak Tri-X 400"])
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS '03/2028'")).firstMatch.exists)
+
+        let editRollGroupBtn = app.buttons["filmDetail.editRollGroupButton"].firstMatch
+        waitFor(editRollGroupBtn)
+        editRollGroupBtn.tap()
+        // Toggle frozen on the migrated v1 rolls (originally nil) and save
+        let frozenToggle = app.switches["Film is frozen"]
+        if !frozenToggle.exists || !frozenToggle.isHittable {
+            scrollDownForm(in: app)
+        }
+        toggleSwitch(frozenToggle)
+        app.navigationBars.buttons["Save"].firstMatch.tap()
+        waitFor(app.staticTexts["FROZEN"])
+
+        // Pop back to My Films and delete all active stock of Kodak Tri-X 400
+        app.navigationBars["Kodak Tri-X 400"].buttons.firstMatch.tap()
+        waitFor(app.navigationBars["My Films"])
+        let triXCell = app.cells.containing(.staticText, identifier: "Kodak Tri-X 400").firstMatch
+        waitFor(triXCell)
+        triXCell.swipeLeft()
+        waitFor(app.buttons["Delete"])
+        app.buttons["Delete"].tap()
+        waitFor(app.staticTexts["No Films Yet"])
+
+        // 2. Switch to Loaded Films -> verify pre-v2.8 loaded roll ("Ilford FP4 Plus" in formatless "Rolleiflex 2.8F")
+        app.tabBars.buttons["Loaded Films"].tap()
+        waitFor(app.staticTexts["Ilford FP4 Plus"])
+        XCTAssertTrue(app.staticTexts["Rolleiflex 2.8F"].exists)
+
+        // Open Manage Cameras -> delete old unused camera "Nikon FM2" (used by legacy finished roll — #86 regression check)
+        app.buttons["loaded.manageCamerasButton"].tap()
+        waitFor(app.staticTexts["Nikon FM2"])
+        let nikonCell = app.cells.containing(.staticText, identifier: "Nikon FM2").firstMatch
+        nikonCell.swipeLeft()
+        if app.buttons["Delete"].waitForExistence(timeout: 2) {
+            app.buttons["Delete"].tap()
+        }
+        app.navigationBars["Manage Cameras"].buttons["Done"].tap()
+
+        // 3. Switch to Finished Rolls -> verify legacy "Kodak Tri-X 400" roll STILL renders intact after both
+        //    active inventory deletion AND "Nikon FM2" camera deletion!
+        app.segmentedControls.buttons["Finished Rolls"].tap()
+        waitFor(app.staticTexts["Kodak Tri-X 400"])
+        XCTAssertTrue(app.staticTexts["Nikon FM2"].exists)
+        XCTAssertTrue(app.staticTexts["To develop"].exists) // nil status gracefully defaults to "To develop"
+
+        // Tap legacy finished roll -> verify backfilled comment ("Berlin 2024") & transition status to Developed
+        app.staticTexts["Kodak Tri-X 400"].firstMatch.tap()
+        waitFor(app.navigationBars["Finished Roll"])
+        let detailList = app.collectionViews.firstMatch
+        if detailList.exists {
+            detailList.swipeUp()
+        }
+        waitFor(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Berlin 2024'")).firstMatch)
+        app.navigationBars["Finished Roll"].buttons["Done"].tap()
+
+        let finishedCell = app.cells.firstMatch
+        finishedCell.swipeLeft()
+        waitFor(app.buttons["Developed"])
+        app.buttons["Developed"].tap()
+        waitFor(app.staticTexts["Developed"])
+    }
 }

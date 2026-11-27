@@ -715,4 +715,237 @@ struct FilmStockTests {
             _ = try ExportManager.shared.importAll(from: badCSVURL)
         }
     }
+
+    // MARK: - 8. Existing v1.x-Origin Library Mutations & History Preservation
+
+    @Test("v1.x-origin migrated films support full editing, merging, camera deletion & stock deletion without breaking finished/loaded history")
+    func legacyLibraryMutationsAndHistoryPreservation() async throws {
+        let (container, context, manager) = try makeIsolatedEnvironment()
+        _ = container
+        UserDefaults.standard.set(false, forKey: "migration_rollCentric_v1")
+
+        // 1. Seed a v1.x-era library (nil optionals, unpadded dates, formatless cameras, status=nil finished rolls, duplicate Film rows)
+        let kodak = Manufacturer(name: "Kodak", isCustom: false)
+        context.insert(kodak)
+
+        let oldTriX = Film(name: "Tri-X", manufacturer: kodak, type: FilmStock.FilmType.bw.rawValue, filmSpeed: 400)
+        context.insert(oldTriX)
+
+        // Legacy multi-quantity roll (v1.x) with nil optional fields and unpadded expiry "3/2028"
+        let v1Stock = MyFilm(
+            id: "v1-trix-batch",
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            quantity: 2,
+            expireDate: ["3/2028"],
+            comments: "v1 batch",
+            film: oldTriX
+        )
+        v1Stock.isFrozen = nil
+        v1Stock.isFridge = nil
+        v1Stock.exposures = nil
+        v1Stock.createdAt = nil
+        v1Stock.updatedAt = nil
+        context.insert(v1Stock)
+
+        // Consumed v1.x roll linked to an early v1.4 FinishedFilm (status = nil, camera relationship set, cameraName = nil, comments = nil)
+        let v1Consumed = MyFilm(
+            id: "v1-trix-finished-backing",
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            quantity: 0,
+            expireDate: ["052024"],
+            comments: "Paris 2024",
+            isFrozen: true,
+            exposures: 36,
+            film: oldTriX
+        )
+        v1Consumed.isFridge = nil
+        context.insert(v1Consumed)
+
+        let oldCam = Camera(name: "Canon AE-1", format: "") // v1.x camera had no format
+        context.insert(oldCam)
+
+        let v1Finished = FinishedFilm(
+            id: "v1-finished-roll",
+            film: nil, // Early versions relied on myFilm.film
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            camera: oldCam,
+            myFilm: v1Consumed,
+            quantity: 1,
+            loadedAt: Date().addingTimeInterval(-86400 * 200),
+            finishedAt: Date().addingTimeInterval(-86400 * 190),
+            shotAtISO: nil,
+            status: nil,
+            developedAt: nil,
+            cameraName: nil,
+            comments: nil
+        )
+        context.insert(v1Finished)
+
+        // Also seed a second Film ("Tri-X 400") to test collision-merging an old Film into an existing Film while preserving finished history
+        let targetTriX400 = Film(name: "Tri-X 400", manufacturer: kodak, type: FilmStock.FilmType.bw.rawValue, filmSpeed: 400)
+        context.insert(targetTriX400)
+        let modernRoll = MyFilm(
+            id: "modern-trix400-1",
+            format: FilmStock.FilmFormat.oneTwenty.rawValue,
+            quantity: 1,
+            expireDate: ["102028"],
+            isFridge: true,
+            film: targetTriX400
+        )
+        context.insert(modernRoll)
+        try context.save()
+
+        // 2. Run startup migration & self-healing (simulating app update to v2.8)
+        await manager.migrateIfNeeded()
+
+        // Verify v1 multi-quantity stock split into 2 individual active rolls, and unpadded expiry formats cleanly
+        let activeOldTriX = manager.filmStocks.filter { $0.name == "Tri-X" && $0.quantity > 0 }
+        #expect(activeOldTriX.count == 2)
+        #expect(FilmStock.formatExpireDate(activeOldTriX[0].expireDate?.first ?? "") == "03/2028")
+
+        // Verify #86 protection: deleting the old Camera ("Canon AE-1") succeeds AND preserves cameraName on old FinishedFilm!
+        #expect(manager.deleteCamera(oldCam) == true)
+        let finishedAfterCamDelete = try #require(manager.getFinishedFilms().first { $0.id == "v1-finished-roll" })
+        #expect(finishedAfterCamDelete.camera == nil)
+        #expect(finishedAfterCamDelete.cameraName == "Canon AE-1")
+        #expect(finishedAfterCamDelete.effectiveComments == "Paris 2024")
+        #expect(finishedAfterCamDelete.effectiveISO == 400)
+
+        // 3. Update one of the migrated v1 rolls (add exposures, fridge flag, updated expiry & comment)
+        manager.updateRolls(
+            ids: [activeOldTriX[0].id],
+            expireDate: "092029",
+            isFrozen: false,
+            isFridge: true,
+            exposures: 36,
+            comments: "Updated v1 roll"
+        )
+        let updatedRoll = try #require(manager.filmStocks.first { $0.id == activeOldTriX[0].id })
+        #expect(updatedRoll.isFridge == true)
+        #expect(updatedRoll.isFrozen == false)
+        #expect(updatedRoll.exposures == 36)
+        #expect(updatedRoll.comments == "Updated v1 roll")
+
+        // 4. Rename old "Tri-X" -> "Tri-X 400" (collision merge into existing Film!) and verify old FinishedFilm re-homes cleanly
+        let oldGroup = try #require(manager.groupedFilms().first { $0.name == "Tri-X" })
+        manager.updateFilmInfo(
+            groupedFilm: oldGroup,
+            name: "Tri-X 400",
+            manufacturer: "Kodak",
+            type: .bw,
+            filmSpeed: 400,
+            imageName: nil,
+            imageSource: ImageSource.autoDetected.rawValue
+        )
+
+        let mergedGroups = manager.groupedFilms().filter { $0.name == "Tri-X 400" }
+        #expect(mergedGroups.count == 1)
+        #expect(mergedGroups[0].formats.reduce(0) { $0 + $1.quantity } == 3) // 2 migrated 35mm + 1 modern 120
+
+        let finishedAfterMerge = try #require(manager.getFinishedFilms().first { $0.id == "v1-finished-roll" })
+        #expect(finishedAfterMerge.film?.name == "Tri-X 400")
+        #expect(finishedAfterMerge.myFilm?.expireDate == "052024")
+        #expect(finishedAfterMerge.myFilm?.exposures == 36)
+
+        // 5. Delete ALL remaining active inventory of "Tri-X 400" (commit 3f23b3b protection):
+        // Active inventory must become empty, BUT old FinishedFilm must keep its Film + MyFilm metadata intact!
+        let err = manager.deleteGroupedFilm(mergedGroups[0])
+        #expect(err == nil)
+        #expect(manager.groupedFilms().filter { group in
+            group.name == "Tri-X 400" && group.formats.reduce(0, { $0 + $1.quantity }) > 0
+        }.isEmpty)
+
+        let finishedAfterStockDelete = try #require(manager.getFinishedFilms().first { $0.id == "v1-finished-roll" })
+        #expect(finishedAfterStockDelete.film?.name == "Tri-X 400")
+        #expect(finishedAfterStockDelete.cameraName == "Canon AE-1")
+        #expect(finishedAfterStockDelete.myFilm?.isFrozen == true)
+        #expect(finishedAfterStockDelete.myFilm?.expireDate == "052024")
+        #expect(finishedAfterStockDelete.effectiveComments == "Paris 2024")
+
+        // 6. Status transitions & Re-load on the old v1 FinishedFilm (status was originally nil -> defaults to toDevelop -> developed -> reload)
+        manager.updateFinishedFilmStatus(finishedAfterStockDelete, status: .developed)
+        #expect(finishedAfterStockDelete.status == FinishedFilmStatus.developed.rawValue)
+        #expect(finishedAfterStockDelete.developedAt != nil)
+
+        manager.reloadFinishedFilm(finishedAfterStockDelete)
+        #expect(manager.getFinishedFilms().isEmpty)
+        let reloadedLegacy = try #require(manager.getLoadedFilms().first)
+        #expect(reloadedLegacy.film?.name == "Tri-X 400")
+        #expect(reloadedLegacy.cameraName == "Canon AE-1")
+        #expect(reloadedLegacy.effectiveComments == "Paris 2024")
+    }
+
+    @Test("Legacy v2.0 bare-array JSON and old-column CSV backups import cleanly into an existing library without clobbering history")
+    func legacyBackupImportIntoExistingLibrary() throws {
+        let (container, _, manager) = try makeIsolatedEnvironment()
+        _ = container
+
+        // Pre-populate existing user library (1 active film + 1 finished roll)
+        let existingStock = FilmStock(
+            id: "existing-hp5",
+            name: "HP5 Plus",
+            manufacturer: "Ilford",
+            type: .bw,
+            filmSpeed: 400,
+            format: .thirtyFive,
+            quantity: 2,
+            comments: "Existing stock",
+            exposures: 36
+        )
+        manager.addFilmStock(existingStock)
+        let firstHp5Id = try #require(manager.filmStocks.first { $0.name == "HP5 Plus" }?.id)
+        #expect(manager.loadFilm(filmStockId: firstHp5Id, format: .thirtyFive, cameraName: "Leica M3") == true)
+        let loaded = try #require(manager.getLoadedFilms().first)
+        manager.unloadFilm(loaded)
+        #expect(manager.getFinishedFilms().count == 1)
+
+        // A. Early v2.0 bare-[ExportFilm] JSON backup (missing wrapper object, no isFridge, no comments, no cameras/loaded/finished keys)
+        let legacyBareJSON = """
+        [
+          {
+            "manufacturer": "Fujifilm",
+            "name": "Pro 400H",
+            "type": "color",
+            "iso": 400,
+            "format": "120",
+            "quantity": 3,
+            "expiryDate": "05/2023",
+            "isFrozen": true
+          }
+        ]
+        """
+        let bareJSONURL = FileManager.default.temporaryDirectory.appendingPathComponent("legacy_v20_\(UUID().uuidString).json")
+        try legacyBareJSON.write(to: bareJSONURL, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: bareJSONURL) }
+
+        let parsedBareJSON = try ExportManager.shared.importAll(from: bareJSONURL)
+        #expect(parsedBareJSON.inventory.count == 1)
+        try manager.importData(parsedBareJSON)
+
+        // B. Early CSV backup missing newer columns (no Fridge, Comments, DevelopedAt, or # CAMERAS section)
+        let legacyCSV = """
+        # INVENTORY
+        Manufacturer,Film,Type,ISO,Format,Qty,Expiry,Frozen,Exposures
+        Kodak,Ektachrome E100,Slide,100,35mm,2,12/2026,No,36
+
+        # FINISHED FILMS
+        Manufacturer,Film,Type,ISO,Format,Qty,ShotAtISO,Camera,LoadedAt,FinishedAt,Status
+        Kodak,Gold 200,Color,200,35mm,1,200,Olympus OM-1,2024-06-01T10:00:00Z,2024-06-15T18:30:00Z,developed
+        """
+        let legacyCSVURL = FileManager.default.temporaryDirectory.appendingPathComponent("legacy_v23_\(UUID().uuidString).csv")
+        try legacyCSV.write(to: legacyCSVURL, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: legacyCSVURL) }
+
+        let parsedLegacyCSV = try ExportManager.shared.importAll(from: legacyCSVURL)
+        try manager.importData(parsedLegacyCSV)
+
+        // Verify existing library + both legacy imports coexist cleanly
+        let activeGroups = manager.groupedFilms().filter { group in
+            group.formats.reduce(0, { $0 + $1.quantity }) > 0
+        }
+        #expect(activeGroups.contains { $0.name == "HP5 Plus" && $0.formats.reduce(0, { $0 + $1.quantity }) == 1 })
+        #expect(activeGroups.contains { $0.name == "Pro 400H" && $0.formats.reduce(0, { $0 + $1.quantity }) == 3 })
+        #expect(activeGroups.contains { $0.name == "Ektachrome E100" && $0.formats.reduce(0, { $0 + $1.quantity }) == 2 })
+        #expect(manager.getFinishedFilms().count == 2) // Existing HP5 Plus + imported Gold 200
+    }
 }

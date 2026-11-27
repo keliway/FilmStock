@@ -46,6 +46,9 @@ struct MainTabView: View {
             if ProcessInfo.processInfo.arguments.contains("-UITestSeedCustomPhotos") {
                 seedUITestCustomPhotos()
             }
+            if ProcessInfo.processInfo.arguments.contains("-UITestSeedLegacyLibrary") {
+                await seedUITestLegacyLibrary()
+            }
 
             // Show welcome screen on very first launch
             if !OnboardingManager.shared.hasCompletedOnboarding {
@@ -126,5 +129,112 @@ struct MainTabView: View {
                 )
             }
         }
+    }
+
+    private func seedUITestLegacyLibrary() async {
+        guard dataManager.filmStocks.isEmpty else { return }
+
+        // Simulate a long-time user library created in v1.x and migrated forward through v2.x:
+        let mfrs = (try? modelContext.fetch(FetchDescriptor<Manufacturer>())) ?? []
+        let kodak = mfrs.first(where: { $0.name == "Kodak" }) ?? {
+            let m = Manufacturer(name: "Kodak", isCustom: false)
+            modelContext.insert(m)
+            return m
+        }()
+        let ilford = mfrs.first(where: { $0.name == "Ilford" }) ?? {
+            let m = Manufacturer(name: "Ilford", isCustom: false)
+            modelContext.insert(m)
+            return m
+        }()
+
+        // 1. Legacy Film added in v1.x (nil imageName, unpadded expiry, nil optional flags on MyFilm)
+        let triX = Film(name: "Tri-X 400", manufacturer: kodak, type: FilmStock.FilmType.bw.rawValue, filmSpeed: 400)
+        modelContext.insert(triX)
+
+        // Pre-roll-centric multi-quantity MyFilm (quantity = 2) with nil optionals -> migrated via migrateToRollCentric
+        let legacyStockRoll = MyFilm(
+            id: "legacy-trix-stock",
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            quantity: 2,
+            expireDate: ["3/2028"],
+            comments: nil,
+            film: triX
+        )
+        legacyStockRoll.isFrozen = nil
+        legacyStockRoll.isFridge = nil
+        legacyStockRoll.exposures = nil
+        legacyStockRoll.createdAt = nil
+        legacyStockRoll.updatedAt = nil
+        modelContext.insert(legacyStockRoll)
+
+        // Consumed v1.x roll backing an old FinishedFilm (status = nil, camera relationship still attached, cameraName = nil)
+        let consumedTriXRoll = MyFilm(
+            id: "legacy-trix-consumed",
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            quantity: 0,
+            expireDate: ["112025"],
+            comments: "Berlin 2024",
+            film: triX
+        )
+        consumedTriXRoll.isFrozen = nil
+        consumedTriXRoll.isFridge = nil
+        modelContext.insert(consumedTriXRoll)
+
+        // Legacy v1.x camera with empty format ("")
+        let legacyCam = Camera(name: "Nikon FM2", format: "")
+        modelContext.insert(legacyCam)
+
+        let legacyFinished = FinishedFilm(
+            id: "legacy-finished-1",
+            film: triX,
+            format: FilmStock.FilmFormat.thirtyFive.rawValue,
+            camera: legacyCam,
+            myFilm: consumedTriXRoll,
+            quantity: 1,
+            loadedAt: Date().addingTimeInterval(-86400 * 120),
+            finishedAt: Date().addingTimeInterval(-86400 * 110),
+            shotAtISO: nil,
+            status: nil,
+            developedAt: nil,
+            cameraName: nil,
+            comments: nil
+        )
+        modelContext.insert(legacyFinished)
+
+        // 2. Legacy LoadedFilm (pre-v2.8: comments = nil on LoadedFilm, camera relationship set, cameraName = nil)
+        let fp4 = Film(name: "FP4 Plus", manufacturer: ilford, type: FilmStock.FilmType.bw.rawValue, filmSpeed: 125)
+        modelContext.insert(fp4)
+        let loadedBackingRoll = MyFilm(
+            id: "legacy-fp4-loaded",
+            format: FilmStock.FilmFormat.oneTwenty.rawValue,
+            quantity: 0,
+            comments: "Alps hike",
+            film: fp4
+        )
+        loadedBackingRoll.isFrozen = nil
+        loadedBackingRoll.isFridge = nil
+        modelContext.insert(loadedBackingRoll)
+
+        let activeLegacyCam = Camera(name: "Rolleiflex 2.8F", format: "")
+        modelContext.insert(activeLegacyCam)
+
+        let legacyLoaded = LoadedFilm(
+            id: "legacy-loaded-1",
+            film: fp4,
+            format: FilmStock.FilmFormat.oneTwenty.rawValue,
+            camera: activeLegacyCam,
+            myFilm: loadedBackingRoll,
+            quantity: 1,
+            loadedAt: Date().addingTimeInterval(-86400 * 30),
+            shotAtISO: nil,
+            cameraName: nil,
+            comments: nil
+        )
+        modelContext.insert(legacyLoaded)
+
+        try? modelContext.save()
+        UserDefaults.standard.set(1, forKey: "stats_finishedFilmsCount")
+        UserDefaults.standard.set(false, forKey: "migration_rollCentric_v1")
+        await dataManager.migrateIfNeeded()
     }
 }

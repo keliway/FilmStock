@@ -466,7 +466,11 @@ struct RollGroupEditSheet: View {
     init(group: RollGroupItem) {
         self.group = group
         _count       = State(initialValue: group.count)
-        _expireDate  = State(initialValue: group.expireDate ?? "")
+        let normalizedExpiry: String = {
+            guard let raw = group.expireDate, !raw.isEmpty else { return "" }
+            return FilmStock.formatExpireDate(raw)
+        }()
+        _expireDate  = State(initialValue: normalizedExpiry)
         _isFrozen    = State(initialValue: group.isFrozen)
         _isFridge    = State(initialValue: group.isFrozen ? false : group.isFridge)
         _comments    = State(initialValue: group.comments ?? "")

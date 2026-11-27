@@ -2,7 +2,7 @@
 
 This document covers **100% of Analog FilmStock's features** end-to-end, combining:
 1. **Automated Test Execution** (`FilmStockTests` Swift Testing unit/integration suite + `FilmStockUITests` XCUITest UI suite + `run_e2e_tests.sh`).
-2. **Step-by-Step Manual QA Test Script** for verifying every screen, edge case, physical-device hardware flow (Camera, Photo Library, DX/UPC Barcode Scanner), StoreKit In-App Purchase, Home Screen Widget, and App Group / Deep Link integration.
+2. **Non-Destructive Manual QA Test Script** designed to be run **directly on your real iPhone with your existing film library, cameras, loaded rolls, and finished roll history** — without wiping or polluting your collection.
 
 ---
 
@@ -15,22 +15,22 @@ This document covers **100% of Analog FilmStock's features** end-to-end, combini
 | **Run Unit & Integration tests only** | `bash run_e2e_tests.sh --unit` |
 | **Run End-to-End UI tests only** | `bash run_e2e_tests.sh --ui` |
 
-> **Data Safety Guarantee:** All automated UI tests launch the app with `-UITesting`, which switches SwiftData to an **in-memory store**, isolates custom reminder card photos into a temporary directory, and resets settings in-process so real user data on Simulator/device is never modified.
+> **Data Safety Guarantee (Automated Tests):** All automated UI tests launch the app with `-UITesting`, which switches SwiftData to an **in-memory store**, isolates custom reminder card photos into a temporary directory, and resets settings in-process so real user data on Simulator/device is never modified.
 
 ---
 
-## Automated Coverage Matrix
+## Automated Coverage Matrix (18 Automated Tests: 11 Unit/Integration + 7 E2E UI)
 
 | Area | Unit / Integration (`FilmStockTests`) | UI E2E (`FilmStockUITests`) |
 | :--- | :---: | :---: |
 | Models, `Codable`, Storage Mutual Exclusion (`Frozen` vs `Fridge`), Bulk Roll (`-2`) | ✅ | ✅ |
-| Expiry Date Parsing (`YYYY`, `MMYYYY`, `MM/YY`, `YYYY-MM-DD`, leap years) & Validation | ✅ | ✅ |
+| Expiry Date Parsing (`YYYY`, `MMYYYY`, `M/YYYY`, `MM/YY`, `YYYY-MM-DD`, leap years) & Validation | ✅ | ✅ |
 | First-Launch Welcome Onboarding (4 pages, `Skip`, `Get Started`) + Sequential Tooltips | ✅ | ✅ |
 | Post-Update `What's New` Sheet (Automatic & Settings manual trigger) | — | ✅ |
 | Built-in & Custom Manufacturers (Pinned order, Add, Search, Duplicate/In-Use Delete Guard) | ✅ | ✅ |
 | Add Film, Auto-Metadata Detection (`manufacturers.json`), Roll Batch Splitting & Sheet Merging | ✅ | ✅ |
 | Film Detail, Edit Film Metadata, Collision Merge, Roll Group Edit, Inline Sheet Controls | ✅ | ✅ |
-| Legacy Multi-Quantity Roll Migration & Database Self-Healing Integrity Repair | ✅ | — |
+| Legacy v1.x/v2.x Library Upgrade, Roll Editing, Camera Delete (`#86`), Stock Delete History Guard & Legacy Backup Import | ✅ | ✅ |
 | Search, Multi-Facet Filtering, Filter Badge, Reset, Sorting, Group By & Cards/Table View Toggle | — | ✅ |
 | Manage Cameras (Add, Edit, Format Matching, Auto-Selection, In-Use Delete Protection) | ✅ | ✅ |
 | Load Film (Roll Picker, Sheet Quantity, Custom `Shoot at ISO`, Cannot-Delete-Loaded Guard) | ✅ | ✅ |
@@ -42,158 +42,157 @@ This document covers **100% of Analog FilmStock's features** end-to-end, combini
 
 ---
 
-## Manual End-to-End QA Test Script (Every Feature)
+## Manual End-to-End QA Script (For Your Real Library on Device)
 
-Use the checkboxes below during release sign-off on a physical iPhone (recommended for Camera, Barcode Scanner, Widget, and StoreKit) and/or Simulator.
+This script is written so you can run every check **on top of your real, long-lived library** (including films, cameras, and finished rolls added in earlier `v1.x` / `v2.x` releases) and end with your library in the **exact same state** you started.
 
-### Suite 1 — First Launch, Onboarding & What's New
-- [ ] **1.1 Clean Install Welcome Screen**
-  - **Precondition:** Fresh install of `Analog FilmStock`.
-  - **Steps:** Launch app -> swipe through pages 1–3 (`Welcome to FilmStock!`, `Track Your Collection`, `Manage Loaded Films`) or tap **`Skip`** -> verify jump to page 4 (`Custom Film Reminder Cards`) -> tap **`Get Started`**.
-  - **Expected:** `WelcomeView` dismisses; `My Films` tab appears with empty state (`No Films Yet`).
-- [ ] **1.2 Sequential Onboarding Tooltips**
-  - **Steps:** Wait 0.5s after dismissing `WelcomeView` -> verify **`Add Your First Film`** tooltip highlights `+` -> tap **`Got it`** -> wait 0.3s -> verify **`Filter Your Films`** tooltip highlights filter button -> tap **`Got it`**.
-  - **Expected:** Both tooltips dismiss cleanly and do not reappear on subsequent launches.
-- [ ] **1.3 Post-Update What's New Sheet**
-  - **Steps:** Open **`Settings`** (gear icon) -> scroll down and tap **`What's New`** -> verify feature list (`Comments on Loaded Films`) -> tap **`Continue`**.
-  - **Expected:** Sheet presents with `.large` detent and dismisses cleanly.
+### Golden Rules for Testing on a Live Library
+1. **Prefix temporary QA items with `QA-`** (e.g., Manufacturer `QA-Lab`, Film `QA-Test 400`, Camera `QA-Camera`, Format `QA-6x17`) so they never merge into your real stocks and can be deleted cleanly at the end of each section.
+2. **Never finish a QA roll unless testing `Finished Rolls`:** Remember that `Finished Rolls` has `Re-load` (not permanent delete). To test `Loaded -> Finish -> Status -> Re-load -> Remove` without leaving a permanent entry in your real history, always **`Re-load`** the QA roll at the end of Suite 5 and swipe **`Remove`** on `Loaded Films`!
+3. **Take a safety backup first** (Step 0.1 below) — which simultaneously tests JSON/CSV export on your real data.
 
 ---
 
-### Suite 2 — Adding Films, Manufacturers, Formats & Barcode Scanning
-- [ ] **2.1 Save Button Validation**
-  - **Steps:** Tap **`+`** on `My Films` -> verify **`Save`** is disabled -> select manufacturer **`Kodak`**, leave `Name` empty -> verify **`Save`** remains disabled -> enter `"   "` (spaces) after adding a roll and tap **`Save`**.
-  - **Expected:** Inline validation error `"Film name cannot be empty"` appears; film is not saved.
-- [ ] **2.2 Built-In Film Auto-Metadata & Default Reminder Card**
-  - **Steps:** In `Add Film`, select Manufacturer **`Ilford`** -> type Name **`HP5 Plus`**.
-  - **Expected:** `Type` auto-sets to **`B&W`**, `Speed` wheel auto-scrolls to **`ISO 400`**, and the default `Ilford HP5 Plus` reminder card thumbnail appears automatically.
-- [ ] **2.3 Custom Manufacturer Lifecycle & Protection**
-  - **Steps:** Tap **`Manufacturer`** -> tap **`+`** -> enter `"Kodak"` -> verify duplicate warning (`"This manufacturer already exists."` and `Add` disabled) -> enter `"Silbersalz35"` -> tap **`Add`**. Save a film with `"Silbersalz35"`, then open `Manufacturer` picker again and swipe left on `"Silbersalz35"` -> tap **`Delete`**.
-  - **Expected:** Alert **`Cannot Delete Manufacturer`** prevents deleting a manufacturer in use. After deleting all `"Silbersalz35"` films, swiping left -> **`Delete`** removes `"Silbersalz35"`. Built-in manufacturers have no delete action.
-- [ ] **2.4 Roll Batch Validation, Exposures & Bulk Rolls**
-  - **Steps:** In `Add Film`, tap **`Add Rolls`** -> test Expiry Date inputs:
-    1. Type `"123"` -> **`Save`** -> error `"Date must be YYYY or MM/YYYY"`.
-    2. Type `"132028"` -> **`Save`** -> error `"Month must be between 01 and 12"`.
-    3. Type `"1940"` -> **`Save`** -> error `"Year must be between 1950 and 2100"`.
-    4. Type `"082028"` -> auto-formats to **`08/2028`**.
-  - **Steps (Exposures):** Keep Format **`35mm`** -> test `Exposures` picker (`Unspecified`, `12`, `24`, `36`, `100ft bulk`, and `Custom` -> enter `18`). Switch Format to **`120`** -> verify `Exposures` section hides.
-  - **Expected:** All validation rules trigger accurately; saving adds the batch row (e.g., `2 rolls 35mm (08/2028) · 18 exp`).
-- [ ] **2.5 Large Format Sheets (`4x5`, `5x7`, `8x10`)**
-  - **Steps:** Add a film (`Kodak Portra 160`) -> **`Add Rolls`** -> select Format **`4x5`** -> verify stepper switches to **`Sheets: %d`** -> set to `10`, toggle **`Film is frozen`**, enter comment `"Studio portraits"`, save batch and save film.
-  - **Expected:** Film appears in `My Films` showing `4x5: 10` and `FROZEN` chip; top roll counter only counts rolls (not sheets).
-- [ ] **2.6 DX Canister & Box Barcode Scanner *(Physical Device)***
-  - **Steps (Device):** Open `Add Film` -> **`Scan barcode`** -> grant Camera permission:
-    1. Scan a **35mm canister DX barcode** -> verify manufacturer, film name, ISO, type, and 1× `35mm` roll with decoded exposure count (`12`/`24`/`36`) populate automatically (or `Select Film` sheet opens if DX code maps to multiple stocks).
-    2. Scan a **film box UPC/EAN barcode** (e.g., Kodak Portra 400 5-pack) -> verify format and pack quantity (`5 rolls`) populate automatically.
-    3. Scan an **unrelated barcode** (e.g., water bottle) -> verify **`Film not recognized`** alert (`OK` returns to manual entry).
-  - **Steps (Simulator):** Tap **`Scan barcode`** -> verify **`Scanner unavailable`** alert.
+### Suite 0 — Pre-Flight Backup & Post-Update Integrity Check (Existing Library)
+- [ ] **0.1 Real-Library Safety Backup (Tests Export on Real Data)**
+  - **Steps:** Open **`Settings -> Export or Import Inventory`** -> export **JSON** to Files (e.g., `FilmStock_PreQA_Backup.json`) and export **CSV** to Files.
+  - **Expected:** Both files generate immediately without errors. Open the CSV in Quick Look / Numbers and confirm your real `# INVENTORY`, `# LOADED FILMS`, `# FINISHED FILMS`, and `# CAMERAS` counts look right.
+- [ ] **0.2 Post-Update Launch & `What's New` Sheet**
+  - **Steps:** Install the new build **over** your existing app on iPhone -> launch app:
+    1. Verify **`What's New`** presents automatically if `whatsNewVersion` was bumped (or open **`Settings -> What's New`** manually) -> tap **`Continue`**.
+    2. Record your baseline numbers in **`Settings -> Statistics`**:
+       - `Total Rolls`: `____` | `Total Sheets`: `____` | `Unique Films`: `____` | `Finished Rolls`: `____`
+  - **Expected:** Zero missing films, zero duplicated rolls, custom reminder card photos still appear on your cards, and `Loaded Films` / `Finished Rolls` tabs open without delay or crash.
+  - *(Note: First-install Welcome onboarding & tooltips require a clean container and are already verified automatically on Simulator by `testOnboardingWelcomeTooltipsAndWhatsNew()` — only test manually on a Simulator if desired.)*
 
 ---
 
-### Suite 3 — Reminder Card Images (Catalog, Camera, Library, Cropper & My Collection)
-- [ ] **3.1 Default Image Catalog & Search**
-  - **Steps:** In `Add Film`, tap **`Open Catalog`** -> search `"Velvia"` -> tap thumbnail -> verify preview appears with blue selection border -> tap **`x`** badge on thumbnail to clear it.
-  - **Expected:** Selected catalog image attaches and clears cleanly.
-- [ ] **3.2 Camera Capture, Photo Library & Square Cropper *(Physical Device)***
-  - **Steps:** Tap **`Add Image`** -> test both **`Add Image`** (live Camera shutter) and **`Choose from Library`** (`PHPicker`) -> in **`Adjust`** cropper, pinch-to-zoom and drag -> tap **`Done`** -> save film.
-  - **Expected:** Cropped square JPEG is saved locally and to the App Group container; card thumbnail displays on `My Films`.
-- [ ] **3.3 My Collection Tab (Gallery, Pager & Delete)**
+### Suite 1 — Verifying & Updating Existing / Legacy (`v1.x`–`v2.x`) Library Items
+- [ ] **1.1 Inspect & Non-Destructively Edit an Old Film From Your Existing Stock**
+  - **Steps:** Pick one of the oldest films in your `My Films` list -> tap into `FilmDetailView`:
+    1. Tap the pencil icon on an existing roll group -> verify existing expiry date (even if originally saved as `M/YYYY` or `MMYYYY`), frozen/fridge state, exposures, and comments populate accurately.
+    2. Add ` (QA check)` to **`Comments`** (or toggle `Frozen` ON) -> tap **`Save`** -> verify detail view & card update immediately -> re-open pencil sheet, revert your change back to original, and tap **`Save`**.
+  - **Expected:** Legacy rolls save cleanly with no false expiry-validation errors, and roll counts stay identical.
+- [ ] **1.2 Inspect Existing Loaded & Finished History**
+  - **Steps:** Switch to Tab 2 (**`Loaded Films`**):
+    1. Tap an **existing loaded roll** (if you have one loaded) -> verify `Roll Details` shows camera name, loaded date, `On Camera` day count, ISO, expiry/storage badges, and comments -> tap **`Done`**.
+    2. Switch segment to **`Finished Rolls`** -> scroll through your oldest finished rolls (including any whose camera or active stock you deleted months ago) -> tap an old finished roll to open **`Finished Roll`** details -> tap **`Done`**.
+  - **Expected:** Every historical roll displays its film name, reminder card thumbnail, camera snapshot, status badge (`To develop` / `In development` / `Developed`), and comments without `Unavailable` placeholders or crashes.
+
+---
+
+### Suite 2 — Browsing, Search, Filtering, Sorting & Grouping on Real Data
+- [ ] **2.1 Cards vs Table View & Pull-to-Refresh**
+  - **Steps:** On `My Films`, toggle between **Cards** (`tablecells`) and **Table** (`list.bullet`) -> scroll horizontally across format columns in Table view -> pull down to refresh -> switch back to your preferred view.
+  - **Expected:** Total roll count in header stays identical across both views.
+- [ ] **2.2 Search & Multi-Facet Filter Combinations on Your Collection**
+  - **Steps:**
+    1. Search by manufacturer (e.g., `"Kodak"`), film name, and type (`"B&W"` / `"Slide"`) -> clear search (`Close`).
+    2. Open **Filter** -> test filtering your real collection by `Manufacturer`, `Type`, `Speed`, `Format`, **`EXPIRED`**, **`FROZEN`**, and **`FRIDGE`** (if Fridge flag is enabled; verify `FROZEN` and `FRIDGE` cannot both be active at once).
+    3. Toggle **`Hide empty`** OFF and ON -> check active filter count badge on `My Films` -> open Filter and tap **`Reset`**.
+  - **Expected:** Every filter combination matches your real inventory accurately, and **`Reset`** restores your exact baseline roll count.
+- [ ] **2.3 Sorting & Grouping (`None`, `Manufacturer`, `ISO`)**
+  - **Steps:** Open **Filter** -> test `Sort by` (`Manufacturer`, `Film Type`, `ISO`, `Expiry Date`) in ascending (`↑`) and descending (`↓`) order -> test `Group by` (`None`, `Manufacturer`, `ISO`) -> restore your preferred sort/grouping.
+  - **Expected:** Undated films sort cleanly after dated films in `Expiry Date` mode; group section headers match every film beneath them.
+
+---
+
+### Suite 3 — Adding Sandbox (`QA-`) Films, Manufacturers, Sheets & Barcode Scanning
+*(All items created here use `QA-` names so they never touch your real films and are deleted at Step 3.6.)*
+- [ ] **3.1 Validation & Built-In Auto-Metadata Check (Without Saving)**
+  - **Steps:** Tap **`+`** on `My Films`:
+    1. Verify **`Save`** is disabled when empty.
+    2. Select **`Ilford`**, type **`HP5 Plus`** -> verify `Type` auto-sets to **`B&W`**, `Speed` wheel scrolls to **`ISO 400`**, and the default `Ilford HP5 Plus` reminder card appears -> tap **`Cancel`** (do not save into your real HP5 stock).
+- [ ] **3.2 Custom Manufacturer Lifecycle & Protection (`QA-Lab`)**
+  - **Steps:** Tap **`+`** -> **`Manufacturer`** -> tap **`+`**:
+    1. Type `"Kodak"` -> verify duplicate warning (`"This manufacturer already exists."`) and disabled **`Add`**.
+    2. Type **`QA-Lab`** -> tap **`Add`**.
+    3. Enter Name **`QA-Test 400`** -> tap **`Add Rolls`**:
+       - Test invalid dates: `"123"` (`Date must be YYYY or MM/YYYY`), `"132028"` (`Month must be between 01 and 12`), `"1940"` (`Year must be between 1950 and 2100`).
+       - Enter valid **`082028`** (auto-formats to `08/2028`), set `Rolls: 2`, set `Exposures` to **`Custom` -> `18`**, toggle **`Frozen`**, add comment `"QA batch"`, tap **`Save`** on roll sheet, then **`Save`** film.
+    4. Tap **`+`** -> **`Manufacturer`** -> search **`QA-Lab`** -> swipe left on `QA-Lab` -> **`Delete`** -> verify **`Cannot Delete Manufacturer`** alert blocks deletion while `QA-Test 400` exists -> cancel out of `Add Film`.
+- [ ] **3.3 Large Format Sheets & Metadata Collision Merge (`QA-Sheet` -> `QA-Test 400`)**
+  - **Steps:**
+    1. Tap **`+`** -> select **`QA-Lab`**, Name **`QA-Sheet`**, ISO `400`, Type `B&W` -> **`Add Rolls`** -> Format **`4x5`**, `Sheets: 5` -> **`Save`** batch & **`Save`** film.
+    2. Open **`QA-Lab QA-Sheet`** -> test inline `+`/`-` sheet stepper and pencil **`Edit stock`** (including **`Add expiry date`** multi-date row) -> **`Save`**.
+    3. Tap **`...`** (`ellipsis.circle`) -> **`Edit Film`** -> rename `QA-Sheet` to **`QA-Test 400`** -> **`Save`**.
+  - **Expected:** `QA-Sheet` merges cleanly into **`QA-Lab QA-Test 400`**, which now shows **both** the `35mm` rolls and `4x5` sheets under one film!
+- [ ] **3.4 DX Canister & Box Barcode Scanner *(Physical Device — Cancel or Use QA Delete)***
+  - **Steps:** Tap **`+`** -> **`Scan barcode`**:
+    1. Scan a **35mm canister DX barcode** -> verify manufacturer, film name, ISO, type, and 1× `35mm` roll + exposure count populate (or `Select Film` picker appears for shared DX codes) -> tap **`Cancel`** so you don't add extra stock to your real library.
+    2. Tap **`+`** -> **`Scan barcode`** -> scan a **film box UPC/EAN barcode** -> verify format & multi-pack roll count populate -> tap **`Cancel`**.
+    3. Scan a **non-film barcode** (e.g., book/bottle) -> verify **`Film not recognized`** alert.
+
+---
+
+### Suite 4 — Reminder Card Images (Catalog, Camera, Cropper & My Collection)
+- [ ] **4.1 Catalog, Camera Capture & Cropper on Your Sandbox `QA-Test 400` Film *(Physical Device)***
+  - **Steps:** Open **`QA-Lab QA-Test 400`** -> **`...` -> `Edit Film`**:
+    1. Tap **`Open Catalog`** -> search `"Velvia"` -> select thumbnail -> tap **`x`** badge on preview to clear.
+    2. Tap **`Add Image`** -> take a quick photo with **Camera** (or **`Choose from Library`**) -> pinch/drag in **`Adjust`** square cropper -> tap **`Done`** -> tap **`Save`**.
+  - **Expected:** Custom cropped card appears on `QA-Lab QA-Test 400` without affecting any of your real reminder cards.
+- [ ] **4.2 My Collection Tab (Inspect Real Cards + Delete Only the `QA-` Card)**
   - **Steps:** Switch to Tab 3 (**`My Collection`**):
     1. Tap **`?`** -> verify help alert -> **`Done`**.
-    2. Tap a custom card -> verify full-screen **`1 of N`** pager; swipe left/right between cards -> **`Done`**.
-    3. Long-press a card -> **`Delete`** -> **`Cancel`** (keeps image).
-    4. Tap **`Edit`** -> select multiple cards -> tap floating red **Trash** button -> confirm **`Delete`**.
-  - **Expected:** Custom images are deleted from disk/App Group, linked films gracefully revert to default/no image, and empty state (`No film reminder cards (yet)`) shows when none remain.
+    2. Tap any card to verify the full-screen **`1 of N`** pager -> swipe between cards -> **`Done`**.
+    3. Tap **`Edit`** -> select **only** the temporary photo you just took for `QA-Test 400` -> tap floating red **Trash** button -> confirm **`Delete`**.
+  - **Expected:** Only the `QA-Test 400` photo is removed; all of your real custom reminder cards in `My Collection` remain untouched.
 
 ---
 
-### Suite 4 — Browsing, Search, Filtering, Sorting, Grouping & Detail Editing
-- [ ] **4.1 Cards vs Table View Toggle & Pull-to-Refresh**
-  - **Steps:** On `My Films`, switch segmented control between **Cards** (`tablecells`) and **Table** (`list.bullet`) -> pull down on list to refresh.
-  - **Expected:** Cards show thumbnails, chips, and format counts; Table shows compact rows with scrollable format columns (`35mm`, `120`, etc.).
-- [ ] **4.2 Search, Filter Chips, Mutual Exclusion & Reset**
-  - **Steps:**
-    1. Type manufacturer, film name, or `"B&W"` into **`Search films...`** -> verify live filtering -> close search.
-    2. Tap **Filter** button -> filter by `Manufacturer`, `Type`, `Speed`, `Format`, **`EXPIRED`**, **`FROZEN`**, and **`FRIDGE`** (verify `FROZEN` and `FRIDGE` filters are mutually exclusive; verify `Hide empty` toggle).
-    3. Verify active filter count badge on `My Films` toolbar -> re-open Filter and tap **`Reset`**.
-  - **Expected:** Filter count badge clears and full inventory returns.
-- [ ] **4.3 Sorting & Grouping (`None`, `Manufacturer`, `ISO`)**
-  - **Steps:** Open Filter -> test `Sort by` (`Manufacturer`, `Film Type`, `ISO`, `Expiry Date`) in both ascending (`↑`) and descending (`↓`) order -> test `Group by` (`None`, `Manufacturer`, `ISO`).
-  - **Expected:** Films reorder accurately (films with expiry dates sort ahead of undated films) and section headers (`Kodak`, `ISO 400`, etc.) appear when grouped.
-- [ ] **4.4 Film Detail, Roll/Sheet Editing & Metadata Collision Merge**
-  - **Steps:** Tap a film -> in `FilmDetailView`:
-    1. Tap pencil icon on a roll group -> adjust quantity, expiry, storage, exposures, comments -> **`Save`** (verify setting quantity to `0` removes that roll group).
-    2. For `Sheets` / `Other`, test inline `+`/`-` stepper and pencil **`Edit stock`** sheet (including **`Add expiry date`** multi-date list).
-    3. Tap **`...`** (`ellipsis.circle`) -> **`Edit Film`** -> rename film to match an *existing* film's exact `(Manufacturer, Name, Type, Speed)` -> **`Save`**.
-  - **Expected:** Both films merge cleanly into a single `GroupedFilm` with combined roll/sheet counts and zero duplicate entries.
-
----
-
-### Suite 5 — Cameras, Loading Films, Loaded Details & Finished Rolls Workflow
-- [ ] **5.1 Manage Cameras & Format Matching**
-  - **Steps:** Open Tab 2 (**`Loaded Films`**) -> tap top-left **Camera** icon (`Manage Cameras`) -> tap **`+`** -> add `"Leica M6"` (`35mm`) and `"Hasselblad 500C/M"` (`120`) -> tap `"Leica M6"` to verify `Edit Camera`.
-  - **Expected:** Both cameras appear with their format subtitles.
-- [ ] **5.2 Load Film (Roll Picker, Quick-Add Camera, Custom ISO & Sheet Quantity)**
-  - **Steps:** Swipe left on a film in `My Films` -> **`Load`** (or tap **`Load Film`** in `FilmDetailView`):
-    1. Verify format-matched camera appears under **`Suggested`** (or auto-selects when unique).
-    2. Open `Select Camera` -> type `"Olympus XA"` in search -> tap **`Add "Olympus XA"`** quick-add row.
-    3. When a film has multiple distinct roll batches (e.g., frozen vs non-frozen), verify **`Select Roll`** section appears and lets you choose the specific roll.
-    4. Change **`Shoot at ISO`** from `400` to `1600` -> verify orange hint `"Different from film's native ISO"` -> tap **`Load`**.
-  - **Expected:** Inventory roll count decrements by 1; roll appears in `Loaded Films` showing **`ISO 1600`** in orange.
+### Suite 5 — Cameras, Load Film, Roll Details, Finished Rolls & Zero-Trace Cleanup
+*(Uses `QA-Lab QA-Test 400` + `QA-Camera` and cleans up via `Re-load` -> `Remove` so zero test entries remain in your real `Finished Rolls` history!)*
+- [ ] **5.1 Add Sandbox Camera (`QA-Camera`)**
+  - **Steps:** On Tab 2 (**`Loaded Films`**), tap top-left **Camera** icon (`Manage Cameras`) -> **`+`** -> Name **`QA-Camera`**, Format **`35mm`** -> **`Add`** -> tap `QA-Camera` to test `Edit Camera` -> **`Done`**.
+- [ ] **5.2 Load `QA-Test 400` Into `QA-Camera` With Custom ISO**
+  - **Steps:** Open **`QA-Lab QA-Test 400`** -> tap **`Load Film`**:
+    1. Verify **`QA-Camera`** appears under **`Suggested`** `35mm` cameras -> select **`QA-Camera`**.
+    2. Change **`Shoot at ISO`** from `400` to **`1600`** -> verify orange hint `"Different from film's native ISO"` -> tap **`Load`**.
+  - **Expected:** `QA-Test 400` roll count drops by 1; `Loaded Films` shows `QA-Lab QA-Test 400` in `QA-Camera` at **`ISO 1600`** alongside any real loaded films you already had.
 - [ ] **5.3 In-Use Deletion Protection (Film & Camera)**
-  - **Steps:** While `"HP5 Plus"` is loaded in `"Olympus XA"`:
-    1. In `My Films`, swipe left on `"HP5 Plus"` -> **`Delete`**.
-    2. In `Manage Cameras`, swipe left on `"Olympus XA"` -> **`Delete`**.
-  - **Expected:** Both actions are blocked with **`Cannot Remove Film`** and **`Cannot Delete Camera`** alerts.
-- [ ] **5.4 Loaded Roll Details, Comments, Change Date, Partial Sheet Unload & Cancel Load**
-  - **Steps:** In `Loaded Films` (`Loaded` segment):
-    1. Tap loaded row -> verify `Roll Details` (`On Camera` days, expiry, storage) -> type/edit **`Comments`** -> tap **`Done`**.
-    2. Swipe left -> **`Change Date`** -> pick an earlier date -> **`Save`** -> verify relative date & `On Camera` day count update.
-    3. Load `3` sheets of `4x5` film -> swipe left on loaded sheets -> tap **`Unload 1 Sheet`** -> verify `2 sheets` remain loaded and `1 sheet` moves to `Finished Rolls`.
-    4. Load another roll -> swipe left -> tap **`Remove`** (accidental load).
-  - **Expected:** `Remove` deletes the loaded entry *without* creating a finished roll and restores the roll back to `My Films` inventory!
-- [ ] **5.5 Finished Rolls Lifecycle (`To develop` -> `In development` -> `Developed` & `Re-load`)**
-  - **Steps:** Swipe left on a loaded roll -> **`Finish Roll`** -> switch segmented picker to **`Finished Rolls`**:
-    1. Verify badge **`To develop`** and carried-over comment in **`Finished Roll`** detail sheet.
-    2. Tap pencil icon next to `Finished` date -> change date -> **`Save`**.
-    3. Swipe left -> **`In development`** -> swipe left -> **`Developed`** -> open detail sheet and verify **`Developed`** date row appears.
-    4. Test `Search films...` text field and Filter sheet (`Type`, `Status`, `Format`, `Camera`, `Sort by`, `Clear All`).
-    5. Swipe left -> **`Re-load`**.
-  - **Expected:** Roll moves back to `Loaded` segment and `Statistics -> Finished Rolls` count decrements accordingly.
-
----
-
-### Suite 6 — Settings, Fridge Mode, Custom Formats, Statistics, Export/Import & StoreKit
-- [ ] **6.1 My Films Settings & Fridge Mode**
-  - **Steps:** In `Settings`:
-    1. Toggle **`Never show empty films`** OFF -> verify 0-quantity films remain visible when `Hide empty` is off.
-    2. Toggle **`Always show the table view`** ON -> relaunch app -> verify `My Films` defaults to Table view.
-    3. Toggle **`Show expiry date in chip`** ON -> verify film cards show `MM/YYYY` chips (red if expired, primary if valid).
-    4. Toggle **`Enable Fridge flag`** ON -> verify `Add/Edit Rolls` switches from a `Frozen` toggle to segmented **`None | Fridge | Frozen`**, `Filter` shows **`FRIDGE`** chip, and `Statistics` shows **`Fridge Films`**.
-- [ ] **6.2 Manage Formats (Built-in Toggles & Custom Formats)**
-  - **Steps:** `Settings -> Film Formats` -> toggle **`110`** OFF -> tap **`Add Custom Format`** -> add `"Panoramic 6x17"` -> verify `"Panoramic 6x17"` appears in `Add Film -> Format` picker and `"110"` is hidden -> delete `"Panoramic 6x17"` via swipe.
-- [ ] **6.3 Statistics & Appearance**
-  - **Steps:** Open `Settings -> Statistics` -> cross-check `Total Rolls`, `Total Sheets`, `Unique Films`, `Finished Rolls`, `Expired Films`, `Frozen Films`, `Fridge Films`, `By Type`, and `By Format` against inventory. Open `Settings -> Appearance` -> verify `System`, `Light`, and `Dark` modes immediately update color scheme.
-- [ ] **6.4 Export & Import Inventory (JSON & CSV)**
-  - **Steps:** Open `Settings -> Export or Import Inventory`:
-    1. Export **JSON** via **`Export & Share`** -> Save to Files.
-    2. Export **CSV** via **`Export & Share`** -> Save to Files (open in Numbers/Excel to verify `# INVENTORY`, `# LOADED FILMS`, `# FINISHED FILMS`, `# CAMERAS` sections).
-    3. Switch to **`Import`** tab -> **`Choose File`** -> select exported JSON/CSV -> verify **`Review Import`** summary sheet -> tap **`Import`**.
-  - **Expected:** Settings dismisses, switches to `My Films`, shows **`Import completed successfully`** toast; existing loaded/finished rolls and cameras are not duplicated.
-- [ ] **6.5 About, Legal & StoreKit Support ("Buy Me a Coffee")**
   - **Steps:**
-    1. Open `Settings -> About` -> verify version, **`Privacy Policy`**, **`Terms of Service`**, and **`Contact me`** (`mailto:hello@halbe.no` on device; `"Email Not Available"` alert on Simulator).
-    2. Open `Settings -> Buy Me a Coffee` (with `Configuration.storekit` active in Xcode scheme) -> tap **`Buy Me a Coffee ($1.99)`** -> confirm **`Yes, Support FilmStock`** -> complete Xcode StoreKit test sheet -> verify **`Thank You!`** alert -> tap **`Restore Purchases`**.
+    1. In `My Films`, swipe left on **`QA-Lab QA-Test 400`** -> **`Delete`** -> verify **`Cannot Remove Film`** alert blocks deletion.
+    2. In `Manage Cameras`, swipe left on **`QA-Camera`** -> **`Delete`** -> verify **`Cannot Delete Camera`** alert blocks deletion.
+- [ ] **5.4 Loaded Details, Comments & Change Date**
+  - **Steps:** In `Loaded Films`, tap **`QA-Lab QA-Test 400`** -> edit **`Comments`** (`"QA batch +1"`) -> **`Done`**. Swipe left on `QA-Lab QA-Test 400` -> **`Change Date`** -> pick yesterday -> **`Save`**.
+- [ ] **5.5 Finish -> Status Transitions -> Filter -> `Re-load` -> `Remove` (Leaves Zero History Trace!)**
+  - **Steps:**
+    1. Swipe left on `QA-Lab QA-Test 400` -> **`Finish Roll`** -> switch to **`Finished Rolls`**.
+    2. Tap `QA-Lab QA-Test 400` -> verify carried-over comment (`"QA batch +1"`) -> tap pencil icon next to `Finished` date -> **`Save`** -> **`Done`**.
+    3. Swipe left -> **`In development`** -> swipe left -> **`Developed`** -> test search/filter sheet on `Finished Rolls` -> reset filter.
+    4. **Clean up history:** Swipe left on `QA-Lab QA-Test 400` in `Finished Rolls` -> tap **`Re-load`** (moves it back to `Loaded` and decrements `Finished Rolls` counter back to your baseline!).
+    5. Switch to **`Loaded`** segment -> swipe left on `QA-Lab QA-Test 400` -> tap **`Remove`** (cancels load and returns the roll to `QA-Test 400`).
+- [ ] **5.6 Delete Sandbox Film, Camera & Custom Manufacturer**
+  - **Steps:**
+    1. In `My Films`, swipe left on **`QA-Lab QA-Test 400`** -> **`Delete`**.
+    2. In `Loaded Films -> Manage Cameras`, swipe left on **`QA-Camera`** -> **`Delete`**.
+    3. Tap **`+`** on `My Films` -> **`Manufacturer`** -> search **`QA-Lab`** -> swipe left -> **`Delete`** -> cancel `Add Film`.
+  - **Expected:** All `QA-` sandbox records are gone, and **`Settings -> Statistics`** matches your exact Step 0.2 baseline (`Total Rolls`, `Total Sheets`, `Unique Films`, `Finished Rolls`).
 
 ---
 
-### Suite 7 — Home Screen Widget, AppIntents & Deep Links *(Simulator or Device)*
-- [ ] **7.1 Empty Widget & Deep Link**
-  - **Steps:** With 0 loaded films, add the small **`Loaded Films`** FilmStock widget to the iOS Home Screen -> verify `"No Films Loaded"` state -> tap widget.
-  - **Expected:** App opens directly onto Tab 2 (**`Loaded Films`**).
-- [ ] **7.2 Populated Widget, Cycling Intents & Edit Widget Configuration**
-  - **Steps:** Load 2+ films with different reminder cards and custom ISOs -> return to Home Screen:
-    1. Verify widget displays the latest loaded film's reminder card.
-    2. Tap **`<`** and **`>`** chevron buttons on the widget -> verify widget cycles through loaded films inline without launching the app (`NextFilmIntent` / `PreviousFilmIntent`).
-    3. Long-press widget -> **`Edit Widget`** -> toggle **`Show Film Info`** ON and test **`Position`** (`Top` vs `Bottom`) -> verify camera name + `ISO <effectiveISO>` pill overlay appears.
-    4. Tap the widget body -> verify app opens Tab 2 (`Loaded Films`) and automatically presents **`Roll Details`** for that specific roll (`filmstock://loadedfilms?id=<id>`).
+### Suite 6 — Settings, Fridge Mode, Custom Formats, Appearance & StoreKit
+- [ ] **6.1 Non-Destructive Settings Toggles**
+  - **Steps:** Open **`Settings`**:
+    1. Toggle **`Show expiry date in chip`** ON/OFF -> check your film cards on `My Films`.
+    2. Toggle **`Enable Fridge flag`** ON -> verify `Statistics` shows **`Fridge Films`**, `Filter` shows **`FRIDGE`**, and roll edit sheets show **`None | Fridge | Frozen`** -> restore your preferred toggle states.
+    3. Open **`Film Formats`** -> add custom format **`QA-6x17`** -> verify it appears -> swipe left to **`Delete`** `QA-6x17` (avoid toggling off built-in formats you actively use, or re-enable them right after checking).
+    4. Open **`Appearance`** -> test `Dark`, `Light`, `System` -> restore your preference.
+- [ ] **6.2 About, Legal & StoreKit ("Buy Me a Coffee")**
+  - **Steps:**
+    1. Open **`Settings -> About`** -> check version string, **`Privacy Policy`**, **`Terms of Service`**, and **`Contact me`** (`mailto:hello@halbe.no`).
+    2. Open **`Settings -> Buy Me a Coffee`** -> verify product price loads (test purchase via Xcode `Configuration.storekit` or Sandbox Apple ID; cancel sheet on App Store production if not purchasing) -> test **`Restore Purchases`**.
+- [ ] **6.3 Import Preview Verification (Without Duplicating Real Stock)**
+  - **Steps:** Open **`Settings -> Export or Import Inventory`** -> **`Import`** tab -> **`Choose File`** -> pick the `FilmStock_PreQA_Backup.json` you exported in Step 0.1 -> inspect the **`Review Import`** summary sheet to confirm counts match your library -> tap **`Cancel`** on the preview sheet!
+  - *(Why `Cancel`? Importing inventory into an already-populated database adds inventory quantities on top of existing stock; tapping `Cancel` verifies the full parser + preview UI on your real backup file without doubling your roll counts.)*
+
+---
+
+### Suite 7 — Home Screen Widget, AppIntents & Deep Links *(On Your Real Loaded Films)*
+- [ ] **7.1 Widget Display, Inline Cycling & Configuration**
+  - **Steps:** Add (or inspect your existing) **`Loaded Films`** FilmStock widget on your iPhone Home Screen:
+    1. Verify your currently loaded film's reminder card (or `"No Films Loaded"` if none are loaded) renders sharply.
+    2. If you have 2+ films loaded, tap **`<`** and **`>`** on the widget -> verify it cycles between your loaded cameras inline without opening the app.
+    3. Long-press widget -> **`Edit Widget`** -> toggle **`Show Film Info`** ON and test **`Top`** vs **`Bottom`** pill position -> verify camera name + `ISO <effectiveISO>` overlay.
+- [ ] **7.2 Deep Link Navigation**
+  - **Steps:** Tap the widget body -> verify FilmStock opens directly onto Tab 2 (**`Loaded Films`**) and automatically opens **`Roll Details`** for the displayed roll (`filmstock://loadedfilms?id=<id>`).
